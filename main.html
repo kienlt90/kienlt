@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cổng thông tin - Hệ thống KIENLT90</title>
+  <!-- Google Fonts: Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // Auth Check: Redirect to index.html if no session exists
+    if (!localStorage.getItem('vnpt_his_session')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</head>
+<body class="portal-body">
+  <script>
+    // Theme Initializer to prevent flash of light
+    (function() {
+      const theme = localStorage.getItem('vnpt_his_theme') || 'dark';
+      if (theme === 'light') {
+        document.body.classList.add('light-theme');
+      }
+    })();
+  </script>
+
+  <!-- Floating animated background blobs -->
+  <div class="bg-glow-container">
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+    <div class="glow-blob blob-3"></div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="portal-container" id="app-container">
+    
+    <!-- DASHBOARD PORTAL VIEW -->
+    <section id="dashboard-view" class="dashboard-section">
+      
+      <!-- Portal Header -->
+      <header class="dash-header glass-card">
+        <div class="dash-brand">
+          <svg class="vnpt-logo-mini" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logo-grad-mini" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06b6d4" />
+                <stop offset="100%" stop-color="#3b82f6" />
+              </linearGradient>
+            </defs>
+            <!-- Outer Hexagon -->
+            <path d="M 100 15 L 173.6 57.5 L 173.6 142.5 L 100 185 L 26.4 142.5 L 26.4 57.5 Z" fill="none" stroke="url(#logo-grad-mini)" stroke-width="6" opacity="0.4" />
+            <!-- Stylized "9" -->
+            <path d="M 100 90 A 22 22 0 1 0 56 90 A 22 22 0 0 0 100 90 L 100 120 C 100 135, 88 145, 70 145" fill="none" stroke="url(#logo-grad-mini)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+            <!-- Stylized "0" -->
+            <path d="M 154 102.5 A 22 30 0 1 1 110 102.5 A 22 30 0 1 1 154 102.5" fill="none" stroke="var(--color-text-primary)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: 1.4rem;">KIENLT90 Portal</h2>
+        </div>
+        <div class="user-profile">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name" id="user-display-name">Lê Trung Kiên</span>
+            <span class="user-role">Quản trị viên</span>
+          </div>
+          <!-- Theme Toggle Button -->
+          <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Đổi giao diện">
+            <span id="theme-icon">☀️</span>
+          </button>
+          <button id="logout-btn" class="btn-secondary" onclick="logout()">Đăng xuất</button>
+        </div>
+      </header>
+
+      <!-- Welcome Banner -->
+      <div class="dash-content" style="margin-top: 1.8rem;">
+        <div class="welcome-banner glass-card" style="margin-bottom: 2rem;">
+          <div class="welcome-text">
+            <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; font-family: var(--font-heading);">
+              Chào mừng quay trở lại, <span id="welcome-user" style="color: var(--color-accent);">Lê Trung Kiên</span>!
+            </h1>
+            <p style="color: var(--color-text-secondary); font-size: 0.95rem; max-width: 650px; line-height: 1.5;">
+              Cổng thông tin hệ thống trung tâm KIENLT90. Bạn có thể truy cập các mô-đun công việc và tiện ích quản lý bên dưới.
+            </p>
+          </div>
+          <div class="welcome-stats">
+            <div class="stat-box">
+              <span class="stat-number" style="color: var(--color-primary);">Active</span>
+              <span class="stat-label">Trạng thái phiên</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-number" style="color: var(--color-accent);">v1.0</span>
+              <span class="stat-label">Phiên bản hệ thống</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Features Header with View Mode Toggler -->
+        <div class="features-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
+          <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 600; border-left: 4px solid var(--color-primary); padding-left: 0.75rem; margin: 0;">
+            Danh mục chức năng
+          </h2>
+          <div class="view-mode-toggler">
+            <button class="view-mode-btn active" id="btn-view-dock" onclick="setViewMode('dock')">
+              <span>↔️</span> Menu ngang
+            </button>
+            <button class="view-mode-btn" id="btn-view-list" onclick="setViewMode('list')">
+              <span>📋</span> Dạng danh sách
+            </button>
+          </div>
+        </div>
+        
+        <!-- Dock/Horizontal Menu View Container -->
+        <div id="dock-view-container">
+          <!-- Horizontal Dock Menu -->
+          <div class="portal-menu-dock" id="portal-menu-dock">
+            <button class="dock-item active-dock-item" id="dock-item-1" onclick="selectPortalModule(1)">
+              <span>📋</span> Khảo sát RIS/PACS-LIS-EMR
+            </button>
+            <button class="dock-item" id="dock-item-2" onclick="selectPortalModule(2)">
+              <span>🤖</span> Cấu hình Telegram
+            </button>
+            <button class="dock-item" id="dock-item-3" onclick="selectPortalModule(3)">
+              <span>📈</span> Báo cáo số liệu
+            </button>
+            <button class="dock-item" id="dock-item-4" onclick="selectPortalModule(4)">
+              <span>🔄</span> Mapping Danh mục HIS
+            </button>
+            <button class="dock-item" id="dock-item-5" onclick="selectPortalModule(5)">
+              <span>⏳</span> Tiến độ dự án HIS L2
+            </button>
+            <button class="dock-item" id="dock-item-6" onclick="selectPortalModule(6)">
+              <span>🔏</span> Phân quyền EMR RACI
+            </button>
+            <button class="dock-item" id="dock-item-7" onclick="selectPortalModule(7)">
+              <span>🔌</span> Test API HIS
+            </button>
+          </div>
+
+          <!-- Interactive Detail Card -->
+          <div class="portal-detail-card" id="portal-detail-card">
+            <div class="detail-header">
+              <div class="detail-icon" id="detail-icon">📋</div>
+              <div class="detail-title">
+                <h3 id="detail-title">Khảo sát RIS/PACS - LIS - EMR Bệnh Viện</h3>
+                <div class="detail-status status-active" id="detail-status">Đang hoạt động</div>
+              </div>
+            </div>
+            <p class="detail-desc" id="detail-desc">
+              Biểu mẫu khảo sát thực trạng số hóa Bệnh viện / Trung tâm Y tế. Quản lý bản thảo JSON, cấu hình API kiểm thử, xuất báo cáo bản in PDF và file Excel ký đóng dấu.
+            </p>
+            <div class="detail-actions">
+              <button class="btn-detail-action active-action" id="detail-action-btn" onclick="window.open('survey.html', '_blank')">
+                Vào biểu mẫu khảo sát ➔
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vertical List View Container (Hidden by default) -->
+        <div id="list-view-container" class="hidden" style="display: flex; flex-direction: column; gap: 1.2rem; margin-bottom: 2rem;">
+          <!-- Content will be rendered dynamically by JS -->
+        </div>
+
+      </div>
+      
+    </section>
+
+  </main>
+
+  <script>
+    // Set user info from localStorage
+    const session = JSON.parse(localStorage.getItem('vnpt_his_session') || '{}');
+    if (session.displayName) {
+      document.getElementById('welcome-user').textContent = session.displayName;
+      document.getElementById('user-display-name').textContent = session.displayName;
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('vnpt_his_session');
+      window.location.href = 'index.html';
+    }
+
+    // Portal modules data definition
+    const portalModules = [
+      {
+        id: 1,
+        icon: '📋',
+        shortTitle: 'Khảo sát RIS/PACS-LIS-EMR',
+        title: 'Khảo sát RIS/PACS - LIS - EMR Bệnh Viện',
+        desc: 'Biểu mẫu khảo sát thực trạng số hóa Bệnh viện / Trung tâm Y tế. Quản lý bản thảo JSON, cấu hình API kiểm thử, xuất báo cáo bản in PDF và file Excel ký đóng dấu.',
+        status: 'active',
+        statusText: 'Đang hoạt động',
+        actionText: 'Vào biểu mẫu khảo sát ➔',
+        action: function() { window.open('survey.html', '_blank'); }
+      },
+      {
+        id: 2,
+        icon: '🤖',
+        shortTitle: 'Cấu hình Telegram',
+        title: 'Cấu hình & Tích hợp Telegram Bot',
+        desc: 'Thiết lập liên kết hệ thống cổng thông tin của bạn với Telegram Bot API để tự động gửi dữ liệu khảo sát và các tệp báo cáo trực tiếp về nhóm hoặc kênh chat của bạn.',
+        status: 'inactive',
+        statusText: 'Chưa kích hoạt (Chờ phát triển)',
+        actionText: 'Chưa kích hoạt',
+        action: null
+      },
+      {
+        id: 3,
+        icon: '📈',
+        shortTitle: 'Báo cáo số liệu',
+        title: 'Thống kê & Báo cáo số liệu số hóa',
+        desc: 'Tổng hợp số liệu hoạt động khám chữa bệnh của các bệnh viện đã điền khảo sát. Vẽ biểu đồ trực quan hóa tỷ lệ triển khai bệnh án điện tử EMR.',
+        status: 'inactive',
+        statusText: 'Chưa kích hoạt (Chờ phát triển)',
+        actionText: 'Chưa kích hoạt',
+        action: null
+      },
+      {
+        id: 4,
+        icon: '🔄',
+        shortTitle: 'Mapping Danh mục HIS',
+        title: 'Đồng bộ & Mapping Danh mục HIS',
+        desc: 'Tải lên danh mục vật tư y tế, dược phẩm, nhân sự từ file Excel để khớp mã danh mục dùng chung và chuẩn hóa dữ liệu trước khi nạp vào cơ sở dữ liệu HIS L2.',
+        status: 'inactive',
+        statusText: 'Chưa kích hoạt (Chờ phát triển)',
+        actionText: 'Chưa kích hoạt',
+        action: null
+      },
+      {
+        id: 5,
+        icon: '⏳',
+        shortTitle: 'Tiến độ dự án HIS L2',
+        title: 'Theo dõi Tiến độ Dự án HIS L2',
+        desc: 'Bảng điều khiển giám sát danh sách các yêu cầu điều chỉnh, nâng cấp tính năng phần mềm HIS L2 từ các bệnh viện, phân công lập trình viên và cập nhật tiến độ hoàn thành.',
+        status: 'inactive',
+        statusText: 'Chưa kích hoạt (Chờ phát triển)',
+        actionText: 'Chưa kích hoạt',
+        action: null
+      },
+      {
+        id: 6,
+        icon: '🔏',
+        shortTitle: 'Phân quyền EMR RACI',
+        title: 'Phân quyền Ký số EMR (RACI)',
+        desc: 'Thiết lập ma trận phân công trách nhiệm ký số (RACI Matrix) cho các y bác sĩ điều trị và bệnh nhân trên từng loại hồ sơ bệnh án theo quy định Thông tư 32/2023.',
+        status: 'inactive',
+        statusText: 'Chưa kích hoạt (Chờ phát triển)',
+        actionText: 'Chưa kích hoạt',
+        action: null
+      },
+      {
+        id: 7,
+        icon: '🔌',
+        shortTitle: 'Test API HIS',
+        title: 'Trình kiểm tra API Webservice HIS',
+        desc: 'Môi trường test kết nối và API tích hợp giữa các hệ thống (HIS, LIS, RIS/PACS) hoặc liên kết cổng thanh toán ngân hàng. Xem trước cấu trúc JSON trả về.',
+        status: 'inactive',
+        statusText: 'Chưa kích hoạt (Chờ phát triển)',
+        actionText: 'Chưa kích hoạt',
+        action: null
+      }
+    ];
+
+    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 2, 3, 4, 5, 6, 7]');
+    let activeModuleId = 1;
+
+    function getSortedModules() {
+      const currentIds = portalModules.map(m => m.id);
+      moduleOrder = moduleOrder.filter(id => currentIds.includes(id));
+      currentIds.forEach(id => {
+        if (!moduleOrder.includes(id)) {
+          moduleOrder.push(id);
+        }
+      });
+      localStorage.setItem('vnpt_his_module_order', JSON.stringify(moduleOrder));
+      return [...portalModules].sort((a, b) => moduleOrder.indexOf(a.id) - moduleOrder.indexOf(b.id));
+    }
+
+    // Render horizontal dock items dynamically
+    function renderDockMenu() {
+      const dock = document.getElementById('portal-menu-dock');
+      if (!dock) return;
+      
+      const sorted = getSortedModules();
+      dock.innerHTML = sorted.map(mod => `
+        <button class="dock-item ${mod.id === activeModuleId ? 'active-dock-item' : ''}" 
+                id="dock-item-${mod.id}" 
+                onclick="selectPortalModule(${mod.id})"
+                draggable="true"
+                data-id="${mod.id}">
+          <span>${mod.icon}</span> ${mod.shortTitle}
+        </button>
+      `).join('');
+      
+      setupDragAndDrop(dock, 'dock');
+    }
+
+    // Select module handler
+    function selectPortalModule(moduleId) {
+      activeModuleId = moduleId;
+      document.querySelectorAll('.dock-item').forEach(item => {
+        item.classList.remove('active-dock-item');
+      });
+      const activeBtn = document.getElementById(`dock-item-${moduleId}`);
+      if (activeBtn) activeBtn.classList.add('active-dock-item');
+
+      const mod = portalModules.find(m => m.id === moduleId);
+      if (!mod) return;
+
+      // Update contents
+      document.getElementById('detail-icon').textContent = mod.icon;
+      document.getElementById('detail-title').textContent = mod.title;
+      
+      const statusEl = document.getElementById('detail-status');
+      statusEl.textContent = mod.statusText;
+      if (mod.status === 'active') {
+        statusEl.className = 'detail-status status-active';
+      } else {
+        statusEl.className = 'detail-status status-inactive';
+      }
+
+      document.getElementById('detail-desc').textContent = mod.desc;
+
+      const actionBtn = document.getElementById('detail-action-btn');
+      actionBtn.textContent = mod.actionText;
+      
+      if (mod.status === 'active') {
+        actionBtn.className = 'btn-detail-action active-action';
+        actionBtn.onclick = mod.action;
+        actionBtn.removeAttribute('disabled');
+      } else {
+        actionBtn.className = 'btn-detail-action inactive-action';
+        actionBtn.onclick = null;
+        actionBtn.setAttribute('disabled', 'true');
+      }
+    }
+
+    // Render list view items dynamically
+    function renderListView() {
+      const container = document.getElementById('list-view-container');
+      if (!container) return;
+      
+      const sorted = getSortedModules();
+      container.innerHTML = sorted.map(mod => `
+        <div class="portal-list-item glass-card" draggable="true" data-id="${mod.id}">
+          <div class="list-item-icon">${mod.icon}</div>
+          <div class="list-item-content">
+            <div class="list-item-title-row">
+              <span class="list-item-title">${mod.title}</span>
+              <span class="detail-status ${mod.status === 'active' ? 'status-active' : 'status-inactive'}">
+                ${mod.statusText}
+              </span>
+            </div>
+            <p class="list-item-desc">${mod.desc}</p>
+          </div>
+          <div class="list-item-action">
+            <button class="btn-list-action ${mod.status === 'active' ? 'active-action' : 'inactive-action'}"
+                    ${mod.status === 'active' ? `onclick="runModuleAction(${mod.id})"` : 'disabled'}>
+              ${mod.status === 'active' ? 'Vào biểu mẫu ➔' : 'Chưa kích hoạt'}
+            </button>
+          </div>
+        </div>
+      `).join('');
+      
+      setupDragAndDrop(container, 'list');
+    }
+
+    // Run module action
+    function runModuleAction(moduleId) {
+      const mod = portalModules.find(m => m.id === moduleId);
+      if (mod && mod.action) {
+        mod.action();
+      }
+    }
+
+    // Set view mode (dock vs list)
+    function setViewMode(mode) {
+      const btnDock = document.getElementById('btn-view-dock');
+      const btnList = document.getElementById('btn-view-list');
+      const dockContainer = document.getElementById('dock-view-container');
+      const listContainer = document.getElementById('list-view-container');
+      
+      localStorage.setItem('vnpt_his_portal_view_mode', mode);
+      
+      if (mode === 'list') {
+        btnDock.classList.remove('active');
+        btnList.classList.add('active');
+        dockContainer.classList.add('hidden');
+        listContainer.classList.remove('hidden');
+        renderListView();
+      } else {
+        btnDock.classList.add('active');
+        btnList.classList.remove('active');
+        dockContainer.classList.remove('hidden');
+        listContainer.classList.add('hidden');
+        renderDockMenu();
+      }
+    }
+
+    // Setup HTML5 Drag and Drop event listeners
+    function setupDragAndDrop(container, type) {
+      const items = container.querySelectorAll(type === 'dock' ? '.dock-item' : '.portal-list-item');
+      
+      items.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+          item.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', item.getAttribute('data-id'));
+        });
+        
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          items.forEach(i => i.classList.remove('drag-over'));
+        });
+        
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          const draggingItem = container.querySelector('.dragging');
+          if (!draggingItem || draggingItem === item) return;
+          
+          item.classList.add('drag-over');
+          
+          const rect = item.getBoundingClientRect();
+          if (type === 'dock') {
+            const next = (e.clientX - rect.left) > (rect.width / 2);
+            if (next) {
+              item.after(draggingItem);
+            } else {
+              item.before(draggingItem);
+            }
+          } else {
+            const next = (e.clientY - rect.top) > (rect.height / 2);
+            if (next) {
+              item.after(draggingItem);
+            } else {
+              item.before(draggingItem);
+            }
+          }
+        });
+        
+        item.addEventListener('dragleave', () => {
+          item.classList.remove('drag-over');
+        });
+        
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          item.classList.remove('drag-over');
+          
+          const newOrder = Array.from(container.querySelectorAll(type === 'dock' ? '.dock-item' : '.portal-list-item'))
+            .map(i => parseInt(i.getAttribute('data-id'), 10));
+          
+          moduleOrder = newOrder;
+          localStorage.setItem('vnpt_his_module_order', JSON.stringify(moduleOrder));
+          
+          renderDockMenu();
+          renderListView();
+        });
+      });
+    }
+
+    // Theme toggler and icon updater
+    function updateThemeUI(theme) {
+      const icon = document.getElementById('theme-icon');
+      if (icon) {
+        icon.textContent = theme === 'light' ? '🌙' : '☀️';
+      }
+    }
+
+    function toggleTheme() {
+      const currentTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      localStorage.setItem('vnpt_his_theme', newTheme);
+      
+      if (newTheme === 'light') {
+        document.body.classList.add('light-theme');
+      } else {
+        document.body.classList.remove('light-theme');
+      }
+      
+      updateThemeUI(newTheme);
+    }
+
+    // Initialize layout & theme settings
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDockMenu();
+      
+      const savedMode = localStorage.getItem('vnpt_his_portal_view_mode') || 'dock';
+      setViewMode(savedMode);
+      
+      const savedTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
+      updateThemeUI(savedTheme);
+    });
+  </script>
+</body>
+</html>
