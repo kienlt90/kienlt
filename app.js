@@ -159,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btnText.classList.remove('hidden');
       btnLoader.classList.add('hidden');
     }
+  }
   // Theme Toggle Logic
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   const themeIcon = document.getElementById('theme-icon');
