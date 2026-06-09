@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu Khảo Sát RIS/PACS - LIS - EMR Bệnh Viện</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="xlsx.full.min.js"></script>
+    <script>
+        if (typeof XLSX === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
+        }
+    </script>
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --accent-color: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.15);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #cbd5e1;
+            --input-bg: #ffffff;
+            
+            --success: #059669;
+            --success-glow: rgba(5, 150, 105, 0.1);
+            --danger: #dc2626;
+            --danger-glow: rgba(220, 38, 38, 0.1);
+            --warning: #d97706;
+            --warning-glow: rgba(217, 119, 6, 0.1);
+            
+            --card-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.06);
+            --transition-speed: 0.25s;
+        }
+
+        .dark-theme {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #161f30;
+            --bg-tertiary: #1f2d44;
+            --accent-color: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --border-color: #2a3b56;
+            --input-bg: #111827;
+            
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.2);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.2);
+            
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--card-shadow);
+        }
+
+        .header-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .brand p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* Form Container & Layout */
+        .form-container {
+            max-width: 1300px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 900px) {
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+            aside {
+                position: static !important;
+            }
+        }
+
+        /* Sidebar Step Menu */
+        aside {
+            position: sticky;
+            top: 90px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sidebar-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .step-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .step-item:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .step-item.active {
+            background-color: var(--accent-color);
+            color: #ffffff;
+        }
+
+        /* Main Form Panel */
+        main {
+            min-width: 0;
+        }
+
+        .form-panel {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        /* Subsections */
+        .subsection-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        /* Input Controls */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color var(--transition-speed);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        /* Inpatient Department Table */
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        /* Buttons styling */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            filter: brightness(1.1);
+        }
+
+        .form-nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* File input overlay */
+        .file-upload-btn {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-upload-btn input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Theme button */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-tertiary);
+        }
+
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="brand">
+                <h1>PHIẾU KHẢO SÁT HỆ THỐNG RIS/PACS - LIS - EMR BỆNH VIỆN</h1>
+                <p>Biểu mẫu khảo sát tình hình triển khai hạ tầng công nghệ thông tin và ứng dụng số hóa</p>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" id="theme-btn" title="Đổi giao diện">🌓</button>
+                <button class="btn btn-primary" onclick="resetToNewSurvey()" style="background-color: #3b82f6; border: none;">
+                    ➕ Bắt đầu Khảo sát Mới
+                </button>
+                <span class="file-upload-btn btn btn-secondary">
+                    📂 Tải file Draft JSON
+                    <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+                </span>
+                <button class="btn btn-secondary" onclick="exportData()">💾 Lưu/Tải JSON</button>
+                <button class="btn btn-success" onclick="exportToExcel()" style="background-color: #10b981; border: none;">📊 Xuất Excel ký nhận</button>
+                <button class="btn btn-success" onclick="window.print()">🖨️ Xuất Báo Cáo PDF</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <aside>
+            <div class="sidebar-card">
+                <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; padding-left: 0.5rem;">CÁC BƯỚC KHẢO SÁT</div>
+                <ul class="step-list">
+                    <li><button class="step-item active" id="btn-ThongTinChung" onclick="switchStep('ThongTinChung')">🏢 1. Thông tin chung</button></li>
+                    <li><button class="step-item" id="btn-SoLieuKCB" onclick="switchStep('SoLieuKCB')">📊 2. Số liệu KCB</button></li>
+                    <li><button class="step-item" id="btn-DS_KhoaNoiTru" onclick="switchStep('DS_KhoaNoiTru')">🛌 3. Khoa nội trú & Giường</button></li>
+                    <li><button class="step-item" id="btn-KEHOACHDUKIEN" onclick="switchStep('KEHOACHDUKIEN')">📅 4. Kế hoạch triển khai</button></li>
+                    <li><button class="step-item" id="btn-LIS" onclick="switchStep('LIS')">🧪 5. Khảo sát LIS & Thiết bị</button></li>
+                    <li><button class="step-item" id="btn-RISPACS" onclick="switchStep('RISPACS')">📸 6. Khảo sát RIS/PACS & CĐHA</button></li>
+                    <li><button class="step-item" id="btn-EMR" onclick="switchStep('EMR')">🏥 7. Khảo sát EMR & Số hóa</button></li>
+                    <li><button class="step-item" id="btn-InfraSecurity" onclick="switchStep('InfraSecurity')">💻 8. Hạ tầng & Bảo mật</button></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main>
+            <!-- panels container -->
+            <div id="survey-panels-container"></div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2026. Biểu mẫu khảo sát thực trạng số hóa Bệnh viện / Trung tâm Y tế.</p>
+    </footer>
+
+    <script>
+        const templateData = {
+  "ThongTinChung": {
+    "title": "THÔNG TIN CHUNG",
+    "data": [
+      [
+        "THÔNG TIN CHUNG",
+        "",
+        ""
+      ],
+      [
+        "STT",
+        "Nội dung khảo sát",
+        "BV điền thông tin khảo sát"
+      ],
+      [
+        "1",
+        "Tên cơ sở y tế (CSYT)",
+        ""
+      ],
+      [
+        "2",
+        "Địa chỉ của CSYT",
+        ""
+      ],
+      [
+        "3",
+        "Mã khám chữa bệnh ban đầu",
+        ""
+      ],
+      [
+        "4",
+        "Tuyến của CSYT",
+        ""
+      ],
+      [
+        "5",
+        "Hạng của CSYT",
+        ""
+      ],
+      [
+        "6",
+        "Số lượng phòng khám ngoại trú",
+        ""
+      ],
+      [
+        "7",
+        "Số lượng phòng khoa nội trú",
+        ""
+      ],
+      [
+        "8",
+        "Số lượng giường bệnh",
+        ""
+      ],
+      [
+        "9",
+        "Số lượng bác sĩ",
+        ""
+      ],
+      [
+        "10",
+        "Số lượng điều dưỡng",
+        ""
+      ],
+      [
+        "11",
+        "Số lượng nhân sự phục vụ hệ thống CNTT",
+        ""
+      ],
+      [
+        "12",
+        "Phòng CNTT (đáp ứng theo quy định của Thông tư số 53/2014/TT-BYT)",
+        "Chưa"
+      ]
+    ]
+  },
+  "SoLieuKCB": {
+    "title": "SỐ LIỆU HOẠT ĐỘNG KHÁM CHỮA BỆNH",
+    "data": [
+      [
+        "SỐ LIỆU KHÁM CHỮA BỆNH",
+        "",
+        ""
+      ],
+      [
+        "STT",
+        "Nội dung khảo sát",
+        "BV điền thông tin khảo sát"
+      ],
+      [
+        "1",
+        "Số lượng bệnh nhân khám ngoại trú bình quân hàng ngày",
+        ""
+      ],
+      [
+        "2",
+        "Số lượng bệnh nhân có bệnh án ngoại trú bình quân hàng ngày",
+        ""
+      ],
+      [
+        "3",
+        "Số lượng bệnh nhân nhập viện nội trú bình quân hàng ngày",
+        ""
+      ],
+      [
+        "4",
+        "Số lượt ca siêu âm bình quân hàng tháng",
+        ""
+      ],
+      [
+        "5",
+        "Số lượt ca nội soi bình quân hàng tháng",
+        ""
+      ],
+      [
+        "6",
+        "Số lượt ca chụp CT bình quân hàng tháng",
+        ""
+      ],
+      [
+        "7",
+        "Số lượt ca chụp MRI bình quân hàng tháng",
+        ""
+      ],
+      [
+        "8",
+        "Số lượt ca chụp X-Quang bình quân hàng tháng",
+        ""
+      ],
+      [
+        "9",
+        "Số máy xét nghiệm hiện có tại đơn vị",
+        ""
+      ]
+    ]
+  },
+  "DS_KhoaNoiTru": {
+    "title": "DANH SÁCH KHOA LÂM SÀNG & SỐ GIƯỜNG",
+    "data": [
+      {
+        "STT": "",
+        "Tên khoa nội trú": "",
+        "Số giường": ""
+      }
+    ]
+  },
+  "KEHOACHDUKIEN": {
+    "title": "STT",
+    "data": []
+  },
+  "LIS": {
+    "title": "KHẢO SÁT HỆ THỐNG LIS & THIẾT BỊ XÉT NGHIỆM",
+    "general": {
+      "lis_system": "",
+      "vendor": "",
+      "avg_tests": "",
+      "ccu": "",
+      "pc_count": "",
+      "network_speed": ""
+    },
+    "analyzers": []
+  },
+  "RISPACS": {
+    "title": "KHẢO SÁT HỆ THỐNG RIS/PACS & THIẾT BỊ CĐHA",
+    "general": {
+      "pacs_system": "",
+      "vendor": "",
+      "server_type": "Cloud PACS",
+      "storage_capacity": "",
+      "radiologist_count": "",
+      "diagnostic_monitors": ""
+    },
+    "devices": []
+  },
+  "EMR": {
+    "title": "KHẢO SÁT TRIỂN KHAI EMR & CHỮ KÝ SỐ",
+    "general": {
+      "digital_sig_status": "Chưa triển khai",
+      "doctor_sig_count": "",
+      "patient_sig_signpad_checked": false,
+      "patient_sig_signpad_qty": "",
+      "patient_sig_paper_checked": false,
+      "patient_sig_paper_qty": "",
+      "patient_sig_card_checked": false,
+      "patient_sig_card_qty": "",
+      "total_templates": "",
+      "mr_types_count": "",
+      "scanner_count": "",
+      "fingerprint_sign_count": "",
+      "digital_sign_device_count": ""
+    },
+    "templates": [
+      {
+        "STT": "1",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Nội khoa (Mẫu 01/BV1)",
+        "jasper": "EMR_BA_NOIKHOA_TT32",
+        "checked": false
+      },
+      {
+        "STT": "2",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Nhi khoa (Mẫu 02/BV1)",
+        "jasper": "EMR_BA_NHIKHOA_TT32",
+        "checked": false
+      },
+      {
+        "STT": "3",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Truyền nhiễm (Mẫu 03/BV1)",
+        "jasper": "EMR_BA_TRUYENNHIEM_TT32",
+        "checked": false
+      },
+      {
+        "STT": "4",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Phụ khoa (Mẫu 04/BV1)",
+        "jasper": "EMR_BA_PHUKHOA_TT32",
+        "checked": false
+      },
+      {
+        "STT": "5",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Sản khoa (Mẫu 05/BV1)",
+        "jasper": "EMR_BA_SANKHOA_TT32",
+        "checked": false
+      },
+      {
+        "STT": "6",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Sơ sinh (Mẫu 06/BV1)",
+        "jasper": "EMR_BA_SOSINH_TT32",
+        "checked": false
+      },
+      {
+        "STT": "7",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Tâm thần (Mẫu 07/BV1)",
+        "jasper": "EMR_BA_TAMTHAN_TT32",
+        "checked": false
+      },
+      {
+        "STT": "8",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Da liễu (Mẫu 08/BV1)",
+        "jasper": "EMR_BA_DALIEU_TT32",
+        "checked": false
+      },
+      {
+        "STT": "9",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Huyết học - Truyền máu (Mẫu 09/BV1)",
+        "jasper": "EMR_BA_HUYETHOC_TT32",
+        "checked": false
+      },
+      {
+        "STT": "10",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Ngoại khoa (Mẫu 10/BV1)",
+        "jasper": "EMR_BA_NGOAIKHOA_TT32",
+        "checked": false
+      },
+      {
+        "STT": "11",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Bỏng (Mẫu 11/BV1)",
+        "jasper": "EMR_BA_BONG_TT32",
+        "checked": false
+      },
+      {
+        "STT": "12",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Ung bướu (Mẫu 12/BV1)",
+        "jasper": "EMR_BA_UNGBUOU_TT32",
+        "checked": false
+      },
+      {
+        "STT": "13",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Răng Hàm Mặt (Mẫu 13/BV1)",
+        "jasper": "EMR_BA_RANGHAMMAT_TT32",
+        "checked": false
+      },
+      {
+        "STT": "14",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Tai Mũi Họng (Mẫu 14/BV1)",
+        "jasper": "EMR_BA_TAIMUIHONG_TT32",
+        "checked": false
+      },
+      {
+        "STT": "15",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Ngoại trú chung (Mẫu 15/BV1)",
+        "jasper": "EMR_BA_NGOAITRU_TT32",
+        "checked": false
+      },
+      {
+        "STT": "16",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Ngoại trú Răng Hàm Mặt (Mẫu 16/BV1)",
+        "jasper": "EMR_BA_NGOAITRU_RHM_TT32",
+        "checked": false
+      },
+      {
+        "STT": "17",
+        "circular": "TT32/2023",
+        "name": "Bệnh án dùng cho tuyến xã/phường (Mẫu 17/BV1)",
+        "jasper": "EMR_BA_XA_PHUONG_TT32",
+        "checked": false
+      },
+      {
+        "STT": "18",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Nội trú Y học cổ truyền (Mẫu 18/BV1)",
+        "jasper": "EMR_BA_NOITRU_YHCT_TT32",
+        "checked": false
+      },
+      {
+        "STT": "19",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Ngoại trú Y học cổ truyền (Mẫu 19/BV1)",
+        "jasper": "EMR_BA_NGOAITRU_YHCT_TT32",
+        "checked": false
+      },
+      {
+        "STT": "20",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Nội trú Nhi Y học cổ truyền (Mẫu 20/BV1)",
+        "jasper": "EMR_BA_NOITRU_NHI_YHCT_TT32",
+        "checked": false
+      },
+      {
+        "STT": "21",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Mắt - Chấn thương (Mẫu 21/BV1)",
+        "jasper": "EMR_BA_MAT_CHANTHUONG_TT32",
+        "checked": false
+      },
+      {
+        "STT": "22",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Mắt - Bán phần trước (Mẫu 22/BV1)",
+        "jasper": "EMR_BA_MAT_BANPHANTRUOC_TT32",
+        "checked": false
+      },
+      {
+        "STT": "23",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Mắt - Đáy mắt (Mẫu 23/BV1)",
+        "jasper": "EMR_BA_MAT_DAYMAT_TT32",
+        "checked": false
+      },
+      {
+        "STT": "24",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Mắt - Glocom (Mẫu 24/BV1)",
+        "jasper": "EMR_BA_MAT_GLOCOM_TT32",
+        "checked": false
+      },
+      {
+        "STT": "25",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Mắt - Lác (Mẫu 25/BV1)",
+        "jasper": "EMR_BA_MAT_LAC_TT32",
+        "checked": false
+      },
+      {
+        "STT": "26",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Mắt trẻ em (Mẫu 26/BV1)",
+        "jasper": "EMR_BA_MAT_TREEM_TT32",
+        "checked": false
+      },
+      {
+        "STT": "27",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Phục hồi chức năng (Mẫu 27/BV1)",
+        "jasper": "EMR_BA_PHCN_TT32",
+        "checked": false
+      },
+      {
+        "STT": "28",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Phục hồi chức năng Nhi (Mẫu 28/BV1)",
+        "jasper": "EMR_BA_PHCN_NHI_TT32",
+        "checked": false
+      },
+      {
+        "STT": "29",
+        "circular": "TT32/2023",
+        "name": "Bệnh án Ngoại trú phục hồi chức năng (Mẫu 29/BV1)",
+        "jasper": "EMR_BA_NGOAITRU_PHCN_TT32",
+        "checked": false
+      },
+      {
+        "STT": "30",
+        "circular": "TT32/2023",
+        "name": "Giấy cam kết chấp thuận phẫu thuật, thủ thuật và gây mê hồi sức (01/BV2)",
+        "jasper": "EMR_CAMKET_PTTT_TT32",
+        "checked": false
+      },
+      {
+        "STT": "31",
+        "circular": "TT32/2023",
+        "name": "Giấy chứng nhận phẫu thuật (02/BV2)",
+        "jasper": "EMR_GIAYCHUNGNHAN_PTTT_TT32",
+        "checked": false
+      },
+      {
+        "STT": "32",
+        "circular": "TT32/2023",
+        "name": "Giấy khám/chữa bệnh theo yêu cầu (03/BV2)",
+        "jasper": "EMR_GIAY_KCB_THEOYEUCAU_TT32",
+        "checked": false
+      },
+      {
+        "STT": "33",
+        "circular": "TT32/2023",
+        "name": "Phiếu khám chuyên khoa (04/BV2)",
+        "jasper": "EMR_PHIEU_KHAM_CHUYENKHOA_TT32",
+        "checked": false
+      },
+      {
+        "STT": "34",
+        "circular": "TT32/2023",
+        "name": "Phiếu gây mê hồi sức (05/BV2)",
+        "jasper": "EMR_PHIEU_GAYMEHOISUC_TT32",
+        "checked": false
+      },
+      {
+        "STT": "35",
+        "circular": "TT32/2023",
+        "name": "Phiếu phẫu thuật/thủ thuật (06/BV2)",
+        "jasper": "EMR_PHIEU_PTTT_TT32",
+        "checked": false
+      },
+      {
+        "STT": "36",
+        "circular": "TT32/2023",
+        "name": "Phiếu theo dõi truyền dịch (07/BV2)",
+        "jasper": "EMR_PHIEU_THEODOITRUYENDICH_TT32",
+        "checked": false
+      },
+      {
+        "STT": "37",
+        "circular": "TT32/2023",
+        "name": "Phiếu chiếu/chụp X-quang (08/BV2)",
+        "jasper": "EMR_PHIEU_XQUANG_TT32",
+        "checked": false
+      },
+      {
+        "STT": "38",
+        "circular": "TT32/2023",
+        "name": "Phiếu chụp cắt lớp vi tính - CT (09/BV2)",
+        "jasper": "EMR_PHIEU_CTSCANNER_TT32",
+        "checked": false
+      },
+      {
+        "STT": "39",
+        "circular": "TT32/2023",
+        "name": "Phiếu chụp cộng hưởng từ - MRI (10/BV2)",
+        "jasper": "EMR_PHIEU_MRI_TT32",
+        "checked": false
+      },
+      {
+        "STT": "40",
+        "circular": "TT32/2023",
+        "name": "Phiếu siêu âm (11/BV2)",
+        "jasper": "EMR_PHIEU_SIEUAM_TT32",
+        "checked": false
+      },
+      {
+        "STT": "41",
+        "circular": "TT32/2023",
+        "name": "Phiếu điện tim (12/BV2)",
+        "jasper": "EMR_PHIEU_DIENTIM_TT32",
+        "checked": false
+      },
+      {
+        "STT": "42",
+        "circular": "TT32/2023",
+        "name": "Phiếu điện não (13/BV2)",
+        "jasper": "EMR_PHIEU_DIENNAO_TT32",
+        "checked": false
+      },
+      {
+        "STT": "43",
+        "circular": "TT32/2023",
+        "name": "Phiếu nội soi (14/BV2)",
+        "jasper": "EMR_PHIEU_NOISOI_TT32",
+        "checked": false
+      },
+      {
+        "STT": "44",
+        "circular": "TT32/2023",
+        "name": "Phiếu đo chức năng hô hấp (15/BV2)",
+        "jasper": "EMR_PHIEU_CHUCNANGHOHAP_TT32",
+        "checked": false
+      },
+      {
+        "STT": "45",
+        "circular": "TT32/2023",
+        "name": "Phiếu xét nghiệm Huyết học (16/BV2)",
+        "jasper": "EMR_PHIEU_XN_HUYETHOC_TT32",
+        "checked": false
+      },
+      {
+        "STT": "46",
+        "circular": "TT32/2023",
+        "name": "Phiếu xét nghiệm Huyết - tủy đồ (17/BV2)",
+        "jasper": "EMR_PHIEU_XN_HUYETTUYDO_TT32",
+        "checked": false
+      },
+      {
+        "STT": "47",
+        "circular": "TT32/2023",
+        "name": "Phiếu xét nghiệm Đông cầm máu (18/BV2)",
+        "jasper": "EMR_PHIEU_XN_DONGAMMAU_TT32",
+        "checked": false
+      },
+      {
+        "STT": "48",
+        "circular": "TT32/2023",
+        "name": "Phiếu xét nghiệm Sinh thiết tủy xương (19/BV2)",
+        "jasper": "EMR_PHIEU_XN_SINHTHIETTUY_TT32",
+        "checked": false
+      },
+      {
+        "STT": "49",
+        "circular": "TT32/2023",
+        "name": "Phiếu xét nghiệm nước dịch (20/BV2)",
+        "jasper": "EMR_PHIEU_XN_NUOCDICH_TT32",
+        "checked": false
+      },
+      {
+        "STT": "50",
+        "circular": "TT32/2023",
+        "name": "Phiếu xét nghiệm Hóa sinh máu/nước tiểu/phân (21/BV2)",
+        "jasper": "EMR_PHIEU_XN_HOASINH_TT32",
+        "checked": false
+      },
+      {
+        "STT": "51",
+        "circular": "TT32/2023",
+        "name": "Phiếu xét nghiệm Vi sinh (22/BV2)",
+        "jasper": "EMR_PHIEU_XN_VISINH_TT32",
+        "checked": false
+      },
+      {
+        "STT": "52",
+        "circular": "TT32/2023",
+        "name": "Phiếu xét nghiệm Giải phẫu bệnh (23/BV2)",
+        "jasper": "EMR_PHIEU_XN_GIAIPHAUBENH_TT32",
+        "checked": false
+      },
+      {
+        "STT": "53",
+        "circular": "TT32/2023",
+        "name": "Trích biên bản hội chẩn (27/BV2)",
+        "jasper": "EMR_BIENBAN_HOICHAN_TT32",
+        "checked": false
+      },
+      {
+        "STT": "54",
+        "circular": "TT32/2023",
+        "name": "Trích biên bản kiểm thảo tử vong (28/BV2)",
+        "jasper": "EMR_KIEMTHAO_TUVONG_TT32",
+        "checked": false
+      },
+      {
+        "STT": "55",
+        "circular": "TT32/2023",
+        "name": "Phiếu khám bệnh vào viện (chung) (29/BV2)",
+        "jasper": "EMR_PHIEU_KHAMBENH_VAOVIEN_TT32",
+        "checked": false
+      },
+      {
+        "STT": "56",
+        "circular": "TT32/2023",
+        "name": "Phiếu theo dõi điều trị (36/BV2)",
+        "jasper": "EMR_PHIEU_THEODOIDIEUTRI_TT32",
+        "checked": false
+      },
+      {
+        "STT": "57",
+        "circular": "TT32/2023",
+        "name": "Phiếu chăm sóc cấp 1 (37/BV2)",
+        "jasper": "EMR_PHIEU_CHAMSOC_CAP1_TT32",
+        "checked": false
+      },
+      {
+        "STT": "58",
+        "circular": "TT32/2023",
+        "name": "Phiếu chăm sóc cấp 2 (38/BV2)",
+        "jasper": "EMR_PHIEU_CHAMSOC_CAP2_TT32",
+        "checked": false
+      },
+      {
+        "STT": "59",
+        "circular": "TT32/2023",
+        "name": "Phiếu nhận định phân loại người bệnh tại khoa cấp cứu (39/BV2)",
+        "jasper": "EMR_PHIEU_PHANLOAI_CAPCUU_TT32",
+        "checked": false
+      },
+      {
+        "STT": "60",
+        "circular": "TT32/2023",
+        "name": "Giấy cung cấp thông tin và cam kết chung về nhập viện nội trú (40/BV2)",
+        "jasper": "EMR_CAMKET_NHAPVIEN_TT32",
+        "checked": false
+      },
+      {
+        "STT": "61",
+        "circular": "QĐ 4069",
+        "name": "Phiếu điều trị",
+        "jasper": "EMR_PHIEUDIEUTRI_TT32",
+        "checked": false
+      },
+      {
+        "STT": "62",
+        "circular": "QĐ 4069",
+        "name": "Phiếu chăm sóc",
+        "jasper": "EMR_PHIEUCHAMSOC_TT32",
+        "checked": false
+      },
+      {
+        "STT": "63",
+        "circular": "QĐ 4069",
+        "name": "Phiếu theo dõi chức năng sống",
+        "jasper": "EMR_PHIEUTHEODOICHUCNANGSONG_TT32",
+        "checked": false
+      },
+      {
+        "STT": "64",
+        "circular": "QĐ 4069",
+        "name": "Phiếu công khai thuốc hàng ngày",
+        "jasper": "EMR_CONGKAITHUOC_TT32",
+        "checked": false
+      },
+      {
+        "STT": "65",
+        "circular": "QĐ 4069",
+        "name": "Phiếu công khai dịch vụ khám bệnh, chữa bệnh hàng ngày",
+        "jasper": "EMR_CONGKAI_DICHVU_TT32",
+        "checked": false
+      },
+      {
+        "STT": "66",
+        "circular": "QĐ 4069",
+        "name": "Phiếu tóm tắt hồ sơ bệnh án",
+        "jasper": "EMR_TOMTAT_HSBA_TT32",
+        "checked": false
+      },
+      {
+        "STT": "67",
+        "circular": "QĐ 4069",
+        "name": "Giấy chuyển tuyến (Mẫu số 23)",
+        "jasper": "EMR_GIAYCHUYENTUYEN_TT32",
+        "checked": false
+      },
+      {
+        "STT": "68",
+        "circular": "QĐ 4069",
+        "name": "Giấy chuyển viện (Mẫu số 24)",
+        "jasper": "EMR_GIAYCHUYENVIEN_TT32",
+        "checked": false
+      },
+      {
+        "STT": "69",
+        "circular": "QĐ 4069",
+        "name": "Giấy chứng sinh (Mẫu số 25)",
+        "jasper": "EMR_GIAYCHUNGSINH_TT32",
+        "checked": false
+      },
+      {
+        "STT": "70",
+        "circular": "QĐ 4069",
+        "name": "Giấy báo tử (Mẫu số 26)",
+        "jasper": "EMR_GIAYBAOTU_TT32",
+        "checked": false
+      },
+      {
+        "STT": "71",
+        "circular": "QĐ 4069",
+        "name": "Giấy chứng nhận thương tích (Mẫu số 28)",
+        "jasper": "EMR_GIAYCHUNGNHAN_THUONGTICH_TT32",
+        "checked": false
+      },
+      {
+        "STT": "72",
+        "circular": "QĐ 4069",
+        "name": "Biên bản kiểm điểm tử vong (Mẫu số 29)",
+        "jasper": "EMR_KIEMDIEM_TUVONG_TT32",
+        "checked": false
+      },
+      {
+        "STT": "73",
+        "circular": "QĐ 3176",
+        "name": "Phiếu kết quả xét nghiệm",
+        "jasper": "PHIEU_KETQUA_XETNGHIEM_A4",
+        "checked": false
+      },
+      {
+        "STT": "74",
+        "circular": "QĐ 3176",
+        "name": "Phiếu kết quả chẩn đoán hình ảnh",
+        "jasper": "PHIEU_KETQUA_CDHA_A4",
+        "checked": false
+      },
+      {
+        "STT": "75",
+        "circular": "TT26/2025",
+        "name": "Đơn thuốc thường ngoại trú",
+        "jasper": "rp_donthuoc_TT26_2025",
+        "checked": false
+      },
+      {
+        "STT": "76",
+        "circular": "TT26/2025",
+        "name": "Đơn thuốc gây nghiện \"N\" ngoại trú",
+        "jasper": "RPT_DONTHUOCGAYNGHIEN_TT26_A5",
+        "checked": false
+      },
+      {
+        "STT": "77",
+        "circular": "TT26/2025",
+        "name": "Đơn thuốc hướng thần \"H\" ngoại trú",
+        "jasper": "NGT013_DONTHUOCHUONGTHAN_TT052016_A5_TT26",
+        "checked": false
+      },
+      {
+        "STT": "78",
+        "circular": "TT25/2025",
+        "name": "Giấy ra viện",
+        "jasper": "GIAYRAVIEN_QD4069_A5_TT25_HYN",
+        "checked": false
+      },
+      {
+        "STT": "79",
+        "circular": "TT25/2025",
+        "name": "Giấy chứng nhận nghỉ việc hưởng BHXH",
+        "jasper": "GIAYNGHI_BHXH_TT25_HYN",
+        "checked": false
+      },
+      {
+        "STT": "80",
+        "circular": "TT25/2025",
+        "name": "Giấy xác nhận quá trình điều trị nội trú",
+        "jasper": "RPT_GIAYXACNHAN_QUATRINH_DIEUTRI_NOITRU",
+        "checked": false
+      },
+      {
+        "STT": "81",
+        "circular": "TT25/2025",
+        "name": "Giấy xác nhận người mẹ không đủ sức khỏe chăm con",
+        "jasper": "RPT_PHIEUXACNHANDUSUCKHOE_CHAMSOCCON",
+        "checked": false
+      },
+      {
+        "STT": "82",
+        "circular": "TT25/2025",
+        "name": "Giấy xác nhận điều trị vô sinh của lao động nữ",
+        "jasper": "RPT_PHIEUXACNHAN_VOSINH_LAODONGNU",
+        "checked": false
+      },
+      {
+        "STT": "83",
+        "circular": "TT25/2025",
+        "name": "Giấy xác nhận nghỉ dưỡng thai",
+        "jasper": "PI_GCN_NDT_CV26",
+        "checked": false
+      }
+    ]
+  },
+  "InfraSecurity": {
+    "title": "KHẢO SÁT HẠ TẦNG CNTT & BẢO MẬT",
+    "general": {
+      "server_ac": "Không",
+      "server_fire": "Không",
+      "server_camera": "Không",
+      "isp_count": "",
+      "main_bandwidth": "",
+      "wifi_coverage": "Không",
+      "firewall_hardware": "Không",
+      "antivirus_software": "Không",
+      "usb_control": "Không"
+    }
+  }
+};
+        let surveyState = JSON.parse(JSON.stringify(templateData));
+        const stepOrder = ["ThongTinChung", "SoLieuKCB", "DS_KhoaNoiTru", "KEHOACHDUKIEN", "LIS", "RISPACS", "EMR", "InfraSecurity"];
+
+        function setupTheme() {
+            const btn = document.getElementById('theme-btn');
+            btn.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+            });
+        }
+
+        function switchStep(stepId) {
+            document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.step-item').forEach(i => i.classList.remove('active'));
+            
+            const panel = document.getElementById(`panel-${stepId}`);
+            if (panel) panel.classList.add('active');
+            
+            const btn = document.getElementById(`btn-${stepId}`);
+            if (btn) btn.classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getPrevStep(currentId) {
+            const idx = stepOrder.indexOf(currentId);
+            return idx > 0 ? stepOrder[idx - 1] : null;
+        }
+
+        function getNextStep(currentId) {
+            const idx = stepOrder.indexOf(currentId);
+            return idx < stepOrder.length - 1 ? stepOrder[idx + 1] : null;
+        }
+
+        function renderForm() {
+            const container = document.getElementById('survey-panels-container');
+            container.innerHTML = '';
+
+            stepOrder.forEach(stepId => {
+                const sheetData = surveyState[stepId];
+                const panel = document.createElement('div');
+                panel.id = `panel-${stepId}`;
+                panel.className = 'form-panel';
+                if (stepId === 'ThongTinChung') panel.classList.add('active');
+
+                let title = sheetData.title || stepId;
+                let headerHtml = `
+                    <div class="section-header">
+                        <div class="section-title">${title}</div>
+                        <div style="font-size:0.8rem; color:var(--text-secondary); font-weight:700;">BƯỚC ${stepOrder.indexOf(stepId) + 1} / ${stepOrder.length}</div>
+                    </div>
+                `;
+
+                let bodyHtml = '';
+                if (stepId === 'ThongTinChung' || stepId === 'SoLieuKCB') {
+                    bodyHtml = renderFieldForm(stepId, sheetData);
+                } else if (stepId === 'DS_KhoaNoiTru') {
+                    bodyHtml = renderDepartmentTable(stepId, sheetData);
+                } else if (stepId === 'KEHOACHDUKIEN') {
+                    bodyHtml = renderScheduleTable(stepId, sheetData);
+                } else if (stepId === 'LIS') {
+                    bodyHtml = renderLISForm(sheetData);
+                } else if (stepId === 'RISPACS') {
+                    bodyHtml = renderRISPACSForm(sheetData);
+                } else if (stepId === 'EMR') {
+                    bodyHtml = renderEMRForm(sheetData);
+                } else if (stepId === 'InfraSecurity') {
+                    bodyHtml = renderInfraSecurityForm(sheetData);
+                }
+
+                // nav buttons
+                const prev = getPrevStep(stepId);
+                const next = getNextStep(stepId);
+                let navHtml = '<div class="form-nav-buttons">';
+                if (prev) {
+                    navHtml += `<button class="btn btn-secondary" onclick="switchStep('${prev}')">⬅️ Quay lại</button>`;
+                } else {
+                    navHtml += '<span></span>';
+                }
+                if (next) {
+                    navHtml += `<button class="btn btn-primary" onclick="switchStep('${next}')">Tiếp theo ➡️</button>`;
+                } else {
+                    navHtml += `<button class="btn btn-success" onclick="exportData()">💾 Hoàn thành & Xuất dữ liệu</button>`;
+                }
+                navHtml += '</div>';
+
+                panel.innerHTML = headerHtml + bodyHtml + navHtml;
+                container.appendChild(panel);
+            });
+        }
+
+        // Render generic field lists
+        function renderFieldForm(stepId, sheetData) {
+            let html = '<div class="form-grid">';
+            sheetData.data.slice(2).forEach((row, rIdx) => {
+                if (row.length >= 3) {
+                    const rowIdx = rIdx + 2;
+                    html += `
+                        <div class="form-group">
+                            <label class="form-label">${row[1]}</label>
+                            <input type="text" class="form-input" value="${row[2] || ''}" onchange="updateStateValue('${stepId}', ${rowIdx}, 2, this.value)">
+                        </div>
+                    `;
+                }
+            });
+            html += '</div>';
+            return html;
+        }
+
+        // Render Inpatient Departments (Streamlined to STT, Khoa, Giường)
+        function renderDepartmentTable(stepId, sheetData) {
+            let tableRowsHtml = '';
+            sheetData.data.forEach((row, idx) => {
+                if (idx === 0) return; // skip header labels row
+                tableRowsHtml += `
+                    <tr id="dept-row-${idx}">
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:50px;" value="${row['STT'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'STT', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.5rem; font-weight:700; font-size:0.95rem; width:100%; min-width:450px;" value="${row['Tên khoa nội trú'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'Tên khoa nội trú', this.value)"></td>
+                        <td><input type="number" class="form-input" style="padding:0.4rem; width:120px;" value="${row['Số giường'] || row['col_9'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'Số giường', this.value)"></td>
+                        <td><button class="btn btn-danger" style="padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="removeTableRow('${stepId}', ${idx})">🗑️ Xóa</button></td>
+                    </tr>
+                `;
+            });
+            return `
+                <div style="margin-bottom: 1rem; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.85rem; color:var(--text-secondary);">Nhập thông số giường bệnh của từng khoa lâm sàng:</span>
+                    <button class="btn btn-primary" onclick="addDeptRow('${stepId}')">➕ Thêm khoa mới</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">STT</th>
+                                <th>Tên Khoa Lâm Sàng</th>
+                                <th style="width: 150px;">Số Giường</th>
+                                <th style="width: 100px;">Tác vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRowsHtml}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Render schedule list
+        function renderScheduleTable(stepId, sheetData) {
+            let tableRowsHtml = '';
+            sheetData.data.forEach((row, idx) => {
+                tableRowsHtml += `
+                    <tr>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:50px;" value="${row['STT'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'STT', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; font-weight:600;" value="${row['Nội dung triển khai'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'Nội dung triển khai', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem;" value="${row['Ngày bắt đầu'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'Ngày bắt đầu', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem;" value="${row['Ngày dự kiến hoàn thành'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'Ngày dự kiến hoàn thành', this.value)"></td>
+                        <td><button class="btn btn-danger" style="padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="removeTableRow('${stepId}', ${idx})">🗑️ Xóa</button></td>
+                    </tr>
+                `;
+            });
+            return `
+                <div style="margin-bottom: 1rem; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.85rem; color:var(--text-secondary);">Nhập các mốc tiến độ triển khai dự kiến:</span>
+                    <button class="btn btn-primary" onclick="addScheduleRow('${stepId}')">➕ Thêm hạng mục</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Hạng Mẫu Công Việc</th>
+                                <th>Ngày Bắt Đầu</th>
+                                <th>Ngày Hoàn Thành Dự Kiến</th>
+                                <th>Tác vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRowsHtml}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 5. Render LIS Survey panel (Wider inputs, Serial / Mã 3176)
+        function renderLISForm(sheetData) {
+            const gen = sheetData.general;
+            let tableRows = '';
+            sheetData.analyzers.forEach((anz, idx) => {
+                tableRows += `
+                    <tr>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:50px;" value="${anz.STT}" onchange="updateLISAnalyzer(${idx}, 'STT', this.value)"></td>
+                        <td>
+                            <select class="form-select" style="padding:0.4rem; width:130px;" onchange="updateLISAnalyzer(${idx}, 'type', this.value)">
+                                <option value="Sinh hoá" ${anz.type==='Sinh hoá'?'selected':''}>Sinh hoá</option>
+                                <option value="Huyết học" ${anz.type==='Huyết học'?'selected':''}>Huyết học</option>
+                                <option value="Nước tiểu" ${anz.type==='Nước tiểu'?'selected':''}>Nước tiểu</option>
+                                <option value="Đông máu" ${anz.type==='Đông máu'?'selected':''}>Đông máu</option>
+                                <option value="Miễn dịch" ${anz.type==='Miễn dịch'?'selected':''}>Miễn dịch</option>
+                                <option value="Vi sinh" ${anz.type==='Vi sinh'?'selected':''}>Vi sinh</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100%; min-width:350px;" maxlength="100" value="${anz.name}" onchange="updateLISAnalyzer(${idx}, 'name', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100%; min-width:220px;" value="${anz.serial}" onchange="updateLISAnalyzer(${idx}, 'serial', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100px;" value="${anz.port}" onchange="updateLISAnalyzer(${idx}, 'port', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100%; min-width:280px;" maxlength="100" value="${anz.manufacturer}" onchange="updateLISAnalyzer(${idx}, 'manufacturer', this.value)"></td>
+                        <td>
+                            <select class="form-select" style="padding:0.4rem; width:150px;" onchange="updateLISAnalyzer(${idx}, 'status', this.value)">
+                                <option value="Đã kết nối LIS" ${anz.status==='Đã kết nối LIS'?'selected':''}>Đã kết nối LIS</option>
+                                <option value="Chưa kết nối" ${anz.status==='Chưa kết nối'?'selected':''}>Chưa kết nối</option>
+                                <option value="Đang kết nối LIS" ${anz.status==='Đang kết nối LIS'?'selected':''}>Đang kết nối LIS</option>
+                            </select>
+                        </td>
+                        <td><button class="btn btn-danger" style="padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="removeLISAnalyzer(${idx})">🗑️ Xóa</button></td>
+                    </tr>
+                `;
+            });
+
+            return `
+                <div class="subsection-title">1. Thông tin chung hệ thống LIS khoa Xét nghiệm</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tên phần mềm LIS đang sử dụng</label>
+                        <input type="text" class="form-input" value="${gen.lis_system}" onchange="updateLISGeneral('lis_system', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nhà cung cấp/Đối tác</label>
+                        <input type="text" class="form-input" value="${gen.vendor}" onchange="updateLISGeneral('vendor', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số ca xét nghiệm trung bình / ngày</label>
+                        <input type="number" class="form-input" value="${gen.avg_tests}" onchange="updateLISGeneral('avg_tests', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số lượng máy xét nghiệm hiện có</label>
+                        <input type="number" class="form-input" value="${gen.ccu}" onchange="updateLISGeneral('ccu', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số máy tính hoạt động tại khoa Xét nghiệm</label>
+                        <input type="number" class="form-input" value="${gen.pc_count}" onchange="updateLISGeneral('pc_count', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tốc độ đường truyền kết nối</label>
+                        <input type="text" class="form-input" value="${gen.network_speed}" onchange="updateLISGeneral('network_speed', this.value)">
+                    </div>
+                </div>
+
+                <div class="subsection-title" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>2. Danh mục máy xét nghiệm kết nối LIS</span>
+                    <button class="btn btn-primary" onclick="addLISAnalyzer()">➕ Thêm máy mới</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">STT</th>
+                                <th style="width: 150px;">Phân loại</th>
+                                <th>Tên dòng máy (Max 100 ký tự)</th>
+                                <th>Số Serial / Mã QĐ 3176</th>
+                                <th style="width: 120px;">Cổng kết nối</th>
+                                <th>Hãng sản xuất (Max 100 ký tự)</th>
+                                <th style="width: 170px;">Trạng thái kết nối LIS</th>
+                                <th style="width: 80px;">Tác vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 6. Render RIS/PACS Survey panel (Wider inputs, Serial / Mã 3176)
+        function renderRISPACSForm(sheetData) {
+            const gen = sheetData.general;
+            let tableRows = '';
+            sheetData.devices.forEach((dev, idx) => {
+                tableRows += `
+                    <tr>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:50px;" value="${dev.STT}" onchange="updateRISDevice(${idx}, 'STT', this.value)"></td>
+                        <td>
+                            <select class="form-select" style="padding:0.4rem; width:130px;" onchange="updateRISDevice(${idx}, 'type', this.value)">
+                                <option value="X-Quang" ${dev.type==='X-Quang'?'selected':''}>X-Quang</option>
+                                <option value="CT Scanner" ${dev.type==='CT Scanner'?'selected':''}>CT Scanner</option>
+                                <option value="MRI" ${dev.type==='MRI'?'selected':''}>MRI</option>
+                                <option value="Siêu âm" ${dev.type==='Siêu âm'?'selected':''}>Siêu âm</option>
+                                <option value="Nội soi" ${dev.type==='Nội soi'?'selected':''}>Nội soi</option>
+                                <option value="Đo loãng xương" ${dev.type==='Đo loãng xương'?'selected':''}>Đo loãng xương</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100%; min-width:350px;" maxlength="100" value="${dev.name}" onchange="updateRISDevice(${idx}, 'name', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100%; min-width:280px;" maxlength="100" value="${dev.manufacturer}" onchange="updateRISDevice(${idx}, 'manufacturer', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100px;" value="${dev.model}" onchange="updateRISDevice(${idx}, 'model', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100%; min-width:220px;" value="${dev.serial}" onchange="updateRISDevice(${idx}, 'serial', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.4rem; width:100px;" value="${dev.port}" onchange="updateRISDevice(${idx}, 'port', this.value)"></td>
+                        <td>
+                            <select class="form-select" style="padding:0.4rem; width:150px;" onchange="updateRISDevice(${idx}, 'status', this.value)">
+                                <option value="Đã kết nối PACS" ${dev.status==='Đã kết nối PACS'?'selected':''}>Đã kết nối PACS</option>
+                                <option value="Chưa kết nối" ${dev.status==='Chưa kết nối'?'selected':''}>Chưa kết nối</option>
+                                <option value="Đang kết nối" ${dev.status==='Đang kết nối'?'selected':''}>Đang kết nối</option>
+                            </select>
+                        </td>
+                        <td><button class="btn btn-danger" style="padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="removeRISDevice(${idx})">🗑️ Xóa</button></td>
+                    </tr>
+                `;
+            });
+
+            return `
+                <div class="subsection-title">1. Thông tin chung hệ thống RIS/PACS khoa Chẩn đoán Hình ảnh</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tên phần mềm RIS/PACS đang sử dụng</label>
+                        <input type="text" class="form-input" value="${gen.pacs_system}" onchange="updateRISPACSGeneral('pacs_system', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nhà cung cấp/Đối tác</label>
+                        <input type="text" class="form-input" value="${gen.vendor}" onchange="updateRISPACSGeneral('vendor', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hình thức triển khai máy chủ PACS</label>
+                        <select class="form-select" onchange="updateRISPACSGeneral('server_type', this.value)">
+                            <option value="Cloud PACS" ${gen.server_type==='Cloud PACS'?'selected':''}>Cloud PACS (Điện toán đám mây)</option>
+                            <option value="Local PACS" ${gen.server_type==='Local PACS'?'selected':''}>Local Server PACS (Tại đơn vị)</option>
+                            <option value="Hybrid PACS" ${gen.server_type==='Hybrid PACS'?'selected':''}>Hybrid PACS (Kết hợp)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dung lượng máy chủ lưu trữ hình ảnh</label>
+                        <input type="text" class="form-input" value="${gen.storage_capacity}" onchange="updateRISPACSGeneral('storage_capacity', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số bác sĩ chuyên khoa CĐHA đọc phim</label>
+                        <input type="number" class="form-input" value="${gen.radiologist_count}" onchange="updateRISPACSGeneral('radiologist_count', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số màn hình chuyên dụng chẩn đoán hình ảnh</label>
+                        <input type="number" class="form-input" value="${gen.diagnostic_monitors}" onchange="updateRISPACSGeneral('diagnostic_monitors', this.value)">
+                    </div>
+                </div>
+
+                <div class="subsection-title" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>2. Danh mục thiết bị chẩn đoán hình ảnh kết nối PACS</span>
+                    <button class="btn btn-primary" onclick="addRISDevice()">➕ Thêm thiết bị</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">STT</th>
+                                <th style="width: 140px;">Loại máy</th>
+                                <th>Tên thiết bị (Max 100 ký tự)</th>
+                                <th>Hãng sản xuất (Max 100 ký tự)</th>
+                                <th>Model</th>
+                                <th>Số Serial / Mã QĐ 3176</th>
+                                <th>Giao thức (DICOM/Analog)</th>
+                                <th style="width: 150px;">Kết nối PACS</th>
+                                <th style="width: 80px;">Tác vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 7. Render EMR & Số hóa Survey panel (With templates checklist)
+        function renderEMRForm(sheetData) {
+            const gen = sheetData.general;
+            
+            // Build the checklist rows
+            let checklistRows = '';
+            sheetData.templates.forEach((tpl, idx) => {
+                const isCustom = tpl.custom === true;
+                checklistRows += `
+                    <tr>
+                        <td>${tpl.STT}</td>
+                        <td>
+                            ${isCustom ? 
+                                `<input type="text" class="form-input" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; font-weight: 700; width: 100px;" value="${tpl.circular}" onchange="updateEMRTemplateValue(${idx}, 'circular', this.value)">` 
+                                : `<span style="font-weight: 700; color: var(--accent-color);">${tpl.circular}</span>`
+                            }
+                        </td>
+                        <td>
+                            ${isCustom ? 
+                                `<input type="text" class="form-input" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; width: 100%; min-width: 250px;" value="${tpl.name || ''}" placeholder="Nhập tên biểu mẫu đặc thù..." onchange="updateEMRTemplateValue(${idx}, 'name', this.value)">` 
+                                : `<span>${tpl.name}</span>`
+                            }
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;" ${tpl.checked ? 'checked' : ''} onchange="updateEMRTemplateChecked(${idx}, this.checked)">
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            ${isCustom ? 
+                                `<button class="btn btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="removeEMRTemplate(${idx})">🗑️ Xóa</button>` 
+                                : ``
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+
+            return `
+                <div class="subsection-title">1. Tình hình triển khai Chữ ký số (Smart CA / Token)</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái cấp chữ ký số cho y bác sĩ lâm sàng</label>
+                        <select class="form-select" onchange="updateEMRGeneral('digital_sig_status', this.value)">
+                            <option value="Đã triển khai" ${gen.digital_sig_status==='Đã triển khai'?'selected':''}>Đã triển khai toàn viện</option>
+                            <option value="Chưa triển khai" ${gen.digital_sig_status==='Chưa triển khai'?'selected':''}>Chưa triển khai</option>
+                            <option value="Triển khai một phần" ${gen.digital_sig_status==='Triển khai một phần'?'selected':''}>Đang triển khai một phần</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tổng số bác sĩ / dược sĩ được cấp chữ ký số để duyệt bệnh án</label>
+                        <input type="number" class="form-input" value="${gen.doctor_sig_count || ''}" onchange="updateEMRGeneral('doctor_sig_count', this.value)">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1; margin-top: 0.5rem;">
+                        <label class="form-label" style="margin-bottom: 0.25rem;">Hình thức ký xác nhận của Bệnh nhân / Người nhà (Chọn các hình thức áp dụng và điền số lượng thiết bị)</label>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem; background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 500; min-width: 320px; cursor: pointer; color: var(--text-primary);">
+                                    <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;" ${gen.patient_sig_signpad_checked ? 'checked' : ''} onchange="updateEMRGeneral('patient_sig_signpad_checked', this.checked)">
+                                    Ký điện tử trên bảng viết (Sign pad)
+                                </label>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Số lượng thiết bị:</span>
+                                    <input type="number" class="form-input" style="width: 100px; padding: 0.35rem 0.5rem;" value="${gen.patient_sig_signpad_qty || ''}" onchange="updateEMRGeneral('patient_sig_signpad_qty', this.value)">
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; border-top: 1px dashed var(--border-color); padding-top: 0.5rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 500; min-width: 320px; cursor: pointer; color: var(--text-primary);">
+                                    <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;" ${gen.patient_sig_paper_checked ? 'checked' : ''} onchange="updateEMRGeneral('patient_sig_paper_checked', this.checked)">
+                                    Ký tươi trên giấy và scan lưu trữ
+                                </label>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Số lượng thiết bị (máy scan):</span>
+                                    <input type="number" class="form-input" style="width: 100px; padding: 0.35rem 0.5rem;" value="${gen.patient_sig_paper_qty || ''}" onchange="updateEMRGeneral('patient_sig_paper_qty', this.value)">
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; border-top: 1px dashed var(--border-color); padding-top: 0.5rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 500; min-width: 320px; cursor: pointer; color: var(--text-primary);">
+                                    <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;" ${gen.patient_sig_card_checked ? 'checked' : ''} onchange="updateEMRGeneral('patient_sig_card_checked', this.checked)">
+                                    Ký bằng thẻ cảm ứng (RFID/NFC)
+                                </label>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Số lượng thiết bị đọc:</span>
+                                    <input type="number" class="form-input" style="width: 100px; padding: 0.35rem 0.5rem;" value="${gen.patient_sig_card_qty || ''}" onchange="updateEMRGeneral('patient_sig_card_qty', this.value)">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection-title">2. Khảo sát số lượng mẫu cần số hóa & Thiết bị ký số</div>
+                <div class="form-grid" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Tổng số mẫu cần số hóa</label>
+                        <input type="number" class="form-input" value="${gen.total_templates || ''}" onchange="updateEMRGeneral('total_templates', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số loại bệnh án sử dụng tại bệnh viện</label>
+                        <input type="number" class="form-input" value="${gen.mr_types_count || ''}" onchange="updateEMRGeneral('mr_types_count', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Có bao nhiêu máy scan</label>
+                        <input type="number" class="form-input" value="${gen.scanner_count || ''}" onchange="updateEMRGeneral('scanner_count', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Có bao nhiêu máy ký vân tay</label>
+                        <input type="number" class="form-input" value="${gen.fingerprint_sign_count || ''}" onchange="updateEMRGeneral('fingerprint_sign_count', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Có bao nhiêu máy ký chữ ký điện tử</label>
+                        <input type="number" class="form-input" value="${gen.digital_sign_device_count || ''}" onchange="updateEMRGeneral('digital_sign_device_count', this.value)">
+                    </div>
+                </div>
+
+                <div class="subsection-title" style="display:flex; justify-content:space-between; align-items:center; margin-top: 2rem;">
+                    <span>3. Danh sách biểu mẫu Thông tư 26, Thông tư 25 & Khác (Đơn vị xác nhận sử dụng)</span>
+                    <button class="btn btn-primary" onclick="addCustomEMRTemplate()">➕ Thêm biểu mẫu khác (Ngoài thông tư)</button>
+                </div>
+                <div class="table-responsive" style="margin-top: 1rem;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">STT</th>
+                                <th style="width: 120px;">Thông tư</th>
+                                <th>Tên biểu mẫu / Mẫu phiếu</th>
+                                <th style="width: 120px; text-align: center;">Có sử dụng</th>
+                                <th style="width: 100px; text-align: center;">Tác vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${checklistRows}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 8. Render Infrastructure and Security Survey panel
+        function renderInfraSecurityForm(sheetData) {
+            const gen = sheetData.general;
+            return `
+                <div class="subsection-title">1. Hiện trạng phòng máy chủ (Server Room) tại Bệnh viện</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Điều hòa nhiệt độ phòng máy chủ (Hoạt động 24/7)</label>
+                        <select class="form-select" onchange="updateInfraGeneral('server_ac', this.value)">
+                            <option value="Có" ${gen.server_ac==='Có'?'selected':''}>Có điều hòa đảm bảo độ ẩm/nhiệt độ máy chủ</option>
+                            <option value="Không" ${gen.server_ac==='Không'?'selected':''}>Không trang bị</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hệ thống phòng cháy chữa cháy chuyên dụng (Cảnh báo & Dập lửa dạng khí CO2)</label>
+                        <select class="form-select" onchange="updateInfraGeneral('server_fire', this.value)">
+                            <option value="Có" ${gen.server_fire==='Có'?'selected':''}>Có hệ thống dập lửa chuyên dụng</option>
+                            <option value="Không" ${gen.server_fire==='Không'?'selected':''}>Không có hoặc chỉ có bình chữa cháy xách tay</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hệ thống camera giám sát và kiểm soát cửa vào/ra phòng máy chủ</label>
+                        <select class="form-select" onchange="updateInfraGeneral('server_camera', this.value)">
+                            <option value="Có" ${gen.server_camera==='Có'?'selected':''}>Có camera ghi hình liên tục</option>
+                            <option value="Không" ${gen.server_camera==='Không'?'selected':''}>Không trang bị</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="subsection-title">2. Khảo sát hạ tầng mạng nội bộ & Kết nối mạng</div>
+                <div class="form-grid" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Số lượng nhà cung cấp Internet (ISPs) kết nối (Đảm bảo backup liên tục)</label>
+                        <input type="number" class="form-input" value="${gen.isp_count}" onchange="updateInfraGeneral('isp_count', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Băng thông đường truyền internet chính</label>
+                        <input type="text" class="form-input" value="${gen.main_bandwidth}" onchange="updateInfraGeneral('main_bandwidth', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Độ phủ mạng không dây (Wifi) toàn bệnh viện</label>
+                        <select class="form-select" onchange="updateInfraGeneral('wifi_coverage', this.value)">
+                            <option value="Có" ${gen.wifi_coverage==='Có'?'selected':''}>Có, phủ sóng phục vụ y tế lâm sàng và bệnh nhân</option>
+                            <option value="Không" ${gen.wifi_coverage==='Không'?'selected':''}>Không có hoặc chỉ có wifi cục bộ văn phòng</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="subsection-title">3. Các biện pháp bảo mật an toàn thông tin</div>
+                <div class="form-grid" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Thiết bị tường lửa cứng bảo vệ mạng bệnh viện (Firewall Hardware)</label>
+                        <select class="form-select" onchange="updateInfraGeneral('firewall_hardware', this.value)">
+                            <option value="Có" ${gen.firewall_hardware==='Có'?'selected':''}>Đã trang bị tường lửa chuyên dụng</option>
+                            <option value="Không" ${gen.firewall_hardware==='Không'?'selected':''}>Không có (hoặc chỉ dùng tường lửa của router)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phần mềm diệt virus bản quyền tập trung trên các máy tính</label>
+                        <select class="form-select" onchange="updateInfraGeneral('antivirus_software', this.value)">
+                            <option value="Có" ${gen.antivirus_software==='Có'?'selected':''}>Có, đã cài đặt phần mềm bản quyền thường xuyên cập nhật</option>
+                            <option value="Không" ${gen.antivirus_software==='Không'?'selected':''}>Không cài đặt hoặc dùng phần mềm miễn phí</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chính sách ngăn chặn sao chép dữ liệu qua thiết bị USB vật lý</label>
+                        <select class="form-select" onchange="updateInfraGeneral('usb_control', this.value)">
+                            <option value="Có" ${gen.usb_control==='Có'?'selected':''}>Có chính sách khóa cổng USB / phần mềm kiểm soát chống sao chép</option>
+                            <option value="Không" ${gen.usb_control==='Không'?'selected':''}>Không kiểm soát</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Data Update Handlers
+        function updateStateValue(sheetName, rowIndex, colIndex, value) {
+            surveyState[sheetName].data[rowIndex][colIndex] = value;
+        }
+
+        function updateTableVal(sheetName, rowIndex, colKey, value) {
+            surveyState[sheetName].data[rowIndex][colKey] = value;
+        }
+
+        // LIS updates
+        function updateLISGeneral(key, val) {
+            surveyState.LIS.general[key] = val;
+        }
+
+        function updateLISAnalyzer(idx, key, val) {
+            surveyState.LIS.analyzers[idx][key] = val;
+        }
+
+        function addLISAnalyzer() {
+            const list = surveyState.LIS.analyzers;
+            const newAnz = {
+                "STT": String(list.length + 1),
+                "type": "Sinh hoá",
+                "name": "Dòng máy mới",
+                "serial": "",
+                "port": "RS232",
+                "manufacturer": "",
+                "status": "Chưa kết nối"
+            };
+            list.push(newAnz);
+            
+            const panel = document.getElementById('panel-LIS');
+            const bodyHtml = renderLISForm(surveyState.LIS);
+            const headerHtml = panel.querySelector('.section-header').outerHTML;
+            const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+            panel.innerHTML = headerHtml + bodyHtml + navHtml;
+        }
+
+        function removeLISAnalyzer(idx) {
+            if (confirm("Xóa máy xét nghiệm này khỏi danh sách khảo sát?")) {
+                surveyState.LIS.analyzers.splice(idx, 1);
+                const panel = document.getElementById('panel-LIS');
+                const bodyHtml = renderLISForm(surveyState.LIS);
+                const headerHtml = panel.querySelector('.section-header').outerHTML;
+                const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+                panel.innerHTML = headerHtml + bodyHtml + navHtml;
+            }
+        }
+
+        // RISPACS updates
+        function updateRISPACSGeneral(key, val) {
+            surveyState.RISPACS.general[key] = val;
+        }
+
+        function updateRISDevice(idx, key, val) {
+            surveyState.RISPACS.devices[idx][key] = val;
+        }
+
+        function addRISDevice() {
+            const list = surveyState.RISPACS.devices;
+            const newDev = {
+                "STT": String(list.length + 1),
+                "type": "X-Quang",
+                "name": "Thiết bị mới",
+                "manufacturer": "",
+                "model": "",
+                "serial": "",
+                "port": "DICOM",
+                "status": "Chưa kết nối"
+            };
+            list.push(newDev);
+            
+            const panel = document.getElementById('panel-RISPACS');
+            const bodyHtml = renderRISPACSForm(surveyState.RISPACS);
+            const headerHtml = panel.querySelector('.section-header').outerHTML;
+            const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+            panel.innerHTML = headerHtml + bodyHtml + navHtml;
+        }
+
+        function removeRISDevice(idx) {
+            if (confirm("Xóa thiết bị CĐHA này khỏi danh sách?")) {
+                surveyState.RISPACS.devices.splice(idx, 1);
+                const panel = document.getElementById('panel-RISPACS');
+                const bodyHtml = renderRISPACSForm(surveyState.RISPACS);
+                const headerHtml = panel.querySelector('.section-header').outerHTML;
+                const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+                panel.innerHTML = headerHtml + bodyHtml + navHtml;
+            }
+        }
+
+        // EMR updates
+        function updateEMRGeneral(key, val) {
+            surveyState.EMR.general[key] = val;
+        }
+
+        function updateEMRTemplateChecked(idx, checked) {
+            surveyState.EMR.templates[idx].checked = checked;
+        }
+
+        function updateEMRTemplateValue(idx, key, val) {
+            surveyState.EMR.templates[idx][key] = val;
+        }
+
+        function addCustomEMRTemplate() {
+            const list = surveyState.EMR.templates;
+            const newTpl = {
+                "STT": "1",
+                "circular": "Khác",
+                "name": "",
+                "jasper": "EMR_CUSTOM_" + (list.length + 1),
+                "checked": true,
+                "custom": true
+            };
+            list.unshift(newTpl);
+            list.forEach((tpl, i) => {
+                tpl.STT = String(i + 1);
+            });
+            
+            const panel = document.getElementById('panel-EMR');
+            const bodyHtml = renderEMRForm(surveyState.EMR);
+            const headerHtml = panel.querySelector('.section-header').outerHTML;
+            const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+            panel.innerHTML = headerHtml + bodyHtml + navHtml;
+        }
+
+        function removeEMRTemplate(idx) {
+            if (confirm("Xóa biểu mẫu tự chọn này khỏi danh sách khảo sát?")) {
+                surveyState.EMR.templates.splice(idx, 1);
+                surveyState.EMR.templates.forEach((tpl, i) => {
+                    tpl.STT = String(i + 1);
+                });
+                const panel = document.getElementById('panel-EMR');
+                const bodyHtml = renderEMRForm(surveyState.EMR);
+                const headerHtml = panel.querySelector('.section-header').outerHTML;
+                const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+                panel.innerHTML = headerHtml + bodyHtml + navHtml;
+            }
+        }
+
+        // Infra & Security updates
+        function updateInfraGeneral(key, val) {
+            surveyState.InfraSecurity.general[key] = val;
+        }
+
+        // Table dynamic rows (DS_KhoaNoiTru & KEHOACHDUKIEN)
+        function removeTableRow(sheetName, idx) {
+            if (confirm("Bạn có chắc chắn muốn xóa dòng này?")) {
+                surveyState[sheetName].data.splice(idx, 1);
+                const panel = document.getElementById(`panel-${sheetName}`);
+                let bodyHtml = '';
+                if (sheetName === 'DS_KhoaNoiTru') bodyHtml = renderDepartmentTable(sheetName, surveyState[sheetName]);
+                else if (sheetName === 'KEHOACHDUKIEN') bodyHtml = renderScheduleTable(sheetName, surveyState[sheetName]);
+                
+                const headerHtml = panel.querySelector('.section-header').outerHTML;
+                const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+                panel.innerHTML = headerHtml + bodyHtml + navHtml;
+            }
+        }
+
+        function addDeptRow(sheetName) {
+            const newRow = {
+                "STT": String(surveyState[sheetName].data.length),
+                "Tên khoa nội trú": "Khoa mới",
+                "Số giường": "0"
+            };
+            surveyState[sheetName].data.push(newRow);
+            const panel = document.getElementById(`panel-${sheetName}`);
+            const bodyHtml = renderDepartmentTable(sheetName, surveyState[sheetName]);
+            const headerHtml = panel.querySelector('.section-header').outerHTML;
+            const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+            panel.innerHTML = headerHtml + bodyHtml + navHtml;
+        }
+
+        function addScheduleRow(sheetName) {
+            const newRow = {
+                "STT": "",
+                "Nội dung triển khai": "Công việc mới",
+                "Ngày bắt đầu": "",
+                "Ngày dự kiến hoàn thành": ""
+            };
+            surveyState[sheetName].data.push(newRow);
+            const panel = document.getElementById(`panel-${sheetName}`);
+            const bodyHtml = renderScheduleTable(sheetName, surveyState[sheetName]);
+            const headerHtml = panel.querySelector('.section-header').outerHTML;
+            const navHtml = panel.querySelector('.form-nav-buttons').outerHTML;
+            panel.innerHTML = headerHtml + bodyHtml + navHtml;
+        }
+
+        // Reset all survey inputs to blank/clean state
+        function resetToNewSurvey() {
+            if (!confirm("Bắt đầu phiếu khảo sát mới từ đầu? Dữ liệu hiện tại chưa lưu trên trang này sẽ bị xóa.")) {
+                return;
+            }
+            surveyState = JSON.parse(JSON.stringify(templateData));
+            renderForm();
+            switchStep('ThongTinChung');
+            alert("Đã làm sạch phiếu khảo sát! Hãy điền thông tin đơn vị ở Bước 1.");
+        }
+
+        // Export survey as JSON
+        function exportData() {
+            let hospitalName = "Chua_Dat_Ten";
+            try {
+                const nameRow = surveyState.ThongTinChung.data.find(row => row[1] && row[1].includes("Tên cơ sở y tế"));
+                if (nameRow && nameRow[2]) {
+                    hospitalName = nameRow[2].trim().replace(/[^a-zA-Z0-9]/g, "_");
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(surveyState, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `Survey_RIS_LIS_EMR_${hospitalName}_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(dl);
+            dl.click();
+            dl.remove();
+        }
+
+        // Export survey as formatted Excel with signature block
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            const data = [];
+            
+            data.push(["PHIẾU KHẢO SÁT HỆ THỐNG HIS - LIS - RIS/PACS - EMR BỆNH VIỆN"]);
+            data.push([]);
+            
+            // 1. Thông tin chung
+            data.push(["I. THÔNG TIN CHUNG"]);
+            surveyState.ThongTinChung.data.slice(2).forEach(row => {
+                data.push([row[1], row[2] || ""]);
+            });
+            data.push([]);
+            
+            // 2. Số liệu KCB
+            data.push(["II. SỐ LIỆU HOẠT ĐỘNG KHÁM CHỮA BỆNH"]);
+            surveyState.SoLieuKCB.data.slice(2).forEach(row => {
+                data.push([row[1], row[2] || ""]);
+            });
+            data.push([]);
+            
+            // 3. Khoa lâm sàng
+            data.push(["III. DANH SÁCH KHOA LÂM SÀNG & SỐ GIƯỜNG"]);
+            data.push(["STT", "Tên Khoa Lâm Sàng", "Số Giường"]);
+            surveyState.DS_KhoaNoiTru.data.forEach((row, idx) => {
+                if (idx === 0) return;
+                data.push([row.STT, row["Tên khoa nội trú"], row["Số giường"]]);
+            });
+            data.push([]);
+            
+            // 4. LIS
+            data.push(["IV. KHẢO SÁT HỆ THỐNG LIS"]);
+            data.push(["Tên phần mềm LIS đang sử dụng", surveyState.LIS.general.lis_system]);
+            data.push(["Nhà cung cấp/Đối tác", surveyState.LIS.general.vendor]);
+            data.push(["Số ca xét nghiệm trung bình / ngày", surveyState.LIS.general.avg_tests]);
+            data.push(["Số lượng máy xét nghiệm hiện có", surveyState.LIS.general.ccu]);
+            data.push(["Số máy tính hoạt động tại khoa Xét nghiệm", surveyState.LIS.general.pc_count]);
+            data.push(["Tốc độ đường truyền kết nối", surveyState.LIS.general.network_speed]);
+            data.push([]);
+            data.push(["Danh mục máy xét nghiệm kết nối LIS:"]);
+            data.push(["STT", "Phân loại", "Tên dòng máy", "Số Serial / Mã QĐ 3176", "Cổng kết nối", "Hãng sản xuất", "Kết nối LIS"]);
+            surveyState.LIS.analyzers.forEach(anz => {
+                data.push([anz.STT, anz.type, anz.name, anz.serial, anz.port, anz.manufacturer, anz.status]);
+            });
+            data.push([]);
+            
+            // 5. RIS/PACS
+            data.push(["V. KHẢO SÁT HỆ THỐNG RIS/PACS"]);
+            data.push(["Tên phần mềm RIS/PACS đang sử dụng", surveyState.RISPACS.general.pacs_system]);
+            data.push(["Nhà cung cấp/Đối tác", surveyState.RISPACS.general.vendor]);
+            data.push(["Hình thức triển khai máy chủ PACS", surveyState.RISPACS.general.server_type]);
+            data.push(["Dung lượng máy chủ lưu trữ hình ảnh", surveyState.RISPACS.general.storage_capacity]);
+            data.push(["Số bác sĩ chuyên khoa CĐHA đọc phim", surveyState.RISPACS.general.radiologist_count]);
+            data.push(["Số màn hình chuyên dụng chẩn đoán hình ảnh", surveyState.RISPACS.general.diagnostic_monitors]);
+            data.push([]);
+            data.push(["Danh mục thiết bị chẩn đoán hình ảnh kết nối PACS:"]);
+            data.push(["STT", "Loại máy", "Tên thiết bị", "Hãng sản xuất", "Model", "Số Serial / Mã QĐ 3176", "Giao thức", "Kết nối PACS"]);
+            surveyState.RISPACS.devices.forEach(dev => {
+                data.push([dev.STT, dev.type, dev.name, dev.manufacturer, dev.model, dev.serial, dev.port, dev.status]);
+            });
+            data.push([]);
+            
+            // 6. EMR & Chữ ký số
+            data.push(["VI. KHẢO SÁT EMR & CHỮ KÝ SỐ"]);
+            data.push(["Trạng thái cấp chữ ký số cho y bác sĩ lâm sàng", surveyState.EMR.general.digital_sig_status]);
+            data.push(["Tổng số bác sĩ / dược sĩ được cấp chữ ký số để duyệt bệnh án", surveyState.EMR.general.doctor_sig_count]);
+            
+            // Patient signatures methods and quantities
+            let patientSigDesc = [];
+            if (surveyState.EMR.general.patient_sig_signpad_checked) {
+                patientSigDesc.push(`Ký điện tử trên bảng viết (SL: ${surveyState.EMR.general.patient_sig_signpad_qty || 0})`);
+            }
+            if (surveyState.EMR.general.patient_sig_paper_checked) {
+                patientSigDesc.push(`Ký tươi trên giấy và scan (SL: ${surveyState.EMR.general.patient_sig_paper_qty || 0})`);
+            }
+            if (surveyState.EMR.general.patient_sig_card_checked) {
+                patientSigDesc.push(`Ký bằng thẻ cảm ứng (SL: ${surveyState.EMR.general.patient_sig_card_qty || 0})`);
+            }
+            data.push(["Hình thức ký xác nhận của Bệnh nhân / Người nhà", patientSigDesc.join("; ") || "Chưa chọn"]);
+            
+            data.push(["Tổng số mẫu cần số hóa", surveyState.EMR.general.total_templates]);
+            data.push(["Số loại bệnh án sử dụng tại bệnh viện", surveyState.EMR.general.mr_types_count]);
+            data.push(["Có bao nhiêu máy scan", surveyState.EMR.general.scanner_count]);
+            data.push(["Có bao nhiêu máy ký vân tay", surveyState.EMR.general.fingerprint_sign_count]);
+            data.push(["Có bao nhiêu máy ký chữ ký điện tử", surveyState.EMR.general.digital_sign_device_count]);
+            data.push([]);
+            
+            data.push(["DANH SÁCH BIỂU MẪU XÁC NHẬN SỬ DỤNG:"]);
+            data.push(["STT", "Thông tư", "Tên biểu mẫu / Mẫu phiếu", "Trạng thái sử dụng"]);
+            surveyState.EMR.templates.forEach(tpl => {
+                data.push([tpl.STT, tpl.circular, tpl.name, tpl.checked ? "Có sử dụng" : "Không sử dụng"]);
+            });
+            data.push([]);
+            
+            // 7. Hạ tầng & Bảo mật
+            data.push(["VII. HẠ TẦNG CNTT & BẢO MẬT"]);
+            data.push(["Điều hòa nhiệt độ phòng máy chủ (Hoạt động 24/7)", surveyState.InfraSecurity.general.server_ac]);
+            data.push(["Hệ thống phòng cháy chữa cháy chuyên dụng", surveyState.InfraSecurity.general.server_fire]);
+            data.push(["Hệ thống camera giám sát phòng máy chủ", surveyState.InfraSecurity.general.server_camera]);
+            data.push(["Số lượng nhà cung cấp Internet (ISPs) kết nối", surveyState.InfraSecurity.general.isp_count]);
+            data.push(["Băng thông đường truyền internet chính", surveyState.InfraSecurity.general.main_bandwidth]);
+            data.push(["Độ phủ mạng không dây (Wifi) toàn bệnh viện", surveyState.InfraSecurity.general.wifi_coverage]);
+            data.push(["Thiết bị tường lửa cứng bảo vệ mạng", surveyState.InfraSecurity.general.firewall_hardware]);
+            data.push(["Phần mềm diệt virus bản quyền tập trung", surveyState.InfraSecurity.general.antivirus_software]);
+            data.push(["Chính sách ngăn chặn sao chép dữ liệu qua USB", surveyState.InfraSecurity.general.usb_control]);
+            data.push([]);
+            data.push([]);
+            
+            // Signature block
+            data.push(["", "", "", "............, ngày ..... tháng ..... năm 2026"]);
+            data.push(["", "ĐẠI DIỆN ĐƠN VỊ ĐƯỢC KHẢO SÁT", "", "ĐẠI DIỆN ĐOÀN KHẢO SÁT"]);
+            data.push(["", "(Ký, ghi rõ họ tên và đóng dấu)", "", "(Ký và ghi rõ họ tên)"]);
+            for (let i = 0; i < 4; i++) data.push([]);
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            
+            // Set dynamic column widths to auto-fit content
+            const max_len = [];
+            data.forEach(row => {
+                row.forEach((val, colIdx) => {
+                    const str = String(val || '');
+                    const len = str.length;
+                    if (!max_len[colIdx] || len > max_len[colIdx]) {
+                        max_len[colIdx] = len;
+                    }
+                });
+            });
+            ws['!cols'] = max_len.map(len => ({ wch: Math.min(Math.max(len + 2, 8), 65) }));
+            
+            XLSX.utils.book_append_sheet(wb, ws, "Phieu_Khao_Sat");
+            
+            let hospitalName = "Chua_Dat_Ten";
+            try {
+                const nameRow = surveyState.ThongTinChung.data.find(row => row[1] && row[1].includes("Tên cơ sở y tế"));
+                if (nameRow && nameRow[2]) {
+                    hospitalName = nameRow[2].trim().replace(/[^a-zA-Z0-9]/g, "_");
+                }
+            } catch (e) {}
+            
+            XLSX.writeFile(wb, `Phieu_Khao_Sat_EMR_${hospitalName}_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        // Import survey draft JSON
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.ThongTinChung && (imported.LIS || imported.RISPACS)) {
+                        surveyState = imported;
+                        renderForm();
+                        alert("Đã tải dữ liệu bản thảo thành công!");
+                    } else {
+                        alert("Định dạng file JSON không khớp với biểu mẫu khảo sát.");
+                    }
+                } catch (err) {
+                    alert("Lỗi khi đọc file JSON: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        window.onload = function() {
+            renderForm();
+            setupTheme();
+        };
+    </script>
+</body>
+</html>
