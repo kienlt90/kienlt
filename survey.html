@@ -407,7 +407,7 @@
     <script>
         // Set theme immediately to avoid flash of light
         (function() {
-            const theme = localStorage.getItem('vnpt_his_theme') || 'light';
+            const theme = localStorage.getItem('vnpt_his_theme') || 'dark';
             if (theme === 'dark') {
                 document.body.classList.add('dark-theme');
             }
@@ -1261,7 +1261,7 @@
 
         function setupTheme() {
             // Apply saved theme on load
-            const savedTheme = localStorage.getItem('vnpt_his_theme') || 'light';
+            const savedTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-theme');
             } else {

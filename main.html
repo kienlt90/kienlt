@@ -126,16 +126,19 @@
               <span>📈</span> Báo cáo số liệu
             </button>
             <button class="dock-item" id="dock-item-4" onclick="selectPortalModule(4)">
-              <span>🔄</span> Mapping Danh mục HIS
+              <span>🔍</span> Phân tích XML BHYT QĐ 130
             </button>
             <button class="dock-item" id="dock-item-5" onclick="selectPortalModule(5)">
-              <span>⏳</span> Tiến độ dự án HIS L2
+              <span>✍️</span> Quản lý Hợp đồng & Ký số
             </button>
             <button class="dock-item" id="dock-item-6" onclick="selectPortalModule(6)">
               <span>🔏</span> Phân quyền EMR RACI
             </button>
             <button class="dock-item" id="dock-item-7" onclick="selectPortalModule(7)">
               <span>🔌</span> Test API HIS
+            </button>
+            <button class="dock-item" id="dock-item-8" onclick="selectPortalModule(8)">
+              <span>⚽</span> Giải trí World Cup 2026
             </button>
           </div>
 
@@ -221,25 +224,25 @@
       },
       {
         id: 4,
-        icon: '🔄',
-        shortTitle: 'Mapping Danh mục HIS',
-        title: 'Đồng bộ & Mapping Danh mục HIS',
-        desc: 'Tải lên danh mục vật tư y tế, dược phẩm, nhân sự từ file Excel để khớp mã danh mục dùng chung và chuẩn hóa dữ liệu trước khi nạp vào cơ sở dữ liệu HIS L2.',
-        status: 'inactive',
-        statusText: 'Chưa kích hoạt (Chờ phát triển)',
-        actionText: 'Chưa kích hoạt',
-        action: null
+        icon: '🔍',
+        shortTitle: 'Phân tích XML BHYT QĐ 130',
+        title: 'Phân tích & Sửa lỗi XML BHYT QĐ 130',
+        desc: 'Trình kéo thả phân tích lỗi dữ liệu XML BHYT đầu ra theo Quyết định 130/4750/3176. Tự động kiểm lỗi thẻ, mã dịch vụ, định dạng ngày tháng và hỗ trợ sửa lỗi tự động.',
+        status: 'active',
+        statusText: 'Đang hoạt động',
+        actionText: 'Vào kiểm lỗi XML ➔',
+        action: function() { window.open('xml_analyzer.html', '_blank'); }
       },
       {
         id: 5,
-        icon: '⏳',
-        shortTitle: 'Tiến độ dự án HIS L2',
-        title: 'Theo dõi Tiến độ Dự án HIS L2',
-        desc: 'Bảng điều khiển giám sát danh sách các yêu cầu điều chỉnh, nâng cấp tính năng phần mềm HIS L2 từ các bệnh viện, phân công lập trình viên và cập nhật tiến độ hoàn thành.',
-        status: 'inactive',
-        statusText: 'Chưa kích hoạt (Chờ phát triển)',
-        actionText: 'Chưa kích hoạt',
-        action: null
+        icon: '✍️',
+        shortTitle: 'Quản lý Hợp đồng & Ký số',
+        title: 'Quản lý Hợp đồng & Ký số dịch vụ Y tế',
+        desc: 'Quản lý hợp đồng cung cấp dịch vụ CNTT y tế (HIS, LIS, PACS, EMR) của các Trung tâm Y tế. Tích hợp giải pháp giả lập ký số VNPT-CA USB Token và SmartCA.',
+        status: 'active',
+        statusText: 'Đang hoạt động',
+        actionText: 'Vào quản lý hợp đồng ➔',
+        action: function() { window.open('contracts.html', '_blank'); }
       },
       {
         id: 6,
@@ -262,10 +265,21 @@
         statusText: 'Chưa kích hoạt (Chờ phát triển)',
         actionText: 'Chưa kích hoạt',
         action: null
+      },
+      {
+        id: 8,
+        icon: '⚽',
+        shortTitle: 'Giải trí World Cup 2026',
+        title: 'Giải trí - Bảng xếp hạng & Lịch thi đấu World Cup 2026',
+        desc: 'Tiện ích giải trí theo dõi lịch thi đấu, kết quả các bảng đấu, sơ đồ knock-out và cập nhật bảng xếp hạng giải vô địch bóng đá thế giới World Cup 2026.',
+        status: 'active',
+        statusText: 'Đang hoạt động',
+        actionText: 'Xem Lịch & Kết quả ➔',
+        action: function() { window.open('worldcup2026_web/index.html', '_blank'); }
       }
     ];
 
-    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 2, 3, 4, 5, 6, 7]');
+    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 2, 3, 4, 5, 6, 7, 8]');
     let activeModuleId = 1;
 
     function getSortedModules() {
@@ -487,6 +501,19 @@
 
     // Initialize layout & theme settings
     document.addEventListener('DOMContentLoaded', () => {
+      // Listen to theme changes from other tabs
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'vnpt_his_theme') {
+          const newTheme = e.newValue || 'dark';
+          if (newTheme === 'light') {
+            document.body.classList.add('light-theme');
+          } else {
+            document.body.classList.remove('light-theme');
+          }
+          updateThemeUI(newTheme);
+        }
+      });
+
       renderDockMenu();
       
       const savedMode = localStorage.getItem('vnpt_his_portal_view_mode') || 'dock';

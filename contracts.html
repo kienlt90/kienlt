@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Hợp đồng & Ký số dịch vụ Y tế - KIENLT90 Portal</title>
+  <!-- Google Fonts: Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Custom Scoped Styles for Contracts Module */
+    .contracts-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 400px;
+      gap: 1.2rem;
+      margin-top: 1.8rem;
+    }
+    
+    @media (max-width: 1280px) {
+      .contracts-layout {
+        grid-template-columns: 240px 1fr;
+      }
+      #detail-panel {
+        grid-column: 1 / -1;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .contracts-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Unit cards styles */
+    .unit-card {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-surface-border);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-bottom: 0.75rem;
+    }
+    
+    .unit-card:hover {
+      border-color: var(--color-primary);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-1px);
+    }
+    
+    body.light-theme .unit-card:hover {
+      background: rgba(0, 0, 0, 0.015);
+    }
+    
+    .unit-card.active {
+      background: rgba(6, 182, 212, 0.06);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
+    }
+    
+    body.light-theme .unit-card.active {
+      background: rgba(37, 99, 235, 0.05);
+      border-color: var(--color-primary);
+    }
+    
+    .unit-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);
+    }
+    
+    .unit-info {
+      flex-grow: 1;
+      min-width: 0;
+    }
+    
+    .unit-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .unit-meta {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-top: 0.15rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    
+    .status-signed {
+      background-color: rgba(34, 197, 94, 0.08);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    
+    .status-pending {
+      background-color: rgba(234, 179, 8, 0.08);
+      color: #eab308;
+      border: 1px solid rgba(234, 179, 8, 0.2);
+    }
+    
+    .status-draft {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-surface-border);
+    }
+    
+    .contract-row {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .contract-row:hover {
+      background: rgba(255, 255, 255, 0.02) !important;
+    }
+    
+    .contract-row.selected {
+      background: rgba(6, 182, 212, 0.05) !important;
+      border-left: 3px solid var(--color-primary);
+    }
+    
+    body.light-theme .contract-row:hover {
+      background: rgba(0, 0, 0, 0.015) !important;
+    }
+    
+    body.light-theme .contract-row.selected {
+      background: rgba(37, 99, 235, 0.05) !important;
+    }
+    
+    /* Milestones List */
+    .milestone-list {
+      list-style: none;
+      padding-left: 1rem;
+      border-left: 2px solid var(--color-surface-border);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+    
+    .milestone-item {
+      position: relative;
+    }
+    
+    .milestone-item::before {
+      content: '';
+      position: absolute;
+      left: -1.45rem;
+      top: 0.25rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--color-surface-border);
+      border: 2px solid var(--color-surface);
+    }
+    
+    .milestone-item.done::before {
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+    }
+    
+    .milestone-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    
+    .milestone-desc {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-top: 0.15rem;
+    }
+    
+    /* Digital Signature stamp */
+    .digital-stamp {
+      border: 2px dashed #22c55e;
+      background: rgba(34, 197, 94, 0.04);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      animation: stamp-fade-in 0.4s ease-out;
+    }
+    
+    @keyframes stamp-fade-in {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .modal-card {
+      width: 100%;
+      max-width: 500px;
+      padding: 2.2rem;
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+    
+    .signing-method-btn {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      width: 100%;
+      padding: 1.2rem;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1.5px solid var(--color-surface-border);
+      color: var(--color-text-primary);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 1rem;
+    }
+    
+    .signing-method-btn:hover {
+      border-color: var(--color-primary);
+      background: rgba(6, 182, 212, 0.05);
+    }
+    
+    body.light-theme .signing-method-btn {
+      background: rgba(0, 0, 0, 0.01);
+    }
+    
+    body.light-theme .signing-method-btn:hover {
+      background: rgba(37, 99, 235, 0.04);
+    }
+    
+    /* Signature progress animation */
+    .signing-progress {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 0;
+      text-align: center;
+    }
+    
+    .signing-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(6, 182, 212, 0.15);
+      border-radius: 50%;
+      border-top-color: var(--color-primary);
+      animation: spin 1s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+    
+    .input-pin-field {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--color-surface-border);
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-size: 1rem;
+      letter-spacing: 0.3rem;
+      text-align: center;
+      outline: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .input-pin-field:focus {
+      border-color: var(--color-primary);
+    }
+  </style>
+</head>
+<body class="portal-body">
+  <script>
+    // Theme Initializer to prevent flash of light
+    (function() {
+      const theme = localStorage.getItem('vnpt_his_theme') || 'dark';
+      if (theme === 'light') {
+        document.body.classList.add('light-theme');
+      }
+    })();
+  </script>
+
+  <!-- Floating animated background blobs -->
+  <div class="bg-glow-container">
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+    <div class="glow-blob blob-3"></div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="portal-container" id="app-container">
+    
+    <!-- Portal Header -->
+    <header class="dash-header glass-card">
+      <div class="dash-brand">
+        <svg class="vnpt-logo-mini" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" onclick="window.close()" style="cursor: pointer;">
+          <defs>
+            <linearGradient id="logo-grad-mini" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#06b6d4" stop-opacity="1" />
+              <stop offset="100%" stop-color="#3b82f6" stop-opacity="1" />
+            </linearGradient>
+          </defs>
+          <path d="M 100 15 L 173.6 57.5 L 173.6 142.5 L 100 185 L 26.4 142.5 L 26.4 57.5 Z" fill="none" stroke="url(#logo-grad-mini)" stroke-width="6" opacity="0.4" />
+          <path d="M 100 90 A 22 22 0 1 0 56 90 A 22 22 0 0 0 100 90 L 100 120 C 100 135, 88 145, 70 145" fill="none" stroke="url(#logo-grad-mini)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 154 102.5 A 22 30 0 1 1 110 102.5 A 22 30 0 1 1 154 102.5" fill="none" stroke="var(--color-text-primary)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: 1.3rem;">Quản lý Hợp đồng & Ký số</h2>
+      </div>
+      <div class="user-profile">
+        <button class="btn-secondary" onclick="window.close()" style="margin-left: 0; margin-right: 1rem;">🏠 Quay lại Portal</button>
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Đổi giao diện">
+          <span id="theme-icon">☀️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Statistics Overview Panel -->
+    <div class="stats-container glass-card" style="margin-top: 1.2rem; padding: 1.2rem 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; border: 1px solid var(--color-surface-border); border-radius: 16px; background: rgba(255, 255, 255, 0.01);">
+      <div class="stat-card" style="display: flex; flex-direction: column; gap: 0.25rem;">
+        <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Tổng số Hợp đồng</span>
+        <span id="stat-total-cnt" style="font-size: 1.6rem; font-weight: 800; color: var(--color-text-primary);">0</span>
+        <span style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600;">100% Hoạt động</span>
+      </div>
+      <div class="stat-card" style="display: flex; flex-direction: column; gap: 0.25rem; border-left: 1px solid var(--color-surface-border); padding-left: 1.5rem;">
+        <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Tổng Giá trị Dự án</span>
+        <span id="stat-total-val" style="font-size: 1.6rem; font-weight: 800; color: var(--color-accent);">0 tỷ VND</span>
+        <span style="font-size: 0.75rem; color: var(--color-text-muted);">Hệ sinh thái Y tế số VNPT</span>
+      </div>
+      <div class="stat-card" style="display: flex; flex-direction: column; gap: 0.25rem; border-left: 1px solid var(--color-surface-border); padding-left: 1.5rem;">
+        <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Hợp đồng đã Ký số</span>
+        <span id="stat-signed-cnt" style="font-size: 1.6rem; font-weight: 800; color: #22c55e;">0</span>
+        <span id="stat-signed-val" style="font-size: 0.75rem; color: #22c55e; font-weight: 600;">0 tỷ VND (0%)</span>
+      </div>
+      <div class="stat-card" style="display: flex; flex-direction: column; gap: 0.25rem; border-left: 1px solid var(--color-surface-border); padding-left: 1.5rem;">
+        <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Hợp đồng Chờ Ký</span>
+        <span id="stat-pending-cnt" style="font-size: 1.6rem; font-weight: 800; color: #eab308;">0</span>
+        <span id="stat-pending-val" style="font-size: 0.75rem; color: #eab308; font-weight: 600;">0 tỷ VND (0%)</span>
+      </div>
+    </div>
+
+    <!-- Layout Grid -->
+    <div class="contracts-layout">
+      
+      <!-- Left Column: Beneficiary Units (Đơn vị thụ hưởng) -->
+      <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; height: fit-content; max-height: 720px;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; border-left: 4px solid var(--color-primary); padding-left: 0.6rem;">
+          Đơn vị thụ hưởng
+        </h3>
+        
+        <!-- Search bar for Units -->
+        <div style="position: relative; margin-bottom: 1rem;">
+          <input type="text" id="unit-search" class="form-input" style="padding: 0.6rem 0.9rem; font-size: 0.85rem; border-radius: 8px; width: 100%;" placeholder="🔍 Tìm kiếm đơn vị...">
+        </div>
+        
+        <div id="units-list-container" style="flex-grow: 1; overflow-y: auto; padding-right: 0.2rem;">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+      
+      <!-- Center Column: Contracts of Selected Unit -->
+      <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; height: fit-content; min-height: 480px;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; border-left: 4px solid var(--color-accent); padding-left: 0.6rem;" id="selected-unit-title">
+          Danh sách văn bản / hợp đồng
+        </h3>
+        
+        <div class="table-responsive" style="flex-grow: 1;">
+          <table class="premium-table" style="font-size: 0.85rem;">
+            <thead>
+              <tr>
+                <th>Mã hợp đồng</th>
+                <th>Tên hợp đồng / nội dung</th>
+                <th style="width: 130px;">Giá trị</th>
+                <th style="text-align: center; width: 100px;">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="contracts-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Column: Contract Detail and Actions -->
+      <div class="glass-card" id="detail-panel" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; height: fit-content; min-height: 520px;">
+        <!-- Placeholder if nothing selected -->
+        <div id="detail-placeholder" style="text-align: center; color: var(--color-text-muted); padding: 4rem 1rem; flex-grow: 1;">
+          <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">📄</div>
+          <h4 style="font-size: 1rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 0.25rem;">Chưa chọn hợp đồng</h4>
+          <p style="font-size: 0.82rem;">Vui lòng chọn một dòng hợp đồng ở giữa để xem chi tiết và ký số.</p>
+        </div>
+        
+        <!-- Detailed Info (hidden by default) -->
+        <div id="detail-content" class="hidden" style="display: flex; flex-direction: column; gap: 1.2rem; flex-grow: 1;">
+          <div>
+            <span class="status-pill" id="detail-status-pill">Chờ ký</span>
+            <h3 id="detail-contract-name" style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; margin-top: 0.6rem; margin-bottom: 0.25rem; color: var(--color-text-primary); line-height: 1.3;">
+              TTYT Huyện Bàu Bàng
+            </h3>
+            <p id="detail-contract-code" style="font-family: monospace; font-size: 0.8rem; color: var(--color-text-muted);">
+              HD-2026-TTYT-BB
+            </p>
+          </div>
+          
+          <table class="xml-info-table">
+            <tr>
+              <td style="width: 100px;">Gói dịch vụ:</td>
+              <td id="detail-package">-</td>
+            </tr>
+            <tr>
+              <td>Đơn vị ký:</td>
+              <td>Chi nhánh VNPT Bình Dương</td>
+            </tr>
+            <tr>
+              <td>Giá trị thầu:</td>
+              <td id="detail-value" style="font-weight: 700; color: var(--color-accent);">-</td>
+            </tr>
+            <tr>
+              <td>Ngày ký kết:</td>
+              <td id="detail-date">-</td>
+            </tr>
+            <tr>
+              <td>Tệp đính kèm:</td>
+              <td id="detail-filename" style="word-break: break-all; font-family: monospace; font-size: 0.8rem; color: var(--color-primary); font-weight: 600;">-</td>
+            </tr>
+          </table>
+          
+          <!-- Implementation Milestones -->
+          <div>
+            <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text-primary);">
+              Mốc dự án thanh toán
+            </h4>
+            <ul class="milestone-list">
+              <li class="milestone-item done" id="ms-1">
+                <div class="milestone-title">Đặt cọc & Biên bản thỏa thuận (30%)</div>
+                <div class="milestone-desc">Đã hoàn thành bàn giao hồ sơ dự án sơ bộ.</div>
+              </li>
+              <li class="milestone-item" id="ms-2">
+                <div class="milestone-title">Nghiệm thu phần mềm & Ký kết hợp đồng (40%)</div>
+                <div class="milestone-desc" id="ms-2-desc">Yêu cầu hoàn thành thủ tục ký số USB Token/SmartCA.</div>
+              </li>
+              <li class="milestone-item" id="ms-3">
+                <div class="milestone-title">Nghiệm thu triển khai thực tế & Thanh lý (30%)</div>
+                <div class="milestone-desc">Đang đợi chạy thử nghiệm hệ thống HIS L2.</div>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Digital Signature Stamp Display -->
+          <div id="detail-stamp-container"></div>
+          
+          <!-- Action Buttons -->
+          <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.6rem;">
+            <button class="btn-primary" id="btn-show-sign-modal" style="padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 0.95rem; width: 100%;">
+              ✍️ Ký số Biên bản Hợp đồng
+            </button>
+            <button class="btn-secondary" id="btn-download-pdf" style="padding: 1rem; border-radius: 12px; width: 100%; margin-left: 0; font-weight: 600;">
+              📥 Tải tệp tin hợp đồng PDF
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL DIALOG FOR SIGNING -->
+  <div class="modal-overlay" id="sign-modal">
+    <div class="modal-card glass-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary);">✍️ Tiến trình ký điện tử</h3>
+        <button onclick="closeModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+      </div>
+
+      <!-- Step 1: Selection -->
+      <div id="modal-step-selection">
+        <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">
+          Chọn giải pháp chữ ký số để thực hiện ký số pháp lý lên hợp đồng y tế:
+        </p>
+        
+        <button class="signing-method-btn" onclick="startSigning('token')">
+          <span style="font-size: 2.2rem;">🔌</span>
+          <div>
+            <h4 style="font-size: 0.92rem; font-weight: 700;">Chữ ký số USB Token (VNPT-CA)</h4>
+            <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.15rem;">Cắm USB Token phần cứng để kết nối chứng thư số.</p>
+          </div>
+        </button>
+
+        <button class="signing-method-btn" onclick="startSigning('smartca')">
+          <span style="font-size: 2.2rem;">📱</span>
+          <div>
+            <h4 style="font-size: 0.92rem; font-weight: 700;">Chữ ký số từ xa (VNPT SmartCA)</h4>
+            <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.15rem;">Xác thực giao dịch ký số trên ứng dụng SmartCA di động.</p>
+          </div>
+        </button>
+      </div>
+
+      <!-- Step 2: USB Token PIN Input -->
+      <div id="modal-step-pin" class="hidden">
+        <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1rem; text-align: center;">
+          Nhập mã PIN của thiết bị USB Token phần cứng:
+        </p>
+        <input type="password" class="input-pin-field" id="token-pin" maxlength="8" placeholder="••••••••">
+        <div style="display: flex; gap: 0.6rem;">
+          <button class="btn-secondary" onclick="goBackToSelection()" style="flex: 1; padding: 0.8rem; margin-left: 0;">Quay lại</button>
+          <button class="btn-primary" onclick="submitTokenPin()" style="flex: 2; padding: 0.8rem;">Xác thực & Ký số</button>
+        </div>
+      </div>
+
+      <!-- Step 3: SmartCA Wait Confirmation -->
+      <div id="modal-step-smartca-wait" class="hidden">
+        <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1.5rem; text-align: center; line-height: 1.5;">
+          Đã gửi yêu cầu xác thực ký số về số điện thoại đăng ký SmartCA của bạn.<br>
+          <strong>Vui lòng mở ứng dụng VNPT SmartCA trên điện thoại để duyệt.</strong>
+        </p>
+        <div class="signing-progress">
+          <div class="signing-spinner"></div>
+          <span style="font-size: 0.82rem; font-weight: 600; color: var(--color-accent); animation: pulse 1.5s infinite;">Đang chờ phê duyệt trên thiết bị di động...</span>
+        </div>
+      </div>
+
+      <!-- Step 4: Signing Progress animation -->
+      <div id="modal-step-progress" class="hidden">
+        <div class="signing-progress">
+          <div class="signing-spinner"></div>
+          <h4 id="progress-status" style="font-size: 0.9rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.35rem;">Đang kết nối thiết bị...</h4>
+          <p id="progress-sub" style="font-size: 0.78rem; color: var(--color-text-muted);">Vui lòng giữ kết nối Internet.</p>
+        </div>
+      </div>
+
+      <!-- Step 5: Success message -->
+      <div id="modal-step-success" class="hidden">
+        <div style="text-align: center; padding: 1rem 0;">
+          <div style="font-size: 3rem; margin-bottom: 1rem; color: #22c55e;">🎉</div>
+          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.5rem;">Ký số thành công!</h4>
+          <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
+            Hợp đồng đã được áp dụng chữ ký điện tử mã hóa SHA-256 an toàn từ VNPT-CA. Trạng thái hợp đồng đã được cập nhật thành công.
+          </p>
+          <button class="btn-primary" onclick="closeModal()" style="padding: 0.8rem 2rem;">Đóng</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Data representation representing the organized contract life cycle by Beneficiary Unit
+                let units = [
+      {
+        "id": "tyt_phuong_ben_cat",
+        "name": "TYT Phường Bến Cát",
+        "avatar": "BC",
+        "contracts": [
+          {
+            "id": "tyt_phuong_ben_cat-1",
+            "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT BEN CAT",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Bến Cát",
+            "fileName": "HD_2026_tyt_phuong_ben_cat.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_thoi_hoa",
+        "name": "TYT Phường Thới Hòa",
+        "avatar": "TH",
+        "contracts": [
+          {
+            "id": "tyt_phuong_thoi_hoa-1",
+            "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT THOI HOA",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Thới Hòa",
+            "fileName": "HD_2026_tyt_phuong_thoi_hoa.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "18,000,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_hoa_loi",
+        "name": "TYT Phường Hòa Lợi",
+        "avatar": "HL",
+        "contracts": [
+          {
+            "id": "tyt_phuong_hoa_loi-1",
+            "code": "20260101-02/HĐ/VNPTBCT.VNPTHCM-TYT HOA LOI",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Hòa Lợi",
+            "fileName": "TRAM Y TE PHUONG HOA LOI.pdf",
+            "fileSize": "39.2 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_tay_nam",
+        "name": "TYT Phường Tây Nam",
+        "avatar": "TN",
+        "contracts": [
+          {
+            "id": "tyt_phuong_tay_nam-1",
+            "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTTAYNAM",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tây Nam",
+            "fileName": "TYT TÂY NAM- Hợp đồng HIS_1.pdf",
+            "fileSize": "5.04 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_long_nguyen",
+        "name": "TYT Phường Long Nguyên",
+        "avatar": "LN",
+        "contracts": [
+          {
+            "id": "tyt_phuong_long_nguyen-1",
+            "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTLONGNGUYEN",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Long Nguyên",
+            "fileName": "TYT LONG NGYEN - HOP DONG HIS_1.pdf",
+            "fileSize": "4.72 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_phu_an",
+        "name": "TYT Phường Phú An",
+        "avatar": "PA",
+        "contracts": [
+          {
+            "id": "tyt_phuong_phu_an-1",
+            "code": "20260101-02/HĐ/VNPTBCT.VNPTHCM-TYT PHU AN",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Phú An",
+            "fileName": "TRAM Y TE PHUONG PHU AN.pdf",
+            "fileSize": "2.53 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_bau_bang",
+        "name": "TYT Xã Bàu Bàng",
+        "avatar": "BB",
+        "contracts": [
+          {
+            "id": "tyt_xa_bau_bang-1",
+            "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT BAUBANG",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Bàu Bàng",
+            "fileName": "HD_2026_tyt_xa_bau_bang.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "18,000,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_tru_van_tho",
+        "name": "TYT Xã Trừ Văn Thố",
+        "avatar": "TV",
+        "contracts": [
+          {
+            "id": "tyt_xa_tru_van_tho-1",
+            "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYTTRUVANTHO",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Trừ Văn Thố",
+            "fileName": "HD_2026_tyt_xa_tru_van_tho.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_phu_giao",
+        "name": "TYT Xã Phú Giáo",
+        "avatar": "PG",
+        "contracts": [
+          {
+            "id": "tyt_xa_phu_giao-1",
+            "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHUGIAO",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Phú Giáo",
+            "fileName": "TTYT PHÚ GIÁO- VNPT HIS.pdf",
+            "fileSize": "6.23 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "32,400,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_phuoc_thanh",
+        "name": "TYT Xã Phước Thành",
+        "avatar": "PT",
+        "contracts": [
+          {
+            "id": "tyt_xa_phuoc_thanh-1",
+            "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHUOCTHANH",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Phước Thành",
+            "fileName": "TTYT PHƯỚC THÀNH -VNPT HIS.pdf",
+            "fileSize": "5.64 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "32,400,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_an_long",
+        "name": "TYT Xã An Long",
+        "avatar": "AL",
+        "contracts": [
+          {
+            "id": "tyt_xa_an_long-1",
+            "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT ANLONG",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã An Long",
+            "fileName": "TTYT AN LONG-VNPT HIS.pdf",
+            "fileSize": "5.75 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "32,400,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_phuoc_hoa",
+        "name": "TYT Xã Phước Hòa",
+        "avatar": "PH",
+        "contracts": [
+          {
+            "id": "tyt_xa_phuoc_hoa-1",
+            "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHUOCHOA",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Phước Hòa",
+            "fileName": "TTYT PHƯỚC HOÀ- VNPT HIS.pdf",
+            "fileSize": "5.95 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_tan_hiep",
+        "name": "TYT Phường Tân Hiệp",
+        "avatar": "TH",
+        "contracts": [
+          {
+            "id": "tyt_phuong_tan_hiep-1",
+            "code": "20260120/VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/nhitp",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tân Hiệp",
+            "fileName": "HD_2026_tyt_phuong_tan_hiep.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_tan_uyen",
+        "name": "TYT Phường Tân Uyên",
+        "avatar": "TU",
+        "contracts": [
+          {
+            "id": "tyt_phuong_tan_uyen-1",
+            "code": "20260120/VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/nhitp",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tân Uyên",
+            "fileName": "HD_2026_tyt_phuong_tan_uyen.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "39,600,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_vinh_tan",
+        "name": "TYT Phường Vĩnh Tân",
+        "avatar": "VT",
+        "contracts": [
+          {
+            "id": "tyt_phuong_vinh_tan-1",
+            "code": "20260120/VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/nhitp",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Vĩnh Tân",
+            "fileName": "HD_2026_tyt_phuong_vinh_tan.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_binh_co",
+        "name": "TYT Phường Bình Cơ",
+        "avatar": "BC",
+        "contracts": [
+          {
+            "id": "tyt_phuong_binh_co-1",
+            "code": "20260120/VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/nhitp",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Bình Cơ",
+            "fileName": "HD_2026_tyt_phuong_binh_co.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_bac_tan_uyen",
+        "name": "TYT Xã Bắc Tân Uyên",
+        "avatar": "BT",
+        "contracts": [
+          {
+            "id": "tyt_xa_bac_tan_uyen-1",
+            "code": "260105-01/ VNPT TP.HCM- VNPT.TU/HĐDV HMIS LYPTL",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Bắc Tân Uyên",
+            "fileName": "VNP005060_1_20250609_103654_HỢP ĐỒNG HMIS TTYT BTU.pdf",
+            "fileSize": "0.59 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "16,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_thuong_tan",
+        "name": "TYT Xã Thường Tân",
+        "avatar": "TT",
+        "contracts": [
+          {
+            "id": "tyt_xa_thuong_tan-1",
+            "code": "VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/lyptl",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Thường Tân",
+            "fileName": "HD_2026_tyt_xa_thuong_tan.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "16,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_chanh_phu_hoa",
+        "name": "TYT Phường Chánh Phú Hòa",
+        "avatar": "CP",
+        "contracts": [
+          {
+            "id": "tyt_phuong_chanh_phu_hoa-1",
+            "code": "260225-01/ VNPT TP.HCM- VNPT.TU/HĐDV HMIS LYPTL",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Chánh Phú Hòa",
+            "fileName": "HD_2026_tyt_phuong_chanh_phu_hoa.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_binh_hoa",
+        "name": "TYT Phường Bình Hòa",
+        "avatar": "BH",
+        "contracts": [
+          {
+            "id": "tyt_phuong_binh_hoa-1",
+            "code": "20260205/HĐ/VNPTTAN.VNPTHCM-TYTPHUONGBINHHOA",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Bình Hòa",
+            "fileName": "TYT BINH HOA.pdf",
+            "fileSize": "27.29 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "18,000,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_lai_thieu",
+        "name": "TYT Phường Lái Thiêu",
+        "avatar": "LT",
+        "contracts": [
+          {
+            "id": "tyt_phuong_lai_thieu-1",
+            "code": "20260205/HĐ/VNPTTAN.VNPTHCM-TYTPHUONGLAITHIEU",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Lái Thiêu",
+            "fileName": "TYT LAI THIEU.pdf",
+            "fileSize": "3.95 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "32,400,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_thuan_an",
+        "name": "TYT Phường Thuận An",
+        "avatar": "TA",
+        "contracts": [
+          {
+            "id": "tyt_phuong_thuan_an-1",
+            "code": "20260402/37034254/VNPTTHUANAN/VNPT027226",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Thuận An",
+            "fileName": "HD_2026_tyt_phuong_thuan_an.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_thuan_giao",
+        "name": "TYT Phường Thuận Giao",
+        "avatar": "TG",
+        "contracts": [
+          {
+            "id": "tyt_phuong_thuan_giao-1",
+            "code": "20260205/HĐ/VNPTTAN.VNPTHCM-TYTPHUONGTHUANGIAO",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Thuận Giao",
+            "fileName": "TYT THUAN GIAO.pdf",
+            "fileSize": "4.28 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_tan_khanh",
+        "name": "TYT Phường Tân Khánh",
+        "avatar": "TK",
+        "contracts": [
+          {
+            "id": "tyt_phuong_tan_khanh-1",
+            "code": "20260301/HĐ/VNPTTAN.VNPTHCM-TYTTANKHANH",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tân Khánh",
+            "fileName": "TYT TAN KHANH.pdf",
+            "fileSize": "7.11 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "19,800,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_dau_tieng",
+        "name": "TYT Xã Dầu Tiếng",
+        "avatar": "DT",
+        "contracts": [
+          {
+            "id": "tyt_xa_dau_tieng-1",
+            "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTDAUTIENG",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Dầu Tiếng",
+            "fileName": "TYT DAU TIENG - HOP DONG HIS.pdf",
+            "fileSize": "2.62 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "39,600,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_long_hoa",
+        "name": "TYT Xã Long Hòa",
+        "avatar": "LH",
+        "contracts": [
+          {
+            "id": "tyt_xa_long_hoa-1",
+            "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTLONGHOA",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Long Hòa",
+            "fileName": "TYT LONG HOA - HOP DONG HIS 2026_1.pdf",
+            "fileSize": "3.84 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_minh_thanh",
+        "name": "TYT Xã Minh Thạnh",
+        "avatar": "MT",
+        "contracts": [
+          {
+            "id": "tyt_xa_minh_thanh-1",
+            "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTMINHTHANH",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Minh Thạnh",
+            "fileName": "TYT MINH THANH - HOP DONG HIS 012026_1.pdf",
+            "fileSize": "4.75 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "32,400,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_xa_thanh_an",
+        "name": "TYT Xã Thanh An",
+        "avatar": "TA",
+        "contracts": [
+          {
+            "id": "tyt_xa_thanh_an-1",
+            "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTTHANHAN",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Thanh An",
+            "fileName": "TYT THANH AN -HOP DONG HIS _1.pdf",
+            "fileSize": "4.64 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_binh_duong",
+        "name": "TYT Phường Bình Dương",
+        "avatar": "BD",
+        "contracts": [
+          {
+            "id": "tyt_phuong_binh_duong-1",
+            "code": "20260130/HĐ/VNPTTDM.VNPTHCM-TYTBINH DUONG",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Bình Dương",
+            "fileName": "HD_2026_tyt_phuong_binh_duong.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_chanh_hiep",
+        "name": "TYT Phường Chánh Hiệp",
+        "avatar": "CH",
+        "contracts": [
+          {
+            "id": "tyt_phuong_chanh_hiep-1",
+            "code": "20260125/3703433073/VNPTTDM/VNPT027189",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Chánh Hiệp",
+            "fileName": "TYT CHANH HIEP.pdf",
+            "fileSize": "2.11 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_phu_loi",
+        "name": "TYT Phường Phú Lợi",
+        "avatar": "PL",
+        "contracts": [
+          {
+            "id": "tyt_phuong_phu_loi-1",
+            "code": "20260120/3703432369/VNPTTDM/VNPT027189",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Phú Lợi",
+            "fileName": "BP-30M31_20260323_140607.pdf",
+            "fileSize": "2.28 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "25,200,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_thu_dau_mot",
+        "name": "TYT Phường Thủ Dầu Một",
+        "avatar": "TD",
+        "contracts": [
+          {
+            "id": "tyt_phuong_thu_dau_mot-1",
+            "code": "HĐ-32/2026/TD",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Thủ Dầu Một",
+            "fileName": "HD_2026_tyt_phuong_thu_dau_mot.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "108,000,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_an_phu",
+        "name": "TYT Phường An Phú",
+        "avatar": "AP",
+        "contracts": [
+          {
+            "id": "tyt_phuong_an_phu-1",
+            "code": "20260205/3703427802/VNPT.DAN/VNPT027134",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường An Phú",
+            "fileName": "TYT AN PHÚ.pdf",
+            "fileSize": "5.43 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "18,000,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_di_an",
+        "name": "TYT Phường Dĩ An",
+        "avatar": "DA",
+        "contracts": [
+          {
+            "id": "tyt_phuong_di_an-1",
+            "code": "20260316/3703430971/VNPT.DAN/CTV074880",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Dĩ An",
+            "fileName": "HD_2026_tyt_phuong_di_an.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "35,400,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_dong_hoa",
+        "name": "TYT Phường Đông Hòa",
+        "avatar": "DH",
+        "contracts": [
+          {
+            "id": "tyt_phuong_dong_hoa-1",
+            "code": "20260327-01/3703435659/VNPT.DAN/VNPT027135/HĐDV",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Đông Hòa",
+            "fileName": "HD_2026_tyt_phuong_dong_hoa.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "36,600,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "tyt_phuong_tan_dong_hiep",
+        "name": "TYT Phường Tân Đông Hiệp",
+        "avatar": "TD",
+        "contracts": [
+          {
+            "id": "tyt_phuong_tan_dong_hiep-1",
+            "code": "20260330/3703436638/VNPTDA/CTV082841",
+            "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tân Đông Hiệp",
+            "fileName": "HD_2026_tyt_phuong_tan_dong_hiep.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+            "value": "18,000,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "cong_ty_tnhh_phong_kham_da_khoa_sai_gon_tan_binh",
+        "name": "CÔNG TY TNHH PHÒNG KHÁM ĐA KHOA SÀI GÒN - TÂN BÌNH",
+        "avatar": "SG",
+        "contracts": [
+          {
+            "id": "cong_ty_tnhh_phong_kham_da_khoa_sai_gon_tan_binh-1",
+            "code": "HĐ-37/2026/SG",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY TNHH PHÒNG KHÁM ĐA KHOA SÀI GÒN - TÂN BÌNH",
+            "fileName": "VNP037608_1_20250822_024328_Úp_BBNT_HĐ_PHIẾU YC_PK TÂN BÌNH.pdf",
+            "fileSize": "10.61 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "42,000,000 VND",
+            "date": "22/08/2025",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "22/08/2025 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "benh_vien_y_hoc_co_truyen_tinh_binh_duong",
+        "name": "BỆNH VIỆN Y HỌC CỔ TRUYỀN TỈNH BÌNH DƯƠNG",
+        "avatar": "BD",
+        "contracts": [
+          {
+            "id": "benh_vien_y_hoc_co_truyen_tinh_binh_duong-1",
+            "code": "HĐ-38/2026/BD",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - BỆNH VIỆN Y HỌC CỔ TRUYỀN TỈNH BÌNH DƯƠNG",
+            "fileName": "HĐ KT YHCT_FN 14052025.pdf",
+            "fileSize": "25.74 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "153,000,000 VND",
+            "date": "14/05/2025",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "14/05/2025 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "benh_vien_sai_gon_binh_duong",
+        "name": "BỆNH VIỆN SÀI GÒN BÌNH DƯƠNG",
+        "avatar": "BD",
+        "contracts": [
+          {
+            "id": "benh_vien_sai_gon_binh_duong-1",
+            "code": "HĐ-39/2026/BD",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - BỆNH VIỆN SÀI GÒN BÌNH DƯƠNG",
+            "fileName": "HOP DONG BVSG HIS 01_10_2025.pdf",
+            "fileSize": "3.42 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "102,000,000 VND",
+            "date": "01/10/2025",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/10/2025 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "cong_ty_co_phan_benh_vien_my_phuoc",
+        "name": "CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC",
+        "avatar": "MP",
+        "contracts": [
+          {
+            "id": "cong_ty_co_phan_benh_vien_my_phuoc-1",
+            "code": "HĐ-40/2026/MP",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC",
+            "fileName": "VNP005069_1_20250709_114003_HĐ HIS BV MY PHƯỚC.pdf",
+            "fileSize": "2.49 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "549,000,000 VND",
+            "date": "09/07/2025",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "09/07/2025 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "cong_ty_co_phan_benh_vien_da_khoa_nam_anh",
+        "name": "CÔNG TY CỔ PHẦN BỆNH VIỆN ĐA KHOA NĂM ANH",
+        "avatar": "DK",
+        "contracts": [
+          {
+            "id": "cong_ty_co_phan_benh_vien_da_khoa_nam_anh-1",
+            "code": "HĐ-41/2026/DK",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN ĐA KHOA NĂM ANH",
+            "fileName": "VNP004979_1_20231113_060503_HIS_LIS_Nam Anh_2023.pdf",
+            "fileSize": "3.62 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "30,600,000 VND",
+            "date": "13/11/2023",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "13/11/2023 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "trung_tam_y_te_kv_ben_cat",
+        "name": "Trung Tâm Y Tế KV Bến Cát",
+        "avatar": "BC",
+        "contracts": [
+          {
+            "id": "trung_tam_y_te_kv_ben_cat-1",
+            "code": "20260406/3700673831/VNPT BCT/VNPT027139/HDDV YTS",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Bến Cát",
+            "fileName": "TTYT_BCT_2026_HIS_LIS_Hợp đồng đã ký 2026.pdf",
+            "fileSize": "4.11 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "233,280,000 VND",
+            "date": "01/04/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/04/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "trung_tam_y_te_kv_phu_giao",
+        "name": "Trung Tâm Y Tế KV Phú Giáo",
+        "avatar": "PG",
+        "contracts": [
+          {
+            "id": "trung_tam_y_te_kv_phu_giao-1",
+            "code": "HĐ-43/2026/PG",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Phú Giáo",
+            "fileName": "TTYT , HĐ, BBNT.pdf",
+            "fileSize": "10.47 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "226,800,000 VND",
+            "date": "12/05/2025",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "12/05/2025 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "trung_tam_y_te_kv_tan_uyen",
+        "name": "Trung Tâm Y Tế KV Tân Uyên",
+        "avatar": "TU",
+        "contracts": [
+          {
+            "id": "trung_tam_y_te_kv_tan_uyen-1",
+            "code": "HĐ-44/2026/TU",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Tân Uyên",
+            "fileName": "HDG 20260120 HIS LIS RIS_PACS TTYT TUN.pdf",
+            "fileSize": "4.52 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "1,619,000,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "trung_tam_y_te_kv_bac_tan_uyen",
+        "name": "Trung Tâm Y Tế KV Bắc Tân Uyên",
+        "avatar": "BT",
+        "contracts": [
+          {
+            "id": "trung_tam_y_te_kv_bac_tan_uyen-1",
+            "code": "HĐ-45/2026/BT",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Bắc Tân Uyên",
+            "fileName": "CTV033214_1_20250709_110716_HỢP ĐỒNG HIS TTYT HUYỆN BẮC TÂN UYÊN.pdf",
+            "fileSize": "3.16 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "24,000,000 VND",
+            "date": "09/07/2025",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "09/07/2025 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "trung_tam_y_te_kv_dau_tieng",
+        "name": "Trung Tâm Y Tế KV Dầu Tiếng",
+        "avatar": "DT",
+        "contracts": [
+          {
+            "id": "trung_tam_y_te_kv_dau_tieng-1",
+            "code": "HĐ-46/2026/DT",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Dầu Tiếng",
+            "fileName": "TTYT_DTG_HĐ His-Lis-Ris, Pacs_2026.pdf",
+            "fileSize": "6.48 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "402,000,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "trung_tam_y_te_kv_thuan_an",
+        "name": "Trung Tâm Y tế KV Thuận An",
+        "avatar": "TA",
+        "contracts": [
+          {
+            "id": "trung_tam_y_te_kv_thuan_an-1",
+            "code": "HĐ-47/2026/TA",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y tế KV Thuận An",
+            "fileName": "hop dong da ky HIS LIS TTYT TA.pdf",
+            "fileSize": "10.51 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "1,800,000,000 VND",
+            "date": "10/06/2025",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "10/06/2025 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "trung_tam_y_te_kv_bau_bang",
+        "name": "Trung Tâm Y Tế KV Bàu Bàng",
+        "avatar": "BB",
+        "contracts": [
+          {
+            "id": "trung_tam_y_te_kv_bau_bang-1",
+            "code": "20260403/3702272634 /VNPT PGO/CTV091408/HDDV YTS",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Bàu Bàng",
+            "fileName": "2026_TTYT Bàu Bàng.pdf",
+            "fileSize": "18.54 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "116,640,000 VND",
+            "date": "04/04/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "04/04/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "benh_vien_ben_san",
+        "name": "Bệnh viện Bến Sắn",
+        "avatar": "BS",
+        "contracts": [
+          {
+            "id": "benh_vien_ben_san-1",
+            "code": "20260401/HĐKT/BENHVIENBENSAN- VNPTТР.НСМ-VNPT.TU/KHANHNN)",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Bệnh viện Bến Sắn",
+            "fileName": "Hop dong thau ben san.pdf",
+            "fileSize": "6.31 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "211,370,000 VND",
+            "date": "01/04/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/04/2026 10:00:00"
+          },
+          {
+            "id": "benh_vien_ben_san-2",
+            "code": "HDBDG0904072514/VNPT VNP-VNPT TUN/HĐ VNPT EMR",
+            "name": "Hợp đồng thuê phần mềm Bệnh án điện tử EMR - Bệnh viện Bến Sắn",
+            "fileName": "Hop dong phan mem 3 thang (01-03.2026).pdf",
+            "fileSize": "5.37 MB",
+            "package": "Hệ thống Bệnh án điện tử EMR",
+            "value": "49,174,000 VND",
+            "date": "01/01/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/01/2026 10:00:00"
+          }
+        ]
+      },
+      {
+        "id": "bv_columbia_asian",
+        "name": "BV Columbia Asian",
+        "avatar": "CA",
+        "contracts": [
+          {
+            "id": "bv_columbia_asian-1",
+            "code": "HĐ-51/2026/CA",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - BV Columbia Asian",
+            "fileName": "HD_2026_bv_columbia_asian.pdf",
+            "fileSize": "1.5 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "90,000,000 VND",
+            "date": "01/04/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "01/04/2026 10:00:00"
+          }
+        ]
+      }
+    ];
+
+    let selectedUnitId = "trung_tam_y_te_kv_bac_tan_uyen";
+    let selectedContractId = null;
+    let selectedSignMethod = '';
+
+    function updateGlobalStats() {
+      let totalCount = 0;
+      let totalVal = 0;
+      let signedCount = 0;
+      let signedVal = 0;
+      let pendingCount = 0;
+      let pendingVal = 0;
+
+      units.forEach(u => {
+        u.contracts.forEach(c => {
+          totalCount++;
+                    let valNum = 0;
+          if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp')) {
+            valNum = parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+          }
+          if (c.status === 'signed') {
+            signedCount++;
+            signedVal += valNum;
+          } else {
+            pendingCount++;
+            pendingVal += valNum;
+          }
+          totalVal += valNum;
+        });
+      });
+
+      document.getElementById('stat-total-cnt').textContent = totalCount;
+      document.getElementById('stat-total-val').textContent = (totalVal / 1e9).toFixed(2) + ' tỷ VND';
+      document.getElementById('stat-signed-cnt').textContent = signedCount;
+      document.getElementById('stat-signed-val').textContent = (signedVal / 1e9).toFixed(2) + ' tỷ VND (' + (signedVal / (totalVal || 1) * 100).toFixed(1) + '%)';
+      document.getElementById('stat-pending-cnt').textContent = pendingCount;
+      document.getElementById('stat-pending-val').textContent = (pendingVal / 1e9).toFixed(2) + ' tỷ VND (' + (pendingVal / (totalVal || 1) * 100).toFixed(1) + '%)';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateGlobalStats();
+      // Initialize theme icon text
+      const savedTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
+      const themeIcon = document.getElementById('theme-icon');
+      if (themeIcon) {
+        themeIcon.textContent = savedTheme === 'light' ? '🌙' : '☀️';
+      }
+
+      // Listen to theme changes from other tabs
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'vnpt_his_theme') {
+          const newTheme = e.newValue || 'dark';
+          if (newTheme === 'light') {
+            document.body.classList.add('light-theme');
+            if (themeIcon) themeIcon.textContent = '🌙';
+          } else {
+            document.body.classList.remove('light-theme');
+            if (themeIcon) themeIcon.textContent = '☀️';
+          }
+        }
+      });
+
+      // Unit Search input handler
+      const searchInput = document.getElementById('unit-search');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          renderUnitsList(e.target.value);
+        });
+      }
+
+      // Render initial sidebar and table
+      renderUnitsList();
+      selectUnit("trung_tam_y_te_kv_bac_tan_uyen");
+
+      // Show Sign Modal click handler
+      document.getElementById('btn-show-sign-modal').addEventListener('click', () => {
+        openSignModal();
+      });
+
+      // PDF click handler
+      document.getElementById('btn-download-pdf').addEventListener('click', () => {
+        const c = getSelectedContract();
+        if (c) {
+          alert(`Đang tải xuống tệp tin hợp đồng: ${c.fileName} (${c.fileSize})`);
+        }
+      });
+    });
+
+    // Theme toggler
+    function toggleTheme() {
+      const currentTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      localStorage.setItem('vnpt_his_theme', newTheme);
+      
+      if (newTheme === 'light') {
+        document.body.classList.add('light-theme');
+        document.getElementById('theme-icon').textContent = '🌙';
+      } else {
+        document.body.classList.remove('light-theme');
+        document.getElementById('theme-icon').textContent = '☀️';
+      }
+    }
+
+    // Helper: get selected contract
+    function getSelectedContract() {
+      if (!selectedUnitId || !selectedContractId) return null;
+      const unit = units.find(u => u.id === selectedUnitId);
+      if (!unit) return null;
+      return unit.contracts.find(c => c.id === selectedContractId);
+    }
+
+    // Render units list on the left column
+    function renderUnitsList(filterText = '') {
+      const container = document.getElementById('units-list-container');
+      if (!container) return;
+      
+      container.innerHTML = '';
+      const query = filterText.toLowerCase().trim();
+      
+      units.forEach(unit => {
+        if (query && !unit.name.toLowerCase().includes(query)) return;
+        
+        // Count statuses
+        const total = unit.contracts.length;
+        const pendingCount = unit.contracts.filter(c => c.status === 'pending').length;
+        const signedCount = unit.contracts.filter(c => c.status === 'signed').length;
+        
+        let statusBadgeText = `Đã ký ${signedCount}/${total}`;
+        let badgeColor = 'var(--color-text-muted)';
+        if (pendingCount > 0) {
+          statusBadgeText = `${pendingCount} chờ ký`;
+          badgeColor = '#eab308';
+        } else if (signedCount === total) {
+          badgeColor = '#22c55e';
+        }
+
+        const div = document.createElement('div');
+        div.className = `unit-card ${unit.id === selectedUnitId ? 'active' : ''}`;
+        div.onclick = () => selectUnit(unit.id);
+        div.innerHTML = `
+          <div class="unit-avatar">${unit.avatar}</div>
+          <div class="unit-info">
+            <div class="unit-name" title="${unit.name}">${unit.name}</div>
+            <div class="unit-meta">
+              <span>${total} văn bản</span>
+              <span style="color: ${badgeColor}; font-weight: 700;">${statusBadgeText}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Select unit action
+    function selectUnit(unitId) {
+      selectedUnitId = unitId;
+      selectedContractId = null;
+      
+      // Update active cards
+      document.querySelectorAll('.unit-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      // Highlight current selected card
+      renderUnitsList(document.getElementById('unit-search')?.value || '');
+      
+      // Update table title
+      const unit = units.find(u => u.id === unitId);
+      if (unit) {
+        document.getElementById('selected-unit-title').textContent = `Hợp đồng tại ${unit.name}`;
+      }
+
+      renderContractsTable();
+
+      // Reset detail panel
+      document.getElementById('detail-placeholder').classList.remove('hidden');
+      document.getElementById('detail-content').classList.add('hidden');
+    }
+
+    // Render Table of Contracts for Selected Unit
+    function renderContractsTable() {
+      const tbody = document.getElementById('contracts-tbody');
+      tbody.innerHTML = '';
+
+      const unit = units.find(u => u.id === selectedUnitId);
+      if (!unit || unit.contracts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--color-text-muted);">Không có văn bản nào.</td></tr>';
+        return;
+      }
+
+      unit.contracts.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.className = `contract-row ${c.id === selectedContractId ? 'selected' : ''}`;
+        tr.onclick = () => selectContract(c.id);
+
+        let statusClass = 'status-draft';
+        let statusText = 'Đang soạn thảo';
+        if (c.status === 'signed') {
+          statusClass = 'status-signed';
+          statusText = 'Đã ký';
+        } else if (c.status === 'pending') {
+          statusClass = 'status-pending';
+          statusText = 'Chờ ký';
+        }
+
+        tr.innerHTML = `
+          <td><strong>${c.code}</strong></td>
+          <td style="font-weight: 600; color: var(--color-text-primary);" title="${c.name}">${c.name}</td>
+          <td style="font-weight: 700; color: var(--color-accent);">${c.value}</td>
+          <td style="text-align: center;"><span class="status-pill ${statusClass}">${statusText}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Select contract
+    function selectContract(contractId) {
+      selectedContractId = contractId;
+      renderContractsTable();
+
+      document.getElementById('detail-placeholder').classList.add('hidden');
+      const detailContainer = document.getElementById('detail-content');
+      detailContainer.classList.remove('hidden');
+
+      const c = getSelectedContract();
+      if (!c) return;
+
+      document.getElementById('detail-contract-name').textContent = c.name;
+      document.getElementById('detail-contract-code').textContent = c.code;
+      document.getElementById('detail-package').textContent = c.package;
+      document.getElementById('detail-value').textContent = c.value;
+      document.getElementById('detail-date').textContent = c.date;
+      document.getElementById('detail-filename').textContent = `${c.fileName} (${c.fileSize})`;
+
+      // Status pill in details
+      const pill = document.getElementById('detail-status-pill');
+      pill.textContent = c.status === 'signed' ? 'Đã ký' : c.status === 'pending' ? 'Chờ ký' : 'Đang soạn thảo';
+      pill.className = `status-pill ${c.status === 'signed' ? 'status-signed' : c.status === 'pending' ? 'status-pending' : 'status-draft'}`;
+
+      // Update Milestones
+      updateMilestone('ms-1', c.ms1Done);
+      updateMilestone('ms-2', c.ms2Done);
+      updateMilestone('ms-3', c.ms3Done);
+
+      const ms2Desc = document.getElementById('ms-2-desc');
+      if (c.status === 'signed') {
+        ms2Desc.textContent = "Hợp đồng đã được ký số hợp pháp.";
+      } else {
+        ms2Desc.textContent = "Yêu cầu hoàn thành thủ tục ký số USB Token/SmartCA.";
+      }
+
+      // Hide/Show digital signature stamp
+      const stampContainer = document.getElementById('detail-stamp-container');
+      if (c.status === 'signed') {
+        stampContainer.innerHTML = `
+          <div class="digital-stamp">
+            <span style="font-size: 2.2rem;">🛡️</span>
+            <div style="font-size: 0.8rem; line-height: 1.4;">
+              <div style="color: #22c55e; font-weight: 800; font-size: 0.88rem; text-transform: uppercase;">Chữ ký số hợp lệ</div>
+              <div style="color: var(--color-text-primary); font-weight: 600;">Ký bởi: Lê Trung Kiên</div>
+              <div style="color: var(--color-text-muted); font-size: 0.72rem;">Đơn vị cấp phát: ${c.signedBy || 'VNPT-CA'}</div>
+              <div style="color: var(--color-text-muted); font-size: 0.72rem;">Thời gian ký: ${c.signedTime || '10/06/2026'}</div>
+            </div>
+          </div>
+        `;
+      } else {
+        stampContainer.innerHTML = '';
+      }
+
+      // Show/Hide sign button
+      const signBtn = document.getElementById('btn-show-sign-modal');
+      if (c.status === 'pending') {
+        signBtn.style.display = 'block';
+      } else {
+        signBtn.style.display = 'none';
+      }
+    }
+
+    function updateMilestone(id, isDone) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('done', isDone);
+      }
+    }
+
+    // Modal Control
+    function openSignModal() {
+      document.getElementById('sign-modal').classList.add('active');
+      switchModalStep('selection');
+    }
+
+    function closeModal() {
+      document.getElementById('sign-modal').classList.remove('active');
+      document.getElementById('token-pin').value = '';
+    }
+
+    function switchModalStep(step) {
+      document.getElementById('modal-step-selection').classList.toggle('hidden', step !== 'selection');
+      document.getElementById('modal-step-pin').classList.toggle('hidden', step !== 'pin');
+      document.getElementById('modal-step-smartca-wait').classList.toggle('hidden', step !== 'smartca-wait');
+      document.getElementById('modal-step-progress').classList.toggle('hidden', step !== 'progress');
+      document.getElementById('modal-step-success').classList.toggle('hidden', step !== 'success');
+    }
+
+    // Start signing flow
+    function startSigning(method) {
+      selectedSignMethod = method;
+      if (method === 'token') {
+        switchModalStep('pin');
+      } else {
+        switchModalStep('smartca-wait');
+        
+        // Simulate phone confirmation approval in 3 seconds
+        setTimeout(() => {
+          runSigningProgressAnimation();
+        }, 3000);
+      }
+    }
+
+    function goBackToSelection() {
+      switchModalStep('selection');
+    }
+
+    function submitTokenPin() {
+      const pin = document.getElementById('token-pin').value;
+      if (pin !== '12345678') {
+        alert("Mã PIN USB Token không chính xác! Thử lại với mã mặc định 12345678");
+        return;
+      }
+      runSigningProgressAnimation();
+    }
+
+    // Progress animation simulator
+    function runSigningProgressAnimation() {
+      switchModalStep('progress');
+      
+      const statusEl = document.getElementById('progress-status');
+      const subEl = document.getElementById('progress-sub');
+      
+      const steps = [
+        { status: "Đang kết nối dịch vụ chữ ký số...", sub: "Kiểm tra chứng thư số..." },
+        { status: "Đang tạo mã hash SHA-256...", sub: "Chuẩn hóa tài liệu..." },
+        { status: "Đang áp dụng chữ ký điện tử...", sub: "Mã hóa khóa bí mật..." },
+        { status: "Đang kiểm tra chứng thư số (VNPT-CA)...", sub: "Xác thực danh tính..." },
+        { status: "Đồng bộ hóa tài liệu ký số lên máy chủ...", sub: "Lưu trữ đám mây..." }
+      ];
+
+      let stepIdx = 0;
+      const interval = setInterval(() => {
+        if (stepIdx < steps.length) {
+          statusEl.textContent = steps[stepIdx].status;
+          subEl.textContent = steps[stepIdx].sub;
+          stepIdx++;
+        } else {
+          clearInterval(interval);
+          completeSigning();
+        }
+      }, 1000);
+    }
+
+    // Complete signature
+    function completeSigning() {
+      const c = getSelectedContract();
+      if (c) {
+        c.status = 'signed';
+        c.ms2Done = true;
+        
+        const now = new Date();
+        const formattedDate = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        
+        if (selectedSignMethod === 'token') {
+          c.signedBy = "Lê Trung Kiên (USB Token GP2-1002517)";
+        } else {
+          c.signedBy = "Lê Trung Kiên (SmartCA Remote ID: VNPT-871971)";
+        }
+        c.signedTime = formattedDate;
+
+        // Refresh lists and details
+        renderUnitsList(document.getElementById('unit-search')?.value || '');
+        renderContractsTable();
+        updateGlobalStats();
+        selectContract(selectedContractId);
+        
+        // Show success modal step
+        switchModalStep('success');
+      }
+    }
+
+    function pad(n) {
+      return n < 10 ? '0' + n : n;
+    }
+  </script>
+</body>
+</html>
