@@ -1971,7 +1971,7 @@
           }
         ]
       }
-    ]];
+    ];
 
     // Database state management
     let storedUnits = localStorage.getItem('vnpt_his_units');
@@ -2151,10 +2151,10 @@
         if (validContractsCount === 0) return; // Skip unit if no contracts for this year
         const total = validContractsCount;
         
-        let statusBadgeText = \Đã ký \/\;
+        let statusBadgeText = `${signedCount}/${total} Đã ký`;
         let badgeColor = 'var(--color-text-muted)';
         if (pendingCount > 0) {
-          statusBadgeText = \ chờ ký\;
+          statusBadgeText = `${pendingCount}/${total} chờ ký`;
           badgeColor = '#eab308';
         } else if (signedCount === total) {
           badgeColor = '#22c55e';
