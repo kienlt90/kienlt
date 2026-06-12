@@ -577,7 +577,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="match-status-badge ${statusClass}">${statusText}</span>
         </div>
         <div style="font-size: 11.5px; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 5px; margin-top: -4px; margin-bottom: 6px; letter-spacing: 0.3px;">
-          📅 ${match.date} • 🕒 ${match.time} (Giờ VN)
+          📅 ${match.date} • 🕒 ${match.time.replace(':', 'h')} (Giờ VN)
         </div>
         
         <div class="scoreboard" style="margin: 12px 0;">
