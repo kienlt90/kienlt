@@ -181,9 +181,9 @@ function generateMatchSchedule() {
         score2: score2,
         yc1: yc1,
         rc1: rc1,
-        yc2: yc2,
         rc2: rc2,
-        status: status
+        status: status,
+        matchTime: ""
       });
     });
   });

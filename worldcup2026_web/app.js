@@ -535,6 +535,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const passStatus = statusFilter === "ALL" || m.status === statusFilter;
       return passGroup && passRound && passStatus;
     });
+    // Sắp xếp các trận đấu theo ngày và giờ (Cũ đến mới)
+    filteredMatches.sort((a, b) => {
+      // Ngày dạng DD/MM/YYYY
+      const [dayA, monthA, yearA] = a.date.split("/");
+      const [dayB, monthB, yearB] = b.date.split("/");
+      const dateA = new Date(`${yearA}-${monthA}-${dayA}T${a.time}:00`);
+      const dateB = new Date(`${yearB}-${monthB}-${dayB}T${b.time}:00`);
+      return dateA - dateB;
+    });
 
     if (filteredMatches.length === 0) {
       container.innerHTML = `
@@ -551,8 +560,16 @@ document.addEventListener("DOMContentLoaded", () => {
       card.id = `match-card-${match.id}`;
 
       const isPlayed = match.score1 !== null && match.score2 !== null;
-      const statusClass = isPlayed ? "status-played" : "status-unplayed";
-      const statusText = isPlayed ? "Kết thúc" : "Chưa đấu";
+      let statusClass = "status-unplayed";
+      let statusText = "Chưa đấu";
+
+      if (match.status === "Đang đá") {
+        statusClass = "status-live";
+        statusText = `Đang đá ${match.matchTime ? '(' + match.matchTime + ')' : ''}`;
+      } else if (match.status === "Kết thúc") {
+        statusClass = "status-played";
+        statusText = "Kết thúc";
+      }
 
       card.innerHTML = `
         <div class="match-top-info" style="margin-bottom: 6px;">
@@ -1375,6 +1392,7 @@ document.addEventListener("DOMContentLoaded", () => {
               matchedMatch.score1 = isNaN(score1) ? 0 : score1;
               matchedMatch.score2 = isNaN(score2) ? 0 : score2;
               matchedMatch.status = espnState === "post" ? "Kết thúc" : "Đang đá";
+              matchedMatch.matchTime = event.status.type.shortDetail || (event.status.displayClock ? event.status.displayClock + "'" : "");
               updatedCount++;
             }
           }
