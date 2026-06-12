@@ -2020,6 +2020,9 @@
     }
 
     function updateGlobalStats() {
+      const yearSelect = document.getElementById('dashboard-year-select');
+      const selectedYear = yearSelect ? yearSelect.value : '2026';
+
       let totalCount = 0;
       let totalVal = 0;
       let signedCount = 0;
@@ -2029,9 +2032,14 @@
 
       units.forEach(u => {
         u.contracts.forEach(c => {
+          let cYear = '2026';
+          if (c.id.includes('-2027')) cYear = '2027';
+          if (c.id.includes('-2028')) cYear = '2028';
+          if (selectedYear !== 'all' && cYear !== selectedYear) return;
+
           totalCount++;
           let valNum = 0;
-          if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp')) {
+          if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
             valNum = parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
           }
           if (c.status === 'signed') {
@@ -2045,13 +2053,20 @@
         });
       });
 
-      document.getElementById('stat-total-cnt').textContent = totalCount;
-      document.getElementById('stat-total-val').textContent = (totalVal / 1e9).toFixed(2) + ' tỷ VND';
-      document.getElementById('stat-signed-cnt').textContent = signedCount;
-      document.getElementById('stat-signed-val').textContent = (signedVal / 1e9).toFixed(2) + ' tỷ VND (' + (signedVal / (totalVal || 1) * 100).toFixed(1) + '%)';
-      document.getElementById('stat-pending-cnt').textContent = pendingCount;
-      document.getElementById('stat-pending-val').textContent = (pendingVal / 1e9).toFixed(2) + ' tỷ VND (' + (pendingVal / (totalVal || 1) * 100).toFixed(1) + '%)';
+      const statTotalCnt = document.getElementById('stat-total-cnt');
+      if (statTotalCnt) statTotalCnt.textContent = totalCount;
+      const statTotalVal = document.getElementById('stat-total-val');
+      if (statTotalVal) statTotalVal.textContent = (totalVal / 1e9).toFixed(2) + ' tỷ VND';
+      const statSignedCnt = document.getElementById('stat-signed-cnt');
+      if (statSignedCnt) statSignedCnt.textContent = signedCount;
+      const statSignedVal = document.getElementById('stat-signed-val');
+      if (statSignedVal) statSignedVal.textContent = (signedVal / 1e9).toFixed(2) + ' tỷ VND (' + (signedVal / (totalVal || 1) * 100).toFixed(1) + '%)';
+      const statPendingCnt = document.getElementById('stat-pending-cnt');
+      if (statPendingCnt) statPendingCnt.textContent = pendingCount;
+      const statPendingVal = document.getElementById('stat-pending-val');
+      if (statPendingVal) statPendingVal.textContent = (pendingVal / 1e9).toFixed(2) + ' tỷ VND (' + (pendingVal / (totalVal || 1) * 100).toFixed(1) + '%)';
     }
+
 
     // Helper to get selected unit
     function getSelectedUnit() {
@@ -2580,8 +2595,12 @@
       // Theme initializer setup
       const savedTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
       const themeIcon = document.getElementById('theme-icon');
-      if (themeIcon) {
-        themeIcon.textContent = savedTheme === 'light' ? '🌙' : '☀️';
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        if (themeIcon) themeIcon.textContent = '🌙';
+      } else {
+        document.body.classList.remove('light-theme');
+        if (themeIcon) themeIcon.textContent = '☀️';
       }
 
       // Listen to theme storage events
@@ -2744,6 +2763,144 @@
         });
       }
     });
+
+    // Add Contract Modal Controls and submission
+    function openAddContractModal() {
+      const modal = document.getElementById('add-contract-modal');
+      if (!modal) return;
+
+      // Populate units select dropdown
+      const unitSelect = document.getElementById('add-contract-unit');
+      if (unitSelect) {
+        unitSelect.innerHTML = '';
+        units.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = u.id;
+          opt.textContent = u.name;
+          unitSelect.appendChild(opt);
+        });
+        // Pre-select the currently active unit
+        unitSelect.value = selectedUnitId || (units.length > 0 ? units[0].id : '');
+      }
+
+      // Reset input fields
+      const codeInput = document.getElementById('add-contract-code');
+      const nameInput = document.getElementById('add-contract-name');
+      const valueInput = document.getElementById('add-contract-value');
+      const dateInput = document.getElementById('add-contract-date');
+      const statusSelect = document.getElementById('add-contract-status');
+
+      if (codeInput) codeInput.value = '';
+      if (nameInput) nameInput.value = '';
+      if (valueInput) valueInput.value = '';
+      if (dateInput) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        dateInput.value = `${yyyy}-${mm}-${dd}`;
+      }
+      if (statusSelect) statusSelect.value = 'signed';
+
+      modal.classList.add('active');
+    }
+
+    function closeAddContractModal() {
+      const modal = document.getElementById('add-contract-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function submitAddContract() {
+      const unitSelect = document.getElementById('add-contract-unit');
+      const codeInput = document.getElementById('add-contract-code');
+      const nameInput = document.getElementById('add-contract-name');
+      const valueInput = document.getElementById('add-contract-value');
+      const dateInput = document.getElementById('add-contract-date');
+      const statusSelect = document.getElementById('add-contract-status');
+
+      const unitId = unitSelect ? unitSelect.value : '';
+      const code = codeInput ? codeInput.value.trim() : '';
+      const name = nameInput ? nameInput.value.trim() : '';
+      const rawValue = valueInput ? valueInput.value.trim() : '';
+      const rawDate = dateInput ? dateInput.value : '';
+      const status = statusSelect ? statusSelect.value : 'signed';
+
+      if (!unitId) {
+        alert('Vui lòng chọn đơn vị thụ hưởng!');
+        return;
+      }
+      if (!name) {
+        alert('Vui lòng nhập tên/nội dung hợp đồng!');
+        return;
+      }
+      if (!rawValue) {
+        alert('Vui lòng nhập giá trị hợp đồng!');
+        return;
+      }
+
+      let formattedDate = '';
+      let year = '2026';
+      if (rawDate) {
+        const parts = rawDate.split('-');
+        if (parts.length === 3) {
+          formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+          year = parts[0];
+        }
+      }
+      if (!formattedDate) {
+        const today = new Date();
+        formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+        year = String(today.getFullYear());
+      }
+
+      let valueStr = rawValue;
+      if (!valueStr.toUpperCase().includes('VND') && !valueStr.includes('đơn giá') && !valueStr.includes('Đơn giá')) {
+        valueStr = valueStr + ' VND';
+      }
+
+      const targetUnit = units.find(u => u.id === unitId);
+      if (!targetUnit) {
+        alert('Không tìm thấy đơn vị thụ hưởng!');
+        return;
+      }
+
+      const contractId = `${unitId}-${Date.now()}-${year}`;
+
+      const newContract = {
+        id: contractId,
+        code: code || `HD-NEW-${Date.now().toString().slice(-4)}`,
+        name: name,
+        fileName: `HD_${year}_new_${Date.now().toString().slice(-4)}.pdf`,
+        fileSize: "1.0 MB",
+        package: "Hệ thống Quản lý Y tế Cơ sở HMIS",
+        value: valueStr,
+        date: formattedDate,
+        endDate: `31/12/${year}`,
+        status: status,
+        ms1Done: true,
+        ms2Done: status === 'signed',
+        ms3Done: status === 'signed'
+      };
+
+      if (status === 'signed') {
+        newContract.signedBy = "Lê Trung Kiên (SmartCA Remote ID: VNPT-871971)";
+        newContract.signedTime = formattedDate + " 09:00:00";
+      }
+
+      targetUnit.contracts.push(newContract);
+
+      localStorage.setItem('vnpt_his_units', JSON.stringify(units));
+
+      updateGlobalStats();
+      renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
+
+      if (selectedUnitId === unitId) {
+        renderContractsTable();
+      }
+
+      closeAddContractModal();
+      alert('Đã bổ sung hợp đồng mới thành công!');
+    }
   </script>
 
   <!-- MODAL DIALOG FOR ADDING CONTRACT -->
