@@ -31,7 +31,7 @@
   --text-muted: #9ca3af;
   --text-dark: #4b5563;
   
-  --font-main: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-main: 'Be Vietnam Pro', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1128,3 +1128,173 @@ footer {
   display: inline-block;
   vertical-align: middle;
 }
+
+/* ==========================================================================
+   LIGHT THEME OVERRIDES FOR WORLD CUP MODULE
+   ========================================================================== */
+body.light-theme {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-bg-hover: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(15, 23, 42, 0.08);
+  --card-border-hover: rgba(245, 158, 11, 0.45);
+  
+  --primary: #d97706; /* Darker Gold for visibility on light bg */
+  --primary-glow: rgba(217, 119, 6, 0.12);
+  
+  --emerald: #059669; /* Darker green */
+  --emerald-glow: rgba(5, 150, 105, 0.1);
+  
+  --gold-highlight: rgba(251, 191, 36, 0.12);
+  
+  --red: #dc2626; /* Darker red */
+  --red-glow: rgba(220, 38, 38, 0.1);
+  
+  --yellow: #ca8a04; /* Darker yellow */
+  --blue: #2563eb; /* Darker blue */
+  --blue-glow: rgba(37, 99, 235, 0.1);
+  
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dark: #94a3b8;
+}
+
+/* Specific adjustments for light theme on world cup */
+body.light-theme header {
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-theme .glow-orb {
+  opacity: 0.04;
+}
+
+body.light-theme .premium-table th {
+  background: rgba(15, 23, 42, 0.03) !important;
+  color: var(--text-main) !important;
+  border-bottom: 2px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-theme .premium-table tr {
+  border-bottom: 1px solid rgba(15, 23, 42, 0.05) !important;
+}
+
+body.light-theme .premium-table tr:hover {
+  background: rgba(15, 23, 42, 0.015) !important;
+}
+
+body.light-theme .sidebar-card {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(15, 23, 42, 0.06) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+}
+
+body.light-theme .nav-btn:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: var(--text-main) !important;
+}
+
+body.light-theme .nav-btn.active {
+  background: rgba(245, 158, 11, 0.1) !important;
+  color: var(--primary) !important;
+}
+
+body.light-theme .rule-num {
+  background: rgba(15, 23, 42, 0.05) !important;
+  color: var(--text-main) !important;
+}
+
+body.light-theme .score-val-input {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: var(--text-main) !important;
+}
+
+body.light-theme .score-control-btn {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  color: var(--text-main) !important;
+}
+
+body.light-theme .score-control-btn:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-theme .card-btn {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  color: var(--text-main) !important;
+}
+
+body.light-theme .card-btn:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-theme .group-container {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(15, 23, 42, 0.06) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+}
+
+body.light-theme .bracket-container {
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+body.light-theme .btn-toggle-bracket.secondary-btn {
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: var(--text-main) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+body.light-theme .btn-toggle-bracket.secondary-btn:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-theme .bracket-stage-title {
+  color: var(--text-main) !important;
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+body.light-theme .bracket-match-item {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-theme .bracket-match-item.highlight-match {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.12) !important;
+}
+
+body.light-theme .bracket-team-row {
+  border-bottom-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-theme .bracket-team-row.winner-team {
+  color: var(--text-main) !important;
+}
+
+body.light-theme .bracket-team-score {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  color: var(--primary) !important;
+}
+
+body.light-theme .bracket-match-card-tree {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-theme .tree-match-title {
+  border-bottom-color: rgba(0, 0, 0, 0.04) !important;
+  color: var(--text-muted) !important;
+}
+
+body.light-theme .table-container {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+body.light-theme .premium-table td {
+  border-bottom-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+

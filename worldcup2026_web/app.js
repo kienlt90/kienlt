@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
        // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
-    const CURRENT_VERSION = "2.4";
+    const CURRENT_VERSION = "3.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -560,8 +560,10 @@ document.addEventListener("DOMContentLoaded", () => {
               <img src="https://flagcdn.com/w40/${match.team1FlagCode}.png" class="team-flag-img" alt="${match.team1}">
               <span>${match.team1}</span>
             </div>
-            <div style="font-size: 26px; font-weight: 800; color: ${match.score1 !== null ? 'var(--text-main)' : 'var(--text-dark)'}; min-width: 44px; text-align: center; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 4px 12px; border: 1px solid rgba(255,255,255,0.05);">
-              ${match.score1 !== null ? match.score1 : "-"}
+            <div class="score-input-container">
+              <button class="score-control-btn btn-score-dec" data-match-id="${match.id}" data-team="1">-</button>
+              <input type="number" class="score-val-input score-team-1" data-match-id="${match.id}" value="${match.score1 !== null ? match.score1 : ''}" placeholder="-">
+              <button class="score-control-btn btn-score-inc" data-match-id="${match.id}" data-team="1">+</button>
             </div>
           </div>
           
@@ -573,17 +575,55 @@ document.addEventListener("DOMContentLoaded", () => {
               <img src="https://flagcdn.com/w40/${match.team2FlagCode}.png" class="team-flag-img" alt="${match.team2}">
               <span>${match.team2}</span>
             </div>
-            <div style="font-size: 26px; font-weight: 800; color: ${match.score2 !== null ? 'var(--text-main)' : 'var(--text-dark)'}; min-width: 44px; text-align: center; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 4px 12px; border: 1px solid rgba(255,255,255,0.05);">
-              ${match.score2 !== null ? match.score2 : "-"}
+            <div class="score-input-container">
+              <button class="score-control-btn btn-score-dec" data-match-id="${match.id}" data-team="2">-</button>
+              <input type="number" class="score-val-input score-team-2" data-match-id="${match.id}" value="${match.score2 !== null ? match.score2 : ''}" placeholder="-">
+              <button class="score-control-btn btn-score-inc" data-match-id="${match.id}" data-team="2">+</button>
             </div>
           </div>
         </div>
 
-        <!-- Thẻ Phạt (Read-Only) -->
-        <div class="cards-manager" style="justify-content: space-between; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 10px; font-size: 12.5px; font-weight: 600;">
+        <!-- Quản lý Thẻ Phạt -->
+        <div class="cards-manager">
           <!-- Thẻ Đội 1 -->
-          <div style="display: flex; gap: 10px; align-items: center;">
-            ${match.yc1 > 0 ? `<span style="color: var(--yellow);">${match.yc1} 🟨</span>` : ""}
+          <div class="cards-team-box">
+            <div class="card-control">
+              <span class="card-icon yellow-card"></span>
+              <button class="card-btn btn-card-dec" data-match-id="${match.id}" data-card="yc1">-</button>
+              <span class="card-count" style="color: var(--yellow); min-width: 12px; text-align: center;">${match.yc1}</span>
+              <button class="card-btn btn-card-inc" data-match-id="${match.id}" data-card="yc1">+</button>
+            </div>
+            <div class="card-control">
+              <span class="card-icon red-card"></span>
+              <button class="card-btn btn-card-dec" data-match-id="${match.id}" data-card="rc1">-</button>
+              <span class="card-count" style="color: var(--red); min-width: 12px; text-align: center;">${match.rc1}</span>
+              <button class="card-btn btn-card-inc" data-match-id="${match.id}" data-card="rc1">+</button>
+            </div>
+          </div>
+
+          <!-- Thẻ Đội 2 -->
+          <div class="cards-team-box" style="flex-direction: row-reverse;">
+            <div class="card-control" style="flex-direction: row-reverse;">
+              <span class="card-icon yellow-card"></span>
+              <button class="card-btn btn-card-dec" data-match-id="${match.id}" data-card="yc2">-</button>
+              <span class="card-count" style="color: var(--yellow); min-width: 12px; text-align: center;">${match.yc2}</span>
+              <button class="card-btn btn-card-inc" data-match-id="${match.id}" data-card="yc2">+</button>
+            </div>
+            <div class="card-control" style="flex-direction: row-reverse;">
+              <span class="card-icon red-card"></span>
+              <button class="card-btn btn-card-dec" data-match-id="${match.id}" data-card="rc2">-</button>
+              <span class="card-count" style="color: var(--red); min-width: 12px; text-align: center;">${match.rc2}</span>
+              <button class="card-btn btn-card-inc" data-match-id="${match.id}" data-card="rc2">+</button>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    // Gán lại sự kiện tương tác
+    attachMatchCardEvents();
+  }🟨</span>` : ""}
             ${match.rc1 > 0 ? `<span style="color: var(--red);">${match.rc1} 🟥</span>` : ""}
             ${match.yc1 === 0 && match.rc1 === 0 ? `<span style="color: var(--text-dark); font-size: 11px; font-weight: 400;">Không có thẻ</span>` : ""}
           </div>
@@ -1377,6 +1417,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // --- ĐỒNG BỘ & ĐỔI GIAO DIỆN SÁNG / TỐI ---
+  window.toggleTheme = function() {
+    const isLight = document.body.classList.contains('light-theme');
+    const newTheme = isLight ? 'dark' : 'light';
+    
+    if (newTheme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+    
+    localStorage.setItem('vnpt_his_theme', newTheme);
+    updateThemeIcon(newTheme);
+  };
+
+  function updateThemeIcon(theme) {
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeIcon) {
+      themeIcon.textContent = theme === 'light' ? '🌙' : '☀️';
+    }
+  }
+
+  // Lắng nghe sự kiện lưu trữ giao diện từ các tab khác
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'vnpt_his_theme') {
+      const newTheme = e.newValue || 'dark';
+      if (newTheme === 'light') {
+        document.body.classList.add('light-theme');
+        updateThemeIcon('light');
+      } else {
+        document.body.classList.remove('light-theme');
+        updateThemeIcon('dark');
+      }
+    }
+  });
+
   // Khởi động ứng dụng
+  const savedTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
+  updateThemeIcon(savedTheme);
   init();
 });

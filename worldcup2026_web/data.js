@@ -158,13 +158,51 @@ function generateMatchSchedule() {
         team2Id: t2.id,
         team2FlagCode: t2.flagCode,
         team2Flag: t2.flag,
-        score1: null,
-        score2: null,
-        yc1: 0,
-        rc1: 0,
-        yc2: 0,
-        rc2: 0,
-        status: "Chưa đấu"
+      let score1 = null;
+      let score2 = null;
+      let yc1 = 0;
+      let rc1 = 0;
+      let yc2 = 0;
+      let rc2 = 0;
+      let status = "Chưa đấu";
+
+      // Khởi tạo lượt đấu 1 đã kết thúc để hệ thống có số liệu ban đầu sinh động
+      if (pair.round === 1) {
+        const scoreRandom = Math.random();
+        if (scoreRandom < 0.2) { score1 = 0; score2 = 0; }
+        else if (scoreRandom < 0.45) { score1 = 1; score2 = 0; }
+        else if (scoreRandom < 0.7) { score1 = 2; score2 = 1; }
+        else if (scoreRandom < 0.85) { score1 = 1; score2 = 1; }
+        else { score1 = 3; score2 = 2; }
+
+        yc1 = Math.floor(Math.random() * 3); // 0 -> 2 thẻ vàng
+        rc1 = Math.random() > 0.95 ? 1 : 0;  // 5% thẻ đỏ
+        yc2 = Math.floor(Math.random() * 3);
+        rc2 = Math.random() > 0.95 ? 1 : 0;
+        status = "Kết thúc";
+      }
+
+      matches.push({
+        id: `M${String(matchId++).padStart(2, "0")}`,
+        group: groupLetter,
+        round: pair.round,
+        date: finalDate.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }),
+        time: pair.time,
+        team1: t1.name,
+        team1Id: t1.id,
+        team1FlagCode: t1.flagCode,
+        team1Flag: t1.flag,
+        team2: t2.name,
+        team2Id: t2.id,
+        team2FlagCode: t2.flagCode,
+        team2Flag: t2.flag,
+        score1: score1,
+        score2: score2,
+        yc1: yc1,
+        rc1: rc1,
+        yc2: yc2,
+        rc2: rc2,
+        status: status
       });
     });
   });
