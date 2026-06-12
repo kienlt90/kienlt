@@ -454,6 +454,7 @@
             Theo dõi hợp đồng theo Đơn vị thụ hưởng
           </h3>
           <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" onclick="openAddContractModal()" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; margin: 0; display: flex; align-items: center; gap: 4px;">➕ Thêm Hợp đồng</button>
             <select id="dashboard-year-select" class="form-input" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; margin: 0; width: 130px; cursor: pointer; color: var(--color-text-primary); background-color: var(--color-bg-secondary);">
               <option value="all">Tất cả các năm</option>
               <option value="2026" selected>Năm 2026</option>
@@ -619,20 +620,10 @@
             <!-- Digital Signature Stamp Display -->
             <div id="detail-stamp-container"></div>
             
-            <!-- Action Buttons -->
-            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.6rem;">
-              <button class="btn-primary" id="btn-show-sign-modal" style="padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 0.95rem; width: 100%;">
-                ✍️ Ký số Biên bản Hợp đồng
-              </button>
-              <button class="btn-secondary" id="btn-download-pdf" style="padding: 1rem; border-radius: 12px; width: 100%; margin-left: 0; font-weight: 600;">
-                📥 Tải tệp tin hợp đồng PDF
-              </button>
-            </div>
           </div>
         </div>
         
       </div>
-    </div>ý số Biên bản Hợp đồng
               </button>
               <button class="btn-secondary" id="btn-download-pdf" style="padding: 1rem; border-radius: 12px; width: 100%; margin-left: 0; font-weight: 600;">
                 📥 Tải tệp tin hợp đồng PDF
@@ -2735,7 +2726,6 @@
         });
       }
 
-      // Ký số Biên bản Hợp đồng button click listener
       const btnShowSignModal = document.getElementById('btn-show-sign-modal');
       if (btnShowSignModal) {
         btnShowSignModal.addEventListener('click', () => {
@@ -2755,5 +2745,52 @@
       }
     });
   </script>
+
+  <!-- MODAL DIALOG FOR ADDING CONTRACT -->
+  <div class="modal-overlay" id="add-contract-modal">
+    <div class="modal-card glass-card" style="width: 450px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary);">Bổ sung Hợp đồng mới</h3>
+        <button onclick="closeAddContractModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Đơn vị thụ hưởng</label>
+          <select id="add-contract-unit" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;">
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Mã hợp đồng</label>
+          <input type="text" id="add-contract-code" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;" placeholder="Ví dụ: HD-99/2026/XYZ">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Tên hợp đồng / Nội dung</label>
+          <input type="text" id="add-contract-name" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;" placeholder="Hợp đồng HIS LIS...">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Giá trị</label>
+          <input type="text" id="add-contract-value" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;" placeholder="Ví dụ: 50,000,000 VND">
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <div style="flex: 1;">
+            <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Ngày ký</label>
+            <input type="date" id="add-contract-date" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;">
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Trạng thái</label>
+            <select id="add-contract-status" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;">
+              <option value="signed">Đã ký số</option>
+              <option value="pending">Chờ ký</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.8rem;">
+        <button class="btn-secondary" onclick="closeAddContractModal()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Hủy</button>
+        <button class="btn-primary" onclick="submitAddContract()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Lưu Hợp đồng</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
