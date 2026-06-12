@@ -144,20 +144,6 @@ function generateMatchSchedule() {
       const t1 = teams[pair.t1Idx];
       const t2 = teams[pair.t2Idx];
 
-      matches.push({
-        id: `M${String(matchId++).padStart(2, "0")}`,
-        group: groupLetter,
-        round: pair.round,
-        date: finalDate.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }),
-        time: pair.time,
-        team1: t1.name,
-        team1Id: t1.id,
-        team1FlagCode: t1.flagCode,
-        team1Flag: t1.flag,
-        team2: t2.name,
-        team2Id: t2.id,
-        team2FlagCode: t2.flagCode,
-        team2Flag: t2.flag,
       let score1 = null;
       let score2 = null;
       let yc1 = 0;

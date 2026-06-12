@@ -494,12 +494,13 @@ body.portal-body {
 
 #app-container.portal-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+  padding: 2rem 3.5rem;
   flex-grow: 1;
   z-index: 10;
   display: block; /* Override flex */
+  box-sizing: border-box;
 }
 
 .dashboard-section {

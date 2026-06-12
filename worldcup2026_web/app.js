@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
        // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
-    const CURRENT_VERSION = "3.0";
+    const CURRENT_VERSION = "4.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -38,6 +38,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 5. Tính toán dữ liệu & Hiển thị lần đầu
     recalculateAll();
+
+    // 6. Tự động đồng bộ từ ESPN Live trong background (không hiện thông báo)
+    setTimeout(() => {
+      fetchLiveScoresFromESPN(true);
+    }, 1500);
+
+    // Thiết lập chu kỳ tự động cập nhật sau mỗi 60 giây
+    setInterval(() => {
+      fetchLiveScoresFromESPN(true);
+    }, 60000);
   }
 
   // --- CHUYỂN ĐỔI TAB ---
@@ -1320,12 +1330,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Đồng bộ tỉ số trực tuyến từ API ESPN (World Cup)
-  async function fetchLiveScoresFromESPN() {
+  async function fetchLiveScoresFromESPN(isSilent = false) {
     const btns = document.querySelectorAll(".btn-espn-live");
-    btns.forEach(btn => {
-      btn.disabled = true;
-      btn.innerHTML = "⏳ Đang tải...";
-    });
+    if (!isSilent) {
+      btns.forEach(btn => {
+        btn.disabled = true;
+        btn.innerHTML = "⏳ Đang tải...";
+      });
+    }
 
     try {
       // Gọi API Scoreboard bóng đá World Cup của ESPN (CORS-enabled)
@@ -1335,7 +1347,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
 
       if (!data.events || data.events.length === 0) {
-        alert("Hiện tại không có trận đấu World Cup nào đang diễn ra hoặc cập nhật trên ESPN (Giải đấu sẽ bắt đầu từ 11/06/2026).");
+        if (!isSilent) {
+          alert("Hiện tại không có trận đấu World Cup nào đang diễn ra hoặc cập nhật trên ESPN (Giải đấu sẽ bắt đầu từ 11/06/2026).");
+        }
         resetButtons();
         return;
       }
@@ -1379,26 +1393,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      recalculateAll();
-
       if (updatedCount > 0) {
-        alert(`🔴 Cập nhật thành công ${updatedCount} trận đấu trực tuyến từ ESPN Live!`);
+        recalculateAll();
+        if (!isSilent) {
+          alert(`🔴 Cập nhật thành công ${updatedCount} trận đấu trực tuyến từ ESPN Live!`);
+        }
       } else {
-        alert("Đồng bộ thành công! Hiện chưa có trận đấu nào của World Cup 2026 chính thức diễn ra trên ESPN (Giải đấu sẽ bắt đầu từ 11/06/2026).");
+        if (!isSilent) {
+          alert("Đồng bộ thành công! Hiện chưa có trận đấu nào của World Cup 2026 chính thức diễn ra trên ESPN (Giải đấu sẽ bắt đầu từ 11/06/2026).");
+        }
       }
 
     } catch (error) {
       console.error("Lỗi fetch ESPN:", error);
-      alert("Không thể tải tỉ số trực tuyến: " + error.message + "\nVui lòng thử lại sau.");
+      if (!isSilent) {
+        alert("Không thể tải tỉ số trực tuyến: " + error.message + "\nVui lòng thử lại sau.");
+      }
     } finally {
       resetButtons();
     }
 
     function resetButtons() {
-      btns.forEach(btn => {
-        btn.disabled = false;
-        btn.innerHTML = btn.classList.contains("full-width") ? "🔴 Cập nhật trực tuyến từ ESPN Live" : "🔴 ESPN Live";
-      });
+      if (!isSilent) {
+        btns.forEach(btn => {
+          btn.disabled = false;
+          btn.innerHTML = btn.classList.contains("full-width") ? "🔴 Cập nhật trực tuyến từ ESPN Live" : "🔴 ESPN Live";
+        });
+      }
     }
   }
 
