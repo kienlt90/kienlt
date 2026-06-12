@@ -623,21 +623,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Gán lại sự kiện tương tác
     attachMatchCardEvents();
-  }🟨</span>` : ""}
-            ${match.rc1 > 0 ? `<span style="color: var(--red);">${match.rc1} 🟥</span>` : ""}
-            ${match.yc1 === 0 && match.rc1 === 0 ? `<span style="color: var(--text-dark); font-size: 11px; font-weight: 400;">Không có thẻ</span>` : ""}
-          </div>
-          
-          <!-- Thẻ Đội 2 -->
-          <div style="display: flex; gap: 10px; align-items: center; flex-direction: row-reverse;">
-            ${match.yc2 > 0 ? `<span style="color: var(--yellow);">${match.yc2} 🟨</span>` : ""}
-            ${match.rc2 > 0 ? `<span style="color: var(--red);">${match.rc2} 🟥</span>` : ""}
-            ${match.yc2 === 0 && match.rc2 === 0 ? `<span style="color: var(--text-dark); font-size: 11px; font-weight: 400;">Không có thẻ</span>` : ""}
-          </div>
-        </div>
-      `;
-      container.appendChild(card);
-    });
   }
 
   // --- ĐĂNG KÝ SỰ KIỆN CHO CÁC Ô TRẬN ĐẤU ---
