@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* Custom Scoped Styles for Contracts Module */
     .portal-container {
@@ -378,6 +379,20 @@
     .input-pin-field:focus {
       border-color: var(--color-primary);
     }
+
+    /* Charts layout styles */
+    .charts-container {
+      margin-top: 1.5rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body class="portal-body">
@@ -450,6 +465,29 @@
           <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Hợp đồng Chờ Ký</span>
           <span id="stat-pending-cnt" style="font-size: 1.6rem; font-weight: 800; color: #eab308;">0</span>
           <span id="stat-pending-val" style="font-size: 0.75rem; color: #eab308; font-weight: 600;">0 tỷ VND (0%)</span>
+        </div>
+      </div>
+      
+      <!-- Charts Panel -->
+      <div class="charts-container">
+        <!-- Chart 1: Revenue by Unit -->
+        <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; height: 350px;">
+          <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; margin: 0 0 1rem 0; border-left: 4px solid var(--color-primary); padding-left: 0.6rem;">
+            Doanh thu Hợp đồng theo Đơn vị (tỷ VND)
+          </h4>
+          <div style="flex-grow: 1; position: relative; height: 260px;">
+            <canvas id="revenue-chart"></canvas>
+          </div>
+        </div>
+        
+        <!-- Chart 2: Status Distribution -->
+        <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; height: 350px;">
+          <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; margin: 0 0 1rem 0; border-left: 4px solid var(--color-primary); padding-left: 0.6rem;">
+            Trạng thái Biên bản Hợp đồng
+          </h4>
+          <div style="flex-grow: 1; position: relative; display: flex; justify-content: center; align-items: center; height: 260px;">
+            <canvas id="status-chart"></canvas>
+          </div>
         </div>
       </div>
       
@@ -2028,6 +2066,7 @@
         document.body.classList.remove('light-theme');
         if (themeIcon) themeIcon.textContent = '☀️';
       }
+      updateCharts();
     }
 
     function resetDatabase() {
@@ -2047,6 +2086,7 @@
       let signedVal = 0;
       let pendingCount = 0;
       let pendingVal = 0;
+      let grandTotalVal = 0; // Sum of all contract values (including pending) for percentage base
 
       units.forEach(u => {
         u.contracts.forEach(c => {
@@ -2067,7 +2107,13 @@
             pendingCount++;
             pendingVal += valNum;
           }
-          totalVal += valNum;
+          
+          grandTotalVal += valNum;
+          
+          // Exclude pending from totalVal (doanh thu tổng) as requested: "chờ ký thì ko tính vào tổng doanh thu"
+          if (c.status !== 'pending') {
+            totalVal += valNum;
+          }
         });
       });
 
@@ -2078,11 +2124,11 @@
       const statSignedCnt = document.getElementById('stat-signed-cnt');
       if (statSignedCnt) statSignedCnt.textContent = signedCount;
       const statSignedVal = document.getElementById('stat-signed-val');
-      if (statSignedVal) statSignedVal.textContent = (signedVal / 1e9).toFixed(2) + ' tỷ VND (' + (signedVal / (totalVal || 1) * 100).toFixed(1) + '%)';
+      if (statSignedVal) statSignedVal.textContent = (signedVal / 1e9).toFixed(2) + ' tỷ VND (' + (signedVal / (grandTotalVal || 1) * 100).toFixed(1) + '%)';
       const statPendingCnt = document.getElementById('stat-pending-cnt');
       if (statPendingCnt) statPendingCnt.textContent = pendingCount;
       const statPendingVal = document.getElementById('stat-pending-val');
-      if (statPendingVal) statPendingVal.textContent = (pendingVal / 1e9).toFixed(2) + ' tỷ VND (' + (pendingVal / (totalVal || 1) * 100).toFixed(1) + '%)';
+      if (statPendingVal) statPendingVal.textContent = (pendingVal / 1e9).toFixed(2) + ' tỷ VND (' + (pendingVal / (grandTotalVal || 1) * 100).toFixed(1) + '%)';
     }
 
 
@@ -2178,8 +2224,10 @@
           if (c.status === 'signed') signedCount++;
           if (c.status === 'almost_signed') almostSignedCount++;
 
-          if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-            unitValueSum += parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+          if (c.status !== 'pending') {
+            if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
+              unitValueSum += parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+            }
           }
         });
         
@@ -2613,6 +2661,7 @@
         renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
         renderContractsTable();
         updateGlobalStats();
+        updateCharts();
         selectContract(selectedContractId);
         
         // Show success modal step
@@ -2629,6 +2678,7 @@
       // Initialize layout rendering
       updateGlobalStats();
       renderDashboardUnitsTable();
+      updateCharts();
       switchView('dashboard');
 
       // Theme initializer setup
@@ -2653,6 +2703,7 @@
             document.body.classList.remove('light-theme');
             if (themeIcon) themeIcon.textContent = '☀️';
           }
+          updateCharts();
         }
         // In case units database changes in other tab
         if (e.key === 'vnpt_his_units') {
@@ -2663,6 +2714,7 @@
               renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
               renderContractsTable();
               updateGlobalStats();
+              updateCharts();
               if (selectedContractId) selectContract(selectedContractId);
             } catch (err) {
               console.error(err);
@@ -2685,6 +2737,7 @@
         dashboardYearSelect.addEventListener('change', () => {
           renderDashboardUnitsTable(dashboardSearchInput ? dashboardSearchInput.value : '');
           updateGlobalStats();
+          updateCharts();
         });
       }
 
@@ -3018,6 +3071,203 @@
 
       closeAddContractModal();
       alert('Đã bổ sung hợp đồng mới thành công!');
+    }
+
+    let revenueChartInstance = null;
+    let statusChartInstance = null;
+
+    function updateCharts() {
+      const yearSelect = document.getElementById('dashboard-year-select');
+      const selectedYear = yearSelect ? yearSelect.value : '2026';
+      const isLightTheme = document.body.classList.contains('light-theme');
+      
+      const textColor = isLightTheme ? '#1e293b' : '#e2e8f0';
+      const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
+      const tooltipBg = isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)';
+      const tooltipColor = isLightTheme ? '#0f172a' : '#f8fafc';
+      const tooltipBorder = isLightTheme ? '#e2e8f0' : '#334155';
+
+      // 1. Calculate revenue by unit (excluding pending)
+      const unitData = [];
+      units.forEach(u => {
+        let sum = 0;
+        u.contracts.forEach(c => {
+          let cYear = '2026';
+          if (c.id.includes('-2027')) cYear = '2027';
+          if (c.id.includes('-2028')) cYear = '2028';
+          if (selectedYear !== 'all' && cYear !== selectedYear) return;
+
+          // Exclude pending from revenue as requested: "chờ ký thì ko tính vào tổng doanh thu"
+          if (c.status !== 'pending') {
+            if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
+              sum += parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+            }
+          }
+        });
+        if (sum > 0) {
+          unitData.push({
+            name: u.name.replace('Trung tâm Y tế ', 'TTYT ').replace('Trung tâm y tế ', 'TTYT ').replace('Bệnh viện ', 'BV '),
+            value: sum / 1e9 // Convert to Billion VND
+          });
+        }
+      });
+
+      // Sort descending
+      unitData.sort((a, b) => b.value - a.value);
+
+      const unitLabels = unitData.map(d => d.name);
+      const unitValues = unitData.map(d => d.value);
+
+      // 2. Status distribution
+      let signedCount = 0;
+      let almostSignedCount = 0;
+      let pendingCount = 0;
+      let draftCount = 0;
+
+      units.forEach(u => {
+        u.contracts.forEach(c => {
+          let cYear = '2026';
+          if (c.id.includes('-2027')) cYear = '2027';
+          if (c.id.includes('-2028')) cYear = '2028';
+          if (selectedYear !== 'all' && cYear !== selectedYear) return;
+
+          if (c.status === 'signed') signedCount++;
+          else if (c.status === 'almost_signed') almostSignedCount++;
+          else if (c.status === 'pending') pendingCount++;
+          else draftCount++;
+        });
+      });
+
+      // 3. Render Revenue Chart
+      const revCtx = document.getElementById('revenue-chart');
+      if (revCtx) {
+        if (revenueChartInstance) {
+          revenueChartInstance.destroy();
+        }
+
+        revenueChartInstance = new Chart(revCtx, {
+          type: 'bar',
+          data: {
+            labels: unitLabels.length > 0 ? unitLabels : ['Không có dữ liệu'],
+            datasets: [{
+              label: 'Doanh thu (tỷ VND)',
+              data: unitValues.length > 0 ? unitValues : [0],
+              backgroundColor: 'rgba(59, 130, 246, 0.85)',
+              borderColor: '#3b82f6',
+              borderWidth: 1,
+              borderRadius: 6,
+              hoverBackgroundColor: 'rgba(59, 130, 246, 1)'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y', // Horizontal bar chart
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipColor,
+                bodyColor: tooltipColor,
+                borderColor: tooltipBorder,
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                  label: function(context) {
+                    return `Doanh thu: ${context.parsed.x.toFixed(3)} tỷ VND`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { color: gridColor },
+                ticks: { color: textColor, font: { family: 'Be Vietnam Pro', size: 11 } }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { color: textColor, font: { family: 'Be Vietnam Pro', size: 11 } }
+              }
+            }
+          }
+        });
+      }
+
+      // 4. Render Status Chart
+      const statusCtx = document.getElementById('status-chart');
+      if (statusCtx) {
+        if (statusChartInstance) {
+          statusChartInstance.destroy();
+        }
+
+        const statusLabels = [];
+        const statusData = [];
+        const statusColors = [];
+
+        if (signedCount > 0) {
+          statusLabels.push('Đã ký số');
+          statusData.push(signedCount);
+          statusColors.push('#22c55e'); // Green
+        }
+        if (almostSignedCount > 0) {
+          statusLabels.push('Sắp ký');
+          statusData.push(almostSignedCount);
+          statusColors.push('#3b82f6'); // Blue
+        }
+        if (pendingCount > 0) {
+          statusLabels.push('Chờ ký');
+          statusData.push(pendingCount);
+          statusColors.push('#eab308'); // Yellow
+        }
+        if (draftCount > 0) {
+          statusLabels.push('Soạn thảo');
+          statusData.push(draftCount);
+          statusColors.push('#64748b'); // Gray
+        }
+
+        if (statusData.length === 0) {
+          statusLabels.push('Trống');
+          statusData.push(1);
+          statusColors.push('rgba(255, 255, 255, 0.1)');
+        }
+
+        statusChartInstance = new Chart(statusCtx, {
+          type: 'doughnut',
+          data: {
+            labels: statusLabels,
+            datasets: [{
+              data: statusData,
+              backgroundColor: statusColors,
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: textColor,
+                  font: { family: 'Be Vietnam Pro', size: 11 },
+                  boxWidth: 12,
+                  padding: 15
+                }
+              },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipColor,
+                bodyColor: tooltipColor,
+                borderColor: tooltipBorder,
+                borderWidth: 1,
+                padding: 10
+              }
+            },
+            cutout: '65%'
+          }
+        });
+      }
     }
   </script>
 
