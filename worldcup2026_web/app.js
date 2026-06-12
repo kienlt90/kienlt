@@ -959,8 +959,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function getTeamOrPlaceholder(groupLetter, rankIndex, placeholderText) {
       const stands = groupStandings[groupLetter];
       if (stands && stands[rankIndex]) {
-        const team = stands[rankIndex];
-        if (team.played > 0) {
+        const isGroupFinished = stands.every(t => t.played === 3);
+        if (isGroupFinished) {
+          const team = stands[rankIndex];
           return { id: team.id, name: team.name, flag: team.flag, flagCode: team.flagCode, isReal: true };
         }
       }
@@ -1014,7 +1015,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const activeThirds = thirdPlaceStandings.slice(0, 8).filter(t => t.played > 0);
+    const allGroupsFinished = Object.values(groupStandings).every(stands => stands.every(t => t.played === 3));
+    const activeThirds = allGroupsFinished ? thirdPlaceStandings.slice(0, 8) : [];
     const assignedThirds = assignThirdPlacedTeams(activeThirds);
 
     // Lấy thông tin đội thứ 3 đã được gán hoặc placeholder tương ứng
