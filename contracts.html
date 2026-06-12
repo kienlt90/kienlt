@@ -453,7 +453,15 @@
           <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; border-left: 4px solid var(--color-primary); padding-left: 0.6rem; margin: 0; white-space: nowrap;">
             Theo dõi hợp đồng theo Đơn vị thụ hưởng
           </h3>
-          <input type="text" id="dashboard-unit-search" class="form-input" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; width: 320px; margin: 0;" placeholder="🔍 Tìm kiếm đơn vị y tế...">
+          <div style="display: flex; gap: 10px;">
+            <select id="dashboard-year-select" class="form-input" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; margin: 0; width: 130px; cursor: pointer; color: var(--color-text-primary); background-color: var(--color-bg-secondary);">
+              <option value="all">Tất cả các năm</option>
+              <option value="2026" selected>Năm 2026</option>
+              <option value="2027">Năm 2027</option>
+              <option value="2028">Năm 2028</option>
+            </select>
+            <input type="text" id="dashboard-unit-search" class="form-input" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; width: 320px; margin: 0;" placeholder="🔍 Tìm kiếm đơn vị y tế...">
+          </div>
         </div>
         
         <div class="table-responsive" style="flex-grow: 1;">
@@ -461,7 +469,7 @@
             <thead>
               <tr>
                 <th style="width: 60px; text-align: center;">STT</th>
-                <th>Đơn vị thụ hưởng</th>
+                <th style="width: 250px;">Đơn vị thụ hưởng</th>
                 <th style="width: 140px; text-align: center;">Số văn bản</th>
                 <th style="width: 160px; text-align: center;">Trạng thái ký số</th>
                 <th style="width: 180px; text-align: right;">Tổng giá trị thầu</th>
@@ -1663,15 +1671,49 @@
         "avatar": "MP",
         "contracts": [
           {
-            "id": "cong_ty_co_phan_benh_vien_my_phuoc-1",
+            "id": "cong_ty_co_phan_benh_vien_my_phuoc-1-2026",
             "code": "HĐ-40/2026/MP",
-            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC (Nam 1)",
             "fileName": "VNP005069_1_20250709_114003_HĐ HIS BV MY PHƯỚC.pdf",
             "fileSize": "2.49 MB",
             "package": "Hệ thống thông tin bệnh viện HIS L2",
-            "value": "549,000,000 VND",
+            "value": "183,000,000 VND",
             "date": "09/07/2025",
-            "endDate": "",
+            "endDate": "08/07/2026",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "09/07/2025 10:00:00"
+          },
+          {
+            "id": "cong_ty_co_phan_benh_vien_my_phuoc-1-2027",
+            "code": "HĐ-40/2026/MP",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC (Nam 2)",
+            "fileName": "VNP005069_1_20250709_114003_HĐ HIS BV MY PHƯỚC.pdf",
+            "fileSize": "2.49 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "183,000,000 VND",
+            "date": "09/07/2025",
+            "endDate": "08/07/2027",
+            "status": "signed",
+            "ms1Done": true,
+            "ms2Done": true,
+            "ms3Done": true,
+            "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+            "signedTime": "09/07/2025 10:00:00"
+          },
+          {
+            "id": "cong_ty_co_phan_benh_vien_my_phuoc-1-2028",
+            "code": "HĐ-40/2026/MP",
+            "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC (Nam 3)",
+            "fileName": "VNP005069_1_20250709_114003_HĐ HIS BV MY PHƯỚC.pdf",
+            "fileSize": "2.49 MB",
+            "package": "Hệ thống thông tin bệnh viện HIS L2",
+            "value": "183,000,000 VND",
+            "date": "09/07/2025",
+            "endDate": "08/07/2028",
             "status": "signed",
             "ms1Done": true,
             "ms2Done": true,
@@ -1938,7 +1980,7 @@
           }
         ]
       }
-    ];
+    ]];
 
     // Database state management
     let storedUnits = localStorage.getItem('vnpt_his_units');
@@ -2092,26 +2134,40 @@
       units.forEach(unit => {
         if (query && !unit.name.toLowerCase().includes(query)) return;
         
-        const total = unit.contracts.length;
-        const pendingCount = unit.contracts.filter(c => c.status === 'pending').length;
-        const signedCount = unit.contracts.filter(c => c.status === 'signed').length;
-        
-        let statusBadgeText = `Đã ký ${signedCount}/${total}`;
-        let badgeColor = 'var(--color-text-muted)';
-        if (pendingCount > 0) {
-          statusBadgeText = `${pendingCount} chờ ký`;
-          badgeColor = '#eab308';
-        } else if (signedCount === total) {
-          badgeColor = '#22c55e';
-        }
-        
-        // Sum total value of contracts
+                const yearSelect = document.getElementById('dashboard-year-select');
+        const selectedYear = yearSelect ? yearSelect.value : '2026';
+
+        let validContractsCount = 0;
+        let pendingCount = 0;
+        let signedCount = 0;
         let unitValueSum = 0;
+
         unit.contracts.forEach(c => {
+          let cYear = '2026';
+          if (c.id.includes('-2027')) cYear = '2027';
+          if (c.id.includes('-2028')) cYear = '2028';
+          if (selectedYear !== 'all' && cYear !== selectedYear) return;
+
+          validContractsCount++;
+          if (c.status === 'pending') pendingCount++;
+          if (c.status === 'signed') signedCount++;
+
           if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp')) {
             unitValueSum += parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
           }
         });
+        
+        if (validContractsCount === 0) return; // Skip unit if no contracts for this year
+        const total = validContractsCount;
+        
+        let statusBadgeText = \Đã ký \/\;
+        let badgeColor = 'var(--color-text-muted)';
+        if (pendingCount > 0) {
+          statusBadgeText = \ chờ ký\;
+          badgeColor = '#eab308';
+        } else if (signedCount === total) {
+          badgeColor = '#22c55e';
+        }
         
         const expStatus = getUnitExpirationStatus(unit.contracts);
         
@@ -2571,6 +2627,15 @@
       if (dashboardSearchInput) {
         dashboardSearchInput.addEventListener('input', (e) => {
           renderDashboardUnitsTable(e.target.value);
+        });
+      }
+
+      // Year filter on dashboard
+      const dashboardYearSelect = document.getElementById('dashboard-year-select');
+      if (dashboardYearSelect) {
+        dashboardYearSelect.addEventListener('change', () => {
+          renderDashboardUnitsTable(dashboardSearchInput ? dashboardSearchInput.value : '');
+          updateGlobalStats();
         });
       }
 
