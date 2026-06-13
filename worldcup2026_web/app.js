@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
        // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
-    const CURRENT_VERSION = "5.0";
+    const CURRENT_VERSION = "6.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -1391,8 +1391,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const espnState = event.status.type.state; // "pre" | "in" | "post"
 
             if (espnState === "post" || espnState === "in") {
-              matchedMatch.score1 = isNaN(score1) ? 0 : score1;
-              matchedMatch.score2 = isNaN(score2) ? 0 : score2;
+              matchedMatch.score1 = isHomeTeam1 ? (isNaN(score1) ? 0 : score1) : (isNaN(score2) ? 0 : score2);
+              matchedMatch.score2 = isHomeTeam1 ? (isNaN(score2) ? 0 : score2) : (isNaN(score1) ? 0 : score1);
               matchedMatch.status = espnState === "post" ? "Kết thúc" : "Đang đá";
               matchedMatch.matchTime = event.status.type.shortDetail || (event.status.displayClock ? event.status.displayClock + "'" : "");
               updatedCount++;
