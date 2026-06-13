@@ -163,11 +163,17 @@ function generateMatchSchedule() {
         status = "Kết thúc";
       }
 
+      const day = String(finalDate.getDate()).padStart(2, '0');
+      const month = String(finalDate.getMonth() + 1).padStart(2, '0');
+      const year = finalDate.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
+
       matches.push({
         id: `M${String(matchId++).padStart(2, "0")}`,
         group: groupLetter,
         round: pair.round,
-        date: finalDate.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }),
+        date: formattedDate,
+        timestamp: finalDate.getTime(),
         time: pair.time,
         team1: t1.name,
         team1Id: t1.id,
