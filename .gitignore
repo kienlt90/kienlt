@@ -1,0 +1,18 @@
+# Git ignore file for kienlt90 portal
+# Viết bởi Antigravity
+
+# Ignore Portable Node.js binaries
+node-portable/
+
+# Ignore Next.js build and node modules
+**/node_modules/
+**/.next/
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
