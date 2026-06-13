@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
        // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
-    const CURRENT_VERSION = "10.0";
+    const CURRENT_VERSION = "11.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -427,6 +427,109 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       quickLinksContainer.appendChild(btn);
     });
+
+    // 4. Render Thống kê cá nhân cầu thủ trên Dashboard
+    renderDashboardPlayerStats();
+  }
+
+  // --- RENDER THỐNG KÊ CẦU THỦ TRÊN TỔNG QUAN (DASHBOARD) ---
+  function renderDashboardPlayerStats() {
+    if (typeof activePlayerStats !== "undefined") {
+      const allPlayersList = Object.values(activePlayerStats);
+
+      let topScorers = [];
+      let topAssists = [];
+      let topXG = [];
+
+      if (allPlayersList.length > 0) {
+        // 1. Chiếc giày vàng (Goals -> xG)
+        topScorers = [...allPlayersList].sort((a, b) => b.goals - a.goals || b.xg - a.xg);
+        // 2. Vua kiến tạo (Assists -> Key Passes)
+        topAssists = [...allPlayersList].sort((a, b) => b.assists - a.assists || b.keyPasses - a.keyPasses);
+        // 3. Hiệu suất xG (xG -> Goals)
+        topXG = [...allPlayersList].sort((a, b) => b.xg - a.xg || b.goals - a.goals);
+      } else {
+        // Fallback danh dự trước giải đấu (Chỉ số 0)
+        if (typeof PLAYER_STATS_DATA !== "undefined") {
+          topScorers = [...PLAYER_STATS_DATA];
+          topAssists = [...PLAYER_STATS_DATA];
+          topXG = [...PLAYER_STATS_DATA];
+        }
+      }
+
+      // 1. Chiếc Giày Vàng (Vua phá lưới)
+      const dashPlayerGoalsTbody = document.getElementById("dash-player-goals-tbody");
+      if (dashPlayerGoalsTbody) {
+        dashPlayerGoalsTbody.innerHTML = "";
+        topScorers.slice(0, 5).forEach((player, idx) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
+            <td><strong>${player.name}</strong></td>
+            <td>
+              <div class="team-cell">
+                <img src="https://flagcdn.com/w40/${player.flagCode}.png" class="team-flag-img" alt="${player.team}">
+                <span>${player.team}</span>
+              </div>
+            </td>
+            <td style="text-align: center; color: var(--text-muted); font-size: 13px;">${player.xg.toFixed(2)}</td>
+            <td style="font-weight: 800; color: var(--primary); text-align: center; font-size: 14.5px;">${player.goals} ⚽</td>
+          `;
+          dashPlayerGoalsTbody.appendChild(tr);
+        });
+      }
+
+      // 2. Vua Kiến Tạo
+      const dashPlayerAssistsTbody = document.getElementById("dash-player-assists-tbody");
+      if (dashPlayerAssistsTbody) {
+        dashPlayerAssistsTbody.innerHTML = "";
+        topAssists.slice(0, 5).forEach((player, idx) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
+            <td><strong>${player.name}</strong></td>
+            <td>
+              <div class="team-cell">
+                <img src="https://flagcdn.com/w40/${player.flagCode}.png" class="team-flag-img" alt="${player.team}">
+                <span>${player.team}</span>
+              </div>
+            </td>
+            <td style="text-align: center; color: var(--text-muted); font-size: 13px;">${player.keyPasses}</td>
+            <td style="font-weight: 800; color: var(--blue); text-align: center; font-size: 14.5px;">${player.assists} 🅰️</td>
+          `;
+          dashPlayerAssistsTbody.appendChild(tr);
+        });
+      }
+
+      // 3. Hiệu suất xG
+      const dashPlayerXGTbody = document.getElementById("dash-player-xg-tbody");
+      if (dashPlayerXGTbody) {
+        dashPlayerXGTbody.innerHTML = "";
+        topXG.slice(0, 5).forEach((player, idx) => {
+          const diff = player.goals - player.xg;
+          const diffColor = diff >= 0 ? "var(--emerald)" : "var(--red)";
+          const diffSign = diff >= 0 ? "+" : "";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
+            <td><strong>${player.name}</strong></td>
+            <td>
+              <div class="team-cell">
+                <img src="https://flagcdn.com/w40/${player.flagCode}.png" class="team-flag-img" alt="${player.team}">
+                <span>${player.team}</span>
+              </div>
+            </td>
+            <td style="font-weight: 700; text-align: center; font-size: 13.5px; color: var(--text-main);">${player.goals} Bàn thắng</td>
+            <td style="font-weight: 700; text-align: center; color: var(--text-muted); font-size: 13.5px;">${player.xg.toFixed(2)} xG</td>
+            <td style="font-weight: 800; text-align: center; color: ${diffColor}; font-size: 13.5px;">
+              ${diffSign}${diff.toFixed(2)}
+            </td>
+          `;
+          dashPlayerXGTbody.appendChild(tr);
+        });
+      }
+    }
   }
 
   // --- RENDER TAB BẢNG XẾP HẠNG (STANDINGS) ---
@@ -852,120 +955,9 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       naughtyTbody.appendChild(tr);
     });
-
-    // ================= THỐNG KÊ CẦU THỦ (NEW - 100% DYNAMIC) =================
-    if (typeof activePlayerStats !== "undefined") {
-      const allPlayersList = Object.values(activePlayerStats);
-
-      let topScorers = [];
-      let topAssists = [];
-      let topXG = [];
-
-      if (allPlayersList.length > 0) {
-        // 1. Chiếc giày vàng (Goals -> xG)
-        topScorers = [...allPlayersList].sort((a, b) => b.goals - a.goals || b.xg - a.xg);
-        // 2. Vua kiến tạo (Assists -> Key Passes)
-        topAssists = [...allPlayersList].sort((a, b) => b.assists - a.assists || b.keyPasses - a.keyPasses);
-        // 3. Hiệu suất xG (xG -> Goals)
-        topXG = [...allPlayersList].sort((a, b) => b.xg - a.xg || b.goals - a.goals);
-      } else {
-        // Fallback danh dự trước giải đấu (Chỉ số 0)
-        if (typeof PLAYER_STATS_DATA !== "undefined") {
-          topScorers = [...PLAYER_STATS_DATA];
-          topAssists = [...PLAYER_STATS_DATA];
-          topXG = [...PLAYER_STATS_DATA];
-        }
-      }
-
-      // 1. Chiếc Giày Vàng (Vua phá lưới)
-      const playerGoalsTbody = document.getElementById("player-goals-tbody");
-      const dashPlayerGoalsTbody = document.getElementById("dash-player-goals-tbody");
-      
-      const renderGoalscorers = (tbody) => {
-        if (!tbody) return;
-        tbody.innerHTML = "";
-        topScorers.slice(0, 5).forEach((player, idx) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
-            <td><strong>${player.name}</strong></td>
-            <td>
-              <div class="team-cell">
-                <img src="https://flagcdn.com/w40/${player.flagCode}.png" class="team-flag-img" alt="${player.team}">
-                <span>${player.team}</span>
-              </div>
-            </td>
-            <td style="text-align: center; color: var(--text-muted); font-size: 13px;">${player.xg.toFixed(2)}</td>
-            <td style="font-weight: 800; color: var(--primary); text-align: center; font-size: 14.5px;">${player.goals} ⚽</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      };
-      renderGoalscorers(playerGoalsTbody);
-      renderGoalscorers(dashPlayerGoalsTbody);
-
-      // 2. Vua Kiến Tạo
-      const playerAssistsTbody = document.getElementById("player-assists-tbody");
-      const dashPlayerAssistsTbody = document.getElementById("dash-player-assists-tbody");
-      
-      const renderAssists = (tbody) => {
-        if (!tbody) return;
-        tbody.innerHTML = "";
-        topAssists.slice(0, 5).forEach((player, idx) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
-            <td><strong>${player.name}</strong></td>
-            <td>
-              <div class="team-cell">
-                <img src="https://flagcdn.com/w40/${player.flagCode}.png" class="team-flag-img" alt="${player.team}">
-                <span>${player.team}</span>
-              </div>
-            </td>
-            <td style="text-align: center; color: var(--text-muted); font-size: 13px;">${player.keyPasses}</td>
-            <td style="font-weight: 800; color: var(--blue); text-align: center; font-size: 14.5px;">${player.assists} 🅰️</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      };
-      renderAssists(playerAssistsTbody);
-      renderAssists(dashPlayerAssistsTbody);
-
-      // 3. Hiệu suất xG
-      const playerXGTbody = document.getElementById("player-xg-tbody");
-      const dashPlayerXGTbody = document.getElementById("dash-player-xg-tbody");
-      
-      const renderXG = (tbody) => {
-        if (!tbody) return;
-        tbody.innerHTML = "";
-        topXG.slice(0, 5).forEach((player, idx) => {
-          const diff = player.goals - player.xg;
-          const diffColor = diff >= 0 ? "var(--emerald)" : "var(--red)";
-          const diffSign = diff >= 0 ? "+" : "";
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
-            <td><strong>${player.name}</strong></td>
-            <td>
-              <div class="team-cell">
-                <img src="https://flagcdn.com/w40/${player.flagCode}.png" class="team-flag-img" alt="${player.team}">
-                <span>${player.team}</span>
-              </div>
-            </td>
-            <td style="font-weight: 700; text-align: center; font-size: 13.5px; color: var(--text-main);">${player.goals} Bàn thắng</td>
-            <td style="font-weight: 700; text-align: center; color: var(--text-muted); font-size: 13.5px;">${player.xg.toFixed(2)} xG</td>
-            <td style="font-weight: 800; text-align: center; color: ${diffColor}; font-size: 13.5px;">
-              ${diffSign}${diff.toFixed(2)}
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      };
-      renderXG(playerXGTbody);
-      renderXG(dashPlayerXGTbody);
-    }
   }
+
+
 
   // --- RENDER TAB SƠ ĐỒ THI ĐẤU (BRACKET) ---
   function renderBracket() {
