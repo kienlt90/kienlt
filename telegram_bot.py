@@ -669,7 +669,7 @@ def save_running_tasks_state(state):
     except Exception as e:
         print(f"Error saving running tasks state: {e}")
 
-def scrape_active_tasks():
+def scrape_active_tasks(pause_if_running=True):
     chrome_options = Options()
     chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
     driver = None
@@ -756,7 +756,7 @@ def scrape_active_tasks():
                     
                     # Nếu task đang chạy, bấm tạm dừng trước để hệ thống đồng bộ/cập nhật số giờ thực tế
                     is_running = "❚❚" in text
-                    if is_running:
+                    if is_running and pause_if_running:
                         try:
                             pause_btn = card.find_element(By.XPATH, ".//span[contains(@class, 'icon') and text()='❚❚']")
                             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", pause_btn)
@@ -969,7 +969,7 @@ def check_tasks_monitor_loop():
             if not chat_ids:
                 continue
                 
-            res = scrape_active_tasks()
+            res = scrape_active_tasks(pause_if_running=False)
             if "error" in res:
                 print(f"[Task Monitor] Scraper error: {res['error']}")
                 continue
@@ -1025,7 +1025,7 @@ def handle_check_tasks(message):
     
     bot.reply_to(message, "⏳ Đang kết nối tới Chrome để kiểm tra các task...", parse_mode='Markdown')
     
-    res = scrape_active_tasks()
+    res = scrape_active_tasks(pause_if_running=True)
     if "error" in res:
         bot.send_message(
             chat_id, 
@@ -1224,7 +1224,7 @@ def handle_task_toggle(call):
             if new_state != current_state:
                 if new_state == "❚❚":
                     # We started the task! Update database with hours
-                    res = scrape_active_tasks()
+                    res = scrape_active_tasks(pause_if_running=False)
                     task_data = None
                     if "tasks" in res:
                         for tk in res["tasks"]:
