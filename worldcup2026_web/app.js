@@ -17,10 +17,51 @@ document.addEventListener("DOMContentLoaded", () => {
     return { name: `Cầu thủ ${idx + 1} (${teamName})`, flagCode: "" };
   }
 
+  // Helper tìm mã cờ quốc gia của cầu thủ dựa trên tên
+  function getPlayerFlagCode(teamName, playerName) {
+    if (typeof TEAM_PLAYERS !== "undefined" && TEAM_PLAYERS[teamName]) {
+      const players = TEAM_PLAYERS[teamName];
+      const found = players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
+      if (found) return found.flagCode;
+    }
+    if (typeof TEAM_PLAYERS !== "undefined") {
+      for (const tName of Object.keys(TEAM_PLAYERS)) {
+        const found = TEAM_PLAYERS[tName].find(p => p.name.toLowerCase() === playerName.toLowerCase());
+        if (found) return found.flagCode;
+      }
+    }
+    return "";
+  }
+
+  // Helper thống nhất để lấy danh sách cầu thủ ghi bàn của trận đấu
+  function getScorersForMatch(match, teamNum) {
+    const score = teamNum === 1 ? match.score1 : match.score2;
+    const scorersArray = teamNum === 1 ? match.scorers1 : match.scorers2;
+    const teamName = teamNum === 1 ? match.team1 : match.team2;
+    
+    if (score === null || score <= 0) return [];
+    
+    const result = [];
+    if (scorersArray && scorersArray.length > 0) {
+      for (let i = 0; i < Math.min(score, scorersArray.length); i++) {
+        result.push(scorersArray[i]);
+      }
+    }
+    // Điền thêm các cầu thủ mặc định nếu thiếu
+    while (result.length < score) {
+      const idx = result.length;
+      const player = getPlayerFromTeam(teamName, idx);
+      let min = 15 + idx * 22 + (parseInt(match.id.substring(1)) * 7 + idx * 13) % 20;
+      if (min > 90) min = 89;
+      result.push({ name: player.name, min: min + "'" });
+    }
+    return result;
+  }
+
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
        // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
-    const CURRENT_VERSION = "12.0";
+    const CURRENT_VERSION = "13.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -215,47 +256,51 @@ document.addEventListener("DOMContentLoaded", () => {
           if (typeof TEAM_PLAYERS !== "undefined") {
             // Đội 1 ghi bàn
             if (match.score1 > 0) {
-              for (let i = 0; i < match.score1; i++) {
-                const scorer = getPlayerFromTeam(match.team1, i);
-                if (!activePlayerStats[scorer.name]) {
-                  activePlayerStats[scorer.name] = { name: scorer.name, team: match.team1, flagCode: scorer.flagCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
+              const scorers1List = getScorersForMatch(match, 1);
+              scorers1List.forEach((scorer, i) => {
+                const sName = scorer.name;
+                const fCode = getPlayerFlagCode(match.team1, sName) || match.team1FlagCode;
+                if (!activePlayerStats[sName]) {
+                  activePlayerStats[sName] = { name: sName, team: match.team1, flagCode: fCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                 }
-                activePlayerStats[scorer.name].goals += 1;
-                activePlayerStats[scorer.name].xg += 0.85 * (1 + (i % 3) * 0.1);
+                activePlayerStats[sName].goals += 1;
+                activePlayerStats[sName].xg += 0.85 * (1 + (i % 3) * 0.1);
                 
                 // 70% tỉ lệ có kiến tạo cho cầu thủ khác
                 if ((i + match.round) % 2 === 0) {
                   const assistant = getPlayerFromTeam(match.team1, i + 1);
-                  if (assistant.name !== scorer.name) {
+                  if (assistant.name !== sName) {
                     if (!activePlayerStats[assistant.name]) {
                       activePlayerStats[assistant.name] = { name: assistant.name, team: match.team1, flagCode: assistant.flagCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                     }
                     activePlayerStats[assistant.name].assists += 1;
                   }
                 }
-              }
+              });
             }
 
             // Đội 2 ghi bàn
             if (match.score2 > 0) {
-              for (let i = 0; i < match.score2; i++) {
-                const scorer = getPlayerFromTeam(match.team2, i);
-                if (!activePlayerStats[scorer.name]) {
-                  activePlayerStats[scorer.name] = { name: scorer.name, team: match.team2, flagCode: scorer.flagCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
+              const scorers2List = getScorersForMatch(match, 2);
+              scorers2List.forEach((scorer, i) => {
+                const sName = scorer.name;
+                const fCode = getPlayerFlagCode(match.team2, sName) || match.team2FlagCode;
+                if (!activePlayerStats[sName]) {
+                  activePlayerStats[sName] = { name: sName, team: match.team2, flagCode: fCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                 }
-                activePlayerStats[scorer.name].goals += 1;
-                activePlayerStats[scorer.name].xg += 0.85 * (1 + (i % 3) * 0.1);
+                activePlayerStats[sName].goals += 1;
+                activePlayerStats[sName].xg += 0.85 * (1 + (i % 3) * 0.1);
 
                 if ((i + match.round) % 2 === 0) {
                   const assistant = getPlayerFromTeam(match.team2, i + 1);
-                  if (assistant.name !== scorer.name) {
+                  if (assistant.name !== sName) {
                     if (!activePlayerStats[assistant.name]) {
                       activePlayerStats[assistant.name] = { name: assistant.name, team: match.team2, flagCode: assistant.flagCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                     }
                     activePlayerStats[assistant.name].assists += 1;
                   }
                 }
-              }
+              });
             }
 
             // Tăng Key passes cho các cầu thủ đá chính
@@ -626,32 +671,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderSimulator() {
     const container = document.getElementById("matches-container");
     container.innerHTML = "";
-
-    function getScorersForMatch(match, teamNum) {
-      const score = teamNum === 1 ? match.score1 : match.score2;
-      const scorersArray = teamNum === 1 ? match.scorers1 : match.scorers2;
-      const teamName = teamNum === 1 ? match.team1 : match.team2;
-      
-      if (score === null || score <= 0) return [];
-      
-      if (scorersArray && scorersArray.length > 0) {
-        if (scorersArray.length === score) {
-          return scorersArray;
-        }
-        if (scorersArray.length > score) {
-          return scorersArray.slice(0, score);
-        }
-      }
-      
-      const result = [];
-      for (let i = 0; i < score; i++) {
-        const player = getPlayerFromTeam(teamName, i);
-        let min = 15 + i * 22 + (parseInt(match.id.substring(1)) * 7 + i * 13) % 20;
-        if (min > 90) min = 89;
-        result.push({ name: player.name, min: min + "'" });
-      }
-      return result;
-    }
 
     const groupFilter = document.getElementById("filter-group-select").value;
     const roundFilter = document.getElementById("filter-round-select").value;
@@ -1406,6 +1425,49 @@ document.addEventListener("DOMContentLoaded", () => {
               matchedMatch.score2 = isHomeTeam1 ? (isNaN(score2) ? 0 : score2) : (isNaN(score1) ? 0 : score1);
               matchedMatch.status = espnState === "post" ? "Kết thúc" : "Đang đá";
               matchedMatch.matchTime = event.status.type.shortDetail || (event.status.displayClock ? event.status.displayClock + "'" : "");
+
+              // Trích xuất thẻ phạt và cầu thủ ghi bàn từ chi tiết trận đấu của ESPN
+              let yc1 = 0, rc1 = 0, yc2 = 0, rc2 = 0;
+              let scorers1 = [];
+              let scorers2 = [];
+              const homeUid = homeCompetitor.team.id;
+              const awayUid = awayCompetitor.team.id;
+
+              if (competition.details && competition.details.length > 0) {
+                competition.details.forEach(d => {
+                  // Thẻ phạt
+                  if (d.yellowCard === true) {
+                    if (d.team.id === homeUid) { if (isHomeTeam1) yc1++; else yc2++; }
+                    else if (d.team.id === awayUid) { if (isHomeTeam1) yc2++; else yc1++; }
+                  }
+                  if (d.redCard === true) {
+                    if (d.team.id === homeUid) { if (isHomeTeam1) rc1++; else rc2++; }
+                    else if (d.team.id === awayUid) { if (isHomeTeam1) rc2++; else rc1++; }
+                  }
+                  // Cầu thủ ghi bàn
+                  if (d.scoringPlay === true || (d.type && (d.type.text === "Goal" || d.type.id === "70"))) {
+                    let pName = (d.athletesInvolved && d.athletesInvolved.length > 0) ? d.athletesInvolved[0].displayName : "Unknown";
+                    let min = d.clock ? d.clock.displayValue : "";
+                    if (d.ownGoal === true) {
+                      pName = pName + " (OG)";
+                    }
+                    const sObj = { name: pName, min: min };
+                    if (d.team.id === homeUid) {
+                      if (isHomeTeam1) scorers1.push(sObj); else scorers2.push(sObj);
+                    } else if (d.team.id === awayUid) {
+                      if (isHomeTeam1) scorers2.push(sObj); else scorers1.push(sObj);
+                    }
+                  }
+                });
+              }
+
+              matchedMatch.yc1 = yc1;
+              matchedMatch.rc1 = rc1;
+              matchedMatch.yc2 = yc2;
+              matchedMatch.rc2 = rc2;
+              matchedMatch.scorers1 = scorers1;
+              matchedMatch.scorers2 = scorers2;
+
               updatedCount++;
             }
           }
