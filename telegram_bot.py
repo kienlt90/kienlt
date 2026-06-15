@@ -16,6 +16,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8226594395:AAHSrs-Ms4wq6K3OrSlA5l7jiXtxb1qsYUs")
 HTML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "contracts.html")
 HISL2_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hisl2_config.json")
+ATTT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "thi_attt_f12.json")
 
 # Load HIS L2 config data into memory
 _hisl2_data = []
@@ -28,6 +29,15 @@ try:
 except Exception as _e:
     print(f"⚠️ Could not load hisl2_config.json: {_e}")
 
+# Load ATTT data into memory
+_attt_data = []
+try:
+    with open(ATTT_CONFIG_PATH, "r", encoding="utf-8") as _f:
+        _attt_data = json.load(_f)
+    print(f"✅ Loaded {len(_attt_data)} ATTT exam entries")
+except Exception as _e:
+    print(f"⚠️ Could not load thi_attt_f12.json: {_e}")
+
 if BOT_TOKEN == "YOUR_TELEGRAM_BOT_TOKEN_HERE":
     print("WARNING: Please set your TELEGRAM_BOT_TOKEN in the script or environment variable.")
 
@@ -39,6 +49,7 @@ try:
         types.BotCommand("list_units", "📋 Xem danh sách đơn vị y tế"),
         types.BotCommand("add_contract", "➕ Bắt đầu thêm hợp đồng mới"),
         types.BotCommand("tracuu", "🔍 Tra cứu cấu hình HIS L2"),
+        types.BotCommand("attt", "🛡️ Tra cứu đáp án thi An toàn thông tin"),
         types.BotCommand("help", "❓ Hướng dẫn sử dụng")
     ])
 except Exception as e:
@@ -176,10 +187,12 @@ def sync_to_git(commit_message):
 def send_welcome(message):
     welcome_text = (
         "👋 **Chào mừng bạn đến với VNPT Contract Bot!**\n\n"
-        "Tôi sẽ giúp bạn thêm hợp đồng y tế mới trực tiếp vào cổng `contracts.html`.\n\n"
+        "Tôi sẽ giúp bạn quản lý hợp đồng y tế và tra cứu thông tin nhanh chóng.\n\n"
         "**Các lệnh chính:**\n"
-        "➕ /add_contract : Bắt đầu quy trình thêm hợp đồng mới.\n"
-        "📋 /list_units : Xem danh sách các đơn vị hiện có.\n"
+        "➕ /add_contract : Thêm hợp đồng mới vào portal.\n"
+        "📋 /list_units : Xem danh sách các đơn vị và tổng giá trị hợp đồng.\n"
+        "🔍 /tracuu <từ khóa> : Tra cứu cấu hình HIS L2.\n"
+        "🛡️ /attt <từ khóa> : Tra cứu đáp án thi An toàn thông tin.\n"
         "❓ /help : Xem hướng dẫn sử dụng."
     )
     bot.reply_to(message, welcome_text, parse_mode='Markdown')
@@ -488,6 +501,107 @@ def search_hisl2_config(message):
     full_msg = "\n".join(lines)
     if len(full_msg) > 4000:
         full_msg = full_msg[:4000] + "\n_(Cắt bớt do quá dài)_"
+
+    bot.send_message(chat_id, full_msg, parse_mode='Markdown')
+
+
+# Helper to clean HTML for Telegram Markdown
+def clean_html(text):
+    if not text:
+        return ""
+    # Replace <p> with newline
+    text = re.sub(r'</?p\s*.*?>', '\n', text)
+    text = re.sub(r'<br\s*/?>', '\n', text)
+    # Replace <img> with placeholder
+    text = re.sub(r'<img\s*.*?>', ' [Ảnh đính kèm] ', text)
+    # Remove all other HTML tags
+    text = re.sub(r'<[^>]+>', '', text)
+    # Replace HTML entities
+    text = text.replace("&nbsp;", " ").replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&quot;", '"')
+    # Collapse multiple newlines
+    text = re.sub(r'\n+', '\n', text).strip()
+    return text
+
+@bot.message_handler(commands=['attt', 'traattt'])
+def search_attt(message):
+    """Search ATTT questions and answers by keyword."""
+    chat_id = message.chat.id
+    parts = message.text.strip().split(None, 1)
+    if len(parts) < 2 or not parts[1].strip():
+        bot.reply_to(
+            message,
+            "🛡️ *Tra cứu đáp án thi An toàn thông tin*\n\n"
+            "Cú pháp: `/attt <từ khóa>`\n"
+            "Ví dụ:\n"
+            "  `/attt ransomware`\n"
+            "  `/attt email giả mạo`\n"
+            "  `/attt OTP`\n\n"
+            f"📊 Tổng số câu hỏi trong bộ đề: *{len(_attt_data)}*",
+            parse_mode='Markdown'
+        )
+        return
+
+    keyword = parts[1].strip().lower()
+    bot.send_message(chat_id, f"⏳ Đang tra cứu bộ đề: `{parts[1].strip()}`...", parse_mode='Markdown')
+
+    results = []
+    for row in _attt_data:
+        que = row.get('que', '')
+        searchable_parts = [que]
+        for k, v in row.items():
+            if k != 'que' and v:
+                searchable_parts.append(str(v))
+        
+        searchable = " ".join(searchable_parts).lower()
+        if keyword in searchable:
+            results.append(row)
+        if len(results) >= 8:
+            break
+
+    if not results:
+        bot.send_message(
+            chat_id,
+            f"❌ Không tìm thấy câu hỏi nào có từ khóa: *{parts[1].strip()}*\n"
+            "Thử tìm bằng các từ khóa khác ngắn hơn.",
+            parse_mode='Markdown'
+        )
+        return
+
+    lines = [f"🛡️ *Kết quả tra cứu bộ đề:* `{parts[1].strip()}`\n"]
+    for idx, row in enumerate(results):
+        que_cleaned = clean_html(row.get('que', ''))
+        lines.append(f"*{idx+1}. {que_cleaned}*")
+        
+        if 'ans' in row and row['ans']:
+            ans_cleaned = clean_html(row['ans'])
+            lines.append(f"👉 _Đáp án:_ `{ans_cleaned}`")
+        else:
+            ans_list = []
+            for i in range(1, 10):
+                key = f"ans{i}"
+                if key in row and row[key]:
+                    ans_list.append(clean_html(row[key]))
+            if ans_list:
+                lines.append("👉 _Đáp án:_")
+                for ans in ans_list:
+                    lines.append(f"  • `{ans}`")
+        lines.append("")
+
+    total_found = 0
+    for row in _attt_data:
+        searchable_parts = [row.get('que', '')]
+        for k, v in row.items():
+            if k != 'que' and v:
+                searchable_parts.append(str(v))
+        if keyword in " ".join(searchable_parts).lower():
+            total_found += 1
+
+    if total_found > 8:
+        lines.append(f"_...và {total_found - 8} câu hỏi khác. Hãy dùng từ khóa cụ thể hơn._")
+
+    full_msg = "\n".join(lines)
+    if len(full_msg) > 4000:
+        full_msg = full_msg[:4000] + "\n_(Cắt bớt do vượt quá độ dài tin nhắn)_"
 
     bot.send_message(chat_id, full_msg, parse_mode='Markdown')
 

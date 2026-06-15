@@ -1,0 +1,2492 @@
+[
+  {
+    "que": "Các hành động nào sau đây là KHÔNG an toàn khi sử dụng mạng Internet?",
+    "ans": "Tắt chế độ tường lửa, chương trình phòng chống virus mỗi khi sử dụng mạng Internet."
+  },
+  {
+    "que": "Ransomware là",
+    "ans": "Mã độc tống tiền người dùng"
+  },
+  {
+    "que": "<p>Trong quá trình sử dụng Microsoft Office 365 tại Tập đoàn, người dùng tại VNPT nhận được email thông báo phát hiện truy cập bất thường từ một thiết bị khác. Bạn nhận định ra sao về email này:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda5e1054rkw\" /></p>\n",
+    "ans1": "Nghi vấn email giả mạo/lừa đảo do bạn kiểm tra email support chính thức của Microsoft Office 365 không phải là no-reply@support-office.vn như ở phần email người gửi",
+    "ans2": "Nghi vấn email giả mạo do đường link gửi kèm trong email (khi rê chuột vào Check your activity) không trỏ đến trang web của Microsoft mà trỏ đến một trang web có tên tương tự là https://support-office.vn/"
+  },
+  {
+    "que": "Khi xuất hiện các “pop-up” hiển thị trên máy tính hoặc trình duyệt web, nghĩa là máy tính của bạn đã bị dính mã độc, điều đó đúng hay sai?",
+    "ans": "Sai"
+  },
+  {
+    "que": "“Đây là tổng đài VNPT, chúng tôi xin thông báo quý khách hàng đang còn nợ số tiền là 8,89 triệu đồng, nếu quý khách không chuyển tiền vào tài khoản sau thì chúng tôi sẽ tiến hành khóa máy sau 2 giờ. Vui lòng bấm số 1 để nghe thông tin tài khoản, số 2 để nghe lại thông báo, số 0 để gặp tổng đài viên”. Đoạn ghi âm trên là của:",
+    "ans": "Mánh khóe lừa đảo báo nợ cước qua điện thoại cố định của tin tặc nhắm vào đối tượng người đứng tuổi, ít kiến thức."
+  },
+  {
+    "que": "Khi màn hình của người dùng hiển thị như hình dưới, nhận định nào phù hợp nhất:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda6b2b34fzz\">",
+    "ans": "Máy tính bị nhiễm mã độc tống tiền Ransomware"
+  },
+  {
+    "que": "Người dùng chỉ nên cài đặt các chương trình, phần mềm được tải về từ:",
+    "ans": "Từ các trang chủ, website chính thống của chương trình, phần mềm đó"
+  },
+  {
+    "que": "Vì sao người dùng được khuyến nghị không nên sử dụng hệ điều hành Win XP nữa?",
+    "ans": "Window XP đã không còn được hỗ trợ bởi nhà sản xuất Microsoft"
+  },
+  {
+    "que": "Mã độc là một khái niệm chung dùng để chỉ các phần mềm độc hại được viết với mục đích:",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Phần mềm sau đây nào không phải là phần mềm chống virus?",
+    "ans": "Word"
+  },
+  {
+    "que": "<p>Những khuyến nghị nào sau đây là đúng khi sử dụng wifi?</p>\n",
+    "ans1": "Luôn ý thức việc sử dụng wifi công cộng như wifi ở các quán cafe, sân bay, phố đi bộ… là không đảm bảo an toàn.",
+    "ans2": "Hạn chế việc chia sẽ mật khẩu wifi"
+  },
+  {
+    "que": "Chính sách tài khoản nào nên được thiết lập để ngăn chặn các cuộc tấn công ác ý liên tục như tấn công dò tìm mật khẩu Brute force vào tài khoản user",
+    "ans": "Giới hạn số lần logon"
+  },
+  {
+    "que": "Cơ chế làm việc của Ransomware WannaCry sau khi lây nhiễm vào máy tính nạn nhân là gì?",
+    "ans": "Quét tất cả các IP trong mạng LAN và sử dụng lỗ hổng của windows MS17-010 để lây lan toàn bộ hệ thống mạng LAN"
+  },
+  {
+    "que": "Kiểu đặt mật khẩu nào sau đây dễ bị bẻ khóa, dễ lộ mật khẩu?",
+    "ans": "Không sử dụng các mật khẩu phức tạp. Chỉ sử dụng mật khẩu đơn giản như 123456a@, 8888888…"
+  },
+  {
+    "que": "<p>Các con đường xâm nhập vào thiết bị của mã độc có thể là:</p>\n",
+    "ans1": "Qua USB",
+    "ans2": "Qua các lỗ hổng web, hệ điều hành, ứng dụng",
+    "ans3": "Qua thư điện tử"
+  },
+  {
+    "que": "<p>Một trong những mục tiêu ưa thích hiện nay của tin tặc là lừa đảo thông qua việc gửi thư điện tử giả mạo, thư rác đến người dùng. Để phòng tránh được những hình thức tấn công này, người dùng cần có những nhận thức cơ bản và cách nhận biết về thư điện tử giả mạo, thư rác. Một số kỹ năng nhận biết đó là:</p>\n",
+    "ans1": "Kiểm tra thông tin Email header trong email được gửi đến. Email header là nội dung được gửi kèm theo thư điện tử (thông tin máy chủ SMTP để tiếp nhận thư điện tử, địa chỉ thư điện tử người gửi, thông tin ứng dụng được sử dụng,…) nhằm cung cấp các thông tin đầy đủ của một bức thư điện tử. Mặc định những thông tin này không được hiển thị đầy đủ cho người dùng để rút gọn không gian hiển thị.",
+    "ans2": "Phân tích địa chỉ thư điện tử để tránh các trường hợp thư điện tử giả mạo mạo danh các website tin tưởng về ngân hàng, tài chính, học tập, chính phủ,… để lừa người dùng nhấp chuột vào đường dẫn độc hại",
+    "ans3": "Xem xét, kiểm tra kỹ các tệp tin tải về trước khi xem và sử dụng, tránh bị tin tặc tấn công lây lan và cài đặt phần mềm độc hại"
+  },
+  {
+    "que": "Độ dài mật khẩu đủ mạnh khi có ít nhất bao nhiêu ký tự?",
+    "ans": "8 ký tự"
+  },
+  {
+    "que": "Một laptop bị nhiễm virus, máy này không có phần mềm diệt virus và đã ngắt kết nối mạng. Biện pháp tốt nhất để sửa chữa khi đó là",
+    "ans": "Khởi động laptop, không kết nối mạng và dùng đĩa anti virus để quét"
+  },
+  {
+    "que": "<p>Trong quá trình thiết lập dịch vụ Internet cho khách hàng, nhân viên kỹ thuật cần thực hiện những công việc nào? Chọn 2 đáp án đúng:</p>\n",
+    "ans1": "Đổi mật khẩu quản trị mặc định của modem. Việc chọn mật khẩu là theo yêu cầu của khách hàng, tuy nhiên vẫn phải đảm bảo mật khẩu đủ độ mạnh và khó đoán đối với tin tặc",
+    "ans2": "Cài đặt, chọn lựa mật khẩu wifi theo yêu cầu của khách hàng, tuy nhiên vẫn phải đảm bảo mật khẩu đủ độ mạnh và khó đoán đối với tin tặc"
+  },
+  {
+    "que": "<p>Khi nhận được một email có đính kèm file, điều gì bạn nên chú ý để phòng ngừa rủi ro: Chọn các đáp án phù hợp:</p>\n",
+    "ans1": "Tất cả các file đính kèm đều có nguy cơ tiềm ẩn và có thể chứa virus độc hại, cần kiểm tra kỹ trước khi mở và sử dụng.",
+    "ans2": "Cài đặt một chương trình diệt virus và đặt chế độ quét virus theo thời gian thực sẽ giảm thiểu nguy cơ bị lây nhiễm virus từ file đính kèm trong email"
+  },
+  {
+    "que": "<p>Phương án nào dưới đây là dấu hiệu nhận biết máy tính bị nhiễm mã độc. Chọn các phương án phù hợp</p>\n",
+    "ans1": "Xuất hiện các file có phần mở rộng .exe có tên trùng với tên các thư mục",
+    "ans2": "Băng thông mạng lớn, ổ cứng hoạt động với tốc độ cao dù máy tính chạy rất ít ứng dụng",
+    "ans3": "Máy tính tự động khởi động lại, màn hình, Webcam tự dưng bật sáng"
+  },
+  {
+    "que": "<p>Những thói quen xấu nào khiến bạn mất an toàn khi sử dụng internet:</p>\n",
+    "ans1": "Sử dụng mật khẩu đơn giản",
+    "ans2": "Sử dụng chung mật khẩu cho nhiều website khác nhau",
+    "ans3": "Sử dụng các thiết lập mặc định trên tất cả mọi thứ, từ ứng dụng, mạng xã hội,…"
+  },
+  {
+    "que": "<p>Mật khẩu nào sau đây đủ mạnh. Chọn nhiều phương án (nếu có):</p>\n",
+    "ans1": "QuIz$2o19",
+    "ans2": "VNpt@019"
+  },
+  {
+    "que": "Để hạn chế chia sẻ thông tin cá nhân trên facebook, đối với chức năng “Quyền riêng tư”, lựa chọn tốt nhất là",
+    "ans": "Cá nhân"
+  },
+  {
+    "que": "Bạn đang thiết lập một tài khoản mạng xã hội lần đầu và rất háo hức được kết nối trực tuyến. Điều gì bạn cần biết trước khi bạn bắt đầu sử dụng tài khoản đó.",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "WannaCry là tên một loại mã độc nào dưới đây?",
+    "ans": "Ransomware"
+  },
+  {
+    "que": "Đâu là nguy cơ mất an toàn khi sử dụng mạng wifi công cộng?",
+    "ans": "Cả 2 đáp án đều đúng"
+  },
+  {
+    "que": "Bạn nhận được 01 email từ một người rất giàu có cần sự giúp đỡ của bạn để chuyển tiền qua biên giới quốc tế. Chỉ cần với vài $, bạn đã có thể giúp anh ta và anh ta đề nghị trả cho bạn nhiều lần hơn rất nhiều so với chi phí bạn bỏ ra. Chọn câu trả lời phù hợp nhất.",
+    "ans": "Xóa email đó ngay. Bạn nhận thấy đó là một email spam nhằm đánh lừa người dùng"
+  },
+  {
+    "que": "Các nguồn nào sau đây thường có nguy cơ lây nhiễm mã độc?",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "<p>Để đảm bảo an toàn khi sử dụng mạng không dây, người dùng cần thực hiện những thao tác nào dưới đây?</p>\n",
+    "ans1": "Đổi mật khẩu quản trị mặc định",
+    "ans2": "Đổi tên hiển thị mạng wifi (SSID) mặc định",
+    "ans3": "Đặt mật khẩu wifi đủ phức tạp"
+  },
+  {
+    "que": "<p>Các biện pháp bảo mật cơ bản nào dưới đây giúp tăng cường an toàn cho máy tính?</p>\n",
+    "ans1": "Update các bản vá bảo mật (Security Update) của hệ điều hành",
+    "ans2": "Update các bản vá bảo mật (Security Update) của các chương trình ứng dụng trên  máy tính (như là Adobe Acrobat reader, Java, Office…)",
+    "ans3": "Cài đặt ứng dụng Anti-Spyware/Adware/Malware"
+  },
+  {
+    "que": "Địa chỉ của hệ thống phân tích mã độc tự động mà Tập đoàn đã xây dựng là:",
+    "ans": "https://malware.vnpt.vn/"
+  },
+  {
+    "que": "Người dùng nên chú ý điều gì khi sử dụng Email:",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Trong các đáp án dưới đây, đáp án nào là tốt nhất để giảm thiểu các điểm yếu, lỗ hổng bảo mật trong hệ điều hành?",
+    "ans": "Cài đặt bản vá mới nhất cho hệ điều hành"
+  },
+  {
+    "que": "<p>Ngày nay chúng ta nhận được rất nhiều đường link chia sẻ từ bạn bè hay email với tập tin đính kèm, tuy nhiên cũng không ít trong số các link này có khả năng chứa các mã độc nguy hiểm. Để hạn chế việc click nhầm vào những link chứa virus, một biện pháp được nhiều người sử dụng là sử dụng website VirusTotal. Tác dụng của website Virustotal là:</p>\n",
+    "ans1": "Kiểm tra nhanh đường dẫn URL xem có gì khả nghi hay không",
+    "ans2": "Kiểm tra nhanh tập tin đính kèm có gì khả nghi hay không"
+  },
+  {
+    "que": "Tấn công phát tán Malware là hình thức tấn công",
+    "ans": "Phát tán các phần mềm độc hại (virus, trojan, backdoor...) qua môi trường internet."
+  },
+  {
+    "que": "Khi có việc bận phải rời khỏi máy tính tại bàn làm việc trong thời gian ngắn, hành động phù hợp nhất nên thực hiện trước khi bạn rời đi là:",
+    "ans": "Khóa màn hình máy tính. Hãy đảm bảo máy tính của bạn đã được cài mật khẩu đăng nhập"
+  },
+  {
+    "que": "<p>Trước chuyến đi chơi chúng ta thường hay post hình vé máy bay hoặc thẻ lên máy bay (boarding pass) của mình lên Facebook, Instagram và các mạng xã hội khác, chủ yếu là để khoe với bạn bè rằng bạn đang chuẩn bị du lịch tới địa điểm nào đó. Hành động này có thể dẫn tới những tác hại nào?</p>\n",
+    "ans1": "Lộ mã vạch: mã vạch này là tất cả những thông tin quan trọng như tên họ, giới tính và mã đặt chỗ của vé. Một số hãng hàng không còn nhúng cả số hiệu chuyến bay vào vé để giúp khâu check in lên máy bay được nhanh chóng hơn, tiện lợi hơn.",
+    "ans2": "Lộ nơi đến, hành trình bay: Trên vé máy bay của bạn có in đầy đủ nơi xuất phát và điểm đến của bạn. Nếu có ai đó biết bạn chuẩn bị bay tới thành phố X nào đó, họ có thể chuẩn bị, thực hiện các hành vi gây hại đến bạn như dàn xếp người chặn đường, cướp đồ của bạn khi bạn vừa ra khỏi sân bay hoặc khi bạn đang lưu trú tại đó.  Tính riêng tư của bạn khi đó bị phơi bày chỉ qua một tấm ảnh",
+    "ans3": "Lộ số ghế: Điện thoại, tablet, máy tính, máy nghe nhạc, ví tiền... là những thứ mà bạn thường mang theo lên máy bay trong khi lại nhỏ gọn và dễ bị trộm. Nếu thông tin bị lộ, kẻ xấu có thể lợi dụng, tìm cách trộm những món đồ đó từ bạn.",
+    "ans4": "Họ tên, giới tính của bạn: Một khi số passport hay chứng minh thư của bạn bị lộ, người ta có thể lén dùng nó để đăng kí tài khoản trong những trang web xấu, dùng để làm giả giấy tờ và mạo danh bạn thực hiện các hành vi phạm tội"
+  },
+  {
+    "que": "Đối với 01 USB lạ không rõ nguồn gốc xuất xứ, không rõ nội dung bên trong, hành động phù hợp nhất của bạn là:",
+    "ans": "Không sử dụng USB đó, không cắm USB đó vào máy tính"
+  },
+  {
+    "que": "<p>Việc sử dụng mạng không dây công cộng tiềm ẩn nhiều nguy cơ nghiêm trọng. Để tăng cường bảo vệ an toàn khi sử dụng wifi công cộng, người dùng nên chú ý:</p>\n",
+    "ans1": "Tắt wifi khi không có nhu cầu sử dụng mạng nữa",
+    "ans2": "Hạn chế truy cập và điền thông tin tài khoản vào các website không được mã hóa. Các website sử dụng giao thức mã hóa HTTPS sẽ giúp bảo mật thông tin tốt hơn.",
+    "ans3": "Khi sử dụng wifi miễn phí được cung cấp ở nơi công cộng, không thực hiện thanh toán trực tuyến hay sử dụng ngân hàng trực tuyến mà không có biện pháp bảo vệ thích hợp (sử dụng VPN,…)"
+  },
+  {
+    "que": "Đường dẫn (URL) để thay đổi mật khẩu Email VNPT",
+    "ans": "https://mail.vnpt.vn/ecp"
+  },
+  {
+    "que": "Các nguyên tắc khi đặt mật khẩu",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Vì sao chúng ta nên sử dụng các mật khẩu riêng biệt cho từng loại tài khoản. Chọn câu trả lời phù hợp nhất:",
+    "ans": "Để giúp cho việc tin tặc không thể truy cập vào tất cả các tài khoản trong trường hợp 1 tài khoản người dùng bị tấn công"
+  },
+  {
+    "que": "Trong các tập tin dưới đây, tập tin nào có khả năng chứa virus nhất?",
+    "ans": "phongcanh.png.msi"
+  },
+  {
+    "que": "Mạng xã hội Facebook rất tuyệt vời. Bạn có thể liên lạc với tất cả bạn bè và đăng tải những gì xảy ra trong cuộc sống của bạn. Khi trở thành 1 thành viên của mạng xã hội, những hành động nào dưới đây bạn nên làm theo?",
+    "ans": "Có trách nhiệm đối với thông tin đăng tải về cá nhân và người thân của bạn."
+  },
+  {
+    "que": "Virus là",
+    "ans": "là chương trình phần mềm độc hại được dùng để phục vụ những mục đích không tốt."
+  },
+  {
+    "que": "<p>Người dùng cần phải thực hiện thay đổi mật khẩu ngay khi:</p>\n",
+    "ans1": "Hệ thống của bạn hay các trang đăng nhập của bạn bị tấn công",
+    "ans2": "Bị mất các thiết bị đang lưu trữ password như smartphone, laptop",
+    "ans3": "Định kỳ thay đổi mật khẩu theo quy định tại đơn vị"
+  },
+  {
+    "que": "Người dùng được khuyến cáo chỉ nên truy cập vào các website HTTPS có biểu tượng ổ khóa trên thanh địa chỉ thay vì HTTP, bởi lý do nào sau đây?",
+    "ans": "Chứng thực website là an toàn. Dữ liệu của người dùng sẽ được mã hóa khi truyền đi trên môi trường mạng"
+  },
+  {
+    "que": "Chức năng nào của Windows được sử dụng để xóa bỏ các chương trình không cần thiết?",
+    "ans": "Programs and Features trong Control Panel"
+  },
+  {
+    "que": "Những biện pháp giúp quản lý mật khẩu an toàn hơn:",
+    "ans": "Tất cả các ý trên"
+  },
+  {
+    "que": "Khi tiến hành cài đặt cấu hình cho modem Wifi ở nhà, người dùng nên lựa chọn cơ chế bảo mật mạng không dây nào dưới đây là an toàn nhất?",
+    "ans": "Mã hóa WAP2"
+  },
+  {
+    "que": "<p>Trước khi sử dụng usb của một người khác trên máy tính, điều gì bạn nên thực hiện để đảm bảo an toàn bảo mật. Chọn các phương án phù hợp</p>\n",
+    "ans1": "Thực hiện quét virus cho chiếc usb trước khi truy cập và sử dụng dữ liệu trong usb",
+    "ans2": "Format usb (nếu được cho phép) là giải pháp an toàn nhất để phòng chống mã độc có thể chứa bên trong usb."
+  },
+  {
+    "que": "Trong các phương án dưới đây, chuẩn bảo mật wifi được khuyến nghị không nên sử dụng  do thiếu đô an toàn bảo mật là:",
+    "ans": "WEP"
+  },
+  {
+    "que": "Phương án nào không phải là dấu hiệu nhận biết máy tính bị nhiễm mã độc?.",
+    "ans": "Không lên nguồn điện khi bật khởi động máy tính"
+  },
+  {
+    "que": "Trong quá trình sử dụng máy tính tại nơi làm việc, trên màn hình máy tính của người dùng bất ngờ xuất hiện nhiều bảng pop up như hình bên dưới. Bạn nhận định ra sao về máy tính của người dùng đó. Chọn câu trả lời phù hợp nhất.<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda64c46a3we\">",
+    "ans": "Máy tính bị nhiễm mã độc quảng cáo Adware"
+  },
+  {
+    "que": "<p>Rất nhiều người dùng hiện nay vẫn đang sử dụng các phần mềm, hệ điều hành được bẻ khóa (crack). Điều đó tồn tại những nguy cơ vô cùng nguy hiểm:</p>\n",
+    "ans1": "Càng sử dụng nhiều phần mềm crack trên máy tính thì nguy cơ bị dính virus, trojan, mã độc…. càng cao.",
+    "ans2": "Vi phạm luật bảo vệ tác quyền các sản phẩm trí tuệ"
+  },
+  {
+    "que": "<p>Bạn nhận được một email thông báo từ Google như hình dưới. Bạn có nhận xét gì về email này:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda57b947abt\" /></p>\n",
+    "ans1": "Tên email của người gửi không phải của GmailTeam",
+    "ans2": "Đường link gửi kèm trong email (Change) không trỏ đến trang web của Gmail mà trỏ đến một trang web lạ"
+  },
+  {
+    "que": "<p>Các biện pháp nên thực hiện ngay khi bạn biết mật khẩu tài khoản của bạn đã bị lộ</p>\n",
+    "ans1": "Lập tức đổi thông tin mật khẩu trên tất cả các tài khoản liên quan",
+    "ans2": "Thông báo cho bạn bè, người thân để họ tránh đưa các thông tin cá nhân cho tin tặc",
+    "ans3": "Bật tính năng xác thực 2 bước cho các tài khoản quan trọng (nếu được hỗ trợ)."
+  },
+  {
+    "que": "Những nguy cơ có thể gặp phải khi sử dụng phần mềm crack",
+    "ans": "Tất cả các phương án trên"
+  },
+  {
+    "que": "<p>Người dùng tại VNPT nhận được 1 email thông báo dung lượng lưu trữ hòm thư vượt quá giới hạn như hình dưới. Anh/chị cho rằng điều này: Chọn các phương án phù hợp.<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda5b05be22p\" /></p>\n",
+    "ans1": "Nghi vấn là email giả mạo do email được gửi từ một email có đuôi @vnptvn.tk không phải là email của VNPT",
+    "ans2": "Nghi vấn là email giả mạo do bạn thấy thông tin email của ITSupport ở phần người gửi (ITSuport@vnptvn.tk) và ở phần chữ ký (ITSuport@vnpt.vn) lại khác nhau"
+  },
+  {
+    "que": "Hệ điều hành nào được Tập đoàn trang bị bản quyền tập trung?",
+    "ans": "Windows 10"
+  },
+  {
+    "que": "Phương án nào không phải là dấu hiệu nhận biết máy tính bị nhiễm mã độc?",
+    "ans": "Cảnh báo cáp mạng bị đứt khi kết nối Internet"
+  },
+  {
+    "que": "<p>Trong quá trình sử dụng điện thoại, khi truy cập vào các trang web, điện thoại của bạn xuất hiện cảnh báo “Điện thoại của bạn đã bị nhiễm virus và cần xóa ngay lập tức”. Hành động của bạn khi đó là gì để đảm bảo an toàn không bị mất mát dữ liệu:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda3dc9075b1\" /></p>\n",
+    "ans1": "TUYỆT ĐỐI bạn KHÔNG nhấp vào nút “hủy bỏ virus – remove virus” hay bất cứ liên kết nào khác có trong thông báo cảnh báo",
+    "ans2": "Thực hiện xóa dữ liệu cache của trình duyệt có thể sẽ giúp trình duyệt không hiện cảnh báo đó nữa"
+  },
+  {
+    "que": "Cú pháp nhắn tin để lấy lại mật khẩu truy cập Portal VNPT",
+    "ans": "MK &lt;tên tài khoản&gt; gửi 293"
+  },
+  {
+    "que": "Vì sao việc mở trực tiếp các tập tin đính kèm theo email mà không kiếm tra trước lại nguy hiểm?",
+    "ans": "Vì các tệp đính kèm email có thể chứa mã độc (VD: virus)"
+  },
+  {
+    "que": "<p>Để tăng cường đảm bảo an toàn khi sử dụng USB, người dùng cần:</p>\n",
+    "ans1": "Khóa chức năng Autorun khi sử dụng USB",
+    "ans2": "Quét virus cho USB trước khi sử dụng"
+  },
+  {
+    "que": "<p>Các kiểu sinh trắc học thường được sử dụng để xác thực người dùng là?</p>\n",
+    "ans1": "Dấu vân tay",
+    "ans2": "Mống mắt",
+    "ans3": "Khuôn mặt"
+  },
+  {
+    "que": "<p>Những thông tin nào bạn nên chú ý tránh ghi vào thông tin tài khoản cá nhân trên mạng xã hội của bạn. Chọn 3 phương án phù hợp</p>\n",
+    "ans1": "Địa chỉ nhà riêng, địa chỉ du lịch bạn sẽ tới,…",
+    "ans2": "Tên công ty bạn đang làm việc",
+    "ans3": "Số điện thoại cá nhân"
+  },
+  {
+    "que": "<p>Khi sử dụng mạng xã hội, các biện pháp nào giúp tăng cường bảo mật cho tài khoản:</p>\n",
+    "ans1": "Kích hoạt chức năng bảo mật hai yếu tố trên các trang mạng xã hội",
+    "ans2": "Dùng số điện thoại làm tùy chọn khôi phục",
+    "ans3": "Tận dụng các tùy chọn riêng tư của các mạng xã hội"
+  },
+  {
+    "que": "Biện pháp phòng ngừa tấn công mã hóa dữ liệu",
+    "ans": "Sao lưu thường xuyên các dữ liệu ra ổ cứng ngoài hoặc trên Cloud (Onedrive, Google Drive….)"
+  },
+  {
+    "que": "Mã độc có thể lây nhiễm, và kiểm soát những loại thiết bị nào dưới đây?",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Cách phòng chống mã độc tốt nhất khi sử dụng máy tính?",
+    "ans": "Phải cài đặt, cập nhật phiên bản và luôn bật chế độ rà quét tự động của phần mềm phòng chống mã độc"
+  },
+  {
+    "que": "<p>Khi phải sử dụng máy tính công cộng, những chú ý nào giúp bạn tăng cường an toàn thông tin:</p>\n",
+    "ans1": "Tránh bị người khác nhìn trộm mật khẩu",
+    "ans2": "Khóa màn hình máy tính hoặc đăng xuất trước khi rời đi vì bất cứ lý do gì",
+    "ans3": "Hạn chế các giao dịch ngân hàng, hay trao đổi thông tin cá nhân",
+    "ans4": "Luôn luôn đăng xuất khỏi các tài khoản online (facebook, gmail, google,…) trước khi rời đi"
+  },
+  {
+    "que": "Kiểu tấn công Non-Electronic là dạng tấn công mật khẩu nào?",
+    "ans": "Tấn công dựa vào yếu tố con người"
+  },
+  {
+    "que": "<p>Phương án nào dưới đây là dấu hiệu nhận biết máy tính có thể bị nhiễm mã độc:</p>\n",
+    "ans1": "Truy xuất tập tin, mở các chương trình ứng dụng chậm bất thường",
+    "ans2": "Khi duyệt web có các trang web lạ tự động xuất hiện",
+    "ans3": "Các trang quảng cáo tự động hiện ra (pop up)"
+  },
+  {
+    "que": "Đồng nghiệp của bạn mượn máy tính của bạn để đăng nhập facebook với mục đích cá nhân nhưng quên không đăng xuất tài khoản. Khi đó, bạn nên làm gì?",
+    "ans": "Đăng xuất ngay lập tức tài khoản của họ và nhắc nhở phải nhớ đăng xuất tài khoản để đảm bảo an toàn"
+  },
+  {
+    "que": "Mã OTP (Mật khẩu chỉ sử dụng một lần) dùng để làm gì?",
+    "ans": "Được dùng làm mã xác thực trong xác minh 2 lớp trong các giao dịch xác minh đăng nhập, giảm thiểu những rủi ro bị tấn công khi mật khẩu bị lộ hoặc hacker xâm nhập"
+  },
+  {
+    "que": "Khi sử dụng internet, biểu tượng ổ khóa trên các URL trình duyệt có ý nghĩa gì:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda49d15143m\">",
+    "ans": "Kết nối đã được mã hóa và đảm bảo an toàn"
+  },
+  {
+    "que": "Cổng dịch vụ 23 (telnet) thường được sử dụng nhằm đảm bảo an toàn bảo mật cho máy tính. Điều đó đúng hay sai?",
+    "ans": "Sai"
+  },
+  {
+    "que": "<p>Trình duyệt tự dưng xuất hiện rất nhiều thanh công cụ (toolbar) mặc dù bạn chưa từng cài. Bạn xác định khả năng lớn máy tính đã bị tấn công. Hành động phù hợp để phòng chống trong trường hợp này là:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda4eca98oye\" /></p>\n",
+    "ans1": "Truy cập vào mục quản lý các toolbar của trình duyệt, vô hiệu hóa (disable) hoặc gỡ bỏ hoàn toàn các thanh công cụ giả mạo",
+    "ans2": "Khi cài đặt các ứng dụng, như trình duyệt hay các trình download, bạn nên đọc kỹ từng bước và bỏ chọn hoặc không đồng ý những điều khoản trong các bước cài thêm các ứng dụng bổ sung để không vô tình cài phải các công cụ không mong muốn."
+  },
+  {
+    "que": "Trên đường đi tới công ty, bạn nhặt được một chiếc usb khá mới. Bạn muốn lấy usb đó tới công ty để sử dụng. Hành động gì nên thực hiện khi sử dụng usb đó?",
+    "ans": "Format usb hoặc quét virus usb trước khi sử dụng để đảm bảo usb không chứa các file độc hại"
+  },
+  {
+    "que": "Phần mềm Kaspersky là phần mềm có chức năng:",
+    "ans": "Diệt virus"
+  },
+  {
+    "que": "Tổ hợp phím “Window + D” dùng để làm gì?",
+    "ans": "Ẩn/hiện các cửa sổ trên màn hình máy tính"
+  },
+  {
+    "que": "<p>Khuyến nghị nào sau đây là KHÔNG ĐÚNG khi sử dụng email</p>\n",
+    "ans1": "Khi nhận được email có các đường link hay file đính kèm, cần phải truy cập các đường link đó hoặc mở các file gửi kèm trong email.",
+    "ans2": "Chia sẻ địa chỉ email lên các trang mạng xã hội, nhà cung cấp dịch vụ, người quen càng nhiều càng tốt để mọi người biết đến mình."
+  },
+  {
+    "que": "Bạn nhận được 1 email trúng thưởng được gửi từ Gmail Team có địa chỉ email là &quot;mail-noreply@gmailteams.com” với nội dung: “Với quyền sở hữu tài khoản Google này. Bạn đã trở thành 1 trong 100 khách hàng tại Việt Nam nhận được giải thưởng từ sự kiện tri ân khách hàng Customer Gratiude do Google tổ chức. Thực hiện truy cập link để chọn giải thưởng và làm thủ tục nhận thưởng tại chi nhánh Google ở Đà Nẵng”. Theo bạn, đáp án nào dưới đây là đúng?",
+    "ans": "Thông tin email \"mail-noreply@gmailteams.com có hình thức tương đối giống với các email của Gmail Team thường gửi tới người dùng. Tuy nhiên email thực sự của Gmail Team là mail-noreply@google.com. Như vậy đây là email lừa đảo."
+  },
+  {
+    "que": "Phương thức nào dưới đây có thể giúp người dùng đảm bảo an toàn thông tin dữ liệu truyền đi khi truy cập qua một mạng thiếu an toàn (mạng wifi công cộng, quán game,...)? Chọn phương án phù hợp nhất.",
+    "ans": "VPN"
+  },
+  {
+    "que": "Đây là địa chỉ website Facebook người dùng thường xuyên truy cập vào. Điều đó đúng hay sai ?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda7083dekcr\">",
+    "ans": "Sai. Website của Facebook sử dụng giao thức HTTPS"
+  },
+  {
+    "que": "Hình thức xác thực khi người dùng truy cập eOffice VNPT là:",
+    "ans": "Mật khẩu người dùng kết hợp OTP (mật khẩu dùng 1 lần qua tin nhắn)"
+  },
+  {
+    "que": "Bạn nhận được email thông báo tài khoản PayPal (tài khoản thanh toán trực tuyến) đã bị tạm khóa do có một số lỗi xảy ra trong thông tin của tài khoản. Để tiếp tục sử dụng tài khoản PayPal đó, người dùng cần cập nhật thông tin của họ theo đường link gửi kèm trong email, đường link yêu cầu thông tin đăng nhập như hình dưới. Bạn cho rằng điều này:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda377510gsl\"><img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda3b12bff4l\">",
+    "ans": "Đường link đính kèm trong email không trỏ tới trang web chính thống của Paypal. Bạn xác nhận email đó là email giả mạo, không điền thông tin cá nhân và xóa chúng ngay lập tức."
+  },
+  {
+    "que": "Tấn công Deface website là kiểu tấn công",
+    "ans": "Thay đổi nội dung website của nạn nhân"
+  },
+  {
+    "que": "<p>Việc cập nhật bản vá thường xuyên cho hệ điều hành, phần mềm máy tính là rất quan trọng bởi vì:</p>\n",
+    "ans1": "Nó giúp máy tính của bạn gặp ít nguy cơ bị mã độc tấn công hơn",
+    "ans2": "Nó giúp sửa chữa các lỗ hổng phần mềm mà nhà sản xuất đã phát hiện ra"
+  },
+  {
+    "que": "<p>Bạn biết gì về tác dụng của firewall và phần mềm diệt virus. Chọn các câu trả lời đúng nhất:</p>\n",
+    "ans1": "Tường lửa (firewall) giúp quản lý những gì được phép vào mạng và những gì được phép ra khỏi mạng. Nó thường được sử dụng để chống sự truy cập trái phép, nhằm bảo vệ các nguồn thông tin nội bộ và hạn chế sự xâm nhập không mong muốn từ bên ngoài vào hệ thống.",
+    "ans2": "Phần mềm diệt virus tìm, cảnh báo và diệt virus (nếu có thể) trong máy tính của bạn"
+  },
+  {
+    "que": "Nguy cơ khi sử dụng mạng xã hội?",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Khi cài đặt phần mềm ứng dụng trên máy tính, người dùng nên tải các bản cài đặt từ đâu? Chọn đáp án đúng nhất",
+    "ans": "Từ trang web chính thức của nhà cung cấp phần mềm"
+  },
+  {
+    "que": "Trang web dưới đây là trang web của<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda6dd16e263\">",
+    "ans": "Không phải website chính thức của các đơn vị thuộc VNPT"
+  },
+  {
+    "que": "Khi sử dụng mạng xã hội, cần lưu ý những điều sau:",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Adware là",
+    "ans": "phần mềm được thiết kế để hiển thị quảng cáo lên màn hình thiết bị của người dùng, thường ngụy trang dưới dạng một chương trình hợp pháp hoặc ẩn mình trong một chương trình khác để lừa người dùng cài đặt nó."
+  },
+  {
+    "que": "<p>Ngày này, mọi thiết bị đều có nguy cơ bị tấn công với nhiều cách thức phức tạp và tinh vi đến mức khó nhận biết. Các dấu hiệu giúp nhận biết máy tính đã bị hacker tấn công:</p>\n",
+    "ans1": "Phần mềm diệt virus đang chạy trên máy tính bỗng dưng bị tắt",
+    "ans2": "Xuất hiện nhiều biểu tượng mới, lạ trên dashboard của trình duyệt. Dashboard là thanh công cụ cho phép người dùng lưu những trang web mình thường truy cập.<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda417919r8b\">",
+    "ans3": "Con trỏ tự di chuyển mà bạn không làm gì. Có khả năng máy đã bị tin tặc tấn công, chúng đang điều khiển con trỏ chuột từ xa."
+  },
+  {
+    "que": "Đâu là địa chỉ website chính thức của VNPT?",
+    "ans": "http://www.vnpt.vn/"
+  },
+  {
+    "que": "Tổ hợp phím “Window + L” trên hệ điều hành Windows có tác dụng gì?",
+    "ans": "Khóa màn hình máy tính"
+  },
+  {
+    "que": "<p>Một người dùng bị mất điện thoại Iphone, đã khóa máy. Sau vài ngày, người dùng đó nhận được tin nhắn yêu cầu xác minh vị trí điện thoại như hình dưới. Bạn nhận định như thế nào trong trường hợp này. Chọn các phương án phù hợp:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda524df5r4r\" /></p>\n",
+    "ans1": "Đường link đính kèm trong tin nhắn không phải trỏ tới website của Apple",
+    "ans2": "Tin tặc đã gửi tin nhắn sms giả mạo tới người dùng nhằm mục đích đánh lừa người dùng truy cập và điền thông tin cá nhân (ID Apple) vào website giả mạo do tin tặc dựng lên"
+  },
+  {
+    "que": "Theo quy định 1650/QĐ-VNPT-IT&amp;VAS về quản lý và sử dụng thư điện tử của Tập đoàn, người dùng phải thay đổi mật khẩu ít nhất bao lâu một lần?",
+    "ans": "3 tháng"
+  },
+  {
+    "que": "<p>Có thể thiết lập firewall trong hệ điều hành Windows bằng cách?</p>\n",
+    "ans1": "Sử dụng giao điện đồ họa thông qua Control panel",
+    "ans2": "Sử dụng cửa sổ dòng lệnh Command Prompt (cmd)"
+  },
+  {
+    "que": "VPN (Virtual Private Network) là gì?",
+    "ans": "Mạng riêng ảo, giúp mã hóa các gói tin truyền đi và nhận về, tạo kết nối mạng an toàn khi người dùng/hệ thống kết nối thông qua mạng công cộng"
+  },
+  {
+    "que": "<p>Trong quá trình thiết lập dịch vụ cho khách hàng, mật khẩu wifi tại nhà khách hàng được đặt là Boybuongbinh. Bạn cho rằng điều này: Chọn các phương án đúng</p>\n",
+    "ans1": "Mật khẩu không đủ mạnh, khá phổ biến trên mạng, cần thiết đổi sang mật khẩu khác phức tạp và khó đoán hơn",
+    "ans2": "Nhân viên kỹ thuật chưa hướng dẫn đầy đủ cho khách hàng về tầm quan trọng của mật khẩu mạnh"
+  },
+  {
+    "que": "Nếu thường xuyên duyệt web sử dụng Mozilla Firefox, bạn nên sử dụng chức năng Master password đi kèm. Chức năng của Master password là gì?",
+    "ans": "Mỗi khi sử dụng trình duyệt Firefox để truy cập một trang web có sử dụng mật khẩu tới tài khoản, bạn sẽ được yêu cầu nhập Master password, giúp ngăn chặn việcngười dùng khác hay tin tặc truy cập vào các trang web bạn đã lưu thông tin đăng nhập trước đó"
+  },
+  {
+    "que": "Mật khẩu đủ mạnh bao gồm các điều kiện nào sau đây:",
+    "ans": "Cả 3 đáp án trên"
+  },
+  {
+    "que": "Tác hại của mã độc",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Hãy chọn một phát biểu đúng nhất trong các phát biểu sau:",
+    "ans": "Tại một thời điểm, một phần mềm diệt virus chỉ diệt được một số loại virus nhất định"
+  },
+  {
+    "que": "Khi xác định máy tính của mình vừa mới bị nhiễm mã độc tống tiền Ransomware, hành động phù hợp nhất để hạn chế tác hại của mã độc khi phát hiện ra là:",
+    "ans": "Lập tức ngắt kết nối mạng, tắt nguồn máy tính và liên hệ với cán bộ quản trị IT để được hỗ trợ giải quyết"
+  },
+  {
+    "que": "Các khuyến nghị khi sử dụng mạng công cộng là:",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "<p>Các dấu hiệu để nghi ngờ máy tính bị nhiễm mã độc là:</p>\n",
+    "ans1": "Sự xuất hiện không rõ nguồn gốc của các thanh công cụ (Toolbar) lạ trên các trình duyệt",
+    "ans2": "Những thay đổi trong thiết lập của trình duyệt. Ví dụ, người dùng đã thiết lập website www.google.com.vn làm trang chủ, nhưng khi chạy thì trình duyệt lại hiện ra một website khác như http://www.antoanroi.com/",
+    "ans3": "Màn hình desktop bị thay đổi và tự động nhảy ra các quáng cáo hoặc các thông báo như: “Your computer is infected”, hoặc xuất hiện cửa sổ “Virus Alert”"
+  },
+  {
+    "que": "<p>Đối với mạng xã hội facebook, trong các đáp án bên dưới, đâu là cách không đảm bảo an toàn bảo mật cho người dùng?</p>\n",
+    "ans1": "Duy trì chế độ đăng nhập thường xuyên của tài khoản facebook",
+    "ans2": "Chia sẻ thông tin cá nhân, các hoạt động đời thường của mình lên facebook để cộng đồng mạng biết đến mình nhiều hơn"
+  },
+  {
+    "que": "<p>Tại sao các tổ chức lại yêu cầu người dùng phải đặt mật khẩu dài và có các ký tự, số:</p>\n",
+    "ans1": "Để các mật khẩu trở nên khó đoán",
+    "ans2": "Để khiến tin tặc bị khó khăn khi dò tìm mật khẩu tự động"
+  },
+  {
+    "que": "Locky là loại mã độc gì?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda2d1c80y8s\">",
+    "ans": "Mã độc tống tiền/Ransomware"
+  },
+  {
+    "que": "<p>Các dấu hiệu của một email giả mạo: Chọn nhiều phương án</p>\n",
+    "ans1": "Có thể đưa ra một cảnh báo cấp bách. Ví dụ: Tài khoản của Quý khách sẽ được đóng cửa hoặc tạm đình chỉ hoặc Quý khách sẽ mất một khoản phí nếu không trả lời.",
+    "ans2": "Có thể chứa những lỗi chính tả lộ liễu. Những lỗi này cho phép các email giả mạo tránh được bộ lọc thư rác mà các nhà cung cấp dịch vụ internet sử dụng.",
+    "ans3": "Có đính kèm những đường dẫn liên kết mà thoạt nhìn tưởng là hợp pháp bởi vì chúng chứa tất cả hoặc một phần tên của công ty chính hãng. Các liên kết này có thể đưa người dùng đến các website giả mạo, tại đó yêu cầu người dùng nhập vào, xác nhận hoặc cập nhật thông tin cá nhân nhạy cảm."
+  },
+  {
+    "que": "Định kỳ sao lưu dữ liệu quan trọng ra đĩa CD, ổ cứng ngoài sẽ giúp cho người dùng:",
+    "ans": "Có thể lấy lại dữ liệu nếu chẳng may bản gốc bị hư hỏng, bị phá hủy, bị nhiễm virus, bị mất máy"
+  },
+  {
+    "que": "<p>Dấu hiệu nhận biết thiết bị di động bị nhiễm mã độc:</p>\n",
+    "ans1": "Thiết bị nhanh nóng hơn khi sử dụng, nhanh hết pin bất thường",
+    "ans2": "Thường xuyên bật các pop-up quảng cáo",
+    "ans3": "Một số ứng dụng lạ được cài đặt"
+  },
+  {
+    "que": "Tại công ty, khi phải ra ngoài một thời gian ngắn (đi xin chữ ký lãnh đạo, đi ăn trưa,…) biện pháp nào bạn nên thực hiện. Chọn đáp án phù hợp nhất",
+    "ans": "Khóa màn hình máy tính"
+  },
+  {
+    "que": "Khi thực hiện các giao dịch trực truyến cần chú ý:",
+    "ans": "Cả 3 phương án trên đều đúng"
+  },
+  {
+    "que": "Mã độc Coinhive là",
+    "ans": "Mã độc chạy dưới dạng tiện ích mở rộng hoặc trực tiếp trong trình duyệt nhằm mục đích đào tiền ảo Bitcoin"
+  },
+  {
+    "que": "<p>Người dùng công nghệ bao giờ cũng mong muốn các thiết bị máy tính, laptop của mình luôn được bảo vệ an toàn khỏi virus và các lỗ hổng bảo mật. Tuy nhiên, nhiều thói quen cơ bản hàng ngày tưởng chừng như vô hại lại hoàn toàn có thể tạo điều kiện cho các hacker bất ngờ “hỏi thăm” thiết bị của bạn:</p>\n",
+    "ans1": "Xem phim hoặc các chương trình TV “lậu”",
+    "ans2": "Chia sẻ tài khoản của bạn cho những người khác",
+    "ans3": "Coi nhẹ việc quét mã độc cho USB"
+  },
+  {
+    "que": "Nếu có người nhận là nhân viên của 1 ngân hàng, quỹ tín dụng gửi email tới bạn và thông báo rằng tài khoản của bạn đã bị đánh cắp và cần cung cấp thêm thông tin về tài khoản cá nhân của bạn, hành động đúng nhất của bạn khi đó là:",
+    "ans": "Bỏ qua/xóa email đó vì bạn cho rằng đây là email lừa đảo do tin tặc tạo ra nhằm dụ dỗ người dùng cung cấp thông tin"
+  },
+  {
+    "que": "Giải pháp nào dưới đây nên thực hiện ngay để giúp giảm thiệt hại cho cả cá nhân người dùng và những người khác khi phát hiện thiết bị đã bị tấn công mã hóa dữ liệu (ransomware)?",
+    "ans": "Ngắt kết nối mạng, tắt nguồn máy tính"
+  },
+  {
+    "que": "<p>Những thói quen xấu nào khiến bạn mất an toàn khi sử dụng internet:.</p>\n",
+    "ans1": "Chia sẻ quá nhiều thông tin cá nhân lên mạng xã hội",
+    "ans2": "Chia sẻ thông tin vị trí của bạn"
+  },
+  {
+    "que": "Đáp án nào không phải mạng xã hội trên Internet?",
+    "ans": "Vnpt-ca"
+  },
+  {
+    "que": "Có rất nhiều wifi công cộng tại sân bay, chọn lựa nào dưới đây là kém an toàn nhất?",
+    "ans": "Tất cả đều là wifi do sân bay cung cấp, sử dụng wifi nào cũng được"
+  },
+  {
+    "que": "Hiện nay xuất hiện nhiều loại mã độc gián điệp (BrowserSpy, …) nằm vùng lây lan mạnh trong các máy tính người dùng. Các mã độc này ẩn mình trong các phần mềm giả mạo được hacker đưa lên Internet để lừa người dùng tải về, có thể âm thầm đánh cắp thông tin cá nhân, thu thập nội dung tìm kiếm, đọc trộm email, lịch sử truy cập web…, tải thêm các mã độc khác nhằm kiểm soát máy tính, thực hiện tấn công có chủ đích APT. Để phòng chống loại mã độc này, người dùng nên chú ý:",
+    "ans": "Tất cả các nội dung đều đúng"
+  },
+  {
+    "que": "Khi cài đặt cấu hình mạng wifi, đáp án nào KHÔNG làm tăng độ an toàn?",
+    "ans": "Sử dụng chuẩn bảo mật wifi WEP thay thế cho chuẩn WPA2 đang dùng"
+  },
+  {
+    "que": "Mật khẩu nào được coi là mật khẩu mạnh?",
+    "ans": "$aLtNb83"
+  },
+  {
+    "que": "Tấn công Offline là dạng tấn công mật khẩu nào?",
+    "ans": "Tấn công kiểu từ điển, thay thế một vài ký tự hoặc vét cạn"
+  },
+  {
+    "que": "Tính năng UAC (User Account Control) trên hệ điều hành Windows giúp:",
+    "ans": "Giúp người sử dụng quản lý và giám sát các sự thay đổi trái phép bên trong hệ thống, đảm bảo rằng tất cả các hành động này đều đã được xác nhận từ tài khoản có quyền quản trị"
+  },
+  {
+    "que": "<p>Trong thời đại công nghệ, những chiếc USB rất hữu dụng để lưu trữ dữ liệu cá nhân và mang đi dễ dàng cho bạn. Trong trường hợp nhìn thấy một chiếc USB do ai đó làm rơi trên sàn, bạn sẽ làm gì. Chọn hai phương án phù hợp:</p>\n",
+    "ans1": "Trường hợp muốn cắm USB vào máy tính để sử dụng, bạn hãy đảm bảo thực hiện quét mã độc trong USB hoặc format USB trước khi sử dụng và tự chịu trách nhiệm trong trường hợp USB làm hư hỏng máy tính.",
+    "ans2": "Không sử dụng USB đó, không cắm USB đó vào máy tính là an toàn nhất"
+  },
+  {
+    "que": "Máy tính của một người dùng hiển thị tên các file như hình dưới. Bạn cho rằng:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda33a37b305\">",
+    "ans": "Máy của người dùng đó đã bị nhiễm mã độc. Mã độc đã đổi tên file thành các tên có đuôi .locky"
+  },
+  {
+    "que": "<p>Dấu hiệu nhận biết máy tính bị mã độc</p>\n",
+    "ans1": "Máy tính chạy không ổn định hoặc đột nhiên chạy rất chậm",
+    "ans2": "Các file và thư mục đột nhiên bị xóa hoặc bị thay đổi nội dung",
+    "ans3": "Không truy cập được vào các Website về Security/Anti-Virus"
+  },
+  {
+    "que": "Tính đến thời điểm cuối năm 2020, chuẩn bảo mật nào của mạng WLAN (Wifi) được đánh giá là an toàn nhất:",
+    "ans": "WPA-2"
+  },
+  {
+    "que": "Mật khẩu có nguy cơ bị đánh cắp thường vì lý do nào sau đây?",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Tên gọi phần mềm chống virus của Microsoft trên hệ điều hành Windows 10 là gì?",
+    "ans": "Windows Defender"
+  },
+  {
+    "que": "<p>Trong quá trình sử dụng điện thoại, bạn thường xuyên sử dụng ứng dụng Whats app để gọi điện nhắn tin. Bạn nhận được một email thông báo lỡ cuộc gọi từ một người bạn như hình dưới. Bạn có nhận xét gì về email này:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda55444al4w\" /></p>\n",
+    "ans1": "Tên email gửi tới không phải là email của Whats app",
+    "ans2": "Đường link gửi kèm trong email không trỏ đến trang web của Whats app"
+  },
+  {
+    "que": "<p>Social engineering là nghệ thuật điều khiển mọi người để họ tiết lộ những thông tin bí mật như mật khẩu, thông tin ngân hàng hoặc cách truy cập máy tính để cài đặt phần mềm độc hại. Các loại tấn công Social Engineering phổ biến có thể bao gồm:</p>\n",
+    "ans1": "Kẻ tấn công để lại một thiết bị vật lý bị nhiễm phần mềm độc hại, chẳng hạn như ổ flash USB, ở một nơi chắc chắn sẽ được tìm thấy. Sau đó, người tìm thấy sẽ sử dụng thiết bị đó, rồi cài thiết bị vào máy tính của mình và vô tình cũng làm máy bị nhiễm phần mềm độc hại.",
+    "ans2": "Kẻ tấn công gửi một email lừa đảo được cải trang thành một email hợp pháp (thường giả mạo là từ một nguồn đáng tin cậy). Thông báo này nhằm lừa người nhận chia sẻ thông tin cá nhân hay thông tin tài chính hoặc nhấp vào liên kết cài đặt phần mềm độc hại.",
+    "ans3": "Kẻ tấn công lừa đảo bằng giọng nói, có thể qua điện thoại để thu thập thông tin cá nhân và thông tin tài chính từ mục tiêu.",
+    "ans4": "Kẻ tấn công muốn truy cập vào dữ liệu đặc quyền. Ví dụ, kẻ tấn công giả vờ cần dữ liệu cá nhân hoặc thông tin tài chính để xác nhận danh tính của người nhận."
+  },
+  {
+    "que": "Trong các đáp án dưới đây, đáp án nào là ví dụ về mật khẩu mạnh?",
+    "ans": "Sử dụng một câu nói mà bạn tâm đắc. Bài hát “My heart will go on” phát hành năm 1997: Mật khẩu là Mhwg@97"
+  },
+  {
+    "que": "<p>Các cách nào sau đây giúp tăng khả năng an toàn bảo mật cho email của bạn?</p>\n",
+    "ans1": "Các thiết bị cá nhân (máy tính, máy tính bảng, điện thoại,…) sử dụng email được cài đặt phần mềm diệt virus/mã độc phiên bản mới nhất",
+    "ans2": "Sử dụng mật khẩu đủ mạnh cho email có độ dài tối thiểu 8 ký tự bao gồm chữ hoa, chữ số, ký tự đặc biệt,…"
+  },
+  {
+    "que": "Mã độc nào dưới đây có tên gọi là “mã độc tống tiền”?",
+    "ans": "Ransomware"
+  },
+  {
+    "que": "<p>Mật khẩu nào là không an toàn. Chọn nhiều phương án</p>\n",
+    "ans1": "qwerty",
+    "ans2": "1q2w3e4r5t",
+    "ans3": "88997788!"
+  },
+  {
+    "que": "Tại sao ko nên chia sẻ thông tin cá nhân con bạn, bạn trên facebook",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Theo quy định hiện hành của VNPT về tài khoản/mật khẩu, mật khẩu của các máy chủ, máy trạm phải được thiết lập đủ độ mạnh, bao gồm?",
+    "ans": "Tối thiểu 8 ký tự, có chữ in thường, in hoa, chữ số và ký tự đặc biệt"
+  },
+  {
+    "que": "<p>Các lưu ý nên áp dụng khi sử dụng máy tính công cộng. Chọn nhiều đáp án</p>\n",
+    "ans1": "Kiểm tra độ an toàn của phần mềm (có độc hại hay không) trước khi sử dụng",
+    "ans2": "Hạn chế gửi/truyền các dữ liệu nhạy cảm khi sử dụng máy tính công cộng",
+    "ans3": "Đăng xuất sau khi kết thúc công việc"
+  },
+  {
+    "que": "<p>Vì sao người dùng nên hạn chế sử dụng wifi công cộng?</p>\n",
+    "ans1": "Có thể bị tấn công nghe lén (Man in the middle attack)",
+    "ans2": "Có thể bị tấn công lừa đảo (Phishing)",
+    "ans3": "Có thể bị tấn công giả mạo Wi-Fi (SSID Spoofing)"
+  },
+  {
+    "que": "<p>Khi truy cập và sử dụng Internet, người dùng nên chú ý:</p>\n",
+    "ans1": "Không nên truy cập vào các trang web đen, các trang web độc hại, có nội dung không lành mạnh",
+    "ans2": "Không tùy tiện click vào các đường link từ các email hoặc từ nội dung chat, trên các website mà chưa xác thực rõ độ tin cậy",
+    "ans3": "Tùy chỉnh các tùy chọn bảo mật cho các phần mềm, ứng dụng, website (nếu có) để tăng cường an toàn."
+  },
+  {
+    "que": "Trong các mật khẩu sau, mật khẩu nào là đủ độ phức tạp.",
+    "ans": "Conan!@43"
+  },
+  {
+    "que": "Mỗi trình duyệt web đều có chế độ duyệt web ẩn danh. Theo bạn, chế độ này mang lại lợi ích gì?",
+    "ans": "Bảo đảm tính riêng tư nơi công cộng bởi trình duyệt sẽ không lưu dữ liệu trang web, cookie và lịch sử duyệt web của người dùng hoặc thông tin đã nhập vào các biểu mẫu"
+  },
+  {
+    "que": "Trong quá trình sử dụng máy tính tại nơi làm việc, màn hình máy tính của bạn hiển thị một loạt cảnh báo máy tính bị nhiễm virus như hình dưới. Bạn nhận định ra sao về tình trạng máy tính đó. Chọn câu trả lời phù hợp nhất.<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda68d4eetqd\">",
+    "ans": "Máy tính đang hiển thị các cảnh báo giả mạo, nếu bạn kích vào làm theo hướng dẫn có thể bị lộ thông tin hay bị nhiễm mã độc nguy hiểm."
+  },
+  {
+    "que": "<p>Nếu bạn là chủ của các tài khoản sau, các email nào không nên sử dụng để đăng ký trên các mạng xã hội:</p>\n",
+    "ans1": "Landiep@vnpt.vn",
+    "ans2": "Lamtung.tgg@vnpt.vn"
+  },
+  {
+    "que": "Ngày nay mạng không dây thường xuyên được người dùng sử dụng nhờ giá thành thấp và dễ sử dụng. Ở những nơi công cộng như sân bay, quán café … thường có sẵn nhiều mạng không dây miễn phí cho người dùng. Việc sử dụng mạng không dây công cộng tồn tại nhiều nguy cơ tiềm ẩn. Trong trường hợp bạn lựa chọn 01 mạng không dây công cộng ở sân bay như hình dưới, cách thức chọn lựa và sử dụng nào kém an toàn nhất:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda74c18a6om\">",
+    "ans": "Tất cả đều là wifi tại sân bay do sân bay cung cấp, sử dụng wifi nào cũng được"
+  },
+  {
+    "que": "Các giải pháp để bảo vệ máy tính trước sự tấn công của mã độc là:",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Luật An ninh mạng chính thức có hiệu lực vào thời gian nào",
+    "ans": "1/1/2019"
+  },
+  {
+    "que": "Để hạn chế chia sẻ thông tin nhạy cảm của các bài viết trên facebook, đối với chức năng “Ai có thể xem nội dung của tôi”, lựa chọn tốt là",
+    "ans": "Bạn bè"
+  },
+  {
+    "que": "<p>Khi sử dụng USB, để tránh làm hỏng, mất mát dữ liệu trong USB, người dùng nên:</p>\n",
+    "ans1": "Tránh để USB bị rơi, va đập mạnh",
+    "ans2": "Tránh để USB bị ướt",
+    "ans3": "Tránh để USB trong khu vực có nhiệt độ quá cao"
+  },
+  {
+    "que": "Đáp án nào dưới đây không làm tăng độ an toàn khi sử dụng mạng Wifi:",
+    "ans": "Thiết lập mật khẩu wifi theo số điện thoại đang dùng của bạn"
+  },
+  {
+    "que": "Con trỏ chuột máy tính bỗng dưng di chuyển trên màn hình và click vào vị trí mà bạn không mong muốn. Bạn sẽ làm gì?",
+    "ans": "Ngắt kết nối mạng và gọi bộ phận IT để yêu cầu hỗ trợ"
+  },
+  {
+    "que": "Đối với mạng xã hội Facebook, hành động nào dưới đây là KHÔNG đảm bảo an toàn bảo mật cho người dùng?",
+    "ans": "Duy trì chế độ đăng nhập thường xuyên của tài khoản Facebook tại máy tính dùng chung"
+  },
+  {
+    "que": "Bạn sẽ làm gì nếu sếp bạn yêu cầu bạn gửi mật khẩu tài khoản email của bạn tại công ty cho anh/cô ấy với lý do xác thực thông tin?",
+    "ans": "Tuyệt đối không cung cấp thông tin cá nhân cho người khác"
+  },
+  {
+    "que": "<p>Các mật khẩu nào sau đây đủ mạnh?</p>\n",
+    "ans1": "qu!Z#2022",
+    "ans2": "Phoung#20"
+  },
+  {
+    "que": "Spyware là",
+    "ans": "là phần mềm máy tính được cài đặt một cách lén lút lên một máy tính, có thể thu thập nhiều loại thông tin cá nhân của người sử dụng, có thể cản trở quyền điều khiển máy tính"
+  },
+  {
+    "que": "Nếu bạn đang duyệt web, đột nhiên một bảng thông báo hiện lên đề nghị bạn tải một file về và khởi chạy nó, bạn thực hiện hành động gì phù hợp?",
+    "ans": "Hủy bỏ việc tải file và đóng trình duyệt đó"
+  },
+  {
+    "que": "Trang web nào là trang web cung cấp dịch vụ BHXH của VNPT",
+    "ans": "https://vnpt-bhxh.vn/"
+  },
+  {
+    "que": "<p>Thời gian gần đây, nhiều người sử dụng ứng dụng Facebook Messenger đã dính phải một mã độc đào tiền ảo hết sức nguy hiểm. Nhiều người bạn có trong danh sách bạn bè đã gửi cho họ một tin nhắn trên Facebook Messenger trong đó có chứa file nén Zip (có tên dạng “ Video_xxxx” trong đó xxxx là 4 con số ngẫu nhiên) qua Facebook Messenger. Người nhận khi mở file này sẽ thấy một file video giả mạo bên trong. Nếu mở tiếp file giả mạo, máy tính sẽ bị nhiễm mã độc. Nếu máy tín nạn nhân dùng trình duyệt Google Chrome, mã độc sẽ cài một extension để tiếp tục phát tán file Zip qua Facebook Messenger tới danh sách bạn bè của nạn nhân. Các biện pháp phòng ngừa/khắc phục phù hợp là:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda46793bt0x\" /></p>\n",
+    "ans1": "Nếu đã lỡ mở file đính kèm, người dùng nên ngay lập tức đổi mật khẩu cho các tài khoản đăng nhập trên trình duyệt của mình.",
+    "ans2": "Nếu đã lỡ mở file đính kèm, người dùng nên ngay lập tức dùng chương trình diệt virus mạnh để quét toàn bộ máy tính.",
+    "ans3": "Cảnh giác, kiểm tra kỹ file đính kèm trước khi nhận file, mở file"
+  },
+  {
+    "que": "Khi làm việc tại công ty, điều quan trọng khi đặt mật khẩu cho máy tính hay tài khoản công việc là:",
+    "ans": "Đặt mật khẩu không có thông tin gì liên quan tới bản thân"
+  },
+  {
+    "que": "<p>Một người dùng tại công ty nhận được email thông báo về việc chia sẻ hợp đồng bán hàng của đồng nghiệp mới như hình dưới, đính kèm theo mail là đường link chứa file rar tên là Draft Sale Contacts.pdf. Kiểm tra đường link trên Virustotal không phát hiện được bất cứ mã độc nào. Theo bạn, trong trường hợp này, đã có thể đảm bảo email gửi đến đó là an toàn hay chưa? Chọn các phương án phù hợp:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda255350y78\" /><img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda26da1fem9\" /><img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda294665ttm\" /></p>\n",
+    "ans1": "Email đó là chưa an toàn. Đường link gửi kèm đã được người dùng kiểm tra trên website Virustotal chưa đảm bảo file trong đường link đó là an toàn",
+    "ans2": "Email đó là chưa an toàn. File gửi kèm trong đường link có biểu tượng như một file .rar nhưng lại hiển thị tên file là .pdf Một file .pdf là một điều bất thường, cần chú ý kiểm tra."
+  },
+  {
+    "que": "Đâu là nguyên nhân có thể khiến wifi (đã được đặt mật khẩu) sử dụng bị chậm một cách bất thường trong khi chỉ có 1,2 thiết sử dụng mạng? Chọn đáp án phù hợp nhất.",
+    "ans": "Wifi đã bị người khác sử dụng trộm"
+  },
+  {
+    "que": "Máy tính bị nhiễm mã độc và bị lợi dụng phục vụ các đợt tấn công DDoS gọi là gì?",
+    "ans": "Zombie"
+  },
+  {
+    "que": "<p>Khi dùng máy tính công cộng nên thực hiện các hành động nào dưới đây để tăng cường an toàn?</p>\n",
+    "ans1": "Thao tác nhanh để tránh bị nhòm ngó.",
+    "ans2": "Xóa lịch sử duyệt web sau khi sử dụng xong",
+    "ans3": "Tránh lưu dữ liệu trên máy tính công cộng",
+    "ans4": "Đăng xuất các tài khoản, đăng xuất máy tính sau khi kết thúc công việc"
+  },
+  {
+    "que": "<p>Các bước cần thiết nên thực hiện khi bạn nhận được một tin nhắn hay một email:</p>\n",
+    "ans1": "Kiểm tra nguồn gốc của tin nhắn",
+    "ans2": "Kiểm tra mục đích của file gửi kèm được gửi tới bạn",
+    "ans3": "Kiểm tra xem thiết bị của bạn đã được cập nhật bản vá mới nhất và đã được cài đặt phần mềm chống mã độc hay chưa trước khi tải và mở bất cứ file gửi kèm nào"
+  },
+  {
+    "que": "Người dùng tại VNPT nhận được 1 email thông báo chương trình đặc biệt của VNPT nhân ngày 30/4-1/5 như hình dưới. Anh/chị cho rằng điều này:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda72c970th2\">",
+    "ans": "Cả 3 phương án đều đúng"
+  },
+  {
+    "que": "<p>Dấu hiệu cơ bản của một email giả mạo</p>\n",
+    "ans1": "Email có nội dung chung chung, không hướng tới một người dùng cụ thể nào cả",
+    "ans2": "Nội dung email chứa những cụm từ mang tính mệnh lệnh như \"thực hiện ngay\", \"bắt buộc\",…",
+    "ans3": "Chứa đường link liên kết yêu cầu cung cấp, bổ sung thông tin"
+  },
+  {
+    "que": "Các trường hợp có thể xảy ra khi bỗng dưng người dùng phải kết nối lại wifi đang kết nối, hoặc khi thấy có 2 tên wifi bạn đang sử dụng giống nhau.",
+    "ans": "Cần nghĩ ngay đến có thể bạn là nạn nhân của tấn công giả mạo Wi-Fi (SSID Spoofing)."
+  },
+  {
+    "que": "Cách quản lý mật khẩu dễ dàng và an toàn là:",
+    "ans": "Cả 3 đáp án trên đều sai"
+  },
+  {
+    "que": "<p>Phishing là một kiểu tấn công mà tin tặc thường sử dụng bằng cách xây dựng những hệ thống lừa đảo nhằm đánh cắp các thông tin nhạy cảm, như tên đăng nhập, mật khẩu hay thông tin về các loại thẻ tín dụng của người dùng. Để nhận biết tấn công phishing trong email, những điều gì bạn nên lưu ý:</p>\n",
+    "ans1": "Địa chỉ người gửi trong email có thể bị giả mạo dễ dàng",
+    "ans2": "Thông thường, tin tặc tấn công phishing nhằm lấy các thông tin cá nhân như tên tài khoản, mật khẩu, số thẻ tín dụng,…",
+    "ans3": "Các email có nội dung chứa các đường link/URLs sẽ có nguy hiểm tiềm ẩn hơn so với các email thông thường"
+  },
+  {
+    "que": "<p>Một số cách thức nhận biết và phòng chống tấn công phishing qua website giả mạo. Chọn các phương án phù hợp</p>\n",
+    "ans1": "Luôn kiểm tra đường dẫn trước khi truy cập vào một địa chỉ lạ hay trước khi điền thông tin tài khoản,... Đường dẫn của website giả mạo sẽ được làm gần giống với các website chính thống, thường sai lệch 1 ký tự hay chứa thêm 1 số ký tự từ ngữ khác",
+    "ans2": "Kiểm tra SSL và chứng thư số của website để đảm bảo độ tin cậy của đường dẫn. Hầu hết các website hợp pháp đều sử dụng giao thức bảo mật SSL và chứng thư số.",
+    "ans3": "Kiểm tra thanh địa chỉ để biết thông tin của tổ chức (nếu có)<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda609a0cnlj\">",
+    "ans4": "Cẩn thận với tấn công homograph – tấn công từ đồng âm tên miền quốc tế. Kỹ thuật tấn công homograph lợi dụng tập hợp các từ được đánh vần giống nhau, nhưng có ý nghĩa khác nhau để tạo ra các tên miền giả mạo. Nhiều ký tự Unicode dùng để biểu diễn cho các bảng chữ cái của tiếng Hy Lạp, Cyrillic và Armenian trong các tên miền quốc tế, nếu nhìn bằng mắt thường sẽ trông không khác gì các chữ cái Latin gây dễ nhầm lẫn. Tuy nhiên, các ký tự này được máy tính xử lý như các ký tự khác nhau, trở thành các địa chỉ website hoàn toàn khác biệt."
+  },
+  {
+    "que": "Khi nghi ngờ các file có nhiễm mã độc, bạn có thể kiểm tra độ an toàn của file trên website:",
+    "ans": "Cả 2 đáp án trên đều đúng"
+  },
+  {
+    "que": "<p>Người dùng tại VNPT nhận được 1 email thông báo ứng dụng Zalo Pay mới tung ra phiên bản mới với nhiều tính năng mới, đề nghị người dùng đăng ký để nhận được nhiều phần quà ưu đãi như hình dưới. Anh/chị cho rằng điều này: Chọn các phương án phù hợp<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda1be4dfxkn\" /><img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda22b121drm\" /></p>\n",
+    "ans1": "Nghi vấn là email giả mạo do đường link khi bạn rê chuột vào đường link đăng ký lại hiển thị (https://zalopay.ga/account?...) khác với đường link được ghi trên email (https://id.zalopay.vn/account)",
+    "ans2": "Nghi vấn là email giả mạo do bạn kiểm tra thấy website https://zalopay.ga không phải là website chính thức của Zalo Pay."
+  },
+  {
+    "que": "Chữ ký số được dùng cho mục đích gì",
+    "ans": "Để kiểm tra định danh người gửi"
+  },
+  {
+    "que": "Những thông tin nào dưới đây người dùng không nên đưa lên mạng xã hội?",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Tấn công Passive Online là dạng tấn công mật khẩu nào?",
+    "ans": "Nghe trộm sự thay đổi mật khẩu trên mạng"
+  },
+  {
+    "que": "Biện pháp đề phòng trường hợp lộ mật khẩu do phần mềm KeyLogger (phần mềm ghi lại mọi phím bấm mà người dùng đã nhấn trên bàn phím) là:",
+    "ans": "Sử dụng bàn phím ảo khi đăng nhập"
+  },
+  {
+    "que": "WannaCry là tên của:",
+    "ans": "Một loại mã độc tống tiền"
+  },
+  {
+    "que": "<p>Mạng không dây ngày càng phổ biến, giá thành thấp và dễ sử dụng. Việc sử dụng mạng không dây công cộng tiềm ẩn nhiều nguy cơ nghiêm trọng. Để tăng cường bảo vệ an toàn thông tin của bản thân khi sử dụng wifi công cộng, người dùng nên thực hiện:</p>\n",
+    "ans1": "Cài đặt phần mềm bảo mật phù hợp cho thiết bị truy cập",
+    "ans2": "Sử dụng xác thực 2 bước cho các tài khoản cùng với các dịch vụ như VPN-truy cập ẩn danh để hạn chế tối đa việc bị rò rỉ thông tin",
+    "ans3": "Không cung cấp thông tin cá nhân, đặc biệt các thông tin liên quan tới công việc, ngân hàng khi truy cập và sử dụng wifi công cộng",
+    "ans4": "Tắt chế độ kết nối tự động vào các điểm wifi trên máy tính và di động, bạn nên chủ động kết nối vào internet khi bạn cần."
+  },
+  {
+    "que": "Phần mềm diệt virus nào dưới đây là của Việt Nam?",
+    "ans": "BKAV"
+  },
+  {
+    "que": "Đối với các tập tin, file đính kèm email được tải về, người dùng nên thực hiện:",
+    "ans": "Quét Virus trước khi sử dụng chúng vì các tập tin, file đó có thể chứa mã độc do tin tặc tạo ra"
+  },
+  {
+    "que": "Trong các tập tin dưới đây, tập tin nào có khả năng chứa virus nhất?.",
+    "ans": "picture.gif.exe"
+  },
+  {
+    "que": "<p>Social engineering là nghệ thuật điều khiển mọi người để họ tiết lộ những thông tin bí mật như mật khẩu, thông tin ngân hàng hoặc cách truy cập máy tính để cài đặt phần mềm độc hại. Các loại tấn công Social Engineering phổ biến có thể bao gồm:.</p>\n",
+    "ans1": "Kẻ tấn công lừa nạn nhân nghĩ rằng máy tính của anh ta bị nhiễm phần mềm độc hại hoặc vô tình tải xuống nội dung bất hợp pháp, độc hại.",
+    "ans2": "Cuộc tấn công trong đó social engineering giả vờ cung cấp một cái gì đó để đổi lấy thông tin hoặc sự hỗ trợ của mục tiêu. Ví dụ, kẻ tấn công chọn ngẫu nhiên các số điện thoại trong một tổ chức và giả vờ gọi lại để hỗ trợ kỹ thuật. Thông qua điều này, hacker có thể buộc mục tiêu thêm các lệnh để khởi chạy phần mềm độc hại hoặc có thể thu thập thông tin mật khẩu.",
+    "ans3": "Kẻ tấn công giả vờ là một người “hấp dẫn”, người nổi tiếng để tương tác với một người trực tuyến hoặc giả mạo một mối quan hệ trực tuyến và thu thập thông tin nhạy cảm thông qua mối quan hệ đó."
+  },
+  {
+    "que": "Những chú ý cần thiết khi truy cập wifi công cộng là:",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Trang mạng xã hội đề nghị bạn sử dụng một add-ons mở rộng để tích hợp các ứng dụng và trò chơi vào tiểu sử mạng xã hội của bạn. Việc cài đặt các add-ons đó liệu có an toàn không? Chọn câu trả lời phù hợp nhất.",
+    "ans": "Không chắc chắn, không gì đảm bảo bạn sẽ an toàn khi cài đặt chúng"
+  },
+  {
+    "que": "Trong quá trình sử dụng máy tính, người dùng nên tắt tính năng Autoplay (chức năng tự động chạy khi cắm ổ đĩa hay usb vào máy tính) trong Windows nhằm mục đích gì?",
+    "ans": "Ngăn chặn việc virus lợi dụng để tự kích hoạt chúng và lây nhiễm vào hệ thống trước khi người dùng chủ đích mở các tập tin trong đó"
+  },
+  {
+    "que": "Bạn nhận được một email từ bộ phận IT của công ty bạn. Email yêu cầu thông tin tài khoản và mật khẩu email của bạn để phục vụ công tác điều tra. Khi đó bạn nên làm gì?",
+    "ans": "Không cung cấp thông tin, báo lại hoặc liên hệ trực tiếp với bộ phận IT để xác minh."
+  },
+  {
+    "que": "Khi nào bạn có thể chia sẻ mật khẩu email công ty của bạn cho người khác",
+    "ans": "Không chia sẻ cho bất cứ ai"
+  },
+  {
+    "que": "Khuyến nghị nào SAI khi sử dụng mật khẩu cho các tài khoản?",
+    "ans": "Sử dụng chung một mật khẩu cho nhiều tài khoản giúp người dùng dễ dàng nhớ và đảm bảo an toàn"
+  },
+  {
+    "que": "Mã độc nào được thiết kế để lây lan qua các thiết bị IoT",
+    "ans": "Mirai Botnet"
+  },
+  {
+    "que": "<p>Điện thoại thông minh chứa rất nhiều thông tin cá nhân, vì thế khi bán hay cho những chiếc điện thoại cũ, dễ dẫn đến việc bị lộ thông tin cá nhân, do người dùng không xoá dữ liệu đúng cách. Để xoá sạch dữ liệu trong điện thoại thông minh, cần thiết thực hiện các bước sau:</p>\n",
+    "ans1": "Trước khi thực hiện xóa dữ liệu, người dùng nên thực hiện lưu trữ toàn bộ dữ liệu (bao gồm cả danh bạ), gỡ sim điện thoại và thẻ nhớ. Mã hoá và xoá dữ liệu trên thẻ nhớ nếu không dùng nó trong thiết bị mới.",
+    "ans2": "Đăng xuất các dịch vụ như thư điện tử và mạng xã hội rồi xoá dữ liệu từ các ứng dụng đó nếu được.",
+    "ans3": "Khôi phục thiết lập gốc (factory reset). Cần mã hoá dữ liệu trước khi tiến hành khôi phục thiết lập gốc để tránh trường hợp dữ liệu có thể được khôi phục bằng những công cụ khôi phục dữ liệu chuẩn.",
+    "ans4": "Gỡ khoá màn hình, đăng xuất các tài khoản, dịch vụ trên điện thoại như email, Google, iCloud, iMessage, Apple ID,…"
+  },
+  {
+    "que": "Khi cấu hình mạng wifi tại nhà, việc cấu hình nên bao gồm. Chọn câu trả lời phù hợp nhất.",
+    "ans": "WPA2, mật khẩu phức tạp khó đoán biết và vô hiệu hóa tính năng WPS"
+  },
+  {
+    "que": "<p>Trong quá trình sử dụng máy tính, một chương trình (thường là giao diện web dạng pop-up) hiện ra với thông báo máy tính đang bị xâm nhập và gặp nguy hiểm. Bạn xác định được thông báo này là giả mạo. Để tránh máy tính bị nhiễm virus, hành động phù hợp khi đó là:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda4bc96fxrn\" /></p>\n",
+    "ans1": "Tuyệt đối không làm theo các hướng dẫn của bảng pop up",
+    "ans2": "Lập tức khởi động lại máy tính, tiến hành tìm và gỡ bỏ các ứng dụng, add-on, plug-in hay extension đã vô tình hoặc cố ý bị cài đặt mà không hề hay biết.",
+    "ans3": "Sử dụng chương trình diệt virus được cập nhật cơ sở dữ liệu mới nhất và quét toàn bộ máy tính."
+  },
+  {
+    "que": "Để phòng chống mã độc được nhúng trong các tệp tin khi tải về từ Internet, người dùng nên tránh hành động nào sau đây?",
+    "ans": "Kích đúp vào tệp tin sau khi tải về mà chưa kiểm tra \"độ sạch\" của tệp tin"
+  },
+  {
+    "que": "Tấn công Active Online là dạng tấn công mật khẩu nào?",
+    "ans": "Đoán trước mật khẩu người quản trị"
+  },
+  {
+    "que": "Bạn nhận được một email từ Microsoft, trong đó có chứa một file đính kèm. Email nói rằng hệ điều hành Windows bạn đang sử dụng xuất hiện lỗi, bạn phải chạy chương trình được đính kèm trong email để sửa những lỗi đó. Trường hợp này bạn nên làm gì để bảo đảm an toàn?",
+    "ans": "Microsoft và nhà cung cấp thường không gửi các file qua email. Bạn Bỏ qua/xóa email đó, truy cập vào trang chủ Microsoft để cập nhật thông tin và tải phần mềm sửa lỗi (nếu có)"
+  },
+  {
+    "que": "<p>Để phòng ngừa bị đánh cắp thông tin qua Webcam, người dùng nên thực hiện những hành động nào sau đây?</p>\n",
+    "ans1": "Che webcam khi không sử dụng để tránh bị lợi dụng. Dán một miếng băng dính đen trên webcam là đơn giản nhất, và không tốn kém.",
+    "ans2": "Cập nhật các phần mềm, sử dụng các phần mềm chống mã độc cũng như luôn luôn bật tường lửa",
+    "ans3": "Sử dụng VPN nơi công cộng",
+    "ans4": "Tắt webcam khi không sử dụng"
+  },
+  {
+    "que": "<p>Các khuyến nghị an toàn bảo mật dành cho người dùng khi sử dụng máy tính công cộng?</p>\n",
+    "ans1": "Tắt tính năng tự động kết nối tới mạng wifi",
+    "ans2": "Nên sử dụng bàn phím ảo để tránh bị tin tặc ăn cắp thông tin tài khoản bằng keylogger.",
+    "ans3": "Hạn chế truy cập vào các ứng dụng quan trọng, đặc biệt liên quan đến tài khoản ngân hàng, thẻ tín dụng, thông tin nội bộ..."
+  },
+  {
+    "que": "Khi cố gắng đăng nhập phần mềm quá nhiều lần, user bị tạm khóa không đăng nhập được tiếp. Tại sao",
+    "ans": "Chức năng phần mềm giúp phòng chống kẻ tấn công dò tìm mật khẩu người dùng"
+  },
+  {
+    "que": "Tại sao sinh trắc học (vân tay, mống mắt,..) là biện pháp xác thực được ưu tiên sử dụng?",
+    "ans": "Phương pháp này khó giả mạo, giúp người dùng hạn chế bị tấn công lấy cắp thông tin. Vân tay, mống mắt, giọng nói,… là đặc điểm nhận diện độc nhất với mỗi người."
+  },
+  {
+    "que": "Trước khi cắm 01 USB vào máy tính của mình, bạn nên đảm bảo rằng. Chọn một hay nhiều phương án",
+    "ans": "Máy tính của bạn đã được cài đặt phần mềm phòng chống mã độc được cập nhật liên tục và cài đặt chế độ tự động rà quét thiết bị mới được cắm vào máy tính"
+  },
+  {
+    "que": "<p>Đặc điểm của mật khẩu một lần (One time password - OTP)</p>\n",
+    "ans1": "Mật khẩu chỉ sử dụng 1 lần",
+    "ans2": "Là 1 chuỗi số hoặc 1 chuỗi ký tự kết hợp chữ số",
+    "ans3": "Thời gian tác dụng ngắn (30s - 1 phút)"
+  },
+  {
+    "que": "<p>Hành động nào không nên áp dụng khi quản lý, sử dụng mật khẩu?</p>\n",
+    "ans1": "Đặt mật khẩu máy tính, thiết bị là tên cá nhân, năm sinh, tên tổ chức đang làm việc để dễ nhớ",
+    "ans2": "Cách tốt nhất để nhớ nhiều mật khẩu là ghi lại danh sách ra file word đặt tại màn hình Desktop máy tính để tiện truy cập",
+    "ans3": "Chia sẻ mật khẩu máy tính cho đồng nghiệp tại cơ quan để đồng nghiệp có thể hỗ trợ khi cần thiết"
+  },
+  {
+    "que": "Tên các file văn bản (word, exel,..) trên máy tính người dùng hiển thị như hình dưới đây, điều đó thể hiện điều gì?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os6385bda3137aaisx\">",
+    "ans": "Máy tính đã bị nhiễm mã độc Ransomware, bị mã hóa dữ liệu, các file bị đổi tên và đổi đuôi file, không thể xem được nội dung"
+  },
+  {
+    "que": "<p>Máy fax là thiết bị được sử dụng cho các doanh nghiệp. Hacker đã có thể tấn công vào hệ thống mạng của doanh nghiệp chỉ thông qua việc biết số fax, hắn có thể gửi một tập tin hình ảnh chứa các mã độc độc hại như ransomware, mã độc đào tiền ảo đến máy fax nạn nhân. Nếu máy fax được kết nối mạng, mã độc sẽ có khả năng lây lan và xâm nhập vào các hệ thống, dẫn đến những nguy cơ về gián điệp, gián đoạn dịch vụ hoặc rò rỉ thông tin. Trong quá trình sử dụng, để hạn chế, phòng ngừa tấn công, người dùng nên thực hiện</p>\n",
+    "ans1": "Cập nhật các bản vá mới nhất từ nhà sản xuất cho máy fax.",
+    "ans2": "Cài đặt phần mềm diệt virus mạnh được cập nhật thường xuyên cho máy tính của mình."
+  },
+  {
+    "que": "Sniffing là một hình thức tấn công",
+    "ans": "Nghe lén, lấy cắp dữ liệu nạn nhân truyền trên mạng."
+  },
+  {
+    "que": "<p>Các biện pháp để đảm bảo an toàn khi sử dụng wifi công cộng là:</p>\n",
+    "ans1": "Chỉ nên truy cập các trang web HTTPS",
+    "ans2": "Luôn cập nhật bản vá mới nhất cho các chương trình, phần mềm trên thiết bị (laptop, máy tính bảng, điện thoại…)",
+    "ans3": "Sử dụng cơ chế xác thực hai bước khi truy cập tài khoản."
+  },
+  {
+    "que": "Mã độc có thể được tin tặc nhúng vào trong",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "<p>Khi tiến hành cài đặt cấu hình cho modem Wifi ở nhà, người dùng nên lựa chọn cơ chế bảo mật mạng không dây nào dưới đây là an toàn nhất?</p>\n",
+    "ans": "Mã hóa WPA2"
+  },
+  {
+    "que": "Các nguy cơ khi máy tính bị lây nhiễm mã độc ?",
+    "ans": "Tất cả các đáp án đều đúng"
+  },
+  {
+    "que": "Trang web nào sau đây giúp người dùng nhận biết về lừa đảo trực tuyến ?",
+    "ans": "dauhieuluadao.com"
+  },
+  {
+    "que": "Trách nhiệm đảm bảo an toàn thông tin của đơn vị là của?",
+    "ans": "Nhân viên an ninh"
+  },
+  {
+    "que": "<p>Các kỹ năng cần có để sử dụng mạng xã hội an toàn là gì?</p>\n",
+    "ans1": "Bảo mật thông tin cá nhân: Những thông tin như tên thật, tuổi, địa chỉ nhà, ảnh cá nhân hay các loại mật khẩu là những thông tin cá nhân, cần được bảo mật, không nên chia sẻ những thông tin này trên mạng. Nên bảo mật tài khoản 2 lớp để tránh bị lấy cắp tài khoản phục vụ cho những mục đích xấu",
+    "ans2": "Suy nghĩ kỹ trước khi chia sẻ bất cứ điều gì: trước khi bình luận, chia sẻ hay đăng tải bất cứ thông tin gì cần phải tìm hiểu và suy nghĩ kỹ, vì những bài đăng trên mạng sẽ có nhiều người xem, có thể sẽ bị người khác soi mói, đánh giá, bình luận tiêu cực.",
+    "ans3": "Ứng xử văn minh trên mạng: Tất cả những hành động không suy nghĩ đều có thể làm người bị chỉ trích thấy buồn và mặc cảm. Nghiêm trọng hơn, nhiều từ ngữ quá khích có thể khiến người khác tổn thương tinh thần.",
+    "ans4": "Nhận biết các dạng lừa đảo qua mạng: Kẻ xấu có thể tạo một tài khoản ảo, kết bạn và trò chuyện để lấy lòng tin sau đó dò hỏi thông tin. Cần luôn nhớ nguyên tắc “không chia sẻ thông tin cá nhân”, đặc biệt là chia sẻ trên mạng xã hội để không trở thành nạn nhân của lừa đảo. Bên cạnh đó, cũng cần cẩn thận với các trò chơi trúng thưởng, không nên nhấn vào đường link lạ để tránh bị mất tài khoản hay bị đánh cắp thông tin."
+  },
+  {
+    "que": "Thiết lập tắt cookies trên trình duyệt web giúp ngăn chặn nguy cơ mất thông tin nào?",
+    "ans": "User và Password"
+  },
+  {
+    "que": "Cách thức nào sau đây để lưu trữ các dữ liệu cá nhân ( tài liệu, hình ảnh, video) của bạn an toàn nhất?",
+    "ans": "Sao lưu trên đĩa cứng bên ngoài và một bản sao lưu khác trên cloud"
+  },
+  {
+    "que": "Khi đang truy cập mạng ở cơ quan, máy tính thỉnh thoảng lại hiện lên những trang web lạ, nội dung quảng cáo xuất hiện liên tục? Người dùng cần phải làm gì khi gặp sự cố này?",
+    "ans": "Báo cáo nội dung trên cho IT hỗ trơ xử lý trong thời gian sớm nhất."
+  },
+  {
+    "que": "Đâu không phải là mạng xã hội?",
+    "ans": "Cổng dịch vụ công Quốc gia"
+  },
+  {
+    "que": "Bạn nên làm gì nếu cho rằng tài khoản của mình trên một hệ thống ứng dụng đã bị lộ lọt?",
+    "ans": "Tất cả các phương án đều đúng"
+  },
+  {
+    "que": "Khi nhận được điện thoại báo &quot;Xe của bạn gây tai nạn tại địa điểm A T/TP B, bạn cần liên hệ đến trụ sở CA tại T/TP B để xử lý và cần xác thực các thông tin qua điện thoại với cơ quan CA&quot;\nViệc cần làm của bạn là gì?",
+    "ans": "Liên hệ ngay với cơ quan CA gần nhất để xác minh các thông tin trên."
+  },
+  {
+    "que": "Các mối đe dọa trên mạng",
+    "ans": "Tất cả đều đúng"
+  },
+  {
+    "que": "Các thông tin nào sau đây được coi là thông tin cá nhân (PII - Personally Identifiable Information) cần được bảo vệ",
+    "ans": "Tất cả thông tin"
+  },
+  {
+    "que": "Những cách nào sau đây để phòng chống virus lây lan qua đường email?",
+    "ans": "Tất cả các đáp án"
+  },
+  {
+    "que": "Đâu không phải là mối nguy hại trên Internet?",
+    "ans": "Mất trộm máy tính"
+  },
+  {
+    "que": "Các hành vi nào sau đây bị nghiêm cấm theo Luật An ninh mạng 2018",
+    "ans": "Tất cả các đáp án đều đúng"
+  },
+  {
+    "que": "Làm gì khi có email cảnh báo đăng nhập từ thiết bị lạ vào mạng xã hội của mình?",
+    "ans": "Đăng xuất khỏi toàn bộ thiết bị, và đổi mật khẩu"
+  },
+  {
+    "que": "Theo bạn thông tin sau là đúng hay sai: Các mạng Wifi miễn phí ở sân bay rất an toàn, hoàn toàn có thể sử dụng để truy cập các trang web như bình thường. Bản thân các website ở thời điểm hiện tại hầu hết cũng đã được sử dụng HTTPS nên nguy cơ là không có.",
+    "ans": "Sai"
+  },
+  {
+    "que": "Biện pháp nào giúp nâng cao hiểu biết về các kiến thức an toàn thông tin, an ninh mạng cho người dùng.",
+    "ans": "Tham gia các lớp học kỹ năng, bổ sung kiến thức về an toàn thông tin, an ninh mạng."
+  },
+  {
+    "que": "Chọn phương án sai. Khi sử dụng internet, có thể:",
+    "ans": "Tin tưởng mọi nguồn thông tin trên mạng"
+  },
+  {
+    "que": "Việc đăng video cá nhân lên mạng có thể gây ảnh hưởng như thế nào?",
+    "ans1": "Video cá nhân là đầu vào cho quá trình training của AI để tái hiện deepfake, từ đó tạo các đoạn video giả mạo gây ảnh hưởng không tốt tới bản thân",
+    "ans2": "Video cá nhân có thể gây lộ địa chỉ, lộ hoàn cảnh hiện tại của bản thân, từ đó kẻ xấu có thêm nhiều thông tin để thực hiện các hành động như: ăn trộm (biết không có nhà), ăn cướp (biết đang ở đâu), …"
+  },
+  {
+    "que": "Đâu là những biện pháp đảm bảo an toàn thông tin khi sử dụng smartphone?",
+    "ans1": "Hạn chế sạc thiết bị thông minh tại các cổng USB điểm công cộng.",
+    "ans2": "Luôn khóa điện thoại khi không sử dụng."
+  },
+  {
+    "que": "Bạn được giới thiệu một phần mềm chỉnh sửa ảnh rất đẹp và đã có sẵn crack trong file download kèm theo. Lựa chọn nào sau đây là phù hợp",
+    "ans1": "Phần mềm crack thường đã bị thay đổi mã nguồn hoặc chèn mã độc, tuyệt đối không nên sử dụng",
+    "ans2": "Cần sử dụng đúng phầm mềm của nhà phát triển, trả phí nếu cần, để được các quyền lợi và được bảo vệ thông tin theo cam kết. Đồng thời tránh các vi phạm về quyền sở hữu trí tuệ, có thể bị phạt tiền."
+  },
+  {
+    "que": "Tập đoàn đã có quy định sử dụng phương thức xác thực tập trung, sử dụng tài khoản email của VNPT kết hợp nhắn tin OTP khi đăng nhập vào các ứng dụng nội bộ. Theo bạn:",
+    "ans": "không được chia sẻ tài khoản của mình cho bất kỳ ai."
+  },
+  {
+    "que": "Khi nhận các món đồ mua online bạn nên chú ý những điểm nào sau đây",
+    "ans1": "Kiểm tra đúng tên mặt hàng đúng tên người gửi người nhận",
+    "ans2": "Nên quay lại video unbox hộp mặt hàng bạn mua",
+    "ans3": "Xé hoặc cắt đơn hàng dán vào hộp trước khi vứt vỏ hộp đi"
+  },
+  {
+    "que": "Theo Anh/Chị, phần mềm diệt virut có tác dụng gì ?",
+    "ans": "Có tính năng phát hiện, loại bỏ các virus máy tính, khắc phục (một phần hoặc hoàn toàn) hậu quả của virus gây ra"
+  },
+  {
+    "que": "Khi sử dụng lại các thông tin trên mạng cần lưu ý đến vấn đề là:",
+    "ans": "Vấn đề bản quyền."
+  },
+  {
+    "que": "Email là phương thức truyền thư qua môi trường mạng máy tính rất tin cậy và an toàn?",
+    "ans": "Sai"
+  },
+  {
+    "que": "Một người tự xưng là nhân viên nhà mạng Viettel liên hệ và đề nghị hỗ trợ chuyển đổi sim 4G thành sim 5G qua điện thoại, nhân viên này hướng dẫn cách nhắn tin để chuyển đổi. Những rủi ro người dùng có thể đối diện trong trường hợp này?",
+    "ans1": "Thông tin cá nhân của người dùng bị lộ.",
+    "ans2": "Người dùng bị chiếm đoạt quyền sử dụng số điện thoại.",
+    "ans3": "Tài khoản ngân hàng/ví điện tử của người dùng bị trừ hết tiền.",
+    "ans4": "SIM của người dùng bị khoá từ xa."
+  },
+  {
+    "que": "Thông tin nào nhân viên không nên chia sẻ cho người ngoài ?",
+    "ans": "Tất cả các đáp án"
+  },
+  {
+    "que": "Hiện nay các gia đình đều lắp đặt hệ thống camera an ninh, tuy nhiên việc lắp đặt này thường được các đơn vị lắp đặt thực hiện cấu hình thiết bị, tạo tài khoản để truy cập xem camera từ xa. Đâu là các việc làm đúng nhất sau khi tiếp nhận hệ thống của đơn vị lắp đặt.",
+    "ans": "Tiếp nhận lại toàn bộ tài khoản đăng nhập hệ thống camera của gia đình, yêu cầu đơn vị lắp đặt hướng dẫn vào phần thiết bị cấu hình đổi mật khẩu tài khoản truy cập thiết bị có độ phức tạp, xóa hoặc khóa toàn bộ các tài khoản được khởi tạo cùng trên hệ thống."
+  },
+  {
+    "que": "Những hành vi nào là không đúng khi tham gia trên mạng?",
+    "ans1": "Phát ngôn kích động thù địch",
+    "ans2": "Phát tán thông tin xúc phạm người khác",
+    "ans3": "Dụ dỗ, quấy rối, bắt nạt, tấn công người khác trên mạng"
+  },
+  {
+    "que": "Phương thức nào sau đây là một phương thức bảo mật truy cập từ xa khi bạn phải làm việc ở nhà?",
+    "ans": "Truy cập qua một hệ thống VPN"
+  },
+  {
+    "que": "Bạn nhận được email có dấu hiệu giả mạo của một diễn đàn cho biết có sự cố với tài khoản của bạn. Trong email có cung cấp hướng dẫn và liên kết để bạn có thể đăng nhập vào tài khoản của mình và khắc phục sự cố. Khi gặp tình huống này, bạn nên làm gì?",
+    "ans": "Chủ động đăng nhập vào diễn đàn đó theo link chính thức (không truy cập theo link trong email) và đổi mật khẩu tài khoản của bạn."
+  },
+  {
+    "que": "Cách hiểu nào sau đây về phishing bằng Website lừa đảo là đúng nhất?",
+    "ans": "Là website giả mạo các trang web thực như ngân hàng, ví điện tử, giao dịch trực tuyến, mạng xã hội,…và thường có giao diện hay tên miền URL gần giống với trang chính thống để đánh lừa người dùng nhằm đánh cắp các thông tin cá nhân quan trọng "
+  },
+  {
+    "que": "Bạn nhận được email từ quản lý trực tiếp yêu cầu cung cấp thông tin về tài khoản ngân hàng bao gồm: số thẻ ngân hàng, ngày hiệu lực thẻ, ảnh hai mặt thẻ CCCD để làm thanh toán tiền công tác, bạn sẽ làm gì ?",
+    "ans": "Không cung cấp thông tin và trao đổi trực tiếp với lãnh đạo về tính xác thực của email kể trên"
+  },
+  {
+    "que": "Nhiều người cho rằng để hạn chế máy tính bị nhiễm độc nên cài rất nhiều phần mềm Anti Virus, vậy việc này nên hay không nên.",
+    "ans": "Không nên vì tốn nhiều tài nguyên máy tính, làm chậm máy, các phần mềm dễ xảy ra xung đột với nhau."
+  },
+  {
+    "que": "Nguy cơ lớn nhất đối với an toàn thông tin cho máy tính là gì?",
+    "ans": "Người dùng"
+  },
+  {
+    "que": "Phương pháp nào sau đây là một phương pháp phát tán virus phổ biến?",
+    "ans": "E-mail."
+  },
+  {
+    "que": "Theo bạn có nên nhắn tin trao đổi tài liệu thông tin khách hàng, số liệu ĐHSXKD trên ứng dụng ZALO hay không ?",
+    "ans1": "Chỉ trao đổi thông tin xã hội, không gửi dữ liệu quan trọng qua ứng dụng nên gửi qua Mail nội bộ",
+    "ans2": "Dữ liệu ĐHSXKD hoặc dữ liệu thông tin của khách hàng gửi qua Zalo phải được mã hóa và gửi mật khẩu giải mã qua một phương thức khác (gọi điện, nhắn tin sms …)"
+  },
+  {
+    "que": "Phần mềm Keylogger dùng để làm gì?",
+    "ans": "Phần mềm keylogger được sử dụng để ghi lại thao tác bàn phím của máy tính và có thể bị hacker sử dụng để khai thác để thu thập thông tin tài khoản, mật khẩu của người dùng"
+  },
+  {
+    "que": "Điều gì cần thực hiện đối với tập tin lưu trữ mật khẩu cá nhân để ngăn chặn một người dùng trái phép crack vào các nội dung?",
+    "ans": "Mã hóa tập tin lưu trữ mật khẩu"
+  },
+  {
+    "que": "Khi nhận các món đồ mua online bạn nên chú ý những điểm nào sau đây",
+    "ans1": "Nên quay lại video unbox hộp mặt hàng bạn mua",
+    "ans2": "Xé hoặc cắt đơn hàng dán vào hộp trước khi vứt vỏ hộp đi",
+    "ans3": "Kiểm tra đúng tên mặt hàng đúng tên người gửi người nhận"
+  },
+  {
+    "que": "Khi gặp các thông tin, bài đăng xuyên tạc, không đúng về bản thân bạn trên mạng xã hội. Bạn sẽ xử lý bằng cách nào sau đây?",
+    "ans": "Yêu cầu chủ bài viết gỡ bỏ và báo cáo bài viết cho quản trị viên hoặc đơn vị quản lý, vận hành mạng xã hội trong trường hợp chủ bài viết không đồng ý gỡ bỏ."
+  },
+  {
+    "que": "Lời khuyên nào là SAI khi bạn muốn bảo vệ máy tính và thông tin trên máy tính của mình?",
+    "ans": "Chẳng cần làm gì vì máy tính đã được cài đặt sắn các thiết bị bảo vệ từ nhà sản xuất"
+  },
+  {
+    "que": "Thói quen nào dưới đây là thói quen tốt khi sử dụng máy tính?.",
+    "ans1": "Cài phần mềm diệt virus và cập nhật thường xuyên",
+    "ans2": "Không tải xuống các phần mềm, ứng dụng từ các nguồn không tin cậy"
+  },
+  {
+    "que": "Chương trình nào sau đây là một loại chương trình diệt vi-rút?",
+    "ans": "Mcafee"
+  },
+  {
+    "que": "Những hành động nào sau đây có nguy cơ cao dẫn đển máy tính bị lây nhiễm mã độc?",
+    "ans1": "Tải và cài đặt phần mềm diệt vi rút từ một trang chia sẻ phần mềm trên mạng",
+    "ans2": "Sao chép tài liệu từ quán nét hoặc quán photocopy bằng thẻ nhớ USB"
+  },
+  {
+    "que": "Khái niệm tiền ảo là gì?",
+    "ans1": "Tiền ảo được lưu trữ, giao dịch qua các phần mềm và ứng dụng được chỉ định ở dạng kỹ thuật số.",
+    "ans2": "Là một dạng tiền kĩ thuật số được giao dịch trên nền tảng online, chỉ tồn tại dưới dạng điện tử, gồm nhiều loại tiền tệ, có loại tiền mã hóa.",
+    "ans3": "Tiền ảo không được kiểm soát và không được phát hành hoặc kiểm soát bởi một ngân hàng trung ương."
+  },
+  {
+    "que": "Chúng ta nên làm gì để tự bảo vệ bản thân khi sử dụng mạng xã hội?",
+    "ans": "Tất cả các phương án trên"
+  },
+  {
+    "que": "Bạn được bạn bè thông báo đã kết bạn với tài khoản facebook mới của bạn. Trong khi bạn không có lập tài khoản facebook mới nào. Bạn kiểm tra trên tài khoản facebook này có chứa nhiều thông tin và hình ảnh của bạn. Lựa chọn nào dưới đây là phù hợp",
+    "ans1": "Đây là facebook giả mạo để lừa đảo hoặc đánh cắp thông tin từ bạn bè và người thân của bạn. Thông báo (report) ngay cho facebook để được hỗ trợ xử lý gở bỏ tài khoản giả mạo",
+    "ans2": "Cần thông báo ngay cho tất cả bạn bè và người thân để mọi người xóa và không trao đổi thông tin với facebook giả mạo này. Đồng thời cài đặt lại  giới hạn truy câp thông tin trên facebook của bạn để kẻ xấu không lấy thông tin của bạn được."
+  },
+  {
+    "que": "Một người bạn hỏi mượn tài khoản mạng xã hội thì Anh/Chị có cho mượn không? Anh/Chị hãy chọn phương án hợp lý nhất.",
+    "ans": "Không nên dù là bạn thân, vì đây là tài khoản cá nhân, không cho mượn được"
+  },
+  {
+    "que": "Cách hiểu nào sau đây về Website lừa đảo phishing là đúng nhất?",
+    "ans": "Là website giả mạo các trang web thực như ngân hàng, ví điện tử, giao dịch trực tuyến, mạng xã hội,…và thường có giao diện hay tên miền URL gần giống với trang chính thống để đánh lừa người dùng nhằm đánh cắp các thông tin cá nhân quan trọng"
+  },
+  {
+    "que": "Khuyến nghị xử lý khi nhận các cuộc gọi video có dấu hiệu giả mạo (deepfake)?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bfa72fe6dcv\">",
+    "ans1": "Liên lạc lại với người thân, bạn bè để xác nhận",
+    "ans2": "Nếu được yêu cầu chuyển tiền, cần kiểm tra lại. Không chuyển tiền đến các số tài khoản lạ."
+  },
+  {
+    "que": "Những khuyến nghị nào sau đây là đúng khi sử dụng máy tính người khác? (như máy tính của các tiệm net, tiệm in ấn, đồng nghiệp...)",
+    "ans1": "Luôn ý thức việc sử dụng máy tính người khác là không đảm bảo an toàn. <br />\nNếu buộc phải sử dụng máy tính công cộng thì chỉ truy cập dữ liệu được công khai và xóa khi hoàn thành công việc.",
+    "ans2": "Hạn chế tối đa việc đăng nhập tài khoản truy cập, thực hiện giao dịch trực tuyến... và luôn thao tác với trình duyệt ẩn danh."
+  },
+  {
+    "que": "Phát biểu nào sau đây đúng?",
+    "ans": "Internet là một mạng các máy tính liên kết với nhau trên toàn cầu."
+  },
+  {
+    "que": "Theo luật an ninh mạng năm 2018 cơ quan nào có trách nhiệm xây dựng và triển khai hoạt động phổ biến kiến thức, nâng cao nhận thức về an ninh mạng cho cơ quan, tổ chức, cá nhân của địa phương?",
+    "ans": "Ủy ban nhân dân cấp tỉnh"
+  },
+  {
+    "que": "Ngày nay chúng ta nhận được rất nhiều đường link chia sẻ từ bạn bè hay email với tập tin đính kèm, tuy nhiên cũng không ít trong số các link này có khả năng chứa các mã độc nguy hiểm. Để hạn chế việc click nhầm vào những link chứa virus, một biện pháp được nhiều người sử dụng là sử dụng website VirusTotal. Tác dụng của website Virustotal là?",
+    "ans1": "Kiểm tra nhanh đường dẫn URL xem có gì khả nghi hay không",
+    "ans2": "Kiểm tra nhanh tập tin đính kèm có gì khả nghi hay không"
+  },
+  {
+    "que": "Cách nào sau đây có thể khóa màn hình máy tính Windows khi máy tính đang bật",
+    "ans": "Windows + L"
+  },
+  {
+    "que": "Hành vi nào sau đây phạm tội “Sản xuất, đưa vào sử dụng công cụ, phương tiện, phần mềm hoặc có hành vi cản trở, gây rối loạn hoạt động của mạng máy tính, mạng viễn thông; phát tán chương trình tin học gây hại cho hoạt động của mạng máy tính, mạng viễn thông” trong luật An Ninh Mạng ban hành năm 2018 ?",
+    "ans": "Tất cả các đáp án đều đúng"
+  },
+  {
+    "que": "Một khi thông tin tài khoản (user/pass) của email bị lộ thì toàn bộ các site và các dịch vụ trực tuyến liên quan đến email này đều có thể bị xâm phạm.",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Các cán bộ chịu trách nhiệm về ATTT tại các đơn vị cần thông báo những rủi ro bảo mật của công nghệ deepfake (giả mạo hình ảnh) cho tất cả nhân viên, đúng hay sai?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Tại gia đình bạn đang sử dụng mạng Wifi , có nên tạo 2 mạng Wifi khác biệt cho khách và cho gia đình không ?",
+    "ans": "Có nên tách 2 mạng riêng biệt và không cho phép 02 mạng có thể kết nối được với nhau."
+  },
+  {
+    "que": "Hành động mở file đính kèm trong email lạ có thể làm máy tính của bạn nhiễm virus ?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Bạn nên cập nhật trạng thái mạng xã hội của mình khi rời thành phố để bạn bè và gia đình biết rằng bạn có thể khó liên lạc hơn?",
+    "ans": "Không nên"
+  },
+  {
+    "que": "Phần mềm máy tính có đặc điểm gây tác hại và có thể hoạt động ngầm được gọi là gì?",
+    "ans": "Virus (mã độc)"
+  },
+  {
+    "que": "Hành vi nào sau đây phạm tội “Chống lại hoặc cản trở hoạt động của lực lượng bảo vệ an ninh mạng; tấn công, vô hiệu hóa trái pháp luật làm mất tác dụng biện pháp bảo vệ an ninh mạng” trong luật An Ninh Mạng ban hành năm 2018 ?",
+    "ans": "Tất cả các đáp án đều đúng"
+  },
+  {
+    "que": "Mức án phạt cho cá nhân có hành vi lợi dụng mạng xã hội để chia sẻ thông tin giả mạo, thông tin sai sự thật, xuyên tạc, vu khống, xúc phạm uy tín của cơ quan, tổ chức, danh dự, nhân phẩm của cá nhân",
+    "ans": "Từ 2.000.000 đồng đến 5.000.000 đồng"
+  },
+  {
+    "que": "Tại sao cán bộ công nhân viên VNPT cần phải hiểu rõ về các chính sách bảo mật thông tin của Tập đoàn ban hành?",
+    "ans": "Tất cả các đáp án"
+  },
+  {
+    "que": "Theo Anh/Chị, những thông tin nào không nên chia sẻ trên mạng xã hội",
+    "ans1": "Địa chỉ nhà riêng hoặc trường học",
+    "ans2": "Phát biểu, chỉ trích về các chủ đề nhạy cảm",
+    "ans3": "Số điện thoại cá nhân"
+  },
+  {
+    "que": "Theo anh/chị thì để sử dụng mật khẩu an toàn cần làm gì ?",
+    "ans1": "Thay mật khẩu thường xuyên và không cho bất cứ ai biết",
+    "ans2": "Đặt mật khẩu đủ mạnh"
+  },
+  {
+    "que": "Bạn có nên trả tiền cho bọn tội phạm đã mã hóa các tệp trên máy tính của bạn bằng cách triển khai cái gọi là ransomware không? Tại sao có hoặc tại sao không? Chọn tất cả các câu trả lời thích hợp.",
+    "ans1": "Không, vì bạn không có gì đảm bảo rằng bạn sẽ lấy lại được quyền truy cập vào các tệp của mình",
+    "ans2": "Không, vì ngay cả khi bạn lấy lại được các tệp của mình, bọn tội phạm vẫn có thể tấn công lại bạn sau đó vì có thể chúng vẫn đang hoạt động trên mạng của bạn"
+  },
+  {
+    "que": "Khi nhận thấy tài khoản mạng xã hội của mình có một số hành động bất thường?",
+    "ans1": "Bật chế độ xác thực đủ mạnh",
+    "ans2": "Kiểm tra lịch sử đăng nhập, thiết bị đã đăng nhập",
+    "ans3": "Đổi mật khẩu đăng nhập mạnh, đăng xuất tất cả phiên trên các thiết bị khác"
+  },
+  {
+    "que": "Khuyến nghị xử lý khi nhận các cuộc gọi video có dấu hiệu giả mạo (deepfake)?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bfa72fe6dcv\">",
+    "ans1": "Nếu được yêu cầu chuyển tiền, cần kiểm tra lại. Không chuyển tiền đến các số tài khoản lạ.",
+    "ans2": "Liên lạc lại với người thân, bạn bè để xác nhận"
+  },
+  {
+    "que": "Bạn nhận được nhắn tin SMS Brandname của ngân hàng báo trúng thưởng hàng chục triệu đồng, kèm theo link truy cập yêu cầu người dùng cung cấp thông tin tài khoản, đăng nhập số điện thoại để liên lạc phát thưởng. Bạn chọn cách nào ?",
+    "ans": "xóa SMS không thực hiện"
+  },
+  {
+    "que": "Tại sao người dùng phải hạn chế cài đặt những ứng dụng không rõ nguồn gốc?",
+    "ans1": "Có nguy cơ lộ thông tin cá nhân trên thiết bị đang sử dụng",
+    "ans2": "Thiết bị sẽ dễ bị nhiễm virus máy tính (mã độc)",
+    "ans3": "Có nguy cơ bị theo dõi và giám sát"
+  },
+  {
+    "que": "Bạn đã quay một video cảnh các bạn đồng nghiệp cãi cọ và đánh nhau. Bạn có chia sẻ nó không?",
+    "ans": "Không, vì nó ảnh hưởng đến quyền riêng tư của cá nhân"
+  },
+  {
+    "que": "<p>Theo Anh/Chị, phần mềm diệt virus&nbsp;có tác dụng gì ?</p>\n",
+    "ans": "Có tính năng phát hiện, loại bỏ các virus máy tính, khắc phục (một phần hoặc hoàn toàn) hậu quả của virus gây ra"
+  },
+  {
+    "que": "Máy tính bạn đang sử dụng bị hỏng, bạn được trang bị máy tính mới đã được cửa hàng bán máy tính cài sẳn Window và các chương trình cần thiết (như Office, WinZip, Unikey,…). Bạn cần phải làm gì trước khi sử dụng máy tính này?",
+    "ans1": "Cài đặt chương trình diệt virus và các chương trình cần thiết khác theo khuyến nghị của bộ phận CNTT trước khi sử dụng",
+    "ans2": "Liên hệ bộ phận CNTT kiểm tra và hỗ trợ gỡ bỏ các chương trình độc hại hoặc mã độc nếu có.",
+    "ans3": "Cập nhật đầy đủ các bán vá lỗi mới nhất của hệ điều hành và các chương trình trên máy."
+  },
+  {
+    "que": "Khi bạn tự động bị add vào group chat lạ, bạn sẽ làm gì?",
+    "ans1": "Cấu hình thêm các chính sách an toàn để hạn chế việc người lạ add vào các group",
+    "ans2": "Xem ai đã add mình vào, vì mục đích gì, nếu không liên quan thì Xóa và rời khỏi group"
+  },
+  {
+    "que": "Trong mùa World Cup, bạn nhận được liên tiếp tin nhắn từ người lạ dự đoán chính xác liên tiếp kết quả (thắng / thua /hòa) trước mỗi trận đấu (mỗi tin nhắn là một trận đấu). Sau đó người lạ nhắn tin yêu cầu bạn chuyển khoản 10 triệu sẽ nhận được kết quả chính xác của trận thi đấu tiếp theo. Bạn sẽ làm gì?",
+    "ans": "Block người lạ ngay khi nhận được tin nhắn đầu tiên. Thông báo đến đường dây nóng của Cục Cảnh sát hình sự Bộ Công an (0692348569) để báo cáo về việc nghi vấn lừa đão liên quan đến cá độ bóng đá. Mọi hình thức cá độ là bất hợp pháp nên tuyệt đối không tham gia. Đây là hành vi lừa đảo chiếm đoạt tài sản."
+  },
+  {
+    "que": "Bạn đang sử dụng Facebook và nhận được tin nhắn từ bạn bè với nội dung như hình sau, bạn sẽ làm gì tiếp theo:<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bf9da7afybp\">",
+    "ans": "Bạn không làm gì cả, nếu thật sự người thân cần chuyển tiền sẽ gọi điện thoại để nói chuyện trực tiếp."
+  },
+  {
+    "que": "Những hành vi nào là không đúng khi sử dụng Internet?",
+    "ans1": "Phát tán các thông tin xúc phạm người khác",
+    "ans2": "Dụ dỗ, quấy rối, bắt nạt, tấn công người khác trên mạng"
+  },
+  {
+    "que": "Để đảm bảo an toàn khi sử dụng mạng Internet, bạn cần làm gì sau đây?",
+    "ans1": "Hạn chế xem các trang web quảng cáo lạ",
+    "ans2": "Khi thấy có cảnh báo gặp trang web nguy hiểm thì không mở trang đó",
+    "ans3": "Sử dụng máy tính cài đặt phần mềm diệt vi rút",
+    "ans4": "Không tải tập tin không rõ nguồn gốc về máy tính"
+  },
+  {
+    "que": "Hành vi nào sau đây không phải là Tấn công người khác qua mạng?",
+    "ans": "Hủy kết bạn với người khác trên mạng xã hội như Zalo, Facebook"
+  },
+  {
+    "que": "Tại sao người dùng phải hạn chế cài đặt những ứng dụng không rõ nguồn gốc?.",
+    "ans1": "Có nguy cơ lộ thông tin cá nhân trên thiết bị đang sử dụng",
+    "ans2": "Có nguy cơ bị theo dõi và giám sát",
+    "ans3": "Thiết bị sẽ dễ bị nhiễm virus máy tính (mã độc)",
+    "ans4": "Không ảnh hưởng gì đến thiết bị"
+  },
+  {
+    "que": "Khi bạn nhận được một tin nhắn gửi qua Facebook Messenger rao bán các thiết bị điện tử (iPhone, iPad, PS4, … với giá chỉ 100 - 200K khi mua qua thẻ cáo điện thoại và đề nghị bạn gửi mã bí mật của thẻ cào để mua đươc giá ưu đãi đó. Bạn sẽ làm gì?",
+    "ans": "Không cung cấp bất kì thông tin gì, không chia sẻ nội dung không gửi mã thẻ cào cho người bán vì đây chỉ là một trò lừa đảo trên mạng"
+  },
+  {
+    "que": "Có ý kiến: &quot;Để hạn chế việc bị đánh cắp thông tin cá nhân trên mạng xã hội thì bạn cần cài đặt quyền riêng tư hợp lý&quot;. Theo bạn ý kiến này là ĐÚNG hay SAI?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Đường dẫn trang web nào dưới đây có nguy cơ là đường dẫn độc hại?",
+    "ans1": "https://Facebook.gov",
+    "ans2": "https://facebooks.vn"
+  },
+  {
+    "que": "Đâu KHÔNG phải là dấu hiệu của một email tấn công lừa đảo (phishing)?",
+    "ans": "Nội dung đưa tin quảng cáo, nhưng không chứa link hoặc file đính kèm"
+  },
+  {
+    "que": "Luật CNTT số 67/2006/QH11, ngày 12/07/2006, quy định về “Bảo đảm an toàn, bí mật thông tin”, tổ chức, cá nhân không được thực hiện một trong những hành vi sau đây?",
+    "ans1": "Xâm nhập, sửa đổi, xóa bỏ nội dung thông tin của tổ chức, cá nhân khác trên môi trường mạng; cản trở hoạt động cung cấp dịch vụ của hệ thống thông tin",
+    "ans2": "Bẻ khóa, trộm cắp, sử dụng mật khẩu, khóa mật mã và thông tin của tổ chức, cá nhân khác trên môi trường mạng"
+  },
+  {
+    "que": "Những khuyến nghị nào sau đây là đúng khi sử dụng wifi?",
+    "ans1": "Hạn chế việc chia sẻ mật khẩu wifi",
+    "ans2": "Luôn ý thức việc sử dụng wifi công cộng như wifi ở các quán cafe, sân bay, phố đi bộ… là không đảm bảo an toàn. <br />\nNếu buộc phải sử dụng wifi công cộng thì chỉ sử dụng wifi yêu cầu xác thực và không thực hiện các tác vụ quan trọng như thực hiện giao dịch trực tuyến…"
+  },
+  {
+    "que": "Đối tượng nào cần phải quan tâm đến vấn đề an toàn thông tin",
+    "ans": "Tất cả đáp án trên"
+  },
+  {
+    "que": "Phần mềm kèm crack trên mạng được chia sẽ rất nhiều, do đó tôi cứ sử dụng và gửi tiếp cho đồng nghiệp để đỡ tốn chi phí. Nhận thức và hành động đúng là",
+    "ans": "Tuyệt đối không sử dụng phần mềm crack để đảm bảo an toàn"
+  },
+  {
+    "que": "Trang thông tin điện tử, cổng thông tin điện tử hoặc chuyên trang trên mạng xã hội của cơ quan, tổ chức, cá nhân không được cung cấp, đăng tải, truyền đưa thông tin có nội dung nào dưới đây ?",
+    "ans": "Tất cả các đáp án trên."
+  },
+  {
+    "que": "Trẻ em có quyền được bảo vệ, tiếp cận thông tin, tham gia hoạt động xã hội, vui chơi, giải trí, giữ bí mật cá nhân, đời sống riêng tư và các quyền khác khi tham gia trên không gian mạng hay không?",
+    "ans": "Có"
+  },
+  {
+    "que": "<p>Anh/Chị cho biết các phương pháp xác thực nào được sử dụng phổ biến hiện nay?</p>\n",
+    "ans": "Tất cả các phương pháp đưa ra"
+  },
+  {
+    "que": "Các thông tin nào sau đây không nên để công khai trên Internet",
+    "ans": "Tất cả các phương án"
+  },
+  {
+    "que": "Đối với máy tính/laptop có webcam khi không sử dụng webcam, nhằm đảm bảo tính riêng tư bạn nên làm gì để hạn chế bị người khác hack, phát tán video riêng tư?",
+    "ans": "Sử dụng miếng che để che mặt kính camera"
+  },
+  {
+    "que": "Khi anh/chị đang sử dụng facebook, một khung chat nhảy ra và thông báo khi chiến thắng game tại link đính kèm thì anh/chị có thể nhận được một iPhone miễn phí. Anh/chị sẽ làm gì?",
+    "ans": "Đó có thể là lừa đảo, tắt khung chat và cảnh báo với mọi người."
+  },
+  {
+    "que": "Đáp án nào đánh giá đúng bản chất cuộc hội thoại sau.<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bfa057eedme\">",
+    "ans": "Đây là tin nhắn lừa đảo người dùng nhằm thu thập thông tin cho mục đích xấu"
+  },
+  {
+    "que": "Khi xác định máy tính của mình vừa mới bị nhiễm mã độc tống tiền Ransomware, hành động phù hợp nhất để hạn chế tác hại của mã độc khi phát hiện ra là?",
+    "ans": "Lập tức ngắt kết nối mạng, tắt nguồn máy tính và liên hệ với cán bộ quản trị IT để được hỗ trợ giải quyết"
+  },
+  {
+    "que": "Theo Anh/Chị, chúng ta cần làm gì để tự bảo vệ bản thân khi sử dụng mạng xã hội",
+    "ans1": "Chỉ nên kết bạn với những người mà chúng ta quen biết trong đời thực",
+    "ans2": "Cẩn thận khi cung cấp thông tin cá nhân trên mạng xã hội",
+    "ans3": "Cân nhắc trước khi chia sẻ hình ảnh, video clip hay thông tin trên mạng xã hội",
+    "ans4": "Nên đăng xuất tài khoản sau khi sử dụng, đặc biệt khi sử dụng máy tính công cộng"
+  },
+  {
+    "que": "Khi có số điện thoại lạ gọi đến tự nhận là tổng đài của Sở GTVT tỉnh A, thông báo cho bạn có một biên lai nộp phạt chưa nộp; để biết thông tin và hướng dẫn nộp phạt cần làm theo một số bước theo chỉ dẫn. Bạn có nên làm theo hướng dẫn không?",
+    "ans": "Không: Đây là hành vi lừa đảo dẫn dắt người bị hại thực hiện những việc có lợi cho kẻ lừa đảo"
+  },
+  {
+    "que": "Khái niệm tiền ảo là gì?",
+    "ans1": "Tiền ảo được lưu trữ, giao dịch qua các phần mềm và ứng dụng được chỉ định ở dạng kỹ thuật số.",
+    "ans2": "Tiền ảo không được kiểm soát và không được phát hành hoặc kiểm soát bởi một ngân hàng trung ương.",
+    "ans3": "Là một dạng tiền kĩ thuật số được giao dịch trên nền tảng online, chỉ tồn tại dưới dạng điện tử, gồm nhiều loại tiền tệ, có loại tiền mã hóa."
+  },
+  {
+    "que": "Đâu là những dấu hiệu của các trò lừa đảo trên Internet?",
+    "ans": "Tất cả các biểu hiện đều đúng"
+  },
+  {
+    "que": "Nhận định nào sai về phương thức https",
+    "ans": "Https là phiên bản kém an toàn hơn của http"
+  },
+  {
+    "que": "Bạn phát hiện khách hàng fiber tự lắp thêm thiết bị wifi với mật khẩu là &quot;123456789&quot;. Đồng thời nhà người đó cũng có lắp đặt camera quan sát và nhiều thiết bị gia dụng thông minh hiện đại. Lựa chọn nào dưới đây là phù hợp?",
+    "ans": "Tư vấn khách hàng đặt lại mật khẩu wifi đủ phức tạp và giải thích khách hàng hiểu được các mối nguy khi kẻ xấu truy cập được vào mạng"
+  },
+  {
+    "que": "Hành vi nào dưới đây không bị nghiêm cấm đưa thông tin khi sử dụng mạng xã hội",
+    "ans": "Đăng tải những thông tin, video clip quảng bá hình ảnh đẹp về đất nước Việt Nam."
+  },
+  {
+    "que": "Theo Anh/Chị, chúng ta cần làm gì để tự bảo vệ bản thân khi sử dụng mạng xã hội",
+    "ans1": "Nên đăng xuất tài khoản sau khi sử dụng, đặc biệt khi sử dụng máy tính công cộng",
+    "ans2": "Chỉ nên kết bạn với những người mà chúng ta quen biết trong đời thực",
+    "ans3": "Cẩn thận khi cung cấp thông tin cá nhân trên mạng xã hội",
+    "ans4": "Cân nhắc trước khi chia sẻ hình ảnh, video clip hay thông tin trên mạng xã hội"
+  },
+  {
+    "que": "Các tiện ích mở rộng được thêm vào trình duyệt (extention) cần?",
+    "ans": "Chỉ cài đặt các extension từ các website chính thức của các trình duyệt"
+  },
+  {
+    "que": "Theo luật an ninh mạng năm 2018 Lực lượng bảo vệ an ninh mạng bao gồm những lực lượng nào sau đây?",
+    "ans": "Tất cả các đáp án"
+  },
+  {
+    "que": "Bạn nhận được email ngân hàng báo trúng thưởng hàng chục triệu đồng, kèm theo link truy cập yêu cầu người dùng cung cấp thông tin tài khoản, đăng nhập số điện thoại để liên lạc phát thưởng. Bạn chọn cách nào ?",
+    "ans": "Xóa email, không thực hiện theo yêu cầu."
+  },
+  {
+    "que": "Người bạn cùng phòng cần truy câp mạng cơ quan qua VPN và mượn account VPN của bạn. Vậy bạn thực hiện như thế nào ?",
+    "ans": "Bạn báo bạn không thể cho mượn account VPN do quy định của cơ quan ghi rõ việc này"
+  },
+  {
+    "que": "Cách tốt nhất để đảm bảo rằng không còn lại dữ liệu thông tin nhạy cảm đã từng được lưu trữ trên phương tiện DVD-R (đĩa CD) là",
+    "ans": "Phá hủy"
+  },
+  {
+    "que": "Các hoạt động nào dưới đây giúp phát hiện dấu hiệu các trang web không an toàn?",
+    "ans1": "Luôn chú ý kiểm tra địa chỉ URL.",
+    "ans2": "Kiểm tra lỗi chính tả, ngữ pháp có bất thường không",
+    "ans3": "Kiểm tra biểu tượng ổ khóa trong thanh địa chỉ trình duyệt của bạn có bị mất không"
+  },
+  {
+    "que": "Đối với mạng xã hội facebook, trong các đáp án bên dưới, đâu là cách không đảm bảo an toàn bảo mật cho người dùng?",
+    "ans": "Duy trì chế độ đăng nhập thường xuyên của tài khoản facebook"
+  },
+  {
+    "que": "Theo anh/chị thì việc người dùng tải và sử dụng những phần mềm crack trên mạng internet sẽ có những nguy cơ gì  ?",
+    "ans": "Tất cả các nguy cơ"
+  },
+  {
+    "que": "Để đảm bảo an toàn khi sử dụng mạng Internet, bạn cần làm gì sau đây?",
+    "ans1": "Hạn chế xem các trang web quảng cáo lạ",
+    "ans2": "Sử dụng máy tính cài đặt phần mềm diệt vi rút",
+    "ans3": "Khi thấy có cảnh báo gặp trang web nguy hiểm thì không mở trang đó",
+    "ans4": "Không tải tập tin không rõ nguồn gốc về máy tính"
+  },
+  {
+    "que": "Một đồng nghiệp trong công ty đưa cho bạn một chiếc USB nhờ bạn hỗ trợ mở USB và in file tài liệu trên máy tính cá nhân của bạn để nhanh chóng xử lý công việc, bạn nên làm gì trong tình huống này ?",
+    "ans1": "Nếu máy tính không có phần mềm AV và chưa được tắt tính năng AutoPlay thì từ chối cắm USB của người khác vào máy tính cá nhân, do USB có thể chứa mã độc gây hại/ mất mát dữ liệu của máy tính.",
+    "ans2": "Nếu máy tính có phần mềm AV và tắt tính năng AutoPlay thì phải Scan usb để tìm và loại bỏ mã độc trước khi bạn sử dụng để hỗ trợ đồng nghiệp"
+  },
+  {
+    "que": "Một số lưu ý khi sử dụng chương trình diệt virus ?",
+    "ans": "Tất cả các đáp án đều đúng"
+  },
+  {
+    "que": "Bạn nghe ngóng có thông tin về việc Microsoft phát hành phiên bản Windows mới, và bản cài đặt đã có ở trên mạng. Bạn sẽ thực hiện hành động nào sau đây?",
+    "ans": "Không cài đặt các phiên bản trôi nổi trên mạng, ngoài các vấn đề về ATTT trên chính bộ cài thì các vấn đề ATTT khác ở trên một hệ điều hành chưa chính thức triển khai cũng có thể trở thành nguy cơ"
+  },
+  {
+    "que": "Bạn có một chiếc máy tính xách tay cũ với các tệp liên quan đến công việc vẫn được lưu trữ trên đó. Bạn muốn tặng máy tính cho tổ chức từ thiện. Cách an toàn nhất để giữ bí mật nội dung tệp là gì?",
+    "ans": "Trao tặng máy tính mà không kèm ổ đĩa cứng"
+  },
+  {
+    "que": "Trong lúc đang sử dụng máy tính xách tay thì đèn camera sáng lên mặc dù bạn không sử dụng nào liên quan đến webcam. Điều nào sao đây là đúng?",
+    "ans": "Máy tính xách tay đã bị hacker chiếm điều khiển và xem trộm webcam."
+  },
+  {
+    "que": "Đâu là địa chỉ website giúp bạn kiểm tra một file có virus hay mã độc không?",
+    "ans": "https://www.virustotal.com/"
+  },
+  {
+    "que": "Lợi ích của việc cai nghiện mạng xã hội là gì?",
+    "ans1": "Sức khỏe tinh thần tốt hơn",
+    "ans2": "Có nhiều thời gian để rèn luyện thể thao",
+    "ans3": "Cải thiện kết quả học tập và làm việc",
+    "ans4": "Có nhiều thời gian dành cho gia đình và người thân"
+  },
+  {
+    "que": "Hành vi chửi bới, xúc phạm danh dự, uy tín, nhân phẩm của người khác trên mạng có vi phạm gì không?",
+    "ans1": "Vi phạm văn hóa ứng xử trên mạng xã hội",
+    "ans2": "Vi phạm Pháp luật về Tội làm nhục người khác (Điều 155 Bộ luật hình sự 2015 sửa đổi, bổ sung năm 2017)",
+    "ans3": "Vi phạm các nhóm hành vi bị cấm trong luật an ninh mạng"
+  },
+  {
+    "que": "Đâu không phải là một phương pháp bảo vệ thiết bị di động?",
+    "ans": "Chữ ký số"
+  },
+  {
+    "que": "Người có hành vi vi phạm được quy định trong Luật An ninh mạng thì bị xử lý như thế nào?",
+    "ans": "Tùy theo tính chất, mức độ vi phạm mà bị xử lý kỷ luật, xử lý vi phạm hành chính hoặc bị truy cứu trách nhiệm hình sự, nếu gây thiệt hại thì phải bồi thường"
+  },
+  {
+    "que": "Có nên đặt giới hạn thời gian tồn tại của link Google Tài liệu, Trang tính khi chia sẻ đến mọi người?",
+    "ans": "Có"
+  },
+  {
+    "que": "Theo bạn có nên nhắn tin trao đổi tài liệu thông tin khách hàng, số liệu ĐHSXKD trên ứng dụng ZALO hay không ?",
+    "ans1": "Dữ liệu ĐHSXKD hoặc dữ liệu thông tin của khách hàng gửi qua Zalo phải được mã hóa và gửi mật khẩu giải mã qua một phương thức khác (gọi điện, nhắn tin sms …)",
+    "ans2": "Chỉ trao đổi thông tin xã hội, không gửi dữ liệu quan trọng qua ứng dụng nên gửi qua Mail nội bộ"
+  },
+  {
+    "que": "Một ngày đẹp trời bạn nhận được số tiền 20 triệu đồng từ 1 số tài khoản ngân hàng lạ. Cùng ngày hôm đó bạn có nhận được điện thoại và tin nhắn từ người xưng là nhân viên ngân hàng hỗ trợ hướng dẫn bạn truy cập đường link web ngân hàng và làm theo các bước để trả lại số tiền trên. Bạn sẽ làm gì trong tình huống này?",
+    "ans1": "Không được sử dụng số tiền chuyển nhầm này",
+    "ans2": "Cần nâng cao nhận thức và đề phòng vì người tự xưng nhân viên ngân hàng có thể là giả mạo, đang dụ dỗ đánh cắp thông tin tài khoản ngân hàng của bạn.",
+    "ans3": "Đến trình báo cơ quan công an nơi cơ trú và làm việc trực tiếp với ngân hàng để được hướng dẫn trả lại số tiền."
+  },
+  {
+    "que": "<p>Trách nhiệm đảm bảo an toàn thông tin của đơn vị là của ai?</p>\n",
+    "ans": "Mọi người"
+  },
+  {
+    "que": "Các thông tin độc hại hiện nay lan tràn rất nhiều trên mạng, mỗi người cần làm gì để tránh cho bản thân và những người xung quanh?",
+    "ans": "Đọc kĩ nội dung tin bài đăng, kiểm tra xem thông tin đã được xác minh hay chưa trước khi có ý định bình luận, chia sẻ bài viết đó trên mạng"
+  },
+  {
+    "que": "Trước khi không sử dụng/bán/cho các bị điện thoại di động chúng ta cần làm gì?",
+    "ans": "Tự mình thoát các tài khoản kết nối với thiết bị,khôi phục thiết bị về mặc định nhà sản suất chọn xóa toàn bộ dữ liệu khôi phục cài đặt gốc"
+  },
+  {
+    "que": "Có nên đặt mật khẩu cho link Google Tài liệu, Trang tính khi chia sẻ đến mọi người?",
+    "ans": "Có"
+  },
+  {
+    "que": "Ưu điểm của mật khẩu dùng một lần (One Time PassWord)",
+    "ans1": "Chỉ dùng được 1 lần và không sử dụng lại.",
+    "ans2": "Khó tấn công."
+  },
+  {
+    "que": "Dương nhận được một tin nhắn từ chú Quang là người thân của bố mẹ, bảo rằng muốn nhờ Dương mua hộ một chiếc thẻ Vina 500 nghìn, chụp mã thẻ gửi cho chú và ngày mai chú sẽ đưa tiền cho vợ Dương và hứa gửi Dương một món quà nhỏ để cảm ơn. Trong các đáp án dưới đây, đáp án nào là hành động mà Dương nên thực hiện nhất? ",
+    "ans": "Có khả năng tài khoản của chú Quang đã bị hack, người nhắn tin là kẻ lừa đảo, không phải chú Quang. Dương sẽ gọi cho vợ hoặc chú Quang để kiểm tra lại xem tin nhắn có là thật không. Chỉ quyết định mua thẻ hay không sau đó"
+  },
+  {
+    "que": "Nếu bạn nhận được một email thông báo về việc tài khoản thanh toán trực tuyến gặp trở ngại vì thẻ tín dụng đã hết hạn (hoặc địa chỉ thanh toán không đúng,…). Tiếp theo, nội dung email còn yêu cầu bạn: “Để khắc phục sự cố này, vui lòng mở liên kết và cập nhật thông tin theo yêu cầu”. Bên trong liên kết sẽ là một trang web khá giống với trang đăng nhập thông tin tài khoản mà bạn đã từng thực hiện một vài lần trước đó. Theo bạn, đây là có phải là 1 email lừa đảo không?",
+    "ans": "Là email lừa đảo"
+  },
+  {
+    "que": "Khuyến nghị khi trao đổi các tài liệu có nội dung quan trọng cho đối tác qua ứng dụng chat OTT ( Zalo, Viber, Telegram, Messenger, Whatapps …) có nên nén tập tin lại và đặt mật khẩu file nén không.",
+    "ans": "Nên nén lại và đặt mật khẩu giải nén sau đó trao đổi riêng với người được nhận mã giải nén để đảm bảo bảo mật thông tin"
+  },
+  {
+    "que": "Khi gửi tài liệu quan trọng thông qua mail, người gửi nên thực hiện những hành động nào?",
+    "ans1": "Sử dụng địa chỉ email nội bộ",
+    "ans2": "Nén tài liệu bằng mật khẩu"
+  },
+  {
+    "que": "Vì sao các chương trình nhắn tin miễn phí như Zalo, Facebook Messenger không cho chúng ta gửi những file có đuôi dạng *.exe",
+    "ans": "Đây là file cài đặt, rất dễ chứa đựng virus, các chương trình nhắn tin không cho phép gửi file dạng này nhằm tránh bị phát tán virus"
+  },
+  {
+    "que": "Theo bạn như thế nào là giới hạn và sự tôn trọng trên Internet?",
+    "ans1": "Là văn hóa ứng xử lịch sự",
+    "ans2": "Đặt ra nguyên tắc riêng cho bản thân",
+    "ans3": "Tôn trọng người khác trên Internet"
+  },
+  {
+    "que": "Lời khuyên nào sai khi người dùng muốn bảo vệ máy tính và thông tin trên máy tính của mình?",
+    "ans": "Chẳng cần làm gì vì máy tính đã được cài đặt sắn các thiết bị bảo vệ từ nhà sản xuất"
+  },
+  {
+    "que": "Bạn mua sắm trên một trang thương mại điện tử sử dụng giao thức https, đến bước thanh toán bằng thẻ tín dụng trỏ sang một trung gian thanh toán khác sử dụng http và yêu cầu bạn nhập thông tin thẻ để tiếp tục thanh toán. Bạn sẽ làm gì ?",
+    "ans": "Không thanh toán nữa do giao thức http không đảm bảo an toàn giao dịch"
+  },
+  {
+    "que": "Cài đặt phần mềm từ các nguồn không xác định, có thể lây lan virus?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Bản hệ điều hành windows nào bị Microsolf ngưng nâng cấp phiên bản",
+    "ans1": "win 8.1",
+    "ans2": "win 7"
+  },
+  {
+    "que": "Thói quen nào không tốt trong việc sử dụng máy tính hàng ngày",
+    "ans1": "Tạo 01 file password.txt để lưu mật khẩu các tài khoản mạng xã hội và để trên desktop",
+    "ans2": "Khi in ấn tại các tiệm photo công cộng, truy cập bằng tài khoản email cá nhân để tải tài liệu cần in và không đăng xuất.",
+    "ans3": "Tải các gói cài đặt phần mềm tự động trên các trang download không chính thống"
+  },
+  {
+    "que": "Mở email nhận được từ những người lạ có thể làm lây lan virus?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Hiện nay thường xuyên có rất nhiều cuộc gọi, tin nhắn, mail rác làm phiền nội dung thường là quảng cáo, tư vấn mua bán nhà đất, tham gia chứng khoán, tiền ảo, bảo hiểm, thậm chí là lừa đảo, đó thường là do thông tin cá nhân của bản thân bị lộ trên mạng. Những khuyến nghị nào sau đây là đúng khi sử dụng sử dụng mạng internet để tránh bị rò rỉ thông tin?",
+    "ans1": "Cân nhắc trước khi đăng kí thông tin bản thân tham gia các diễn đàn, ứng dụng di động, bình luận bài viết live stream trên mạng",
+    "ans2": "Khi không còn sử dụng tài khoản cá nhân nào trên ứng dụng hay diễn đàn nào thì nên khóa hoặc xóa bỏ hoàn toàn tài khoản đó của mình",
+    "ans3": "Sử dụng tính năng chặn vào danh sách đen các đầu số máy, mail làm phiền",
+    "ans4": "Phản ánh, tố cáo các cuộc gọi, tin nhắn rác đến tổng đài hoặc website báo cuộc gọi rác do Cục An toàn thông tin quản lí"
+  },
+  {
+    "que": "Hành động nào sau đây là đúng khi sử dụng mạng xã hội",
+    "ans": "Xác nhận thông tin người gửi kết bạn. Kiểm tra thông tin trước khi chia sẻ"
+  },
+  {
+    "que": "Điều nào đúng khi bàn về đặt mật khẩu cho máy tính cá nhân?",
+    "ans1": "Mật khẩu cần được thiết lập để bảo vệ máy tính của bạn khỏi truy cập trái phép và tấn công mạng.",
+    "ans2": "Mật khẩu cần được bảo vệ bằng cách không chia sẻ nó với người khác và định kỳ thay đổi mật khẩu."
+  },
+  {
+    "que": "Một người thân gọi video call FB cho bạn với chất lượng thấp, hình ảnh nhòe, âm thanh không tốt. Sau 10s họ ngắt kết nối và nhắn tin lại với bạn qua messenger của FB. Họ kể rằng người nhà của họ vừa bị tai nạn giao thông và họ đang đưa người nhà đến bệnh viện nhưng không có tiền để đóng viện phí. Họ hỏi mượn tiền bạn và nhờ bạn chuyển qua số tài khoản của bác sĩ trực lúc đó. Bạn sẽ làm thế nào?",
+    "ans": "Gọi điện thoại hoặc trực tiếp đến nhà người thân đó để xác nhận sự việc"
+  },
+  {
+    "que": "Khi nhận được tin nhắn thông báo tài khoản ngân hàng của bạn bị khóa kèm đường link khôi phục. Bạn nên làm gì?",
+    "ans1": "Gọi cho tổng đài của ngân hàng bạn đang dùng xác minh thông tin trước",
+    "ans2": "Kiểm tra tài khoản của mình có bị khóa hay không bằng cách sử dụng web hoặc app ngân hàng mà bạn thường dùng để giao dịch từ trước đến nay"
+  },
+  {
+    "que": "Các email của người lạ, có thể làm lây truyền virus?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Lợi ích của việc cai nghiện mạng xã hội là gì?",
+    "ans1": "Có nhiều thời gian dành cho gia đình và người thân",
+    "ans2": "Sức khỏe tinh thần tốt hơn",
+    "ans3": "Cải thiện kết quả học tập và làm việc",
+    "ans4": "Có nhiều thời gian để rèn luyện thể thao"
+  },
+  {
+    "que": "Cần phải làm gì để bảo vệ dữ liệu trên một máy tính xách tay của bạn phòng trường hợp bị lấy cắp ?",
+    "ans": "Mã hóa các dữ liệu quan trọng"
+  },
+  {
+    "que": "Bạn có nên gửi thông tin cá nhân của bản thân, khách hàng và đối tác,.. qua các ứng dụng chat?",
+    "ans": "Không"
+  },
+  {
+    "que": "Để phòng tránh các dạng tấn công đánh cắp thông tin từ trình duyệt phía người dùng thì người dùng nên sử dụng 2 trình duyệt khác nhau. Một trình duyệt dùng để truy cập các website của công ty, một trình duyệt dùng để truy cập các website khác. Đúng hay sai?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Anh/chị thao tác như thế nào là đúng nhất để thoát khỏi các trang giao dịch điện tử?",
+    "ans": "Bấm nút đăng xuất"
+  },
+  {
+    "que": "Để bảo vệ dữ liệu trên máy tính khi dùng internet, bạn cần làm gì?",
+    "ans": "Cài đặt và cập nhật phần mềm chống virus"
+  },
+  {
+    "que": "Bạn nhận được điện thoại từ con bạn báo có công nhân đến nhà để sửa mạng truy wifi cập internet. Bạn sẽ báo con bạn thực hiện như thế nào ?",
+    "ans1": "Không mở cửa cho người công nhân vào nhà để sửa mạng wifi truy cập internet, dặn người công nhân liên hệ lại khi có bố/mẹ ở nhà",
+    "ans2": "Tuyệt đối không cho người công nhân vào nhà"
+  },
+  {
+    "que": "Theo Anh/Chị, những thông tin nào không nên chia sẻ trên mạng xã hội",
+    "ans1": "Phát biểu, chỉ trích về các chủ đề nhạy cảm",
+    "ans2": "Số điện thoại cá nhân",
+    "ans3": "Địa chỉ nhà riêng hoặc trường học"
+  },
+  {
+    "que": "Gần đây có nhiều tin tuyển cộng tác viên bán hàng online trên các trang mạng xã hội (Zalo, Facebook, Tiktok…), nhận việc làm tại nhà, không mất thời gian di chuyển, bỏ tiền tạm ứng hoặc thanh toán trước đơn hàng khoảng vài trăm nghìn để đặt hàng, sau đó nhận tiền công kèm theo lãi đơn hàng và tiền thưởng. Trong trường hợp này bạn nên làm gì?",
+    "ans": "Không nghe theo đề nghị trên vì điều đó có khả năng là một vụ lừa đảo qua không gian mạng, sau khi thanh toán đơn hàng và đặt hàng, nạn nhân có thể bị chiếm đoạt số tiền tạm ứng hoặc thanh toán đơn hàng."
+  },
+  {
+    "que": "Khi bạn sử dụng chế độ ẩn danh hoặc riêng tư trong trình duyệt thì đáp án nào sau đây là đúng?",
+    "ans": "Những người khác sử dụng chung hoặc mượn thiết bị của bạn không thể thấy lịch sử các trang web mà bạn đã truy cập ẩn danh"
+  },
+  {
+    "que": "Khi thực hiện chia sẻ màn hình khi họp trực tuyến hoặc trình chiếu. Người dùng nên thực hiện các biện pháp nào sau đây để tránh lộ lọt thông tin.",
+    "ans1": "Tắt thông báo hoặc exit các chương trình nhắn tin (telegram), mail, … để tránh lộ nội dung thông tin.",
+    "ans2": "Dọn dẹp các thông tin nhạy cảm trên Màn hình, các tệp chứa thông tin nhạy cảm."
+  },
+  {
+    "que": "Tập đoàn VNPT quy định tham gia thi đánh giá nhận thức An toàn thông tin theo chu kỳ nào ?",
+    "ans": "Hàng quý"
+  },
+  {
+    "que": "Khi lướt web nhảy ra một popup thông báo &quot;Bạn đã trúng thưởng 100 triệu ...&quot; thì bạn nên làm gì?",
+    "ans": "Không click vào nội dung, đóng popup và không nên truy cập lại vào trang web này."
+  },
+  {
+    "que": "Theo Anh/Chị, tác hại của virus máy tính là:",
+    "ans1": "Tiêu tốn tài nguyên máy tính",
+    "ans2": "Đánh cắp dữ liệu",
+    "ans3": "Phá hủy dữ liệu",
+    "ans4": "Gây khó chịu cho người dùng"
+  },
+  {
+    "que": "Bạn nhận được một tin nhắn từ người thân, bảo rằng muốn nhờ mua hộ một chiếc thẻ điện thoại 200 nghìn, chụp mã thẻ gửi và ngày mai sẽ đưa tiền. Trong các đáp án dưới đây, đáp án nào là hành động mà bạn nên thực hiện nhất ?",
+    "ans": "Gọi điện để kiểm tra lại xem tin nhắn có là thật không. Chỉ quyết định mua thẻ hay không sau đó. Có khả năng tài khoản đã bị hack, người nhắn tin là kẻ lừa đảo, không phải chủ tài khoản."
+  },
+  {
+    "que": "Đối với mạng xã hội như Facebook, Twitter, Instagram … sử dụng chức năng xác thực 2 yếu tố (two-factor authentication) để tăng cường an toàn bảo mật tài khoản là đúng hay sai",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Các thiết bị nào sau đây có thể sử dụng được trên mạng không dây ?",
+    "ans": "Tất cả các loại trên"
+  },
+  {
+    "que": "Một máy tính đã nhiễm virus nhưng trên máy không cài đặt phần mềm Antivirus và chưa được kết nối với mạng.Cách tốt nhất để sửa chữa máy tính là gì?",
+    "ans": "Khởi động máy tính với đĩa hoặc usb antivirus"
+  },
+  {
+    "que": "Một người tự xưng là nhân viên nhà mạng Viettel liên hệ và đề nghị hỗ trợ chuyển đổi sim 4G thành sim 5G qua điện thoại, nhân viên này hướng dẫn cách nhắn tin để chuyển đổi. Những rủi ro người dùng có thể đối diện trong trường hợp này?",
+    "ans1": "Tài khoản ngân hàng/ví điện tử của người dùng bị trừ hết tiền.",
+    "ans2": "SIM của người dùng bị khoá từ xa.",
+    "ans3": "Người dùng bị chiếm đoạt quyền sử dụng số điện thoại.",
+    "ans4": "Thông tin cá nhân của người dùng bị lộ."
+  },
+  {
+    "que": "Khi thực hiện chia sẻ màn hình khi họp trực tuyến hoặc trình chiếu. Người dùng nên thực hiện các biện pháp nào sau đây để tránh lộ lọt thông tin.",
+    "ans1": "Dọn dẹp các thông tin nhạy cảm trên Màn hình, các tệp chứa thông tin nhạy cảm.",
+    "ans2": "Tắt thông báo hoặc exit các chương trình nhắn tin (telegram), mail, … để tránh lộ nội dung thông tin."
+  },
+  {
+    "que": "Các hành động nào sau đây giúp An toàn cho máy tính cá nhân ?",
+    "ans1": "Hãy khóa máy tính khi rời chỗ ngồi",
+    "ans2": "Đối với máy tính ở nhà, bật firewall và các phần mềm chống mã độc.",
+    "ans3": "Luôn cài mật khẩu đăng nhập máy tính"
+  },
+  {
+    "que": "Có ý kiến cho rằng chỉ có điện thoại Android mới có thể nhiễm virus còn Iphone thì không, vậy là đúng hay sai?",
+    "ans": "Sai"
+  },
+  {
+    "que": "Khi thấy các thông tin mua bán trên các trang mạng xã hội thì bạn có tin tưởng không?",
+    "ans": "Nửa tin nửa ngờ, trước khi mua hàng thì tìm hiểu kĩ rồi mới quyết định mua hay không"
+  },
+  {
+    "que": "Khi bạn tự động bị add vào group chat lạ, bạn sẽ làm gì?",
+    "ans1": "Xem ai đã add mình vào, vì mục đích gì, nếu không liên quan thì Xóa và rời khỏi group",
+    "ans2": "Cấu hình thêm các chính sách an toàn để hạn chế việc người lạ add vào các group"
+  },
+  {
+    "que": "Tính năng nào của Windows giúp chống các Virus và Threat trên máy tính?",
+    "ans": "Windows Defender"
+  },
+  {
+    "que": "Một người đồng nghiệp nhắn tin cho bạn qua ứng dụng Messenger, thông báo anh/cô ấy quên mật khẩu và cần mượn tài khoản, mật khẩu của bạn để truy cập ngay lập tức vào hệ thống của công ty. Bạn nên làm gì?",
+    "ans": "Gọi điện trực tiếp để xác nhận đồng nghiệp và hướng dẫn gọi tới bộ phận hỗ trợ của công ty"
+  },
+  {
+    "que": "Không cần che mã số CVV/CVC trên thẻ tín dụng vì muốn thanh toán trực tuyến phải có otp hoặc mã pin?",
+    "ans": "Sai"
+  },
+  {
+    "que": "Bạn nhận được 1 tin nhắn SMS với Brandname là tổng đài chăm sóc khách hàng ngân hàng (ngân hàng bạn đang sử dụng). Trong tin nhắn SMS có nội dung nhắc nhở tài khoản của bạn đang chi tiêu số tiền lớn ở nước ngoài, và yêu cầu bạn truy cập 1 trang web, nhập các thông tin nhạy cảm (số thẻ ngân hàng, mã OTP,…) để xác nhận thông tin chi tiêu đó. Bạn sẽ làm gì?",
+    "ans1": "Người dùng cần thực sự cảnh giác, không truy cập các đường link lạ, không cung cấp các thông tin nhạy cảm (tên đăng nhập, mật khẩu, mã OTP các dịch vụ nói chung) cho bất kỳ ai và trong bất kỳ trường hợp nào.",
+    "ans2": "Gọi đến hotline của ngân hàng để xác nhận thông tin trên"
+  },
+  {
+    "que": "Theo Anh/Chị, những thông tin nào không nên chia sẻ trên mạng xã hội",
+    "ans1": "Phát biểu, chỉ trích về các chủ đề nhạy cảm",
+    "ans2": "Địa chỉ nhà riêng hoặc trường học",
+    "ans3": "Số điện thoại cá nhân"
+  },
+  {
+    "que": "Chọn thiết bị mạng không dây (bộ phát wifi) như thế nào để đảm bảo an toàn thông tin khi sử dụng?",
+    "ans1": "Chọn thiết bị có nguồn gốc xuất xứ rõ ràng, thương hiệu uy tín từ các cửa hàng chính hãng",
+    "ans2": "Chọn thiết bị có nguồn gốc xuất xứ, thương hiệu nổi tiếng của nước ngoài"
+  },
+  {
+    "que": "Thói quen nào là tốt khi sử dụng máy tính.",
+    "ans": "Quét virus và cập nhật các bản vá lỗi thường xuyên"
+  },
+  {
+    "que": "Spyware không thực hiện các hoạt động sau?",
+    "ans": "Gỡ bỏ các trình duyệt trên mobile"
+  },
+  {
+    "que": "“An ninh mạng” là gì?",
+    "ans": "Là sự bảo đảm hoạt động trên không gian mạng không gây phương hại đến an ninh quốc gia, trật tự, an toàn xã hội, quyền và lợi ích hợp pháp của cơ quan, tổ chức, cá nhân"
+  },
+  {
+    "que": "Mục tiêu chính của chương trình nâng cao nhận thức bảo mật là ?",
+    "ans": "Để làm cho mọi người nhận thức được rủi ro tiềm ẩn, các nguồn gây mất an toàn bảo mật."
+  },
+  {
+    "que": "Theo anh/chị việc sử dụng mạng xã hội như facebook, zalo…không an toàn có thể đối mặt với những nguy cơ gì ?",
+    "ans1": "Có thể ảnh hưởng tới hình ảnh, uy tín bản thân và bị lợi dụng, lôi kéo với các tin giả",
+    "ans2": "Bị khai thác thông tin cá nhân: email, điện thoại, tên người nhà…",
+    "ans3": "Luôn phải đối mặt với nguy cơ bị tấn công mạng"
+  },
+  {
+    "que": "Điều gì có thể xảy ra khi bạn sử dụng các trình duyệt để lướt web và tải về những file không rõ nguồn gốc?",
+    "ans": "Tất cả các phương án"
+  },
+  {
+    "que": "Không nên tin tưởng ngay những thông tin như tên công ty, tổ chức, người quen, người nổi tiếng… hiển thị trên email gửi đến, mà nên kiểm tra lại?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Bạn nhận được cảnh báo tài khoản email của bạn đã bị thử truy cập nhiều lần. Cách tốt nhất để ngăn chặn truy cập trái phép vào tài khoản email của bạn là gì?",
+    "ans": "Thay đổi mật khẩu và bật xác thực hai yếu tố trên tài khoản email."
+  },
+  {
+    "que": "Để đảm bảo an toàn khi sử dụng mạng Internet, bạn cần làm gì sau đây?",
+    "ans1": "Hạn chế xem các trang web quảng cáo lạ",
+    "ans2": "Không tải tập tin không rõ nguồn gốc về máy tính",
+    "ans3": "Khi thấy có cảnh báo gặp trang web nguy hiểm thì không mở trang đó",
+    "ans4": "Sử dụng máy tính cài đặt phần mềm diệt vi rút"
+  },
+  {
+    "que": "Chọn đáp án đúng. Người dùng không thể xem mật khẩu được lưu trên trình duyệt Chrome khi không nhập mật khẩu máy tính đúng hay sai ?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Việc chia sẻ, đăng tải các thông tin sai sự thật gây hoang mang dư luận có phải là hành vi vi phạm pháp luật không?.",
+    "ans": "Là hành vi vi phạm pháp luật, sẽ bị xử lý hành chính hoặc hình sự tùy thuộc vào hậu quả của hành vi đó"
+  },
+  {
+    "que": "Một ngày đẹp trời, một người bạn thân nhắn tin qua Messenger hỏi mượn tiền thì việc làm nào sau đây là sai?",
+    "ans1": "Chuyển tiền ngay lập tức.",
+    "ans2": "Trả lời tin nhắn trên messenger hỏi thông tin cá nhân của bạn rồi thực hiện chuyển tiền."
+  },
+  {
+    "que": "Theo Anh/Chị, chúng ta cần làm gì để tự bảo vệ bản thân khi sử dụng mạng xã hội",
+    "ans1": "Cẩn thận khi cung cấp thông tin cá nhân trên mạng xã hội",
+    "ans2": "Cân nhắc trước khi chia sẻ hình ảnh, video clip hay thông tin trên mạng xã hội",
+    "ans3": "Nên đăng xuất tài khoản sau khi sử dụng, đặc biệt khi sử dụng máy tính công cộng",
+    "ans4": "Chỉ nên kết bạn với những người mà chúng ta quen biết trong đời thực"
+  },
+  {
+    "que": "Một người tự xưng là nhân viên nhà mạng Viettel liên hệ và đề nghị hỗ trợ chuyển đổi sim 4G thành sim 5G qua điện thoại, nhân viên này hướng dẫn cách nhắn tin để chuyển đổi. Những rủi ro người dùng có thể đối diện trong trường hợp này?",
+    "ans1": "Tài khoản ngân hàng/ví điện tử của người dùng bị trừ hết tiền.",
+    "ans2": "Người dùng bị chiếm đoạt quyền sử dụng số điện thoại.",
+    "ans3": "Thông tin cá nhân của người dùng bị lộ.",
+    "ans4": "SIM của người dùng bị khoá từ xa."
+  },
+  {
+    "que": "Khi thấy Anh/chị của bạn thường đăng ảnh và checkin vị trí của con cái trên mạng xã hội thì bạn sẽ làm hành động gì để có thể đảm bảo an toàn cho cháu của mình?",
+    "ans": "Giải thích cho anh/chị về việc rủi ro nếu gặp người xấu có thể khai thác thông tin về hình ảnh, thời gian và thói quen của gia đình và cháu"
+  },
+  {
+    "que": "Tại sao người dùng phải hạn chế cài đặt những ứng dụng không rõ nguồn gốc?",
+    "ans1": "Có nguy cơ bị theo dõi và giám sát",
+    "ans2": "Có nguy cơ lộ thông tin cá nhân trên thiết bị đang sử dụng",
+    "ans3": "Thiết bị sẽ dễ bị nhiễm virus máy tính (mã độc)"
+  },
+  {
+    "que": "Đối tượng áp dụng của Luật &quot;An toàn thông tin mạng&quot; là:",
+    "ans": "Cả 2 phương án"
+  },
+  {
+    "que": "Bạn truy cập vào một trang web mới và thấy yêu cầu sử dụng tài khoản facebook của bạn để đăng nhập. Bạn nên làm gì?",
+    "ans": "Kiểm tra xem đây là trang web uy tín và không bị giả mạo tài khoản mới đăng nhập bằng tài khoản facebook"
+  },
+  {
+    "que": "&quot;Hệ điều hành của máy tính lúc vừa cài đặt có thể là phiên bản cũ chưa được vá các lỗi bảo mật. Do đó, người sử dụng cần thiết lập chế độ tự động nâng cấp và thực hiện nâng cấp cho hệ điều hành và các phần mềm khác&quot;. Điều này đúng hay sai?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Bạn nhận được cuộc gọi từ số máy lạ với nội dung &quot;số điện thoại của bạn sẽ bị Bộ Thông tin và Truyền thông khóa trong 2 giờ, nhấn phím 1 để biết thêm thông tin&quot;. Bạn nhận định đây là?",
+    "ans": "Đây là cuộc gọi giả mạo, dừng cuộc gọi, lập tức nhắn tin phản ánh cuộc gọi rác tới đầu số 5656 theo cú pháp V [nguồn phát tán][nội dung cuộc gọi rác]."
+  },
+  {
+    "que": "Bạn nhận được một khoản tiền chuyển vào tài khoản thanh toán tại ngân hàng với nội dung cho vay, sau đó đối tượng gọi điện cho bạn báo vừa chuyển nhầm và yêu cầu bạn chuyển trả lại tiền (tài khoản nhận tiền lúc này khác với tài khoản đã chuyển nhầm). Trong trường hợp này bạn KHÔNG nên làm gì?",
+    "ans1": "Sử dụng số tiền chuyển nhầm đó vào việc chi tiêu cá nhân.",
+    "ans2": "Chuyển khoản trực tiếp trả lại số tiền mà người gửi kia chuyển nhầm.",
+    "ans3": "Nhờ người thứ 3 làm giao dịch trung gian làm chứng để giải quyết."
+  },
+  {
+    "que": "Khi bị mất điện thoại kẻ xấu có thể lấy thẻ sim vật lý gắn vào điện thoại/thiết bị khác để nhận otp nếu chưa đổi mã pin mặc định?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Theo Anh/Chị, tác hại của virus máy tính là:",
+    "ans1": "Phá hủy dữ liệu",
+    "ans2": "Gây khó chịu cho người dùng",
+    "ans3": "Tiêu tốn tài nguyên máy tính",
+    "ans4": "Đánh cắp dữ liệu"
+  },
+  {
+    "que": "Việc chia sẻ, đăng tải các thông tin sai sự thật gây hoang mang dư luận có phải là hành vi vi phạm pháp luật không?",
+    "ans": "Là hành vi vi phạm pháp luật, sẽ bị xử lý hành chính hoặc hình sự tùy thuộc vào hậu quả của hành vi đó"
+  },
+  {
+    "que": "Đâu là những biện pháp đảm bảo an toàn thông tin khi sử dụng smartphone?",
+    "ans1": "Luôn khóa điện thoại khi không sử dụng.",
+    "ans2": "Hạn chế sạc thiết bị thông minh tại các cổng USB điểm công cộng."
+  },
+  {
+    "que": "Bạn sẽ làm gì khi biết rằng website mà bạn thường truy cập có sự rò rỉ dữ liệu? Chọn phương án đúng nhất.",
+    "ans": "Đổi mật khẩu tài khoản của bạn trên website đó và trên tất cả các website khác nếu bạn dùng chung mật khẩu"
+  },
+  {
+    "que": "Chức năng chính của vius là:",
+    "ans1": "Lây nhiễm",
+    "ans2": "Tấn công",
+    "ans3": "Lan truyền",
+    "ans4": "Ẩn mình",
+    "ans5": "Phá hoại"
+  },
+  {
+    "que": "Các hành động nào dưới đây có khả năng phòng chống mã độc?",
+    "ans": "Tất cả đều đúng"
+  },
+  {
+    "que": "Tại sao người dùng phải hạn chế cài đặt những ứng dụng không rõ nguồn gốc?",
+    "ans1": "Có nguy cơ lộ thông tin cá nhân trên thiết bị đang sử dụng",
+    "ans2": "Có nguy cơ bị theo dõi và giám sát",
+    "ans3": "Thiết bị sẽ dễ bị nhiễm virus máy tính (mã độc)"
+  },
+  {
+    "que": "Bạn mở một trang web và nó có một ổ khóa trên thanh trình duyệt (biểu tượng ổ khóa phía trước URL). Đáp án nào sau đây là đúng?",
+    "ans": "Dữ liệu truy cập giữa máy tính của bạn (trình duyệt) và máy chủ chạy trang web được mã hóa để đảm bảo an toàn"
+  },
+  {
+    "que": "Theo Anh/Chị, khi post một bài viết lên mạng xã hội ở chế độ public những ai có thể xem được bài viết của Anh/Chị?",
+    "ans": "Bất kì ai"
+  },
+  {
+    "que": "Để bảo mật hơn cho tài khoản facebook, bạn phải kích hoạt tính năng bảo mật 2 lớp đúng hay sai?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Khi nhận thấy tài khoản mạng xã hội của mình có một số hành động bất thường?",
+    "ans1": "Bật chế độ xác thực đủ mạnh",
+    "ans2": "Đổi mật khẩu đăng nhập mạnh, đăng xuất tất cả phiên trên các thiết bị khác",
+    "ans3": "Kiểm tra lịch sử đăng nhập, thiết bị đã đăng nhập"
+  },
+  {
+    "que": "Một người tự xưng là nhân viên nhà mạng Viettel liên hệ và đề nghị hỗ trợ chuyển đổi sim 4G thành sim 5G qua điện thoại, nhân viên này hướng dẫn cách nhắn tin để chuyển đổi. Những rủi ro người dùng có thể đối diện trong trường hợp này?",
+    "ans1": "SIM của người dùng bị khoá từ xa.",
+    "ans2": "Người dùng bị chiếm đoạt quyền sử dụng số điện thoại.",
+    "ans3": "Tài khoản ngân hàng/ví điện tử của người dùng bị trừ hết tiền.",
+    "ans4": "Thông tin cá nhân của người dùng bị lộ."
+  },
+  {
+    "que": "Bạn nên xử lý như thế nào khi nhận được 1 email có dấu hiệu lừa đảo/giả mạo (phishing)?",
+    "ans": "Xóa mail đó ngay và thông báo với đầu mối VNPT Cert tại đơn vị."
+  },
+  {
+    "que": "Để đảm bảo an toàn thông tin ở nơi làm việc nói chung, chúng ta cần…?",
+    "ans": "Không ghi mật khẩu, các tài liệu quan trọng, tài liệu mật ở bàn làm việc."
+  },
+  {
+    "que": "Những hành động nào sau đây có nguy cơ cao dẫn đển máy tính bị lây nhiễm mã độc?",
+    "ans1": "Sao chép tài liệu từ quán nét hoặc quán photocopy bằng thẻ nhớ USB",
+    "ans2": "Tải và cài đặt phần mềm diệt vi rút từ một trang chia sẻ phần mềm trên mạng"
+  },
+  {
+    "que": "Để đảm bảo an toàn khi sử dụng mạng Internet, bạn cần làm gì sau đây?",
+    "ans1": "Sử dụng máy tính cài đặt phần mềm diệt vi rút",
+    "ans2": "Không tải tập tin không rõ nguồn gốc về máy tính",
+    "ans3": "Khi thấy có cảnh báo gặp trang web nguy hiểm thì không mở trang đó",
+    "ans4": "Hạn chế xem các trang web quảng cáo lạ"
+  },
+  {
+    "que": "Một người tự xưng là nhân viên nhà mạng Viettel liên hệ và đề nghị hỗ trợ chuyển đổi sim 4G thành sim 5G qua điện thoại, nhân viên này hướng dẫn cách nhắn tin để chuyển đổi. Những rủi ro người dùng có thể đối diện trong trường hợp này?",
+    "ans1": "Người dùng bị chiếm đoạt quyền sử dụng số điện thoại.",
+    "ans2": "Thông tin cá nhân của người dùng bị lộ.",
+    "ans3": "Tài khoản ngân hàng/ví điện tử của người dùng bị trừ hết tiền.",
+    "ans4": "SIM của người dùng bị khoá từ xa."
+  },
+  {
+    "que": "Tự nhiên bạn nhìn thấy trang web này nổi lên trên trình duyệt. Vậy bạn có nên tham gia vào để lấy quà hay không?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bf9768bbygu\">",
+    "ans": "Không"
+  },
+  {
+    "que": "Máy điện thoại của bạn nhận được các tin nhắn báo nâng cấp hệ thống ngân hàng như này, chọn các phương án xử lý đúng nhất?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bfa36b228s1\">",
+    "ans1": "Đây là tin nhắn lừa đảo, bạn không nên thực hiện chọn vào link đăng nhập để tránh lộ thông tin tài khoản ngân hàng.",
+    "ans2": "Thông báo cho cơ quan công an, nhà mạng có thẩm quyền để kiểm tra đầu số gửi tin nhắn, nội dung tin nhắn và xử lý."
+  },
+  {
+    "que": "Khi nhận được tin nhắn thông báo tài khoản ngân hàng của bạn bị khóa kèm đường link khôi phục. Bạn nên làm gì?",
+    "ans1": "Kiểm tra tài khoản của mình có bị khóa hay không bằng cách sử dụng web hoặc app ngân hàng mà bạn thường dùng để giao dịch từ trước đến nay",
+    "ans2": "Gọi cho tổng đài của ngân hàng bạn đang dùng xác minh thông tin trước"
+  },
+  {
+    "que": "Theo Anh/Chị, những thông tin nào không nên chia sẻ trên mạng xã hội",
+    "ans1": "Số điện thoại cá nhân",
+    "ans2": "Địa chỉ nhà riêng hoặc trường học",
+    "ans3": "Phát biểu, chỉ trích về các chủ đề nhạy cảm"
+  },
+  {
+    "que": "Khi đang lướt web bạn thấy một hộp thoại hiện lên với nội dung: “Máy tính của bạn đã nhiễm virus, hãy tải và sử dùng phần mềm diệt virus ở bên dưới”. Bạn nên làm gì?",
+    "ans": "Đóng hộp thoại, tắt trang web đi"
+  },
+  {
+    "que": "Có ý kiến:&quot; Máy tính cơ quan đã được cài diệt virus, người dùng có thể sử dụng thoải mái mà không lo bị tấn công&quot; đúng hay sai?",
+    "ans": "Sai"
+  },
+  {
+    "que": "Luật CNTT số 67/2006/QH11, ngày 12/07/2006, quy định về “Bảo đảm an toàn, bí mật thông tin”, tổ chức, cá nhân không được thực hiện một trong những hành vi sau đây?",
+    "ans1": "Bẻ khóa, trộm cắp, sử dụng mật khẩu, khóa mật mã và thông tin của tổ chức, cá nhân khác trên môi trường mạng",
+    "ans2": "Xâm nhập, sửa đổi, xóa bỏ nội dung thông tin của tổ chức, cá nhân khác trên môi trường mạng; cản trở hoạt động cung cấp dịch vụ của hệ thống thông tin"
+  },
+  {
+    "que": "Khái niệm tiền ảo là gì?",
+    "ans1": "Tiền ảo không được kiểm soát và không được phát hành hoặc kiểm soát bởi một ngân hàng trung ương.",
+    "ans2": "Là một dạng tiền kĩ thuật số được giao dịch trên nền tảng online, chỉ tồn tại dưới dạng điện tử, gồm nhiều loại tiền tệ, có loại tiền mã hóa.",
+    "ans3": "Tiền ảo được lưu trữ, giao dịch qua các phần mềm và ứng dụng được chỉ định ở dạng kỹ thuật số."
+  },
+  {
+    "que": "Khi nhận thấy tài khoản mạng xã hội của mình có một số hành động bất thường?",
+    "ans1": "Đổi mật khẩu đăng nhập mạnh, đăng xuất tất cả phiên trên các thiết bị khác",
+    "ans2": "Kiểm tra lịch sử đăng nhập, thiết bị đã đăng nhập",
+    "ans3": "Bật chế độ xác thực đủ mạnh"
+  },
+  {
+    "que": "Hãy chỉ ra các hành vi nào sau đây mọi người nên thực hiện trong môi trường mạng?",
+    "ans": "Thể hiện sự tôn trọng cộng đồng trong giao tiếp, ứng xử trên môi trường mạng."
+  },
+  {
+    "que": "Việc lừa đảo và gian lận thường có dấu hiệu như thế nào?",
+    "ans1": "Các trang thông tin liên quan đến đánh bạc, cá cược",
+    "ans2": "Bài đăng cung cấp thông tin về một chủ đề để lấy phần quà từ nhà tài trợ",
+    "ans3": "Quảng cáo về phần thưởng có giá trị cao và chỉ cần cung cấp thông tin thẻ ngân hàng để nhận thưởng"
+  },
+  {
+    "que": "<p>Việc \"làm nhiệm vụ kiếm tiền online, và nhận hoa hồng …\" trong các nhóm chát trên Zalo, Telegram … khá nhiều. Bạn nên làm gì khi được mời vào hoặc tham gia những nhóm này trên mạng xã hội</p>\n",
+    "ans1": "Không đặt hàng, mua hàng, chuyển tiền … hoặc làm theo bất kỳ đề nghị của bất cứ người lạ nào",
+    "ans2": "Thoát ngay các nhóm thông tin không rõ ràng và có dấu hiệu lừa đảo"
+  },
+  {
+    "que": "Những khuyến nghị nào sau đây là đúng khi sử dụng wifi?",
+    "ans1": "Luôn ý thức việc sử dụng wifi công cộng như wifi ở các quán cafe, sân bay, phố đi bộ… là không đảm bảo an toàn. <br />\nNếu buộc phải sử dụng wifi công cộng thì chỉ sử dụng wifi yêu cầu xác thực và không thực hiện các tác vụ quan trọng như thực hiện giao dịch trực tuyến…",
+    "ans2": "Hạn chế việc chia sẻ mật khẩu wifi"
+  },
+  {
+    "que": "Trẻ em có quyền được bảo vệ, tiếp cận thông tin, tham gia hoạt động xã hội, vui chơi, giải trí, giữ bí mật cá nhân, đời sống riêng tư và các quyền khác khi tham gia trên không gian mạng hay không?.",
+    "ans": "Có"
+  },
+  {
+    "que": "Theo anh/chị thì lắp đặt camera an ninh tại nhà sẽ có những nguy cơ gì cần phải lưu ý ?",
+    "ans": "Tất cả các nguy cơ"
+  },
+  {
+    "que": "Bạn nhận được email sau có nội dung &quot;This message was sent from a trusted sender&quot;. Điều này có nghĩa là bạn có thể tin rằng email này là hợp pháp?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bf903478bb1\">",
+    "ans": "Không"
+  },
+  {
+    "que": "Hành vi chửi bới, xúc phạm danh dự, uy tín, nhân phẩm của người khác trên mạng có vi phạm gì không?",
+    "ans1": "Vi phạm Pháp luật về Tội làm nhục người khác (Điều 155 Bộ luật hình sự 2015 sửa đổi, bổ sung năm 2017)",
+    "ans2": "Vi phạm các nhóm hành vi bị cấm trong luật an ninh mạng",
+    "ans3": "Vi phạm văn hóa ứng xử trên mạng xã hội"
+  },
+  {
+    "que": "<p>Mức án phạt cho cá nhân có hành vi lợi dụng mạng xã hội để chia sẻ thông tin giả mạo, thông tin sai sự thật, xuyên tạc, vu khống, xúc phạm uy tín của cơ quan, tổ chức, danh dự, nhân phẩm của cá nhân</p>\n",
+    "ans": "Từ 10.000.000 đồng đến 20.000.000 đồng"
+  },
+  {
+    "que": "Hành vi chửi bới, xúc phạm danh dự, uy tín, nhân phẩm của người khác trên mạng có vi phạm gì không?",
+    "ans1": "Vi phạm Pháp luật về Tội làm nhục người khác (Điều 155 Bộ luật hình sự 2015 sửa đổi, bổ sung năm 2017)",
+    "ans2": "Vi phạm văn hóa ứng xử trên mạng xã hội",
+    "ans3": "Vi phạm các nhóm hành vi bị cấm trong luật an ninh mạng"
+  },
+  {
+    "que": "Những hành động khiến máy tính dễ nhiễm phần mềm gián điệp (Spyware) ?",
+    "ans1": "Cho phép các popup hiển thị trên web",
+    "ans2": "Download phần mềm từ nguồn không đáng tin cậy",
+    "ans3": "Mở các tệp đính kèm không rõ ràng"
+  },
+  {
+    "que": "Khái niệm công dân số chuẩn là gì?",
+    "ans": "Là người sử dụng Internet thông minh để phát huy các lợi ích và giảm thiểu các rủi ro của môi trường mạng thông qua việc trang bị các kỹ năng số để làm chủ công nghệ"
+  },
+  {
+    "que": "Một đồng nghiệp trong công ty đưa cho bạn một chiếc USB nhờ bạn hỗ trợ mở USB và in file tài liệu trên máy tính cá nhân của bạn để nhanh chóng xử lý công việc, bạn nên làm gì trong tình huống này ?",
+    "ans1": "Nếu máy tính có phần mềm AV và tắt tính năng AutoPlay thì phải Scan usb để tìm và loại bỏ mã độc trước khi bạn sử dụng để hỗ trợ đồng nghiệp",
+    "ans2": "Nếu máy tính không có phần mềm AV và chưa được tắt tính năng AutoPlay thì từ chối cắm USB của người khác vào máy tính cá nhân, do USB có thể chứa mã độc gây hại/ mất mát dữ liệu của máy tính."
+  },
+  {
+    "que": "Người yêu bạn gửi tin nhắn qua mạng xã hội nhờ chuyển 5 triệu vào số tài khoản lạ. Bạn sẽ làm gì?",
+    "ans1": "Phớt lờ tin nhắn và báo cho cơ quan công an. Vì biết người yêu vừa bị mất tài khoản mạng XH",
+    "ans2": "Gọi điện để kiểm tra thông tin trên"
+  },
+  {
+    "que": "Có một cuộc gọi từ tổng đài 1000 113 yêu cầu bạn đến Công An gần nhất để nộp phạt phiếu phạt vi phạm giao thông. Bạn xác nhận các thông tin Họ tên, địa chỉ, SĐT, biển số xe đều đúng. Tổng đài yêu cầu bạn nộp phạt online qua đường link trong SMS gửi đến sau đó. Bạn không nên làm gì ?",
+    "ans1": "Truy cập link và tự thực hiện nộp phạt.",
+    "ans2": "Bạn có thể bấm vào chỉ để xem và nghĩ rằng nhất định không tham gia chơi thì vẫn an toàn",
+    "ans3": "Đến trung tâm hành chính công, sử dụng máy tính tại đây truy cập vào link trong sms và thực hiện nộp phạt."
+  },
+  {
+    "que": "Máy tính của bạn sử dụng hệ điều hành windows 7 bạn nhận được thông báo từ Microsoft rằng máy bạn sẽ không được support sau 14/1/2020 việc nào bạn nên thực hiện để máy tính của bạn an toàn",
+    "ans": "Nâng cấp Hệ điều hành windows và cài đặt phần mềm diệt virus có bản quyền"
+  },
+  {
+    "que": " Luật An ninh mạng có cấm người sử dụng internet truy cập Facebook, Google, Youtube không?",
+    "ans": "Không"
+  },
+  {
+    "que": "Bạn nhận được 1 tin nhắn từ Vietcombank có nội dung như hình dưới. Hành động nào là sai.<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bfa559cf1oe\">",
+    "ans": "Thực hiện theo hướng dẫn của tin nhắn, truy cập vào link để đổi mật khẩu"
+  },
+  {
+    "que": "Khi nhận các món đồ mua online bạn nên chú ý những điểm nào sau đây",
+    "ans1": "Nên quay lại video unbox hộp mặt hàng bạn mua",
+    "ans2": "Kiểm tra đúng tên mặt hàng đúng tên người gửi người nhận",
+    "ans3": "Xé hoặc cắt đơn hàng dán vào hộp trước khi vứt vỏ hộp đi"
+  },
+  {
+    "que": "Theo bạn như thế nào là giới hạn và sự tôn trọng trên Internet?",
+    "ans1": "Tôn trọng người khác trên Internet",
+    "ans2": "Đặt ra nguyên tắc riêng cho bản thân",
+    "ans3": "Là văn hóa ứng xử lịch sự"
+  },
+  {
+    "que": "Điều nào đúng khi bàn về đặt mật khẩu cho máy tính cá nhân?",
+    "ans1": "Mật khẩu cần được bảo vệ bằng cách không chia sẻ nó với người khác và định kỳ thay đổi mật khẩu.",
+    "ans2": "Mật khẩu cần được thiết lập để bảo vệ máy tính của bạn khỏi truy cập trái phép và tấn công mạng."
+  },
+  {
+    "que": "Theo anh/chị việc sử dụng mạng xã hội như facebook, zalo…không an toàn có thể đối mặt với những nguy cơ gì ?",
+    "ans1": "Có thể ảnh hưởng tới hình ảnh, uy tín bản thân và bị lợi dụng, lôi kéo với các tin giả",
+    "ans2": "Luôn phải đối mặt với nguy cơ bị tấn công mạng",
+    "ans3": "Bị khai thác thông tin cá nhân: email, điện thoại, tên người nhà…"
+  },
+  {
+    "que": "Khi nhận thấy tài khoản mạng xã hội của mình có một số hành động bất thường?",
+    "ans1": "Đổi mật khẩu đăng nhập mạnh, đăng xuất tất cả phiên trên các thiết bị khác",
+    "ans2": "Bật chế độ xác thực đủ mạnh",
+    "ans3": "Kiểm tra lịch sử đăng nhập, thiết bị đã đăng nhập"
+  },
+  {
+    "que": "Theo Anh/Chị, việc dành quá nhiều thời gian trên mạng có thể khiến chúng ta gặp phải những vấn đề gì không tốt trong số liệt kê dưới đây",
+    "ans1": "Sao nhãng học tập",
+    "ans2": "Dành ít thời gian với bạn bè, người thân ngoài đời thực",
+    "ans3": "Gặp một số vấn đề về sức khỏe"
+  },
+  {
+    "que": "Hiện nay trên nhiều diễn đàn, hội nhóm chia sẻ với nhau về cách kiếm tiền thụ động bằng cách tham gia thực hiện các nhiệm vụ. Khi xem bình luận có thể thấy có nhiều bình luận tích cực, và họ đã nhận được tiền từ công việc này. Tuy nhiên họ yêu cầu bạn phải tiến hành đăng ký tài khoản, điền thêm thông tin về ngân hàng để nhận tiền. Trong trường hợp này cần xử lý ra sao?",
+    "ans1": "Kiểm tra ứng dụng, website đó xem có thật sự an toàn qua một số công cụ online",
+    "ans2": "Kiểm tra các tài khoản đã bình luận, xem có đáng tin cậy không",
+    "ans3": "Không đăng ký tài khoản, không cung cấp thông tin cá nhân"
+  },
+  {
+    "que": "Khi dùng Google Tài liệu, Trang tính, những thông tin cá nhân, thông tin nhạy cảm, thông tin bí mật kinh doanh của công ty có nên đưa vào nội dung chia sẻ?",
+    "ans": "Không"
+  },
+  {
+    "que": "Chọn thiết bị mạng không dây (bộ phát wifi) như thế nào để đảm bảo an toàn thông tin khi sử dụng?",
+    "ans1": "Chọn thiết bị có nguồn gốc xuất xứ, thương hiệu nổi tiếng của nước ngoài",
+    "ans2": "Chọn thiết bị có nguồn gốc xuất xứ rõ ràng, thương hiệu uy tín từ các cửa hàng chính hãng"
+  },
+  {
+    "que": "Theo Anh/Chị, điều nào sau đây có thể giúp Anh/Chị có thể tránh được những rủi ro khi mất điện thoại của bản thân?",
+    "ans1": "Kích hoạt chức năng chống trộm trên di động",
+    "ans2": "Cài đặt chế độ mật khẩu cho SIM"
+  },
+  {
+    "que": "Lợi ích của việc cai nghiện mạng xã hội là gì?",
+    "ans1": "Có nhiều thời gian dành cho gia đình và người thân",
+    "ans2": "Cải thiện kết quả học tập và làm việc",
+    "ans3": "Sức khỏe tinh thần tốt hơn",
+    "ans4": "Có nhiều thời gian để rèn luyện thể thao"
+  },
+  {
+    "que": "Đâu là đầu số tiếp nhận xử lý các cuộc gọi rác, cuộc gọi có dấu hiệu lừa đảo của Bộ thông tin và Truyền thông?",
+    "ans": "156"
+  },
+  {
+    "que": "<p>Khi đăng ảnh lên mạng xã hội, bạn nên làm gì để tránh các nguy cơ lộ lọt thông tin cá nhân?</p>\n",
+    "ans1": "Nên xóa mờ các thông tin cá nhân khi đăng ảnh lên mạng",
+    "ans2": "Tùy chọn người xem mỗi khi đăng ảnh"
+  },
+  {
+    "que": "Theo Anh/Chị, việc dành quá nhiều thời gian trên mạng có thể khiến chúng ta gặp phải những vấn đề gì không tốt trong số liệt kê dưới đây",
+    "ans1": "Sao nhãng học tập",
+    "ans2": "Gặp một số vấn đề về sức khỏe",
+    "ans3": "Dành ít thời gian với bạn bè, người thân ngoài đời thực"
+  },
+  {
+    "que": "Khi đăng nhập vào tài khoản cá nhân trên các máy tính công cộng, việc nên làm là ?",
+    "ans": "không để chế độ ghi nhớ mật khẩu và đăng xuất tài khoản sau khi sử dụng"
+  },
+  {
+    "que": "Theo Anh/Chị, điều nào sau đây có thể giúp Anh/Chị có thể tránh được những rủi ro khi mất điện thoại của bản thân?",
+    "ans1": "Cài đặt chế độ mật khẩu cho SIM",
+    "ans2": "Kích hoạt chức năng chống trộm trên di động"
+  },
+  {
+    "que": "Theo Luật An ninh mạng năm 2018 thì Tài khoản số là thông tin dùng để làm gì?",
+    "ans": "Chứng thực, xác thực, phân quyền sử dụng các ứng dụng, dịch vụ trên không gian mạng"
+  },
+  {
+    "que": "Thói quen nào dưới đây là thói quen tốt khi sử dụng máy tính?.",
+    "ans1": "Không tải xuống các phần mềm, ứng dụng từ các nguồn không tin cậy",
+    "ans2": "Cài phần mềm diệt virus và cập nhật thường xuyên"
+  },
+  {
+    "que": "Theo Anh/Chị, dấu hiệu của việc lừa đảo, gian lận qua mạng thể hiện ở các điểm nào sau đây?",
+    "ans1": "Những quảng cáo về phần thưởng miễn phí có giá trị cao, chỉ cần nhập thông tin thẻ ngân hàng để người tài trợ chuyển tiền",
+    "ans2": "Những bài đăng yêu cầu người dùng có kiến thức nhất định để nhận được phần quà từ nhà tài trợ",
+    "ans3": "Website đánh bạc qua mạng với những khuyến mãi hấp dẫn"
+  },
+  {
+    "que": "Việc công khai thông tin quá mức trên mạng dẫn đến hậu quả?",
+    "ans1": "Kẻ xấu biết được thông tin về địa chỉ, nơi ở",
+    "ans2": "Bị nhận được các tin nhắn, cuộc gọi quảng cáo",
+    "ans3": "Nhận được nhiều cuộc gọi lừa đảo, giả danh người nhà để lấy lòng tin rồi làm theo họ",
+    "ans4": "Bán thông tin trên chợ đen."
+  },
+  {
+    "que": "Theo anh/chị thì nhận định nào sau đây là đúng ?",
+    "ans1": "Phần mềm diệt virus là lớp lá chắn quan trọng bảo vệ người sử dụng khỏi các mã độc và virus. Do đó, cần có chương trình diệt virus để bảo vệ người dùng ngay trong các hoạt động đầu tiên của người sử dụng trên máy tính.",
+    "ans2": "Nên sử dụng VPN để đảm bảo an toàn bảo mật khi sử dụng mạng wifi công cộng",
+    "ans3": "Không sử dụng các mật khẩu dễ nhớ như “123456”, “abcdef”… vì đây là các mật khẩu yếu, rất dễ đoán"
+  },
+  {
+    "que": "Máy điện thoại của bạn nhận được các tin nhắn báo nâng cấp hệ thống ngân hàng như này, chọn các phương án xử lý đúng nhất?<img class=\"excel-image img-responsive\" src=\"/module/filesystem/service/default/preview/os64633bfa36b228s1\">",
+    "ans1": "Thông báo cho cơ quan công an, nhà mạng có thẩm quyền để kiểm tra đầu số gửi tin nhắn, nội dung tin nhắn và xử lý.",
+    "ans2": "Đây là tin nhắn lừa đảo, bạn không nên thực hiện chọn vào link đăng nhập để tránh lộ thông tin tài khoản ngân hàng."
+  },
+  {
+    "que": "Trong khi chat với bạn bè, đồng nghiệp, nội dung đoạn chat của bạn có đề cập tới thời gian. Ngay tức thì, ứng dụng chat đó hiện thêm nút &quot;Đặt lịch hẹn&quot;. Vậy theo bạn những ý nào sau đây là đúng với tinh năng này?",
+    "ans1": "Đó là một tính năng hữu ích của ứng dụng này đối với trải nghiệm của người dùng.",
+    "ans2": "Ứng dụng đã đọc và hiểu được nội dung chat. Bạn nên cân nhắc khi sử dụng.",
+    "ans3": "Bạn có thể sẽ bị lộ thông tin khi chat bằng ứng dụng này."
+  },
+  {
+    "que": "Hành động nào sau đây gây nguy cơ mất an ninh mạng?",
+    "ans": "Giữ password đăng nhập mặc định của thiết bị (máy tính, điện thoại, modem…)"
+  },
+  {
+    "que": "Khi bạn nhận được cuộc gọi từ một thuê bao lạ, người này đọc đúng một số thông tin cá nhân của bạn và thông báo rằng là công an đang thực hiện điều tra một số vấn đề. Người này yêu cầu bạn thực hiện cung cấp thêm OTP. Khi đó bạn đã lập tức cung cấp OTP theo yêu cầu. Hành động này là đúng hay sai?",
+    "ans": "Sai"
+  },
+  {
+    "que": "Hãy chỉ ra các con đường có thể phát tán và lây lan của mã độc trên thiết bị di động?",
+    "ans1": "Qua việc chia sẻ tệp tin hay đường link trên mạng xã hội",
+    "ans2": "Qua việc cài đặt các ứng dụng không an toàn",
+    "ans3": "Qua thư điện tử"
+  },
+  {
+    "que": "Đâu là tên của phần mềm antivirus?",
+    "ans": "Tất cả đáp án"
+  },
+  {
+    "que": "Một số điện thoại tổng đài gọi đến bạn, tự giới thiệu là công an giám sát giao thông và thông báo cho bạn biết về lỗi bạn vi phạm luật giao thông được camera ghi lại. Theo thông tin thì lỗi của bạn khá nặng và sắp hết hạn đóng tiền phạt, nếu bạn đóng tiền phạt muộn thì bạn có thể bị tịch thu phương tiện và bị tước bằng lái trong vòng 6 tháng. Bạn sẽ xử lý như thế nào?",
+    "ans": "Không làm gì cả, nếu có vi phạm sẽ có biên bản vi phạm và giấy yêu cầu nộp phạt gửi tới nhà"
+  },
+  {
+    "que": "Có ý kiến: \"Để hạn chế việc bị đánh cắp thông tin cá nhân trên mạng xã hội thì bạn cần cài đặt quyền riêng tư hợp lý\". Theo bạn ý kiến này là ĐÚNG hay SAI?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Bạn phát hiện khách hàng fiber tự lắp thêm thiết bị wifi với mật khẩu là \"123456789\". Đồng thời nhà người đó cũng có lắp đặt camera quan sát và nhiều thiết bị gia dụng thông minh hiện đại. Lựa chọn nào dưới đây là phù hợp?",
+    "ans": "Tư vấn khách hàng đặt lại mật khẩu wifi đủ phức tạp và giải thích khách hàng hiểu được các mối nguy khi kẻ xấu truy cập được vào mạng"
+  },
+  {
+    "que": "Công cụ giám sát bản quyền phần mềm nào trên máy tính cá nhân của VNPT đang triển khai?",
+    "ans": "SmartIR"
+  },
+  {
+    "que": "Khi một người lạ gửi cho bạn một đường link tham gia đánh bạc trực tuyến, bạn có thể làm những gì để bảo vệ an toàn cho bản thân mình?",
+    "ans": "Không xem và cũng không chơi thì mới có thể an toàn"
+  },
+  {
+    "que": "\"Các hệ điều hành hiện nay hầu hết đều tích hợp các tường lửa nhằm bảo vệ người sử dụng khỏi các tấn công cơ bản. Hãy kích hoạt phần mềm tường lửa trước khi kết nối đến bất kỳ mạng máy tính nào (Internet/Wifi/LAN…)\". Nhận định này đúng hay sai?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Việc công khai thông tin quá mức trên mạng dẫn đến hậu quả?.",
+    "ans": "Kẻ xấu biết được thông tin về địa chỉ, nơi ở.",
+    "ans1": "Bị nhận các tin nhắn, cuộc gọi quảng cáo",
+    "ans2": "Nhận được nhiều cuộc gọi lừa đảo, giả danh người nhà để lấy lòng tin rồi làm theo họ",
+    "ans3": "Bán thông tin trên chợ đen"
+  },
+  {
+    "que": "Việc chia sẻ, đăng tải các thông tin sai sự thật gây hoang mang dư luận có phải là hành vi vi phạm pháp luật không?..",
+    "ans": "Có"
+  },
+  {
+    "que": "Khuyến nghị xử lý khi nhận các cuộc gọi video có dấu hiệu giả mạo (deepfake)?",
+    "ans": "Liên lạc lại với người thân, bạn bè để xác nhận",
+    "ans1": "Nếu được yêu cầu chuyển tiền, cần kiểm tra lại. Không chuyển tiền đến các số tài khoản lạ."
+  },
+  {
+    "que": "Trong khi chat với bạn bè, đồng nghiệp, nội dung đoạn chat của bạn có đề cập tới thời gian. Ngay tức thì, ứng dụng chat đó hiện thêm nút \"Đặt lịch hẹn\". Vậy theo bạn những ý nào sau đây là đúng với tinh năng này?",
+    "ans": "Đó là một tính năng hữu ích của ứng dụng này đối với trải nghiệm của người dùng."
+  },
+  {
+    "que": "Theo anh/chị thì việc người dùng tải và sử dụng những phần mềm crack trên mạng internet sẽ có những nguy cơ gì ?",
+    "ans": "Tất cả các nguy cơ"
+  },
+  {
+    "que": "Bạn nhận được cuộc gọi từ số máy lạ với nội dung \"số điện thoại của bạn sẽ bị Bộ Thông tin và Truyền thông khóa trong 2 giờ, nhấn phím 1 để biết thêm thông tin\". Bạn nhận định đây là?",
+    "ans": "Đây là cuộc gọi giả mạo, dừng cuộc gọi, lập tức nhắn tin phản ánh cuộc gọi rác tới đầu số 5656 theo cú pháp V [nguồn phát tán][nội dung cuộc gọi rác]."
+  },
+  {
+    "que": "Khi nhận được điện thoại báo \"Xe của bạn gây tai nạn tại địa điểm A T/TP B, bạn cần liên hệ đến trụ sở CA tại T/TP B để xử lý và cần xác thực các thông tin qua điện thoại với cơ quan CA\" Việc cần làm của bạn là gì?",
+    "ans": "Liên hệ ngay với cơ quan CA gần nhất để xác minh các thông tin trên."
+  },
+  {
+    "que": "Sau khi hoàn thành công việc thu thập thông tin người dùng qua google spreadsheet. Có cần phải xoá file lưu trữ đó trên Google đi hay không?",
+    "ans": "Có"
+  },
+  {
+    "que": "Thói quen nào dưới đây là thói quen tốt khi sử dụng máy tính?",
+    "ans": "Tất cả phương án"
+  },
+  {
+    "que": "Máy điện thoại của bạn nhận được các tin nhắn báo nâng cấp hệ thống ngân hàng như này, chọn các phương án xử lý đúng nhất?",
+    "ans": "Đây là tin nhắn lừa đảo, bạn không nên thực hiện chọn vào link đăng nhập để tránh lộ thông tin tài khoản ngân hàng.",
+    "ans1": "Thông báo cho cơ quan công an, nhà mạng có thẩm quyền để kiểm tra đầu số gửi tin nhắn, nội dung tin nhắn và xử lý."
+  },
+  {
+    "que": "Các phương án nào là đúng (về an toàn thông tin) để điền vào chỗ trống trong câu: “Bạn có thể _________ tin tưởng vào những gì bạn đọc được trên web”",
+    "ans": "Kiểm tra để"
+  },
+  {
+    "que": "Đối tượng áp dụng của Luật \"An toàn thông tin mạng\" là:",
+    "ans": "Cả 2 phương án"
+  },
+  {
+    "que": "Phương pháp để bảo mật dữ liệu là ?",
+    "ans": "Mã hóa (Encryption)"
+  },
+  {
+    "que": "Việc \"làm nhiệm vụ kiếm tiền online, và nhận hoa hồng …\" trong các nhóm chát trên Zalo, Telegram … khá nhiều. Bạn nên làm gì khi được mời vào hoặc tham gia những nhóm này trên mạng xã hội",
+    "ans": "Không đặt hàng, mua hàng, chuyển tiền … hoặc làm theo bất kỳ đề nghị của bất cứ người lạ nào",
+    "ans1": "Thoát ngay các nhóm thông tin không rõ ràng và có dấu hiệu lừa đảo"
+  },
+  {
+    "que": "Theo Anh/Chị, vì sao không phải thông tin nào trên mạng Internet cũng đáng tin cậy?",
+    "ans": "Vì ai đó có thể viết các bài viết không đúng sự thật và đăng lên mạng",
+    "ans1": "Vì Internet là không gian công cộng, bất kì ai cũng có thể đăng tải thông tin lên mạng"
+  },
+  {
+    "que": "\"Hệ điều hành của máy tính lúc vừa cài đặt có thể là phiên bản cũ chưa được vá các lỗi bảo mật. Do đó, người sử dụng cần thiết lập chế độ tự động nâng cấp và thực hiện nâng cấp cho hệ điều hành và các phần mềm khác\". Điều này đúng hay sai?",
+    "ans": "Đúng"
+  },
+  {
+    "que": "Thiết bị hay nơi nào có thể dễ chứa Virus là",
+    "ans": "Các tệp chương trình",
+    "ans1": "Một số thiết bị nhớ như USB, đĩa cứng gắn ngoài,..."
+  },
+  {
+    "que": "Chỉ với một cú click chuột, người dùng có thể thoải mái sử dụng dịch vụ hoặc ứng dụng mới nào đó mà không cần mất thời gian đăng ký bằng cách đăng nhập tài khoản có sẵn như icloud, gmail, facebook, zalo,… Vậy có nguy cơ nào khi cấp quyền cho phép ứng dụng, dịch vụ đó sử dụng thông tin tài khoản cá nhân ở ứng dụng khác như vậy không?",
+    "ans": "Không có gì đảm bảo thông tin của mình an toàn khi cấp quyền cho phép một ứng dụng mới lấy thông tin của mình từ ứng dụng khác"
+  },
+  {
+    "que": "Các phát biểu sau đây, phát biểu nào tốt nhất mô tả một hacker mũ trắng?.",
+    "ans": "Chuyên gia bảo mật"
+  },
+  {
+    "que": "Tự nhiên bạn nhìn thấy trang web này nổi lên trên trình duyệt. Vậy bạn có nên tham gia vào để lấy quà hay không?",
+    "ans": "Không"
+  },
+  {
+    "que": "Khi bạn đang truy cập web trên điện thoại, nhận được 1 thông báo điện thoại của bạn đã bị nhiễm virus có thể làm hư SIM, kèm hướng dẫn các bước để quét virus trên điện thoại của bạn. Bạn sẽ làm gì trong tình huống này ?",
+    "ans": "Không làm theo hướng dẫn, do cảnh báo trên website kia là giả mạo, làm theo hướng dẫn có nguy cơ bị đánh cắp thông tin các nhân, bị cài đặt các phần mềm gián điệp, phần mềm quảng cáo.",
+    "ans1": "Tắt trình duyệt và không truy cập vào các trang website hiển thị các thông báo tương tự."
+  },
+  {
+    "que": "Bạn nhận được email sau có nội dung \"This message was sent from a trusted sender\". Điều này có nghĩa là bạn có thể tin rằng email này là hợp pháp?",
+    "ans": "Không"
+  },
+  {
+    "que": "Các kỹ năng cần có để sử dụng mạng xã hội an toàn là gì?",
+    "ans": "Bảo mật thông tin cá nhân: Những thông tin như tên thật, tuổi, địa chỉ nhà, ảnh cá nhân hay các loại mật khẩu là những thông tin cá nhân, cần được bảo mật, không nên chia sẻ những thông tin này trên mạng. Nên bảo mật tài khoản 2 lớp để tránh bị lấy cắp tài khoản phục vụ cho những mục đích xấu",
+    "ans1": "Suy nghĩ kỹ trước khi chia sẻ bất cứ điều gì: trước khi bình luận, chia sẻ hay đăng tải bất cứ thông tin gì cần phải tìm hiểu và suy nghĩ kỹ, vì những bài đăng trên mạng sẽ có nhiều người xem, có thể sẽ bị người khác soi mói, đánh giá, bình luận tiêu cực.",
+    "ans2": "Ứng xử văn minh trên mạng: Tất cả những hành động không suy nghĩ đều có thể làm người bị chỉ trích thấy buồn và mặc cảm. Nghiêm trọng hơn, nhiều từ ngữ quá khích có thể khiến người khác tổn thương tinh thần.",
+    "ans3": "Nhận biết các dạng lừa đảo qua mạng: Kẻ xấu có thể tạo một tài khoản ảo, kết bạn và trò chuyện để lấy lòng tin sau đó dò hỏi thông tin. Cần luôn nhớ nguyên tắc “không chia sẻ thông tin cá nhân”, đặc biệt là chia sẻ trên mạng xã hội để không trở thành nạn nhân của lừa đảo. Bên cạnh đó, cũng cần cẩn thận với các trò chơi trúng thưởng, không nên nhấn vào đường link lạ để tránh bị mất tài khoản hay bị đánh cắp thông tin."
+  },
+  {
+    "que": "Loại file nào (có tên phần mở rộng) dưới đây có thể phát tán được virus",
+    "ans": "Tất cả các đáp án đều đúng"
+  },
+  {
+    "que": "Các cách nào sau đây phòng tránh máy tính bị lây nhiễm bởi mã độc tống tiền?",
+    "ans": "Sao lưu dữ liệu quan trọng thường xuyên sang ổ cứng ngoài hoặc các dịch vụ lưu trữ đám mây",
+    "ans1": "Luôn cập nhật trình duyệt và các ứng dụng của máy tính.",
+    "ans2": "Không mở các liên kết độc hại hoặc xấu trong email, Facebook, Twitter, không mở các liên kết độc hại hoặc xấu trong email, Facebook, Twitter, không mở tệp đính kèm mà bạn không mong đợi hoặc từ những người mà bạn không biết."
+  },
+  {
+    "que": "Anh/Chị cho biết các phương pháp xác thực nào được sử dụng phổ biến hiện nay?",
+    "ans": "Tất cả các phương pháp đưa ra"
+  },
+  {
+    "que": "Đáp án nào đánh giá đúng bản chất cuộc hội thoại sau.",
+    "ans": "Đây là tin nhắn lừa đảo người dùng nhằm thu thập thông tin cho mục đích xấu"
+  },
+  {
+    "que": "Đáp án nào sau đâu là dấu hiệu của việc lừa đảo, gian lận qua không gian mạng?",
+    "ans": "Cả 3 đáp án đều đúng"
+  },
+  {
+    "que": "Khi phát hiện nội dung trên mạng xã hội được cho là vi phạm pháp luật, thì nên xử lí thế nào?",
+    "ans": "Thông báo sự việc này cho cơ quan có thẩm quyền như cơ quan công an hoặc cán bộ quản lí của đơn vi"
+  },
+  {
+    "que": "Khi nhận được điện thoại báo \"Xe của bạn gây tai nạn tại địa điểm A T/TP B, bạn cần liên hệ đến trụ sở CA tại T/TP B để xử lý và cần xác thực các thông tin qua điện thoại với cơ quan CA\"\nViệc cần làm của bạn là gì?",
+    "ans": "Liên hệ ngay với cơ quan CA gần nhất để xác minh các thông tin trên."
+  },
+  {
+    "que": "Những biện pháp nào sau đây giúp bạn phòng tránh nguy cơ bị tấn công đánh cắp thông tin (social engineering) ?",
+    "ans": "Không cung cấp thông tin máy tính và mạng",
+    "ans1": "Không cung cấp thông tin về các công việc, nhiệm vụ bí mật của đơn vị.",
+    "ans2": "Không cung cấp thông tin nhận dạng cá nhân"
+  },
+  {
+    "que": "Khi lướt web nhảy ra một popup thông báo \"Bạn đã trúng thưởng 100 triệu ...\" thì bạn nên làm gì?",
+    "ans": "Không click vào nội dung, đóng popup và không nên truy cập lại vào trang web này."
+  },
+  {
+    "que": "Các bước thực hiện để tắt tính năng AutoPlay khi cắm USB trên PC Window 10?",
+    "ans": "Settings >> Bluetooth and devices>> AutoPlay>> Use AutoPlay for all media and devices>>Off"
+  },
+  {
+    "que": "Khi đăng ảnh lên mạng xã hội, bạn nên làm gì để tránh các nguy cơ lộ lọt thông tin cá nhân?",
+    "ans": "Nên xóa mờ các thông tin cá nhân khi đăng ảnh lên mạng",
+    "ans1": "Tùy chọn người xem mỗi khi đăng ảnh"
+  },
+  {
+    "que": "Theo Anh/Chị, phần mềm diệt virus có tác dụng gì ?",
+    "ans": "Có tính năng phát hiện, loại bỏ các virus máy tính, khắc phục (một phần hoặc hoàn toàn) hậu quả của virus gây ra"
+  },
+  {
+    "que": "Theo bạn, những thiết lập nào là cần thiết khi dùng ứng dụng như Google Form, Tài liệu, Trang tính để tập hợp thông tin?",
+    "ans": "Tất cả các ý kiến."
+  },
+  {
+    "que": "Khi tham gia mạng Internet, những nguy cơ nào có thể gặp phải?",
+    "ans": "Nhiễm virus",
+    "ans1": "Bị tấn công giả mạo (phishing)",
+    "ans2": "Dính các phần mềm gián điệp (spyware)"
+  },
+  {
+    "que": "Bạn nhận được 1 tin nhắn từ Vietcombank có nội dung như hình dưới. Hành động nào là sai.",
+    "ans": "Thực hiện theo hướng dẫn của tin nhắn, truy cập vào link để đổi mật khẩu"
+  }
+]
