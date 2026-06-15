@@ -27,23 +27,6 @@ HTML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "contracts.
 HISL2_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hisl2_config.json")
 ATTT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "thi_attt_f12.json")
 
-# Chrome Automation Configuration
-USER_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chrome_bot_profile")
-browser_lock = threading.Lock()
-
-def get_chrome_driver(headless=True):
-    chrome_options = Options()
-    chrome_options.add_argument(f"--user-data-dir={USER_DATA_DIR}")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    if headless:
-        chrome_options.add_argument("--headless=new")
-    chrome_options.add_argument("--window-size=1920,1080")
-    
-    driver = webdriver.Chrome(options=chrome_options)
-    return driver
-
-
 # Load HIS L2 config data into memory
 _hisl2_data = []
 try:
@@ -687,278 +670,236 @@ def save_running_tasks_state(state):
         print(f"Error saving running tasks state: {e}")
 
 def scrape_active_tasks(pause_if_running=True):
-    with browser_lock:
-        driver = None
+    chrome_options = Options()
+    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+    driver = None
+    try:
+        driver = webdriver.Chrome(options=chrome_options)
+    except Exception as e:
+        return {"error": f"Không thể kết nối đến Chrome qua port 9222. Đảm bảo Chrome đã chạy ở chế độ debug. Chi tiết: {e}"}
+        
+    try:
         try:
-            # 1. Khởi động Chrome chế độ ngầm (headless)
-            driver = get_chrome_driver(headless=True)
+            current_url = driver.current_url
+        except Exception:
+            current_url = ""
+            
+        if "current_work_dashboard" not in current_url:
             driver.get("https://cds.hcmict.io/#/work/current_work_dashboard")
             time.sleep(3)
             
-            # Kiểm tra xem có bị chuyển hướng tới trang đăng nhập không
-            current_url = driver.current_url
-            if "login" in current_url:
-                # Phiên đăng nhập hết hạn hoặc chưa có, cần mở trình duyệt thường để người dùng đăng nhập
-                print("[Chrome Bot] Session expired or not logged in. Re-opening in visible mode...")
-                driver.quit()
-                
-                # Mở trình duyệt thường có giao diện để đăng nhập
-                driver = get_chrome_driver(headless=False)
-                driver.get("https://cds.hcmict.io/#/work/current_work_dashboard")
-                
-                # Gửi thông báo yêu cầu đăng nhập lên tất cả chat ID đã lưu
-                chat_ids = get_saved_chat_ids()
-                for cid in chat_ids:
-                    try:
-                        bot.send_message(
-                            cid, 
-                            "⚠️ **Yêu cầu đăng nhập:** Trình duyệt Chrome đã mở trên PC của bạn. Vui lòng đăng nhập vào hệ thống trong vòng 2 phút để bot tiếp tục hoạt động!",
-                            parse_mode='Markdown'
-                        )
-                    except Exception:
-                        pass
-                
-                # Đợi người dùng đăng nhập thành công (tối đa 120 giây)
-                logged_in = False
-                for _ in range(60):
-                    time.sleep(2)
-                    try:
-                        if "current_work_dashboard" in driver.current_url:
-                            # Đợi thêm 2 giây để trang tải xong sau đăng nhập
-                            time.sleep(2)
-                            logged_in = True
-                            break
-                    except Exception:
-                        pass
-                
-                if not logged_in:
-                    return {"error": "Quá thời gian 2 phút đăng nhập. Vui lòng thử lại lệnh check task sau."}
-                
-                # Gửi thông báo đăng nhập thành công
-                for cid in chat_ids:
-                    try:
-                        bot.send_message(cid, "✅ Đăng nhập thành công! Bot đang tiếp tục quét task ngầm...")
-                    except Exception:
-                        pass
+        # Đóng tất cả modal/overlay đang mở sẵn để tránh lỗi click intercepted
+        try:
+            # Gửi phím ESCAPE vô điều kiện trước để đóng mọi modal hiện tại
+            driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+            time.sleep(1)
             
-            # Đóng tất cả modal/overlay đang mở sẵn để tránh lỗi click intercepted
-            try:
-                # Gửi phím ESCAPE vô điều kiện trước để đóng mọi modal hiện tại
-                driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                time.sleep(1)
+            # Nếu vẫn còn overlay (ví dụ ESCAPE không tác dụng), thử click nút đóng
+            overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
+            if overlays:
+                close_buttons = driver.find_elements(By.XPATH, 
+                    "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
+                )
+                for btn in close_buttons:
+                    try:
+                        driver.execute_script("arguments[0].click();", btn)
+                        time.sleep(1)
+                        break
+                    except Exception:
+                        pass
+        except Exception as e:
+            print(f"Lỗi đóng modal có sẵn: {e}")
+            
+        # Tìm phần container chứa "VIỆC TÔI ĐƯỢC GIAO"
+        headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
+        if not headers:
+            # Chờ thêm 3s nếu trang đang tải chậm
+            time.sleep(3)
+            headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
+            
+        if not headers:
+            return {"error": "Không tìm thấy phần 'VIỆC TÔI ĐƯỢC GIAO' trên trang."}
+            
+        header_el = headers[0]
+        container = header_el.find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
+        scroll_container = container.find_element(By.CLASS_NAME, "column-task-scroll")
+        
+        # Lấy các cột bên trong
+        columns = scroll_container.find_elements(By.CLASS_NAME, "border-col-task")
+        
+        tasks = []
+        seen_codes = set()
+        
+        for col in columns:
+            title_els = col.find_elements(By.CLASS_NAME, "title")
+            title_text = title_els[0].text.strip() if title_els else ""
+            
+            # Chỉ xử lý hai cột: "Đang thực hiện" và "Đã nhận", bỏ qua cột "Đã hoàn thành"
+            if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
+                continue
                 
-                # Nếu vẫn còn overlay (ví dụ ESCAPE không tác dụng), thử click nút đóng
-                overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
-                if overlays:
-                    close_buttons = driver.find_elements(By.XPATH, 
-                        "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
-                    )
-                    for btn in close_buttons:
+            cards = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+            
+            for card in cards:
+                try:
+                    text = card.text.strip()
+                    code_match = re.search(r'\b\d{3}\.\d{6}\b', text)
+                    if not code_match:
+                        continue
+                    code = code_match.group(0)
+                    if code in seen_codes:
+                        continue
+                    seen_codes.add(code)
+                    
+                    date_match = re.search(r'\b\d{2}/\d{2}/\d{4}\b', text)
+                    date_str = date_match.group(0) if date_match else None
+                    
+                    # Nếu task đang chạy, bấm tạm dừng trước để hệ thống đồng bộ/cập nhật số giờ thực tế
+                    is_running = "❚❚" in text
+                    if is_running and pause_if_running:
                         try:
-                            driver.execute_script("arguments[0].click();", btn)
-                            time.sleep(1)
-                            break
+                            pause_btn = card.find_element(By.XPATH, ".//span[contains(@class, 'icon') and text()='❚❚']")
+                            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", pause_btn)
+                            time.sleep(0.3)
+                            driver.execute_script("arguments[0].click();", pause_btn)
+                            time.sleep(3)
+                            
+                            # Cập nhật lại tham chiếu card và text sau khi re-render và di chuyển cột
+                            card = scroll_container.find_element(By.XPATH, f".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ') and contains(., '{code}')]")
+                            text = card.text.strip()
+                        except Exception as pause_err:
+                            print(f"Lỗi khi tạm dừng task {code} để check: {pause_err}")
+
+                    # Tìm phần tử tiêu đề để click (nút thực sự mở modal)
+                    click_target = card
+                    try:
+                        click_target = card.find_element(By.CLASS_NAME, "task-title")
+                    except Exception:
+                        pass
+                    
+                    # Click mở chi tiết task
+                    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", click_target)
+                    time.sleep(0.5)
+                    
+                    try:
+                        click_target.click()
+                    except Exception:
+                        driver.execute_script("arguments[0].click();", click_target)
+                    
+                    required_hours = None
+                    actual_hours = None
+                    try:
+                        # Đợi modal hiển thị trong DOM (dùng presence_of_element_located để chạy tốt khi Chrome bị minimize)
+                        WebDriverWait(driver, 5).until(
+                            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
+                        )
+                        
+                        # Xác thực Mã trong modal trùng với task code
+                        code_verified = False
+                        for _ in range(5):
+                            try:
+                                ma_el = driver.find_element(By.XPATH, "//*[text()='Mã']/following::input[1]")
+                                ma_val = (ma_el.get_attribute('value') or ma_el.text or "").strip()
+                                if ma_val == code:
+                                    code_verified = True
+                                    break
+                            except Exception:
+                                pass
+                            time.sleep(0.5)
+                            
+                        if not code_verified:
+                            print(f"Cảnh báo: Mã task trong modal không khớp với {code}")
+                            
+                        # Đọc Số giờ yêu cầu
+                        try:
+                            req_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]/following::input[1]")
+                            req_val_str = req_el.get_attribute('value') or req_el.text
+                            if req_val_str:
+                                required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
                         except Exception:
                             pass
-            except Exception as e:
-                print(f"Lỗi đóng modal có sẵn: {e}")
-                
-            # Tìm phần container chứa "VIỆC TÔI ĐƯỢC GIAO"
-            headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
-            if not headers:
-                # Chờ thêm 3s nếu trang đang tải chậm
-                time.sleep(3)
-                headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
-                
-            if not headers:
-                return {"error": "Không tìm thấy phần 'VIỆC TÔI ĐƯỢC GIAO' trên trang."}
-                
-            header_el = headers[0]
-            container = header_el.find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
-            scroll_container = container.find_element(By.CLASS_NAME, "column-task-scroll")
-            
-            # Lấy các cột bên trong
-            columns = scroll_container.find_elements(By.CLASS_NAME, "border-col-task")
-            
-            tasks = []
-            seen_codes = set()
-            
-            for col in columns:
-                title_els = col.find_elements(By.CLASS_NAME, "title")
-                title_text = title_els[0].text.strip() if title_els else ""
-                
-                # Chỉ xử lý hai cột: "Đang thực hiện" và "Đã nhận", bỏ qua cột "Đã hoàn thành"
-                if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
+                        # Đọc Số giờ thực hiện
+                        try:
+                            act_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ thực hiện')]/following::input[1]")
+                            act_val_str = act_el.get_attribute('value') or act_el.text
+                            if act_val_str:
+                                actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
+                        except Exception:
+                            pass
+                    except Exception as ex:
+                        print(f"Lỗi đọc modal cho task {code}: {ex}")
+                    finally:
+                        # Đóng modal bằng Escape
+                        try:
+                            driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                        except Exception:
+                            pass
+                        time.sleep(0.5)  # Trễ cố định ngắn đề phòng Chrome bị minimize làm is_displayed() trả về False
+                        # Đợi cho overlay biến mất hẳn trước khi xử lý task tiếp theo
+                        for _ in range(10):
+                            try:
+                                overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
+                                if not any(o.is_displayed() for o in overlays):
+                                    break
+                            except Exception:
+                                break
+                            time.sleep(0.2)
+                    
+                    clean_text = text.replace(code, "")
+                    if date_str:
+                        clean_text = clean_text.replace(date_str, "")
+                    
+                    title = re.sub(r'\s+', ' ', clean_text).strip()
+                    hour_match = re.search(r'\((\d+(?:\.\d+)?)h\)', title)
+                    if hour_match:
+                        title = title.replace(hour_match.group(0), "").strip()
+                    
+                    tasks.append({
+                        "code": code,
+                        "title": title,
+                        "deadline": date_str,
+                        "required_hours": required_hours,
+                        "actual_hours": actual_hours,
+                        "raw": text
+                    })
+                except Exception as e:
+                    print(f"Lỗi xử lý card task: {e}")
                     continue
                     
-                cards = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+        # Cập nhật trạng thái tracking thời gian thực của các task đang chạy
+        try:
+            state = load_running_tasks_state()
+            current_timestamp = time.time()
+            
+            # Cập nhật các task đang chạy
+            for t in tasks:
+                t_code = t["code"]
+                is_running = "❚❚" in t.get("raw", "")
+                db_hours = t.get("actual_hours")
                 
-                for card in cards:
-                    try:
-                        text = card.text.strip()
-                        code_match = re.search(r'\b\d{3}\.\d{6}\b', text)
-                        if not code_match:
-                            continue
-                        code = code_match.group(0)
-                        if code in seen_codes:
-                            continue
-                        seen_codes.add(code)
-                        
-                        date_match = re.search(r'\b\d{2}/\d{2}/\d{4}\b', text)
-                        date_str = date_match.group(0) if date_match else None
-                        
-                        # Nếu task đang chạy, bấm tạm dừng trước để hệ thống đồng bộ/cập nhật số giờ thực tế
-                        is_running = "❚❚" in text
-                        if is_running and pause_if_running:
-                            try:
-                                pause_btn = card.find_element(By.XPATH, ".//span[contains(@class, 'icon') and text()='❚❚']")
-                                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", pause_btn)
-                                time.sleep(0.3)
-                                driver.execute_script("arguments[0].click();", pause_btn)
-                                time.sleep(3)
-                                
-                                # Cập nhật lại tham chiếu card và text sau khi re-render và di chuyển cột
-                                card = scroll_container.find_element(By.XPATH, f".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ') and contains(., '{code}')]")
-                                text = card.text.strip()
-                            except Exception as pause_err:
-                                print(f"Lỗi khi tạm dừng task {code} để check: {pause_err}")
-    
-                        # Tìm phần tử tiêu đề để click (nút thực sự mở modal)
-                        click_target = card
-                        try:
-                            click_target = card.find_element(By.CLASS_NAME, "task-title")
-                        except Exception:
-                            pass
-                        
-                        # Click mở chi tiết task
-                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", click_target)
-                        time.sleep(0.5)
-                        
-                        try:
-                            click_target.click()
-                        except Exception:
-                            driver.execute_script("arguments[0].click();", click_target)
-                        
-                        required_hours = None
-                        actual_hours = None
-                        try:
-                            # Đợi modal hiển thị trong DOM (dùng presence_of_element_located để chạy tốt khi Chrome bị minimize)
-                            WebDriverWait(driver, 5).until(
-                                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
-                            )
-                            
-                            # Xác thực Mã trong modal trùng với task code
-                            code_verified = False
-                            for _ in range(5):
-                                try:
-                                    ma_el = driver.find_element(By.XPATH, "//*[text()='Mã']/following::input[1]")
-                                    ma_val = (ma_el.get_attribute('value') or ma_el.text or "").strip()
-                                    if ma_val == code:
-                                        code_verified = True
-                                        break
-                                except Exception:
-                                    pass
-                                time.sleep(0.5)
-                                
-                            if not code_verified:
-                                print(f"Cảnh báo: Mã task trong modal không khớp với {code}")
-                                
-                            # Đọc Số giờ yêu cầu
-                            try:
-                                req_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]/following::input[1]")
-                                req_val_str = req_el.get_attribute('value') or req_el.text
-                                if req_val_str:
-                                    required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
-                            except Exception:
-                                pass
-                            # Đọc Số giờ thực hiện
-                            try:
-                                act_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ thực hiện')]/following::input[1]")
-                                act_val_str = act_el.get_attribute('value') or act_el.text
-                                if act_val_str:
-                                    actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
-                            except Exception:
-                                pass
-                        except Exception as ex:
-                            print(f"Lỗi đọc modal cho task {code}: {ex}")
-                        finally:
-                            # Đóng modal bằng Escape
-                            try:
-                                driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                            except Exception:
-                                pass
-                            time.sleep(0.5)  # Trễ cố định ngắn đề phòng Chrome bị minimize làm is_displayed() trả về False
-                            # Đợi cho overlay biến mất hẳn trước khi xử lý task tiếp theo
-                            for _ in range(10):
-                                try:
-                                    overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
-                                    if not any(o.is_displayed() for o in overlays):
-                                        break
-                                except Exception:
-                                    break
-                                time.sleep(0.2)
-                        
-                        clean_text = text.replace(code, "")
-                        if date_str:
-                            clean_text = clean_text.replace(date_str, "")
-                        
-                        title = re.sub(r'\s+', ' ', clean_text).strip()
-                        hour_match = re.search(r'\((\d+(?:\.\d+)?)h\)', title)
-                        if hour_match:
-                            title = title.replace(hour_match.group(0), "").strip()
-                        
-                        tasks.append({
-                            "code": code,
-                            "title": title,
-                            "deadline": date_str,
-                            "required_hours": required_hours,
-                            "actual_hours": actual_hours,
-                            "raw": text
-                        })
-                    except Exception as e:
-                        print(f"Lỗi xử lý card task: {e}")
-                        continue
-                        
-            # Cập nhật trạng thái tracking thời gian thực của các task đang chạy
-            try:
-                state = load_running_tasks_state()
-                current_timestamp = time.time()
-                
-                # Cập nhật các task đang chạy
-                for t in tasks:
-                    t_code = t["code"]
-                    is_running = "❚❚" in t.get("raw", "")
-                    db_hours = t.get("actual_hours")
-                    
-                    if is_running and db_hours is not None:
-                        if t_code not in state or state[t_code].get("last_db_hours") != db_hours:
-                            state[t_code] = {
-                                "first_seen_running": current_timestamp,
-                                "last_db_hours": db_hours
-                            }
-                    else:
-                        if t_code in state:
-                            del state[t_code]
-                            
-                # Xóa các task không còn xuất hiện trong danh sách quét
-                active_codes = {t["code"] for t in tasks}
-                for t_code in list(state.keys()):
-                    if t_code not in active_codes:
+                if is_running and db_hours is not None:
+                    if t_code not in state or state[t_code].get("last_db_hours") != db_hours:
+                        state[t_code] = {
+                            "first_seen_running": current_timestamp,
+                            "last_db_hours": db_hours
+                        }
+                else:
+                    if t_code in state:
                         del state[t_code]
                         
-                save_running_tasks_state(state)
-            except Exception as state_err:
-                print(f"Lỗi cập nhật trạng thái tracking chạy ngầm: {state_err}")
-    
-            return {"tasks": tasks}
-        except Exception as e:
-            return {"error": f"Lỗi xảy ra khi quét dữ liệu trang: {e}"}
-        finally:
-            if driver:
-                try:
-                    driver.quit()
-                except Exception:
-                    pass
+            # Xóa các task không còn xuất hiện trong danh sách quét
+            active_codes = {t["code"] for t in tasks}
+            for t_code in list(state.keys()):
+                if t_code not in active_codes:
+                    del state[t_code]
+                    
+            save_running_tasks_state(state)
+        except Exception as state_err:
+            print(f"Lỗi cập nhật trạng thái tracking chạy ngầm: {state_err}")
+
+        return {"tasks": tasks}
+    except Exception as e:
+        return {"error": f"Lỗi xảy ra khi quét dữ liệu trang: {e}"}
 
 def calculate_time_remaining(task, current_time=None):
     if not current_time:
@@ -1089,7 +1030,11 @@ def handle_check_tasks(message):
         bot.send_message(
             chat_id, 
             f"❌ *Lỗi kết nối Chrome:*\n{res['error']}\n\n"
-            "👉 Vui lòng thử lại. Nếu phiên đăng nhập hết hạn hoặc trình duyệt bị khóa, hãy đảm bảo đóng hết các cửa sổ Chrome do bot mở trước đó.",
+            "👉 Hãy đảm bảo bạn đã:\n"
+            "1. Tắt hết các cửa sổ Chrome đang chạy.\n"
+            "2. Mở Chrome debug bằng Command Prompt:\n"
+            '   `"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\\Users\\kienlt.bdg\\ChromeDebug"`\n'
+            "3. Đăng nhập vào website và mở tab dashboard.",
             parse_mode='Markdown'
         )
         return
@@ -1171,200 +1116,144 @@ def handle_task_toggle(call):
     bot.send_message(chat_id, f"⏳ Đang thực hiện {action_text} task `{code}` qua Chrome...", parse_mode='Markdown')
     bot.answer_callback_query(call.id, f"Đang {action_text} task...")
     
-    success_toggle = False
-    new_state = None
-    current_state = None
-    
-    with browser_lock:
-        driver = None
+    chrome_options = Options()
+    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+    driver = None
+    try:
+        driver = webdriver.Chrome(options=chrome_options)
+    except Exception as e:
+        bot.send_message(chat_id, f"❌ Lỗi kết nối Chrome: {e}")
+        return
+        
+    try:
+        # Close any open modals/overlays
         try:
-            # 1. Khởi động Chrome chế độ ngầm (headless)
-            driver = get_chrome_driver(headless=True)
-            driver.get("https://cds.hcmict.io/#/work/current_work_dashboard")
-            time.sleep(3)
-            
-            # Kiểm tra xem có bị chuyển hướng tới trang đăng nhập không
-            current_url = driver.current_url
-            if "login" in current_url:
-                print("[Chrome Bot - Toggle] Session expired or not logged in. Re-opening in visible mode...")
-                driver.quit()
-                driver = None
-                
-                # Mở trình duyệt thường có giao diện để đăng nhập
-                driver = get_chrome_driver(headless=False)
-                driver.get("https://cds.hcmict.io/#/work/current_work_dashboard")
-                
-                # Gửi thông báo yêu cầu đăng nhập lên tất cả chat ID đã lưu
-                chat_ids = get_saved_chat_ids()
-                for cid in chat_ids:
+            driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+            time.sleep(0.5)
+            overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
+            if overlays:
+                close_buttons = driver.find_elements(By.XPATH, 
+                    "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
+                )
+                for btn in close_buttons:
                     try:
-                        bot.send_message(
-                            cid, 
-                            "⚠️ **Yêu cầu đăng nhập:** Trình duyệt Chrome đã mở trên PC của bạn. Vui lòng đăng nhập vào hệ thống trong vòng 2 phút để bot tiếp tục hoạt động!",
-                            parse_mode='Markdown'
-                        )
+                        driver.execute_script("arguments[0].click();", btn)
+                        time.sleep(0.5)
+                        break
                     except Exception:
                         pass
-                
-                # Đợi người dùng đăng nhập thành công (tối đa 120 giây)
-                logged_in = False
-                for _ in range(60):
-                    time.sleep(2)
-                    try:
-                        if "current_work_dashboard" in driver.current_url:
-                            time.sleep(2)
-                            logged_in = True
-                            break
-                    except Exception:
-                        pass
-                
-                if not logged_in:
-                    bot.send_message(chat_id, "❌ Quá thời gian 2 phút đăng nhập. Vui lòng thử lại sau.")
-                    return
-                
-                # Gửi thông báo đăng nhập thành công
-                for cid in chat_ids:
-                    try:
-                        bot.send_message(cid, "✅ Đăng nhập thành công! Bot đang tiếp tục thao tác task...")
-                    except Exception:
-                        pass
+        except Exception:
+            pass
             
-            # Close any open modals/overlays
-            try:
-                driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                time.sleep(0.5)
-                overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
-                if overlays:
-                    close_buttons = driver.find_elements(By.XPATH, 
-                        "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
-                    )
-                    for btn in close_buttons:
-                        try:
-                            driver.execute_script("arguments[0].click();", btn)
-                            time.sleep(0.5)
-                            break
-                        except Exception:
-                            pass
-            except Exception:
-                pass
-                
-            headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
-            if not headers:
-                bot.send_message(chat_id, "❌ Không tìm thấy khu vực 'VIỆC TÔI ĐƯỢC GIAO' trên dashboard.")
-                return
-                
-            header_el = headers[0]
-            container = header_el.find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
-            scroll_container = container.find_element(By.CLASS_NAME, "column-task-scroll")
-            columns = scroll_container.find_elements(By.CLASS_NAME, "border-col-task")
+        headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
+        if not headers:
+            bot.send_message(chat_id, "❌ Không tìm thấy khu vực 'VIỆC TÔI ĐƯỢC GIAO' trên dashboard.")
+            return
             
-            card = None
-            for col in columns:
+        header_el = headers[0]
+        container = header_el.find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
+        scroll_container = container.find_element(By.CLASS_NAME, "column-task-scroll")
+        columns = scroll_container.find_elements(By.CLASS_NAME, "border-col-task")
+        
+        card = None
+        for col in columns:
+            title_els = col.find_elements(By.CLASS_NAME, "title")
+            title_text = title_els[0].text.strip() if title_els else ""
+            if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
+                continue
+            cards = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+            for c in cards:
+                if code in c.text:
+                    card = c
+                    break
+            if card:
+                break
+                
+        if not card:
+            bot.send_message(chat_id, f"❌ Không tìm thấy task `{code}` trong mục đang thực hiện.")
+            return
+            
+        try:
+            btn = card.find_element(By.XPATH, ".//span[contains(@class, 'icon') and (text()='▶' or text()='❚❚')]")
+        except Exception:
+            bot.send_message(chat_id, f"❌ Không tìm thấy nút trạng thái (Play/Pause) cho task `{code}`.")
+            return
+            
+        current_state = btn.text
+        if action == "start" and current_state == "❚❚":
+            bot.send_message(chat_id, f"ℹ️ Task `{code}` đã ở trạng thái Đang chạy (`❚❚`).", parse_mode='Markdown')
+            return
+        elif action == "pause" and current_state == "▶":
+            bot.send_message(chat_id, f"ℹ️ Task `{code}` đã ở trạng thái Tạm dừng (`▶`).", parse_mode='Markdown')
+            return
+            
+        # Click the button
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+        time.sleep(0.3)
+        driver.execute_script("arguments[0].click();", btn)
+        
+        # Wait for API reload
+        time.sleep(3)
+        
+        # Verify new state by re-finding
+        headers_new = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
+        new_state = None
+        if headers_new:
+            container_new = headers_new[0].find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
+            scroll_container_new = container_new.find_element(By.CLASS_NAME, "column-task-scroll")
+            columns_new = scroll_container_new.find_elements(By.CLASS_NAME, "border-col-task")
+            
+            for col in columns_new:
                 title_els = col.find_elements(By.CLASS_NAME, "title")
                 title_text = title_els[0].text.strip() if title_els else ""
                 if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
                     continue
-                cards = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
-                for c in cards:
+                cards_new = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+                for c in cards_new:
                     if code in c.text:
-                        card = c
+                        try:
+                            new_btn = c.find_element(By.XPATH, ".//span[contains(@class, 'icon') and (text()='▶' or text()='❚❚')]")
+                            new_state = new_btn.text
+                        except Exception:
+                            pass
                         break
-                if card:
+                if new_state:
                     break
-                    
-            if not card:
-                bot.send_message(chat_id, f"❌ Không tìm thấy task `{code}` trong mục đang thực hiện hoặc đã nhận.")
-                return
-                
-            try:
-                btn_el = card.find_element(By.XPATH, ".//span[contains(@class, 'icon') and (text()='▶' or text()='❚❚')]")
-            except Exception:
-                bot.send_message(chat_id, f"❌ Không tìm thấy nút trạng thái (Play/Pause) cho task `{code}`.")
-                return
-                
-            current_state = btn_el.text
-            if action == "start" and current_state == "❚❚":
-                bot.send_message(chat_id, f"ℹ️ Task `{code}` đã ở trạng thái Đang chạy (`❚❚`).", parse_mode='Markdown')
-                return
-            elif action == "pause" and current_state == "▶":
-                bot.send_message(chat_id, f"ℹ️ Task `{code}` đã ở trạng thái Tạm dừng (`▶`).", parse_mode='Markdown')
-                return
-                
-            # Click the button
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn_el)
-            time.sleep(0.3)
-            driver.execute_script("arguments[0].click();", btn_el)
             
-            # Wait for API reload
-            time.sleep(3)
-            
-            # Verify new state by re-finding
-            headers_new = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
-            if headers_new:
-                container_new = headers_new[0].find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
-                scroll_container_new = container_new.find_element(By.CLASS_NAME, "column-task-scroll")
-                columns_new = scroll_container_new.find_elements(By.CLASS_NAME, "border-col-task")
-                
-                for col in columns_new:
-                    title_els = col.find_elements(By.CLASS_NAME, "title")
-                    title_text = title_els[0].text.strip() if title_els else ""
-                    if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
-                        continue
-                    cards_new = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
-                    for c in cards_new:
-                        if code in c.text:
-                            try:
-                                new_btn = c.find_element(By.XPATH, ".//span[contains(@class, 'icon') and (text()='▶' or text()='❚❚')]")
-                                new_state = new_btn.text
-                            except Exception:
-                                pass
-                            break
-                    if new_state:
-                        break
-            
-            if new_state:
-                if new_state != current_state:
-                    success_toggle = True
+        if new_state:
+            if new_state != current_state:
+                if new_state == "❚❚":
+                    # We started the task! Update database with hours
+                    res = scrape_active_tasks(pause_if_running=False)
+                    task_data = None
+                    if "tasks" in res:
+                        for tk in res["tasks"]:
+                            if tk["code"] == code:
+                                task_data = tk
+                                break
+                                
+                    msg = f"🚀 **Đã bắt đầu chạy task `{code}` thành công!**"
+                    if task_data:
+                        rem_mins = calculate_time_remaining(task_data)
+                        if rem_mins is not None and rem_mins > 0:
+                            buffer_mins = 15
+                            target_duration_mins = rem_mins - buffer_mins
+                            if target_duration_mins > 0:
+                                target_dt = datetime.now() + timedelta(minutes=target_duration_mins)
+                                target_time_str = target_dt.strftime("%H:%M")
+                                msg += f"\n⏱️ **Thời điểm cần đóng task (chừa 15p buffer)**: `{target_time_str}` (sau `{target_duration_mins}` phút nữa)"
+                            else:
+                                msg += f"\n⚠️ **Thời gian còn lại rất ít ({rem_mins}p). Cần đóng task NGAY LẬP TỨC!**"
+                    bot.send_message(chat_id, msg, parse_mode='Markdown')
                 else:
-                    bot.send_message(chat_id, f"❌ Lỗi: Click nút trạng thái nhưng trạng thái của task `{code}` trên dashboard không đổi.", parse_mode='Markdown')
+                    bot.send_message(chat_id, f"⏸️ **Đã tạm dừng task `{code}` thành công!**", parse_mode='Markdown')
             else:
-                bot.send_message(chat_id, f"⚠️ Đã click nhưng không tìm lại được nút trạng thái cho task `{code}`.", parse_mode='Markdown')
-                
-        except Exception as e:
-            bot.send_message(chat_id, f"❌ Lỗi xử lý click play/pause: {e}")
-        finally:
-            if driver:
-                try:
-                    driver.quit()
-                except Exception:
-                    pass
-
-    # Gọi scrape_active_tasks bên ngoài block locks
-    if success_toggle and new_state:
-        if new_state == "❚❚":
-            res = scrape_active_tasks(pause_if_running=False)
-            task_data = None
-            if "tasks" in res:
-                for tk in res["tasks"]:
-                    if tk["code"] == code:
-                        task_data = tk
-                        break
-                        
-            msg = f"🚀 **Đã bắt đầu chạy task `{code}` thành công!**"
-            if task_data:
-                rem_mins = calculate_time_remaining(task_data)
-                if rem_mins is not None and rem_mins > 0:
-                    buffer_mins = 15
-                    target_duration_mins = rem_mins - buffer_mins
-                    if target_duration_mins > 0:
-                        target_dt = datetime.now() + timedelta(minutes=target_duration_mins)
-                        target_time_str = target_dt.strftime("%H:%M")
-                        msg += f"\n⏱️ **Thời điểm cần đóng task (chừa 15p buffer)**: `{target_time_str}` (sau `{target_duration_mins}` phút nữa)"
-                    else:
-                        msg += f"\n⚠️ **Thời gian còn lại rất ít ({rem_mins}p). Cần đóng task NGAY LẬP TỨC!**"
-            bot.send_message(chat_id, msg, parse_mode='Markdown')
+                bot.send_message(chat_id, f"❌ Lỗi: Click nút trạng thái nhưng trạng thái của task `{code}` trên dashboard không đổi.", parse_mode='Markdown')
         else:
-            bot.send_message(chat_id, f"⏸️ **Đã tạm dừng task `{code}` thành công!**", parse_mode='Markdown')
+            bot.send_message(chat_id, f"⚠️ Đã click nhưng không tìm lại được nút trạng thái cho task `{code}`.", parse_mode='Markdown')
+            
+    except Exception as e:
+        bot.send_message(chat_id, f"❌ Lỗi xử lý click play/pause: {e}")
 
 # Start polling
 if __name__ == "__main__":
