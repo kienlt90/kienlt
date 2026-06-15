@@ -670,6 +670,30 @@ def scrape_active_tasks():
             driver.get("https://cds.hcmict.io/#/work/current_work_dashboard")
             time.sleep(3)
             
+        # Đóng tất cả modal/overlay đang mở sẵn để tránh lỗi click intercepted
+        try:
+            overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
+            visible_overlays = [o for o in overlays if o.is_displayed()]
+            if visible_overlays:
+                driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                time.sleep(1)
+                
+                overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
+                if any(o.is_displayed() for o in overlays):
+                    close_buttons = driver.find_elements(By.XPATH, 
+                        "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
+                    )
+                    for btn in close_buttons:
+                        if btn.is_displayed():
+                            try:
+                                driver.execute_script("arguments[0].click();", btn)
+                                time.sleep(1)
+                                break
+                            except Exception:
+                                pass
+        except Exception as e:
+            print(f"Lỗi đóng modal có sẵn: {e}")
+            
         # Tìm cột 'Đang thực hiện'
         elements = driver.find_elements(By.XPATH, "//*[contains(text(), 'Đang thực hiện')]")
         if not elements:
@@ -725,29 +749,52 @@ def scrape_active_tasks():
                 date_str = date_match.group(0) if date_match else None
                 
                 # Click mở chi tiết task
-                driver.execute_script("arguments[0].scrollIntoView(true);", card)
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card)
                 time.sleep(0.5)
-                driver.execute_script("arguments[0].click();", card)
+                
+                try:
+                    card.click()
+                except Exception:
+                    driver.execute_script("arguments[0].click();", card)
                 
                 required_hours = None
                 actual_hours = None
                 try:
-                    # Đợi modal load
+                    # Đợi modal hiển thị
                     WebDriverWait(driver, 5).until(
-                        EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
+                        EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
                     )
+                    
+                    # Xác thực Mã trong modal trùng với task code
+                    code_verified = False
+                    for _ in range(5):
+                        try:
+                            ma_el = driver.find_element(By.XPATH, "//*[text()='Mã']/following::input[1]")
+                            ma_val = (ma_el.get_attribute('value') or ma_el.text or "").strip()
+                            if ma_val == code:
+                                code_verified = True
+                                break
+                        except Exception:
+                            pass
+                        time.sleep(0.5)
+                        
+                    if not code_verified:
+                        print(f"Cảnh báo: Mã task trong modal không khớp với {code}")
+                        
                     # Đọc Số giờ yêu cầu
                     try:
                         req_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]/following::input[1]")
                         req_val_str = req_el.get_attribute('value') or req_el.text
-                        required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
+                        if req_val_str:
+                            required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
                     except Exception:
                         pass
                     # Đọc Số giờ thực hiện
                     try:
                         act_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ thực hiện')]/following::input[1]")
                         act_val_str = act_el.get_attribute('value') or act_el.text
-                        actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
+                        if act_val_str:
+                            actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
                     except Exception:
                         pass
                 except Exception as ex:
@@ -758,7 +805,15 @@ def scrape_active_tasks():
                         driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
                     except Exception:
                         pass
-                    time.sleep(1)
+                    # Đợi cho overlay biến mất hẳn trước khi xử lý task tiếp theo
+                    for _ in range(10):
+                        try:
+                            overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
+                            if not any(o.is_displayed() for o in overlays):
+                                break
+                        except Exception:
+                            break
+                        time.sleep(0.2)
                 
                 clean_text = text.replace(code, "")
                 if date_str:
