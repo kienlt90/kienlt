@@ -23,3 +23,16 @@ __pycache__/
 
 # Local Telegram Chat ID configuration
 user_chat_id.json
+
+# Scratch and test files
+check_*.py
+debug_*.py
+dump_*.py
+find_*.py
+inspect_*.py
+open_*.py
+print_*.py
+screenshot_*.py
+test_*.py
+debug_dom_output.txt
+running_tasks.json
