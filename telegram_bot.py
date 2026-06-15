@@ -651,6 +651,24 @@ def get_saved_chat_ids():
             pass
     return []
 
+def load_running_tasks_state():
+    state_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "running_tasks.json")
+    if os.path.exists(state_path):
+        try:
+            with open(state_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+def save_running_tasks_state(state):
+    state_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "running_tasks.json")
+    try:
+        with open(state_path, "w", encoding="utf-8") as f:
+            json.dump(state, f, indent=4)
+    except Exception as e:
+        print(f"Error saving running tasks state: {e}")
+
 def scrape_active_tasks():
     chrome_options = Options()
     chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
@@ -748,14 +766,21 @@ def scrape_active_tasks():
                 date_match = re.search(r'\b\d{2}/\d{2}/\d{4}\b', text)
                 date_str = date_match.group(0) if date_match else None
                 
+                # Tìm phần tử tiêu đề để click (nút thực sự mở modal)
+                click_target = card
+                try:
+                    click_target = card.find_element(By.CLASS_NAME, "task-title")
+                except Exception:
+                    pass
+                
                 # Click mở chi tiết task
-                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", card)
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", click_target)
                 time.sleep(0.5)
                 
                 try:
-                    card.click()
+                    click_target.click()
                 except Exception:
-                    driver.execute_script("arguments[0].click();", card)
+                    driver.execute_script("arguments[0].click();", click_target)
                 
                 required_hours = None
                 actual_hours = None
@@ -836,6 +861,39 @@ def scrape_active_tasks():
                 print(f"Lỗi xử lý card task: {e}")
                 continue
                 
+        # Cập nhật trạng thái tracking thời gian thực của các task đang chạy
+        try:
+            state = load_running_tasks_state()
+            current_timestamp = time.time()
+            
+            # Cập nhật các task đang chạy
+            for t in tasks:
+                t_code = t["code"]
+                is_running = "❚❚" in t.get("raw", "")
+                db_hours = t.get("actual_hours")
+                
+                if is_running and db_hours is not None:
+                    # Nếu chưa theo dõi hoặc db_hours từ server đã thay đổi (người dùng bấm dừng rồi chạy lại)
+                    if t_code not in state or state[t_code].get("last_db_hours") != db_hours:
+                        state[t_code] = {
+                            "first_seen_running": current_timestamp,
+                            "last_db_hours": db_hours
+                        }
+                else:
+                    # Nếu dừng hoặc không chạy nữa, xóa khỏi tracking
+                    if t_code in state:
+                        del state[t_code]
+                        
+            # Xóa các task không còn xuất hiện trong danh sách quét
+            active_codes = {t["code"] for t in tasks}
+            for t_code in list(state.keys()):
+                if t_code not in active_codes:
+                    del state[t_code]
+                    
+            save_running_tasks_state(state)
+        except Exception as state_err:
+            print(f"Lỗi cập nhật trạng thái tracking chạy ngầm: {state_err}")
+
         return {"tasks": tasks}
     except Exception as e:
         return {"error": f"Lỗi xảy ra khi quét dữ liệu trang: {e}"}
@@ -846,9 +904,22 @@ def calculate_time_remaining(task, current_time=None):
         
     req_h = task.get("required_hours")
     act_h = task.get("actual_hours")
+    code = task.get("code")
     
     # 1. Ưu tiên tính toán bằng giờ yêu cầu - giờ thực tế
     if req_h is not None and act_h is not None:
+        state = load_running_tasks_state()
+        if code in state:
+            first_seen = state[code].get("first_seen_running", time.time())
+            last_db_hours = state[code].get("last_db_hours", act_h)
+            # Tính số giờ trôi qua thực tế kể từ lúc bắt đầu quét thấy chạy
+            elapsed_hours = (time.time() - first_seen) / 3600.0
+            est_actual_hours = last_db_hours + elapsed_hours
+            task["estimated_actual_hours"] = round(est_actual_hours, 2)
+            
+            rem_mins = int((req_h - est_actual_hours) * 60)
+            return rem_mins
+            
         return int((req_h - act_h) * 60)
         
     # Fallback dự phòng tính theo deadline
@@ -916,7 +987,9 @@ def check_tasks_monitor_loop():
                             
                             hours_info = ""
                             if task.get("required_hours") is not None and task.get("actual_hours") is not None:
-                                hours_info = f"\n📊 **Tiến độ**: `{task['actual_hours']}` / `{task['required_hours']}h` (Còn `{task['required_hours'] - task['actual_hours']:.2f}h`)"
+                                est_act = task.get("estimated_actual_hours", task.get("actual_hours"))
+                                est_diff = task["required_hours"] - est_act
+                                hours_info = f"\n📊 **Tiến độ**: `{est_act}` / `{task['required_hours']}h` (Còn `{est_diff:.2f}h`)"
                                 
                             alert_msg = (
                                 f"⚠️ **CẢNH BÁO SẮP HẾT HẠN TASK!**\n\n"
@@ -975,7 +1048,9 @@ def handle_check_tasks(message):
             
         hours_progress = ""
         if t.get("required_hours") is not None and t.get("actual_hours") is not None:
-            hours_progress = f"\n   • Số giờ: `{t['actual_hours']}` / `{t['required_hours']}h` (Còn `{t['required_hours'] - t['actual_hours']:.2f}h`)"
+            est_act = t.get("estimated_actual_hours", t.get("actual_hours"))
+            est_diff = t["required_hours"] - est_act
+            hours_progress = f"\n   • Số giờ: `{est_act}` / `{t['required_hours']}h` (Còn `{est_diff:.2f}h`)"
             
         lines.append(
             f"{idx+1}. **{t['title']}**\n"
