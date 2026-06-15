@@ -5,6 +5,14 @@ import json
 import subprocess
 import telebot
 from telebot import types
+import threading
+import time
+from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -50,6 +58,7 @@ try:
         types.BotCommand("add_contract", "➕ Bắt đầu thêm hợp đồng mới"),
         types.BotCommand("tracuu", "🔍 Tra cứu cấu hình HIS L2"),
         types.BotCommand("attt", "🛡️ Tra cứu đáp án thi An toàn thông tin"),
+        types.BotCommand("check_tasks", "⏱️ Kiểm tra thời gian các task"),
         types.BotCommand("help", "❓ Hướng dẫn sử dụng")
     ])
 except Exception as e:
@@ -185,6 +194,8 @@ def sync_to_git(commit_message):
 # ----------------------------------------------------------------------
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
+    chat_id = message.chat.id
+    save_chat_id(chat_id)
     welcome_text = (
         "👋 **Chào mừng bạn đến với VNPT Contract Bot!**\n\n"
         "Tôi sẽ giúp bạn quản lý hợp đồng y tế và tra cứu thông tin nhanh chóng.\n\n"
@@ -193,6 +204,7 @@ def send_welcome(message):
         "📋 /list_units : Xem danh sách các đơn vị và tổng giá trị hợp đồng.\n"
         "🔍 /tracuu <từ khóa> : Tra cứu cấu hình HIS L2.\n"
         "🛡️ /attt <từ khóa> : Tra cứu đáp án thi An toàn thông tin.\n"
+        "⏱️ /check_tasks : Kiểm tra thời gian còn lại của các task đang chạy.\n"
         "❓ /help : Xem hướng dẫn sử dụng."
     )
     bot.reply_to(message, welcome_text, parse_mode='Markdown')
@@ -212,6 +224,8 @@ def format_vietnamese_currency(amount):
 
 @bot.message_handler(commands=['list_units', 'listunits', 'list'])
 def list_units(message):
+    chat_id = message.chat.id
+    save_chat_id(chat_id)
     try:
         units = read_database()
         lines = ["📋 **Danh sách đơn vị y tế hiện có:**\n"]
@@ -231,6 +245,7 @@ def list_units(message):
 @bot.message_handler(commands=['add_contract', 'addcontract', 'add'])
 def start_add_contract(message):
     chat_id = message.chat.id
+    save_chat_id(chat_id)
     try:
         units = read_database()
         # Create a markup menu with existing unit names
@@ -439,6 +454,7 @@ def handle_wizard_steps(message):
 def search_hisl2_config(message):
     """Search HIS L2 configuration by keyword."""
     chat_id = message.chat.id
+    save_chat_id(chat_id)
     # Extract keyword from command
     parts = message.text.strip().split(None, 1)
     if len(parts) < 2 or not parts[1].strip():
@@ -526,6 +542,7 @@ def clean_html(text):
 def search_attt(message):
     """Search ATTT questions and answers by keyword."""
     chat_id = message.chat.id
+    save_chat_id(chat_id)
     parts = message.text.strip().split(None, 1)
     if len(parts) < 2 or not parts[1].strip():
         bot.reply_to(
@@ -606,7 +623,270 @@ def search_attt(message):
     bot.send_message(chat_id, full_msg, parse_mode='Markdown')
 
 
+# ----------------------------------------------------------------------
+# CHROME REMOTE DEBUGGING & TASK EXPIRATION MONITOR
+# ----------------------------------------------------------------------
+def save_chat_id(chat_id):
+    chat_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_chat_id.json")
+    try:
+        chat_ids = []
+        if os.path.exists(chat_file):
+            with open(chat_file, "r") as f:
+                chat_ids = json.load(f)
+        if chat_id not in chat_ids:
+            chat_ids.append(chat_id)
+            with open(chat_file, "w") as f:
+                json.dump(chat_ids, f)
+    except Exception as e:
+        print(f"Error saving chat ID: {e}")
+
+def get_saved_chat_ids():
+    chat_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_chat_id.json")
+    if os.path.exists(chat_file):
+        try:
+            with open(chat_file, "r") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return []
+
+def scrape_active_tasks():
+    chrome_options = Options()
+    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+    driver = None
+    try:
+        driver = webdriver.Chrome(options=chrome_options)
+    except Exception as e:
+        return {"error": f"Không thể kết nối đến Chrome qua port 9222. Đảm bảo Chrome đã chạy ở chế độ debug. Chi tiết: {e}"}
+        
+    try:
+        try:
+            current_url = driver.current_url
+        except Exception:
+            current_url = ""
+            
+        if "current_work_dashboard" not in current_url:
+            driver.get("https://cds.hcmict.io/#/work/current_work_dashboard")
+            time.sleep(3)
+            
+        # Tìm cột 'Đang thực hiện'
+        elements = driver.find_elements(By.XPATH, "//*[contains(text(), 'Đang thực hiện')]")
+        if not elements:
+            time.sleep(3)
+            elements = driver.find_elements(By.XPATH, "//*[contains(text(), 'Đang thực hiện')]")
+            
+        if not elements:
+            return {"error": "Không tìm thấy cột 'Đang thực hiện' trên trang."}
+            
+        header_el = elements[0]
+        parent = header_el
+        cards = []
+        # Đi ngược lên 5 cấp cha để tìm container lớn và quét các card con
+        for _ in range(5):
+            parent = parent.find_element(By.XPATH, "..")
+            all_children = parent.find_elements(By.XPATH, ".//*[text() or @class]")
+            for child in all_children:
+                try:
+                    text = child.text.strip()
+                    if text and re.search(r'\b\d{3}\.\d{6}\b', text):
+                        if not any(text in c.text for c in cards) and len(text) < 500:
+                            cards.append(child)
+                except Exception:
+                    continue
+            if cards:
+                break
+                
+        if not cards:
+            all_elements = driver.find_elements(By.XPATH, "//*[contains(text(), '000.')]")
+            for el in all_elements:
+                try:
+                    text = el.text.strip()
+                    if len(text) < 500 and re.search(r'\b\d{3}\.\d{6}\b', text):
+                        if re.search(r'\d{2}/\d{2}/\d{4}', text):
+                            cards.append(el)
+                except Exception:
+                    continue
+                    
+        tasks = []
+        seen_codes = set()
+        for card in cards:
+            try:
+                text = card.text.strip()
+                code_match = re.search(r'\b\d{3}\.\d{6}\b', text)
+                if not code_match:
+                    continue
+                code = code_match.group(0)
+                if code in seen_codes:
+                    continue
+                seen_codes.add(code)
+                
+                date_match = re.search(r'\b\d{2}/\d{2}/\d{4}\b', text)
+                date_str = date_match.group(0) if date_match else None
+                
+                hour_match = re.search(r'\((\d+(?:\.\d+)?)h\)', text)
+                hours = float(hour_match.group(1)) if hour_match else 0.0
+                
+                clean_text = text.replace(code, "")
+                if date_str:
+                    clean_text = clean_text.replace(date_str, "")
+                if hour_match:
+                    clean_text = clean_text.replace(hour_match.group(0), "")
+                
+                title = re.sub(r'\s+', ' ', clean_text).strip()
+                
+                tasks.append({
+                    "code": code,
+                    "title": title,
+                    "deadline": date_str,
+                    "hours": hours,
+                    "raw": text
+                })
+            except Exception:
+                continue
+                
+        return {"tasks": tasks}
+    except Exception as e:
+        return {"error": f"Lỗi xảy ra khi quét dữ liệu trang: {e}"}
+
+def calculate_time_remaining(task, current_time=None):
+    if not current_time:
+        current_time = datetime.now()
+        
+    raw_text = task.get("raw", "")
+    deadline_str = task.get("deadline", "")
+    
+    # 1. Tìm thông tin thời gian còn lại trực tiếp (Ví dụ: còn 15 phút, 15m)
+    minutes_left_match = re.search(r'(?:còn\s+)?(\d+)\s*(?:phút|m\b)', raw_text, re.IGNORECASE)
+    if minutes_left_match:
+        return int(minutes_left_match.group(1))
+        
+    hours_left_match = re.search(r'(?:còn\s+)?(\d+(?:\.\d+)?)\s*(?:giờ|h\b)', raw_text, re.IGNORECASE)
+    if hours_left_match and f"({hours_left_match.group(1)}h)" not in raw_text:
+        return int(float(hours_left_match.group(1)) * 60)
+        
+    # 2. Tính toán dựa trên deadline
+    time_match = re.search(r'\b(\d{1,2}):(\d{2})\b', raw_text)
+    
+    if deadline_str:
+        try:
+            deadline_date = datetime.strptime(deadline_str, "%d/%m/%Y")
+            if time_match:
+                hour, minute = map(int, time_match.groups())
+                deadline_dt = deadline_date.replace(hour=hour, minute=minute, second=0)
+            else:
+                # Mặc định là cuối giờ chiều (17:00) hoặc cuối ngày (23:59)
+                deadline_dt_17 = deadline_date.replace(hour=17, minute=0, second=0)
+                if current_time > deadline_dt_17:
+                    deadline_dt = deadline_date.replace(hour=23, minute=59, second=59)
+                else:
+                    deadline_dt = deadline_dt_17
+            
+            delta = deadline_dt - current_time
+            return int(delta.total_seconds() / 60)
+        except Exception:
+            pass
+            
+    return None
+
+alerted_tasks = {} # task_code -> timestamp của cảnh báo cuối cùng
+
+def check_tasks_monitor_loop():
+    while True:
+        try:
+            time.sleep(300) # Đợi 5 phút
+            chat_ids = get_saved_chat_ids()
+            if not chat_ids:
+                continue
+                
+            res = scrape_active_tasks()
+            if "error" in res:
+                print(f"[Task Monitor] Scraper error: {res['error']}")
+                continue
+                
+            tasks = res.get("tasks", [])
+            now = datetime.now()
+            
+            for task in tasks:
+                code = task["code"]
+                title = task["title"]
+                rem_mins = calculate_time_remaining(task, now)
+                
+                if rem_mins is not None:
+                    # Gửi cảnh báo nếu thời gian còn lại từ 0 đến 15 phút
+                    if 0 <= rem_mins <= 15:
+                        last_alert = alerted_tasks.get(code, 0)
+                        # Giới hạn cảnh báo cách nhau ít nhất 30 phút cho cùng một task
+                        if time.time() - last_alert > 1800:
+                            alerted_tasks[code] = time.time()
+                            alert_msg = (
+                                f"⚠️ **CẢNH BÁO SẮP HẾT HẠN TASK!**\n\n"
+                                f"📌 **Mã task**: `{code}`\n"
+                                f"📝 **Nội dung**: *{title}*\n"
+                                f"⏱️ **Thời gian còn lại**: {rem_mins} phút!"
+                            )
+                            for chat_id in chat_ids:
+                                try:
+                                    bot.send_message(chat_id, alert_msg, parse_mode='Markdown')
+                                except Exception as e:
+                                    print(f"Failed to send alert to {chat_id}: {e}")
+        except Exception as e:
+            print(f"[Task Monitor] Loop error: {e}")
+
+@bot.message_handler(commands=['check_tasks', 'checktasks', 'task'])
+def handle_check_tasks(message):
+    chat_id = message.chat.id
+    save_chat_id(chat_id)
+    
+    bot.reply_to(message, "⏳ Đang kết nối tới Chrome để kiểm tra các task...", parse_mode='Markdown')
+    
+    res = scrape_active_tasks()
+    if "error" in res:
+        bot.send_message(
+            chat_id, 
+            f"❌ *Lỗi kết nối Chrome:*\n{res['error']}\n\n"
+            "👉 Hãy đảm bảo bạn đã:\n"
+            "1. Tắt hết các cửa sổ Chrome đang chạy.\n"
+            "2. Mở Chrome debug bằng Command Prompt:\n"
+            '   `"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\\Users\\kienlt.bdg\\ChromeDebug"`\n'
+            "3. Đăng nhập vào website và mở tab dashboard.",
+            parse_mode='Markdown'
+        )
+        return
+        
+    tasks = res.get("tasks", [])
+    if not tasks:
+        bot.send_message(chat_id, "📋 Không tìm thấy task nào đang chạy dưới cột *'Đang thực hiện'*.", parse_mode='Markdown')
+        return
+        
+    lines = ["⏱️ **Thời gian còn lại của các task đang thực hiện:**\n"]
+    now = datetime.now()
+    for idx, t in enumerate(tasks):
+        rem_mins = calculate_time_remaining(t, now)
+        if rem_mins is not None:
+            if rem_mins < 0:
+                time_str = f"🔴 Quá hạn {-rem_mins} phút"
+            elif rem_mins <= 60:
+                time_str = f"⚠️ Còn {rem_mins} phút"
+            else:
+                hours = rem_mins / 60.0
+                time_str = f"🟢 Còn {hours:.1f} giờ ({rem_mins} phút)"
+        else:
+            time_str = "Không xác định được thời hạn"
+            
+        lines.append(
+            f"{idx+1}. **{t['title']}**\n"
+            f"   • Mã: `{t['code']}`\n"
+            f"   • Trạng thái: {time_str} (Hạn chót: {t['deadline'] or 'Chưa rõ'})\n"
+        )
+        
+    bot.send_message(chat_id, "\n".join(lines), parse_mode='Markdown')
+
 # Start polling
 if __name__ == "__main__":
+    # Khởi chạy thread giám sát chạy ngầm
+    monitor_thread = threading.Thread(target=check_tasks_monitor_loop, daemon=True)
+    monitor_thread.start()
+    print("✅ Background Task Monitor Thread started...")
+    
     print("Telegram Contract Bot is running...")
     bot.infinity_polling()
