@@ -16,3 +16,10 @@ node-portable/
 # Ignore OS files
 .DS_Store
 Thumbs.db
+
+# Python temporary files
+__pycache__/
+*.pyc
+
+# Local Telegram Chat ID configuration
+user_chat_id.json

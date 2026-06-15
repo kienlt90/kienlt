@@ -13,6 +13,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -723,25 +724,61 @@ def scrape_active_tasks():
                 date_match = re.search(r'\b\d{2}/\d{2}/\d{4}\b', text)
                 date_str = date_match.group(0) if date_match else None
                 
-                hour_match = re.search(r'\((\d+(?:\.\d+)?)h\)', text)
-                hours = float(hour_match.group(1)) if hour_match else 0.0
+                # Click mở chi tiết task
+                driver.execute_script("arguments[0].scrollIntoView(true);", card)
+                time.sleep(0.5)
+                driver.execute_script("arguments[0].click();", card)
+                
+                required_hours = None
+                actual_hours = None
+                try:
+                    # Đợi modal load
+                    WebDriverWait(driver, 5).until(
+                        EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
+                    )
+                    # Đọc Số giờ yêu cầu
+                    try:
+                        req_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]/following::input[1]")
+                        req_val_str = req_el.get_attribute('value') or req_el.text
+                        required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
+                    except Exception:
+                        pass
+                    # Đọc Số giờ thực hiện
+                    try:
+                        act_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ thực hiện')]/following::input[1]")
+                        act_val_str = act_el.get_attribute('value') or act_el.text
+                        actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
+                    except Exception:
+                        pass
+                except Exception as ex:
+                    print(f"Lỗi đọc modal cho task {code}: {ex}")
+                finally:
+                    # Đóng modal bằng Escape
+                    try:
+                        driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                    except Exception:
+                        pass
+                    time.sleep(1)
                 
                 clean_text = text.replace(code, "")
                 if date_str:
                     clean_text = clean_text.replace(date_str, "")
-                if hour_match:
-                    clean_text = clean_text.replace(hour_match.group(0), "")
                 
                 title = re.sub(r'\s+', ' ', clean_text).strip()
+                hour_match = re.search(r'\((\d+(?:\.\d+)?)h\)', title)
+                if hour_match:
+                    title = title.replace(hour_match.group(0), "").strip()
                 
                 tasks.append({
                     "code": code,
                     "title": title,
                     "deadline": date_str,
-                    "hours": hours,
+                    "required_hours": required_hours,
+                    "actual_hours": actual_hours,
                     "raw": text
                 })
-            except Exception:
+            except Exception as e:
+                print(f"Lỗi xử lý card task: {e}")
                 continue
                 
         return {"tasks": tasks}
@@ -752,10 +789,17 @@ def calculate_time_remaining(task, current_time=None):
     if not current_time:
         current_time = datetime.now()
         
+    req_h = task.get("required_hours")
+    act_h = task.get("actual_hours")
+    
+    # 1. Ưu tiên tính toán bằng giờ yêu cầu - giờ thực tế
+    if req_h is not None and act_h is not None:
+        return int((req_h - act_h) * 60)
+        
+    # Fallback dự phòng tính theo deadline
     raw_text = task.get("raw", "")
     deadline_str = task.get("deadline", "")
     
-    # 1. Tìm thông tin thời gian còn lại trực tiếp (Ví dụ: còn 15 phút, 15m)
     minutes_left_match = re.search(r'(?:còn\s+)?(\d+)\s*(?:phút|m\b)', raw_text, re.IGNORECASE)
     if minutes_left_match:
         return int(minutes_left_match.group(1))
@@ -764,7 +808,6 @@ def calculate_time_remaining(task, current_time=None):
     if hours_left_match and f"({hours_left_match.group(1)}h)" not in raw_text:
         return int(float(hours_left_match.group(1)) * 60)
         
-    # 2. Tính toán dựa trên deadline
     time_match = re.search(r'\b(\d{1,2}):(\d{2})\b', raw_text)
     
     if deadline_str:
@@ -774,7 +817,6 @@ def calculate_time_remaining(task, current_time=None):
                 hour, minute = map(int, time_match.groups())
                 deadline_dt = deadline_date.replace(hour=hour, minute=minute, second=0)
             else:
-                # Mặc định là cuối giờ chiều (17:00) hoặc cuối ngày (23:59)
                 deadline_dt_17 = deadline_date.replace(hour=17, minute=0, second=0)
                 if current_time > deadline_dt_17:
                     deadline_dt = deadline_date.replace(hour=23, minute=59, second=59)
@@ -812,16 +854,19 @@ def check_tasks_monitor_loop():
                 rem_mins = calculate_time_remaining(task, now)
                 
                 if rem_mins is not None:
-                    # Gửi cảnh báo nếu thời gian còn lại từ 0 đến 15 phút
                     if 0 <= rem_mins <= 15:
                         last_alert = alerted_tasks.get(code, 0)
-                        # Giới hạn cảnh báo cách nhau ít nhất 30 phút cho cùng một task
                         if time.time() - last_alert > 1800:
                             alerted_tasks[code] = time.time()
+                            
+                            hours_info = ""
+                            if task.get("required_hours") is not None and task.get("actual_hours") is not None:
+                                hours_info = f"\n📊 **Tiến độ**: `{task['actual_hours']}` / `{task['required_hours']}h` (Còn `{task['required_hours'] - task['actual_hours']:.2f}h`)"
+                                
                             alert_msg = (
                                 f"⚠️ **CẢNH BÁO SẮP HẾT HẠN TASK!**\n\n"
                                 f"📌 **Mã task**: `{code}`\n"
-                                f"📝 **Nội dung**: *{title}*\n"
+                                f"📝 **Nội dung**: *{title}*{hours_info}\n"
                                 f"⏱️ **Thời gian còn lại**: {rem_mins} phút!"
                             )
                             for chat_id in chat_ids:
@@ -869,14 +914,18 @@ def handle_check_tasks(message):
                 time_str = f"⚠️ Còn {rem_mins} phút"
             else:
                 hours = rem_mins / 60.0
-                time_str = f"🟢 Còn {hours:.1f} giờ ({rem_mins} phút)"
+                time_str = f"🟢 Còn {hours:.2f} giờ ({rem_mins} phút)"
         else:
             time_str = "Không xác định được thời hạn"
+            
+        hours_progress = ""
+        if t.get("required_hours") is not None and t.get("actual_hours") is not None:
+            hours_progress = f"\n   • Số giờ: `{t['actual_hours']}` / `{t['required_hours']}h` (Còn `{t['required_hours'] - t['actual_hours']:.2f}h`)"
             
         lines.append(
             f"{idx+1}. **{t['title']}**\n"
             f"   • Mã: `{t['code']}`\n"
-            f"   • Trạng thái: {time_str} (Hạn chót: {t['deadline'] or 'Chưa rõ'})\n"
+            f"   • Trạng thái: {time_str} (Hạn chót: {t['deadline'] or 'Chưa rõ'}){hours_progress}\n"
         )
         
     bot.send_message(chat_id, "\n".join(lines), parse_mode='Markdown')
