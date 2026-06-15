@@ -690,25 +690,23 @@ def scrape_active_tasks():
             
         # Đóng tất cả modal/overlay đang mở sẵn để tránh lỗi click intercepted
         try:
+            # Gửi phím ESCAPE vô điều kiện trước để đóng mọi modal hiện tại
+            driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+            time.sleep(1)
+            
+            # Nếu vẫn còn overlay (ví dụ ESCAPE không tác dụng), thử click nút đóng
             overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
-            visible_overlays = [o for o in overlays if o.is_displayed()]
-            if visible_overlays:
-                driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                time.sleep(1)
-                
-                overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
-                if any(o.is_displayed() for o in overlays):
-                    close_buttons = driver.find_elements(By.XPATH, 
-                        "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
-                    )
-                    for btn in close_buttons:
-                        if btn.is_displayed():
-                            try:
-                                driver.execute_script("arguments[0].click();", btn)
-                                time.sleep(1)
-                                break
-                            except Exception:
-                                pass
+            if overlays:
+                close_buttons = driver.find_elements(By.XPATH, 
+                    "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
+                )
+                for btn in close_buttons:
+                    try:
+                        driver.execute_script("arguments[0].click();", btn)
+                        time.sleep(1)
+                        break
+                    except Exception:
+                        pass
         except Exception as e:
             print(f"Lỗi đóng modal có sẵn: {e}")
             
@@ -775,9 +773,9 @@ def scrape_active_tasks():
                     required_hours = None
                     actual_hours = None
                     try:
-                        # Đợi modal hiển thị
+                        # Đợi modal hiển thị trong DOM (dùng presence_of_element_located để chạy tốt khi Chrome bị minimize)
                         WebDriverWait(driver, 5).until(
-                            EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
+                            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
                         )
                         
                         # Xác thực Mã trong modal trùng với task code
@@ -820,6 +818,7 @@ def scrape_active_tasks():
                             driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
                         except Exception:
                             pass
+                        time.sleep(0.5)  # Trễ cố định ngắn đề phòng Chrome bị minimize làm is_displayed() trả về False
                         # Đợi cho overlay biến mất hẳn trước khi xử lý task tiếp theo
                         for _ in range(10):
                             try:
