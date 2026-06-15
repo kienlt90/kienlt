@@ -7,7 +7,7 @@ import telebot
 from telebot import types
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -973,15 +973,25 @@ def check_tasks_monitor_loop():
                             alerted_tasks[code] = time.time()
                             
                             hours_info = ""
+                            close_info = ""
                             if task.get("required_hours") is not None and task.get("actual_hours") is not None:
                                 est_act = task.get("estimated_actual_hours", task.get("actual_hours"))
                                 est_diff = task["required_hours"] - est_act
                                 hours_info = f"\n📊 **Tiến độ**: `{est_act}` / `{task['required_hours']}h` (Còn `{est_diff:.2f}h`)"
                                 
+                                if rem_mins is not None and rem_mins > 0:
+                                    buffer_mins = 15
+                                    target_duration_mins = rem_mins - buffer_mins
+                                    if target_duration_mins > 0:
+                                        target_dt = now + timedelta(minutes=target_duration_mins)
+                                        close_info = f"\n⏱️ **Thời điểm cần đóng task (chừa 15p buffer)**: `{target_dt.strftime('%H:%M')}` (sau `{target_duration_mins}` phút nữa)"
+                                    else:
+                                        close_info = f"\n⚠️ **Cần đóng task NGAY LẬP TỨC!**"
+                                
                             alert_msg = (
                                 f"⚠️ **CẢNH BÁO SẮP HẾT HẠN TASK!**\n\n"
                                 f"📌 **Mã task**: `{code}`\n"
-                                f"📝 **Nội dung**: *{title}*{hours_info}\n"
+                                f"📝 **Nội dung**: *{title}*{hours_info}{close_info}\n"
                                 f"⏱️ **Thời gian còn lại**: {rem_mins} phút!"
                             )
                             for chat_id in chat_ids:
@@ -1015,13 +1025,17 @@ def handle_check_tasks(message):
         
     tasks = res.get("tasks", [])
     if not tasks:
-        bot.send_message(chat_id, "📋 Không tìm thấy task nào đang chạy dưới cột *'Đang thực hiện'*.", parse_mode='Markdown')
+        bot.send_message(chat_id, "📋 Không tìm thấy task nào đang chạy dưới cột *'Đang thực hiện'* hoặc *'Đã nhận'*.", parse_mode='Markdown')
         return
         
-    lines = ["⏱️ **Thời gian còn lại của các task đang thực hiện:**\n"]
+    lines = ["⏱️ **Thời gian còn lại của các task:**\n"]
     now = datetime.now()
+    markup = types.InlineKeyboardMarkup()
+    
     for idx, t in enumerate(tasks):
         rem_mins = calculate_time_remaining(t, now)
+        is_running = "❚❚" in t.get("raw", "")
+        
         if rem_mins is not None:
             if rem_mins < 0:
                 time_str = f"🔴 Quá hạn {-rem_mins} phút"
@@ -1034,18 +1048,196 @@ def handle_check_tasks(message):
             time_str = "Không xác định được thời hạn"
             
         hours_progress = ""
+        close_time_str = ""
         if t.get("required_hours") is not None and t.get("actual_hours") is not None:
             est_act = t.get("estimated_actual_hours", t.get("actual_hours"))
             est_diff = t["required_hours"] - est_act
             hours_progress = f"\n   • Số giờ: `{est_act}` / `{t['required_hours']}h` (Còn `{est_diff:.2f}h`)"
             
+            if rem_mins is not None and rem_mins > 0:
+                buffer_mins = 15
+                target_duration_mins = rem_mins - buffer_mins
+                if target_duration_mins > 0:
+                    target_dt = now + timedelta(minutes=target_duration_mins)
+                    target_time_str = target_dt.strftime("%H:%M")
+                    if is_running:
+                        close_time_str = f"\n   • **Cần đóng task lúc**: `{target_time_str}` (sau `{target_duration_mins}` phút nữa)"
+                    else:
+                        close_time_str = f"\n   • **Cần đóng task (nếu chạy ngay)**: `{target_time_str}` (sau `{target_duration_mins}` phút)"
+                else:
+                    close_time_str = f"\n   • ⚠️ **Cần đóng task NGAY LẬP TỨC!**"
+            
         lines.append(
             f"{idx+1}. **{t['title']}**\n"
             f"   • Mã: `{t['code']}`\n"
-            f"   • Trạng thái: {time_str} (Hạn chót: {t['deadline'] or 'Chưa rõ'}){hours_progress}\n"
+            f"   • Trạng thái: {time_str} (Hạn chót: {t['deadline'] or 'Chưa rõ'}){hours_progress}{close_time_str}\n"
         )
         
-    bot.send_message(chat_id, "\n".join(lines), parse_mode='Markdown')
+        # Add inline button for start/pause
+        code = t["code"]
+        if is_running:
+            btn_text = f"❚❚ Dừng task {code}"
+            callback_data = f"toggle:{code}:pause"
+        else:
+            btn_text = f"▶ Chạy task {code}"
+            callback_data = f"toggle:{code}:start"
+        markup.add(types.InlineKeyboardButton(text=btn_text, callback_data=callback_data))
+        
+    bot.send_message(chat_id, "\n".join(lines), reply_markup=markup, parse_mode='Markdown')
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('toggle:'))
+def handle_task_toggle(call):
+    chat_id = call.message.chat.id
+    parts = call.data.split(':')
+    if len(parts) < 3:
+        bot.answer_callback_query(call.id, "Dữ liệu callback không hợp lệ!")
+        return
+        
+    code = parts[1]
+    action = parts[2]
+    
+    action_text = "bắt đầu" if action == "start" else "tạm dừng"
+    bot.send_message(chat_id, f"⏳ Đang thực hiện {action_text} task `{code}` qua Chrome...", parse_mode='Markdown')
+    bot.answer_callback_query(call.id, f"Đang {action_text} task...")
+    
+    chrome_options = Options()
+    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+    driver = None
+    try:
+        driver = webdriver.Chrome(options=chrome_options)
+    except Exception as e:
+        bot.send_message(chat_id, f"❌ Lỗi kết nối Chrome: {e}")
+        return
+        
+    try:
+        # Close any open modals/overlays
+        try:
+            driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+            time.sleep(0.5)
+            overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
+            if overlays:
+                close_buttons = driver.find_elements(By.XPATH, 
+                    "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
+                )
+                for btn in close_buttons:
+                    try:
+                        driver.execute_script("arguments[0].click();", btn)
+                        time.sleep(0.5)
+                        break
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+            
+        headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
+        if not headers:
+            bot.send_message(chat_id, "❌ Không tìm thấy khu vực 'VIỆC TÔI ĐƯỢC GIAO' trên dashboard.")
+            return
+            
+        header_el = headers[0]
+        container = header_el.find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
+        scroll_container = container.find_element(By.CLASS_NAME, "column-task-scroll")
+        columns = scroll_container.find_elements(By.CLASS_NAME, "border-col-task")
+        
+        card = None
+        for col in columns:
+            title_els = col.find_elements(By.CLASS_NAME, "title")
+            title_text = title_els[0].text.strip() if title_els else ""
+            if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
+                continue
+            cards = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+            for c in cards:
+                if code in c.text:
+                    card = c
+                    break
+            if card:
+                break
+                
+        if not card:
+            bot.send_message(chat_id, f"❌ Không tìm thấy task `{code}` trong mục đang thực hiện.")
+            return
+            
+        try:
+            btn = card.find_element(By.XPATH, ".//span[contains(@class, 'icon') and (text()='▶' or text()='❚❚')]")
+        except Exception:
+            bot.send_message(chat_id, f"❌ Không tìm thấy nút trạng thái (Play/Pause) cho task `{code}`.")
+            return
+            
+        current_state = btn.text
+        if action == "start" and current_state == "❚❚":
+            bot.send_message(chat_id, f"ℹ️ Task `{code}` đã ở trạng thái Đang chạy (`❚❚`).", parse_mode='Markdown')
+            return
+        elif action == "pause" and current_state == "▶":
+            bot.send_message(chat_id, f"ℹ️ Task `{code}` đã ở trạng thái Tạm dừng (`▶`).", parse_mode='Markdown')
+            return
+            
+        # Click the button
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+        time.sleep(0.3)
+        driver.execute_script("arguments[0].click();", btn)
+        
+        # Wait for API reload
+        time.sleep(3)
+        
+        # Verify new state by re-finding
+        headers_new = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
+        new_state = None
+        if headers_new:
+            container_new = headers_new[0].find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
+            scroll_container_new = container_new.find_element(By.CLASS_NAME, "column-task-scroll")
+            columns_new = scroll_container_new.find_elements(By.CLASS_NAME, "border-col-task")
+            
+            for col in columns_new:
+                title_els = col.find_elements(By.CLASS_NAME, "title")
+                title_text = title_els[0].text.strip() if title_els else ""
+                if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
+                    continue
+                cards_new = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+                for c in cards_new:
+                    if code in c.text:
+                        try:
+                            new_btn = c.find_element(By.XPATH, ".//span[contains(@class, 'icon') and (text()='▶' or text()='❚❚')]")
+                            new_state = new_btn.text
+                        except Exception:
+                            pass
+                        break
+                if new_state:
+                    break
+            
+        if new_state:
+            if new_state != current_state:
+                if new_state == "❚❚":
+                    # We started the task! Update database with hours
+                    res = scrape_active_tasks()
+                    task_data = None
+                    if "tasks" in res:
+                        for tk in res["tasks"]:
+                            if tk["code"] == code:
+                                task_data = tk
+                                break
+                                
+                    msg = f"🚀 **Đã bắt đầu chạy task `{code}` thành công!**"
+                    if task_data:
+                        rem_mins = calculate_time_remaining(task_data)
+                        if rem_mins is not None and rem_mins > 0:
+                            buffer_mins = 15
+                            target_duration_mins = rem_mins - buffer_mins
+                            if target_duration_mins > 0:
+                                target_dt = datetime.now() + timedelta(minutes=target_duration_mins)
+                                target_time_str = target_dt.strftime("%H:%M")
+                                msg += f"\n⏱️ **Thời điểm cần đóng task (chừa 15p buffer)**: `{target_time_str}` (sau `{target_duration_mins}` phút nữa)"
+                            else:
+                                msg += f"\n⚠️ **Thời gian còn lại rất ít ({rem_mins}p). Cần đóng task NGAY LẬP TỨC!**"
+                    bot.send_message(chat_id, msg, parse_mode='Markdown')
+                else:
+                    bot.send_message(chat_id, f"⏸️ **Đã tạm dừng task `{code}` thành công!**", parse_mode='Markdown')
+            else:
+                bot.send_message(chat_id, f"❌ Lỗi: Click nút trạng thái nhưng trạng thái của task `{code}` trên dashboard không đổi.", parse_mode='Markdown')
+        else:
+            bot.send_message(chat_id, f"⚠️ Đã click nhưng không tìm lại được nút trạng thái cho task `{code}`.", parse_mode='Markdown')
+            
+    except Exception as e:
+        bot.send_message(chat_id, f"❌ Lỗi xử lý click play/pause: {e}")
 
 # Start polling
 if __name__ == "__main__":
