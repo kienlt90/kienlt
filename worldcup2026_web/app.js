@@ -8,6 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let thirdPlaceStandings = []; // Danh sách 12 đội xếp thứ 3
   let activePlayerStats = {}; // Thống kê tất cả cầu thủ thực tế ghi bàn/kiến tạo
 
+  // Helper lấy thông tin cầu thủ theo chỉ số mục tiêu
+  function getPlayerFromTeam(teamName, idx) {
+    if (typeof TEAM_PLAYERS !== "undefined" && TEAM_PLAYERS[teamName]) {
+      const players = TEAM_PLAYERS[teamName];
+      return players[idx % players.length];
+    }
+    return { name: `Cầu thủ ${idx + 1} (${teamName})`, flagCode: "" };
+  }
+
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
        // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
@@ -136,15 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function recalculateAll() {
     // 0. Khởi tạo/Reset thống kê cầu thủ thực tế về rỗng
     activePlayerStats = {};
-
-    // Helper lấy thông tin cầu thủ theo chỉ số mục tiêu
-    function getPlayerFromTeam(teamName, idx) {
-      if (typeof TEAM_PLAYERS !== "undefined" && TEAM_PLAYERS[teamName]) {
-        const players = TEAM_PLAYERS[teamName];
-        return players[idx % players.length];
-      }
-      return { name: `Cầu thủ ${idx + 1} (${teamName})`, flagCode: "" };
-    }
 
     // Khởi tạo lại thống kê cho 48 đội
     teamStats = {};
