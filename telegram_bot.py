@@ -712,155 +712,145 @@ def scrape_active_tasks():
         except Exception as e:
             print(f"Lỗi đóng modal có sẵn: {e}")
             
-        # Tìm cột 'Đang thực hiện'
-        elements = driver.find_elements(By.XPATH, "//*[contains(text(), 'Đang thực hiện')]")
-        if not elements:
+        # Tìm phần container chứa "VIỆC TÔI ĐƯỢC GIAO"
+        headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
+        if not headers:
+            # Chờ thêm 3s nếu trang đang tải chậm
             time.sleep(3)
-            elements = driver.find_elements(By.XPATH, "//*[contains(text(), 'Đang thực hiện')]")
+            headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
             
-        if not elements:
-            return {"error": "Không tìm thấy cột 'Đang thực hiện' trên trang."}
+        if not headers:
+            return {"error": "Không tìm thấy phần 'VIỆC TÔI ĐƯỢC GIAO' trên trang."}
             
-        header_el = elements[0]
-        parent = header_el
-        cards = []
-        # Đi ngược lên 5 cấp cha để tìm container lớn và quét các card con
-        for _ in range(5):
-            parent = parent.find_element(By.XPATH, "..")
-            all_children = parent.find_elements(By.XPATH, ".//*[text() or @class]")
-            for child in all_children:
-                try:
-                    text = child.text.strip()
-                    if text and re.search(r'\b\d{3}\.\d{6}\b', text):
-                        if not any(text in c.text for c in cards) and len(text) < 500:
-                            cards.append(child)
-                except Exception:
-                    continue
-            if cards:
-                break
-                
-        if not cards:
-            all_elements = driver.find_elements(By.XPATH, "//*[contains(text(), '000.')]")
-            for el in all_elements:
-                try:
-                    text = el.text.strip()
-                    if len(text) < 500 and re.search(r'\b\d{3}\.\d{6}\b', text):
-                        if re.search(r'\d{2}/\d{2}/\d{4}', text):
-                            cards.append(el)
-                except Exception:
-                    continue
-                    
+        header_el = headers[0]
+        container = header_el.find_element(By.XPATH, "./ancestor::div[contains(@class, 'column-group')][1]")
+        scroll_container = container.find_element(By.CLASS_NAME, "column-task-scroll")
+        
+        # Lấy các cột bên trong
+        columns = scroll_container.find_elements(By.CLASS_NAME, "border-col-task")
+        
         tasks = []
         seen_codes = set()
-        for card in cards:
-            try:
-                text = card.text.strip()
-                code_match = re.search(r'\b\d{3}\.\d{6}\b', text)
-                if not code_match:
-                    continue
-                code = code_match.group(0)
-                if code in seen_codes:
-                    continue
-                seen_codes.add(code)
-                
-                date_match = re.search(r'\b\d{2}/\d{2}/\d{4}\b', text)
-                date_str = date_match.group(0) if date_match else None
-                
-                # Tìm phần tử tiêu đề để click (nút thực sự mở modal)
-                click_target = card
-                try:
-                    click_target = card.find_element(By.CLASS_NAME, "task-title")
-                except Exception:
-                    pass
-                
-                # Click mở chi tiết task
-                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", click_target)
-                time.sleep(0.5)
-                
-                try:
-                    click_target.click()
-                except Exception:
-                    driver.execute_script("arguments[0].click();", click_target)
-                
-                required_hours = None
-                actual_hours = None
-                try:
-                    # Đợi modal hiển thị
-                    WebDriverWait(driver, 5).until(
-                        EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
-                    )
-                    
-                    # Xác thực Mã trong modal trùng với task code
-                    code_verified = False
-                    for _ in range(5):
-                        try:
-                            ma_el = driver.find_element(By.XPATH, "//*[text()='Mã']/following::input[1]")
-                            ma_val = (ma_el.get_attribute('value') or ma_el.text or "").strip()
-                            if ma_val == code:
-                                code_verified = True
-                                break
-                        except Exception:
-                            pass
-                        time.sleep(0.5)
-                        
-                    if not code_verified:
-                        print(f"Cảnh báo: Mã task trong modal không khớp với {code}")
-                        
-                    # Đọc Số giờ yêu cầu
-                    try:
-                        req_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]/following::input[1]")
-                        req_val_str = req_el.get_attribute('value') or req_el.text
-                        if req_val_str:
-                            required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
-                    except Exception:
-                        pass
-                    # Đọc Số giờ thực hiện
-                    try:
-                        act_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ thực hiện')]/following::input[1]")
-                        act_val_str = act_el.get_attribute('value') or act_el.text
-                        if act_val_str:
-                            actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
-                    except Exception:
-                        pass
-                except Exception as ex:
-                    print(f"Lỗi đọc modal cho task {code}: {ex}")
-                finally:
-                    # Đóng modal bằng Escape
-                    try:
-                        driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                    except Exception:
-                        pass
-                    # Đợi cho overlay biến mất hẳn trước khi xử lý task tiếp theo
-                    for _ in range(10):
-                        try:
-                            overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
-                            if not any(o.is_displayed() for o in overlays):
-                                break
-                        except Exception:
-                            break
-                        time.sleep(0.2)
-                
-                clean_text = text.replace(code, "")
-                if date_str:
-                    clean_text = clean_text.replace(date_str, "")
-                
-                title = re.sub(r'\s+', ' ', clean_text).strip()
-                hour_match = re.search(r'\((\d+(?:\.\d+)?)h\)', title)
-                if hour_match:
-                    title = title.replace(hour_match.group(0), "").strip()
-                
-                tasks.append({
-                    "code": code,
-                    "title": title,
-                    "deadline": date_str,
-                    "required_hours": required_hours,
-                    "actual_hours": actual_hours,
-                    "raw": text
-                })
-            except Exception as e:
-                print(f"Lỗi xử lý card task: {e}")
+        
+        for col in columns:
+            title_els = col.find_elements(By.CLASS_NAME, "title")
+            title_text = title_els[0].text.strip() if title_els else ""
+            
+            # Chỉ xử lý hai cột: "Đang thực hiện" và "Đã nhận", bỏ qua cột "Đã hoàn thành"
+            if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
                 continue
                 
+            cards = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+            
+            for card in cards:
+                try:
+                    text = card.text.strip()
+                    code_match = re.search(r'\b\d{3}\.\d{6}\b', text)
+                    if not code_match:
+                        continue
+                    code = code_match.group(0)
+                    if code in seen_codes:
+                        continue
+                    seen_codes.add(code)
+                    
+                    date_match = re.search(r'\b\d{2}/\d{2}/\d{4}\b', text)
+                    date_str = date_match.group(0) if date_match else None
+                    
+                    # Tìm phần tử tiêu đề để click (nút thực sự mở modal)
+                    click_target = card
+                    try:
+                        click_target = card.find_element(By.CLASS_NAME, "task-title")
+                    except Exception:
+                        pass
+                    
+                    # Click mở chi tiết task
+                    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", click_target)
+                    time.sleep(0.5)
+                    
+                    try:
+                        click_target.click()
+                    except Exception:
+                        driver.execute_script("arguments[0].click();", click_target)
+                    
+                    required_hours = None
+                    actual_hours = None
+                    try:
+                        # Đợi modal hiển thị
+                        WebDriverWait(driver, 5).until(
+                            EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
+                        )
+                        
+                        # Xác thực Mã trong modal trùng với task code
+                        code_verified = False
+                        for _ in range(5):
+                            try:
+                                ma_el = driver.find_element(By.XPATH, "//*[text()='Mã']/following::input[1]")
+                                ma_val = (ma_el.get_attribute('value') or ma_el.text or "").strip()
+                                if ma_val == code:
+                                    code_verified = True
+                                    break
+                            except Exception:
+                                pass
+                            time.sleep(0.5)
+                            
+                        if not code_verified:
+                            print(f"Cảnh báo: Mã task trong modal không khớp với {code}")
+                            
+                        # Đọc Số giờ yêu cầu
+                        try:
+                            req_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]/following::input[1]")
+                            req_val_str = req_el.get_attribute('value') or req_el.text
+                            if req_val_str:
+                                required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
+                        except Exception:
+                            pass
+                        # Đọc Số giờ thực hiện
+                        try:
+                            act_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ thực hiện')]/following::input[1]")
+                            act_val_str = act_el.get_attribute('value') or act_el.text
+                            if act_val_str:
+                                actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
+                        except Exception:
+                            pass
+                    except Exception as ex:
+                        print(f"Lỗi đọc modal cho task {code}: {ex}")
+                    finally:
+                        # Đóng modal bằng Escape
+                        try:
+                            driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                        except Exception:
+                            pass
+                        # Đợi cho overlay biến mất hẳn trước khi xử lý task tiếp theo
+                        for _ in range(10):
+                            try:
+                                overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
+                                if not any(o.is_displayed() for o in overlays):
+                                    break
+                            except Exception:
+                                break
+                            time.sleep(0.2)
+                    
+                    clean_text = text.replace(code, "")
+                    if date_str:
+                        clean_text = clean_text.replace(date_str, "")
+                    
+                    title = re.sub(r'\s+', ' ', clean_text).strip()
+                    hour_match = re.search(r'\((\d+(?:\.\d+)?)h\)', title)
+                    if hour_match:
+                        title = title.replace(hour_match.group(0), "").strip()
+                    
+                    tasks.append({
+                        "code": code,
+                        "title": title,
+                        "deadline": date_str,
+                        "required_hours": required_hours,
+                        "actual_hours": actual_hours,
+                        "raw": text
+                    })
+                except Exception as e:
+                    print(f"Lỗi xử lý card task: {e}")
+                    continue
+                    
         # Cập nhật trạng thái tracking thời gian thực của các task đang chạy
         try:
             state = load_running_tasks_state()
@@ -873,14 +863,12 @@ def scrape_active_tasks():
                 db_hours = t.get("actual_hours")
                 
                 if is_running and db_hours is not None:
-                    # Nếu chưa theo dõi hoặc db_hours từ server đã thay đổi (người dùng bấm dừng rồi chạy lại)
                     if t_code not in state or state[t_code].get("last_db_hours") != db_hours:
                         state[t_code] = {
                             "first_seen_running": current_timestamp,
                             "last_db_hours": db_hours
                         }
                 else:
-                    # Nếu dừng hoặc không chạy nữa, xóa khỏi tracking
                     if t_code in state:
                         del state[t_code]
                         
