@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
        // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
-    const CURRENT_VERSION = "13.0";
+    const CURRENT_VERSION = "14.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -265,17 +265,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 activePlayerStats[sName].goals += 1;
                 activePlayerStats[sName].xg += 0.85 * (1 + (i % 3) * 0.1);
-                
-                // 70% tỉ lệ có kiến tạo cho cầu thủ khác
-                if ((i + match.round) % 2 === 0) {
-                  const assistant = getPlayerFromTeam(match.team1, i + 1);
-                  if (assistant.name !== sName) {
-                    if (!activePlayerStats[assistant.name]) {
-                      activePlayerStats[assistant.name] = { name: assistant.name, team: match.team1, flagCode: assistant.flagCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
-                    }
-                    activePlayerStats[assistant.name].assists += 1;
-                  }
+              });
+            }
+
+            // Đội 1 kiến tạo
+            if (match.assists1 && match.assists1.length > 0) {
+              match.assists1.forEach(assister => {
+                const fCode = getPlayerFlagCode(match.team1, assister) || match.team1FlagCode;
+                if (!activePlayerStats[assister]) {
+                  activePlayerStats[assister] = { name: assister, team: match.team1, flagCode: fCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                 }
+                activePlayerStats[assister].assists += 1;
               });
             }
 
@@ -290,16 +290,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 activePlayerStats[sName].goals += 1;
                 activePlayerStats[sName].xg += 0.85 * (1 + (i % 3) * 0.1);
+              });
+            }
 
-                if ((i + match.round) % 2 === 0) {
-                  const assistant = getPlayerFromTeam(match.team2, i + 1);
-                  if (assistant.name !== sName) {
-                    if (!activePlayerStats[assistant.name]) {
-                      activePlayerStats[assistant.name] = { name: assistant.name, team: match.team2, flagCode: assistant.flagCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
-                    }
-                    activePlayerStats[assistant.name].assists += 1;
-                  }
+            // Đội 2 kiến tạo
+            if (match.assists2 && match.assists2.length > 0) {
+              match.assists2.forEach(assister => {
+                const fCode = getPlayerFlagCode(match.team2, assister) || match.team2FlagCode;
+                if (!activePlayerStats[assister]) {
+                  activePlayerStats[assister] = { name: assister, team: match.team2, flagCode: fCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                 }
+                activePlayerStats[assister].assists += 1;
               });
             }
 
