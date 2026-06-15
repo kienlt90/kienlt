@@ -754,6 +754,22 @@ def scrape_active_tasks():
                     date_match = re.search(r'\b\d{2}/\d{2}/\d{4}\b', text)
                     date_str = date_match.group(0) if date_match else None
                     
+                    # Nếu task đang chạy, bấm tạm dừng trước để hệ thống đồng bộ/cập nhật số giờ thực tế
+                    is_running = "❚❚" in text
+                    if is_running:
+                        try:
+                            pause_btn = card.find_element(By.XPATH, ".//span[contains(@class, 'icon') and text()='❚❚']")
+                            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", pause_btn)
+                            time.sleep(0.3)
+                            driver.execute_script("arguments[0].click();", pause_btn)
+                            time.sleep(3)
+                            
+                            # Cập nhật lại tham chiếu card và text sau khi re-render và di chuyển cột
+                            card = scroll_container.find_element(By.XPATH, f".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ') and contains(., '{code}')]")
+                            text = card.text.strip()
+                        except Exception as pause_err:
+                            print(f"Lỗi khi tạm dừng task {code} để check: {pause_err}")
+
                     # Tìm phần tử tiêu đề để click (nút thực sự mở modal)
                     click_target = card
                     try:
