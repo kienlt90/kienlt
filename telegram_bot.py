@@ -13,7 +13,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 # ----------------------------------------------------------------------
 # Replace this with your bot token obtained from @BotFather, 
 # or set the TELEGRAM_BOT_TOKEN environment variable.
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8226594395:AAHSrs-Ms4wq6K3OrSlA5l7jiXtxb1qsYUs")
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8226594395:AAFd-FhOxxtmhyP4j9D5qz937A1TsK1sfmo")
 HTML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "contracts.html")
 HISL2_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hisl2_config.json")
 ATTT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "thi_attt_f12.json")
