@@ -2149,6 +2149,8 @@
     function updateGlobalStats() {
       const yearSelect = document.getElementById('dashboard-year-select');
       const selectedYear = yearSelect ? yearSelect.value : '2026';
+      const regionSelect = document.getElementById('dashboard-region-filter');
+      const selectedRegion = regionSelect ? regionSelect.value : 'all';
 
       let totalCount = 0;
       let totalVal = 0;
@@ -2159,6 +2161,16 @@
       let grandTotalVal = 0; // Sum of all contract values (including pending) for percentage base
 
       units.forEach(u => {
+        // Filter by region
+        if (selectedRegion !== 'all') {
+          const unitKv = (u.khuVuc || '').trim();
+          if (selectedRegion === 'empty') {
+            if (unitKv !== '') return;
+          } else {
+            if (unitKv !== selectedRegion) return;
+          }
+        }
+
         u.contracts.forEach(c => {
           let cYear = '2026';
           if (c.id.includes('-2027')) cYear = '2027';
@@ -3005,6 +3017,8 @@
       if (dashboardRegionFilter) {
         dashboardRegionFilter.addEventListener('change', () => {
           renderDashboardUnitsTable(dashboardSearchInput ? dashboardSearchInput.value : '');
+          updateGlobalStats();
+          updateCharts();
         });
       }
 
@@ -3354,6 +3368,8 @@
     function updateCharts() {
       const yearSelect = document.getElementById('dashboard-year-select');
       const selectedYear = yearSelect ? yearSelect.value : '2026';
+      const regionSelect = document.getElementById('dashboard-region-filter');
+      const selectedRegion = regionSelect ? regionSelect.value : 'all';
       const isLightTheme = document.body.classList.contains('light-theme');
       
       const textColor = isLightTheme ? '#1e293b' : '#e2e8f0';
@@ -3361,17 +3377,27 @@
       const tooltipBg = isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)';
       const tooltipColor = isLightTheme ? '#0f172a' : '#f8fafc';
       const tooltipBorder = isLightTheme ? '#e2e8f0' : '#334155';
-
+ 
       // 1. Calculate revenue by unit (excluding pending)
       const unitData = [];
       units.forEach(u => {
+        // Filter by region
+        if (selectedRegion !== 'all') {
+          const unitKv = (u.khuVuc || '').trim();
+          if (selectedRegion === 'empty') {
+            if (unitKv !== '') return;
+          } else {
+            if (unitKv !== selectedRegion) return;
+          }
+        }
+ 
         let sum = 0;
         u.contracts.forEach(c => {
           let cYear = '2026';
           if (c.id.includes('-2027')) cYear = '2027';
           if (c.id.includes('-2028')) cYear = '2028';
           if (selectedYear !== 'all' && cYear !== selectedYear) return;
-
+ 
           // Exclude pending from revenue as requested: "chờ ký thì ko tính vào tổng doanh thu"
           if (c.status !== 'pending') {
             if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
@@ -3386,26 +3412,36 @@
           });
         }
       });
-
+ 
       // Sort descending
       unitData.sort((a, b) => b.value - a.value);
-
+ 
       const unitLabels = unitData.map(d => d.name);
       const unitValues = unitData.map(d => d.value);
-
+ 
       // 2. Status distribution
       let signedCount = 0;
       let almostSignedCount = 0;
       let pendingCount = 0;
       let draftCount = 0;
-
+ 
       units.forEach(u => {
+        // Filter by region
+        if (selectedRegion !== 'all') {
+          const unitKv = (u.khuVuc || '').trim();
+          if (selectedRegion === 'empty') {
+            if (unitKv !== '') return;
+          } else {
+            if (unitKv !== selectedRegion) return;
+          }
+        }
+ 
         u.contracts.forEach(c => {
           let cYear = '2026';
           if (c.id.includes('-2027')) cYear = '2027';
           if (c.id.includes('-2028')) cYear = '2028';
           if (selectedYear !== 'all' && cYear !== selectedYear) return;
-
+ 
           if (c.status === 'signed') signedCount++;
           else if (c.status === 'almost_signed') almostSignedCount++;
           else if (c.status === 'pending') pendingCount++;
