@@ -60,6 +60,7 @@ try:
         types.BotCommand("tracuu", "🔍 Tra cứu cấu hình HIS L2"),
         types.BotCommand("attt", "🛡️ Tra cứu đáp án thi An toàn thông tin"),
         types.BotCommand("check_tasks", "⏱️ Kiểm tra thời gian các task"),
+        types.BotCommand("garmin", "🏊 Xem và đồng bộ số liệu bơi Garmin"),
         types.BotCommand("help", "❓ Hướng dẫn sử dụng")
     ])
 except Exception as e:
@@ -1254,6 +1255,102 @@ def handle_task_toggle(call):
             
     except Exception as e:
         bot.send_message(chat_id, f"❌ Lỗi xử lý click play/pause: {e}")
+
+@bot.message_handler(commands=['garmin'])
+def handle_garmin(message):
+    chat_id = message.chat.id
+    save_chat_id(chat_id)
+    
+    parts = message.text.strip().split()
+    subcommand = parts[1].lower() if len(parts) > 1 else "report"
+    
+    if subcommand == "sync":
+        bot.send_message(chat_id, "⏳ Đang kết nối Garmin Connect và tải dữ liệu mới nhất (90 ngày qua)...")
+        try:
+            sync_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sync_garmin.py")
+            res = subprocess.run([sys.executable, sync_script], capture_output=True, text=True)
+            if res.returncode == 0:
+                report = build_garmin_summary_text()
+                bot.send_message(chat_id, f"✅ **Đồng bộ thành công!**\n\n{report}", parse_mode='Markdown')
+            else:
+                stdout = res.stdout.strip()
+                stderr = res.stderr.strip()
+                err_msg = stdout if stdout else stderr
+                bot.send_message(chat_id, f"❌ **Lỗi đồng bộ Garmin:**\n`{err_msg}`", parse_mode='Markdown')
+        except Exception as e:
+            bot.send_message(chat_id, f"❌ **Lỗi thực thi script đồng bộ:**\n`{e}`", parse_mode='Markdown')
+            
+    else: # report
+        report = build_garmin_summary_text()
+        bot.send_message(chat_id, report, parse_mode='Markdown')
+
+def build_garmin_summary_text():
+    data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "swimming_data.json")
+    if not os.path.exists(data_path):
+        return (
+            "🏊 **Thống kê Bơi lội Garmin**\n\n"
+            "❌ *Chưa có dữ liệu đồng bộ.*\n"
+            "👉 Hãy chạy lệnh `/garmin sync` để đồng bộ dữ liệu lần đầu."
+        )
+        
+    try:
+        with open(data_path, "r", encoding="utf-8") as f:
+            sessions = json.load(f)
+            
+        if not sessions:
+            return "🏊 **Thống kê Bơi lội Garmin**\n\n❌ *Không tìm thấy hoạt động bơi lội nào trong 90 ngày qua.*"
+            
+        # Calc 7 days stats
+        now = datetime.now()
+        seven_days_ago = now - timedelta(days=7)
+        
+        total_dist_7d = 0
+        sessions_7d = 0
+        total_dur_7d = 0
+        
+        for s in sessions:
+            s_time_str = s.get("startTime", "")
+            if s_time_str:
+                try:
+                    s_date = datetime.strptime(s_time_str.split()[0], "%Y-%m-%d")
+                    if s_date >= seven_days_ago:
+                        total_dist_7d += s.get("distance", 0)
+                        total_dur_7d += s.get("duration", 0)
+                        sessions_7d += 1
+                except Exception:
+                    pass
+                    
+        # Last session info
+        last = sessions[0]
+        last_date = last.get("startTime", "").split()[0]
+        try:
+            parts = last_date.split("-")
+            last_date_formatted = f"{parts[2]}/{parts[1]}/{parts[0]}"
+        except Exception:
+            last_date_formatted = last_date
+            
+        last_dur_mins = int((last.get("duration", 0) + 30) // 60)
+        
+        hr_info = f" Nhịp tim TB: `{last['avgHr']} bpm` |" if last.get("avgHr") else ""
+        swolf_info = f" SWOLF: `{last['avgSwolf']}` |" if last.get("avgSwolf") else ""
+        
+        msg = (
+            f"🏊 **THỐNG KÊ BƠI LỘI GARMIN**\n\n"
+            f"📅 **Trong 7 ngày qua:**\n"
+            f"• Số buổi bơi: `{sessions_7d}` buổi\n"
+            f"• Tổng cự ly: `{total_dist_7d / 1000:.2f} km` ({total_dist_7d}m)\n"
+            f"• Tổng thời gian: `{int(total_dur_7d // 60)} phút`\n\n"
+            f"🏊 **Buổi bơi gần nhất ({last_date_formatted}):**\n"
+            f"• Tên: *{last.get('name')}*\n"
+            f"• Cự ly: `{last.get('distance')}m`\n"
+            f"• Thời gian: `{last_dur_mins} phút`\n"
+            f"• Tốc độ Pace: `{last.get('avgPace')} min/100m`\n"
+            f"•{swolf_info}{hr_info} Calo: `{int(last.get('calories', 0))} kcal`\n\n"
+            f"👉 Để cập nhật dữ liệu mới từ Garmin, gõ: `/garmin sync`"
+        )
+        return msg
+    except Exception as e:
+        return f"❌ *Lỗi phân tích tệp dữ liệu bơi lội:* `{e}`"
 
 # Start polling
 if __name__ == "__main__":
