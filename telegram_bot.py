@@ -70,6 +70,8 @@ try:
         types.BotCommand("tracuu", "🔍 Tra cứu cấu hình HIS L2"),
         types.BotCommand("attt", "🛡️ Tra cứu đáp án thi An toàn thông tin"),
         types.BotCommand("emr", "📄 Tra cứu mã TransType EMR"),
+        types.BotCommand("add_emr", "➕ Bổ sung mã TransType EMR"),
+        types.BotCommand("add_hisl2", "➕ Bổ sung cấu hình HIS L2"),
         types.BotCommand("check_tasks", "⏱️ Kiểm tra thời gian các task"),
         types.BotCommand("help", "❓ Hướng dẫn sử dụng")
     ])
@@ -217,6 +219,8 @@ def send_welcome(message):
         "🔍 /tracuu <từ khóa> : Tra cứu cấu hình HIS L2.\n"
         "🛡️ /attt <từ khóa> : Tra cứu đáp án thi An toàn thông tin.\n"
         "📄 /emr <từ khóa> : Tra cứu mã TransType EMR.\n"
+        "➕ /add_emr <tên> | <mã> : Bổ sung mã TransType EMR mới.\n"
+        "➕ /add_hisl2 <mã> | <tên> | [mặc định] | [mô tả] : Bổ sung cấu hình HIS L2 mới.\n"
         "⏱️ /check_tasks : Kiểm tra thời gian còn lại của các task đang chạy.\n"
         "❓ /help : Xem hướng dẫn sử dụng."
     )
@@ -706,6 +710,175 @@ def search_emr_transtype(message):
         full_msg = full_msg[:4000] + "\n_(Cắt bớt do vượt quá độ dài tin nhắn)_"
 
     bot.send_message(chat_id, full_msg, parse_mode='Markdown')
+
+
+def sync_file_to_git(file_path, commit_message):
+    """Stages, commits, and pushes a specific file to GitHub."""
+    cwd = os.path.dirname(file_path)
+    filename = os.path.basename(file_path)
+    try:
+        subprocess.run(["git", "add", filename], cwd=cwd, check=True, capture_output=True)
+        subprocess.run(["git", "commit", "-m", commit_message], cwd=cwd, check=True, capture_output=True)
+        subprocess.run(["git", "push"], cwd=cwd, check=True, capture_output=True)
+        return True, "Successfully pushed to GitHub!"
+    except subprocess.CalledProcessError as e:
+        return False, f"Git Sync Error: {e.stderr.decode('utf-8', errors='replace').strip() if e.stderr else str(e)}"
+    except Exception as e:
+        return False, f"Error: {e}"
+
+
+@bot.message_handler(commands=['add_emr', 'addemr'])
+def add_emr_entry(message):
+    """Add a new EMR TransType entry."""
+    chat_id = message.chat.id
+    save_chat_id(chat_id)
+    parts = message.text.strip().split(None, 1)
+    if len(parts) < 2 or not parts[1].strip() or '|' not in parts[1]:
+        bot.reply_to(
+            message,
+            "📄 *Thêm mã TransType EMR mới*\n\n"
+            "Cú pháp: `/add_emr <tên phiếu> | <mã TransType>`\n"
+            "Ví dụ:\n"
+            "  `/add_emr Phiếu khám nhi | 55`",
+            parse_mode='Markdown'
+        )
+        return
+
+    content = parts[1].strip()
+    subparts = content.split('|', 1)
+    name = subparts[0].strip()
+    code = subparts[1].strip()
+
+    if not name or not code:
+        bot.reply_to(
+            message,
+            "⚠️ Tên phiếu và mã TransType không được để trống.\n"
+            "Cú pháp: `/add_emr <tên phiếu> | <mã TransType>`",
+            parse_mode='Markdown'
+        )
+        return
+
+    # Normalize name for duplicate check
+    norm_name = re.sub(r'\s+', ' ', name).strip().lower()
+    
+    # Check if exists
+    exists = False
+    for item in _emr_data:
+        if re.sub(r'\s+', ' ', item.get('name', '')).strip().lower() == norm_name:
+            exists = True
+            break
+            
+    if exists:
+        bot.reply_to(message, f"⚠️ Tên phiếu *{name}* đã tồn tại trong danh sách TransType EMR!", parse_mode='Markdown')
+        return
+
+    # Append to database
+    new_entry = {"name": name, "code": code}
+    _emr_data.append(new_entry)
+
+    try:
+        with open(TRANSTYPE_CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(_emr_data, f, indent=4, ensure_ascii=False)
+            
+        bot.send_message(chat_id, f"💾 Đã lưu cục bộ. Đang đồng bộ GitHub...", parse_mode='Markdown')
+        success, git_msg = sync_file_to_git(TRANSTYPE_CONFIG_PATH, f"feat: Add EMR TransType '{name}' via bot")
+        
+        if success:
+            bot.send_message(chat_id, f"✅ **Đã thêm TransType EMR thành công!**\n\n📄 *{name}* ➔ TransType `{code}`\n\n⚙️ _Đồng bộ GitHub:_ `{git_msg}`", parse_mode='Markdown')
+        else:
+            bot.send_message(chat_id, f"⚠️ **Đã lưu cục bộ nhưng lỗi đồng bộ GitHub:**\n`{git_msg}`\n\n📄 *{name}* ➔ TransType `{code}`", parse_mode='Markdown')
+    except Exception as e:
+        bot.reply_to(message, f"❌ Lỗi ghi file cơ sở dữ liệu: {e}")
+
+
+@bot.message_handler(commands=['add_hisl2', 'addhisl2'])
+def add_hisl2_entry(message):
+    """Add a new HIS L2 configuration entry."""
+    chat_id = message.chat.id
+    save_chat_id(chat_id)
+    parts = message.text.strip().split(None, 1)
+    if len(parts) < 2 or not parts[1].strip() or '|' not in parts[1]:
+        bot.reply_to(
+            message,
+            "🔍 *Thêm cấu hình HIS L2 mới*\n\n"
+            "Cú pháp: `/add_hisl2 <mã cấu hình> | <tên cấu hình> | [giá trị mặc định] | [mô tả]`\n"
+            "Ví dụ:\n"
+            "  `/add_hisl2 NGT_BATBUOC_EMAIL | Bắt buộc nhập Email | 0 | 0: không, 1: có`",
+            parse_mode='Markdown'
+        )
+        return
+
+    content = parts[1].strip()
+    subparts = [p.strip() for p in content.split('|')]
+    
+    if len(subparts) < 2:
+        bot.reply_to(
+            message,
+            "⚠️ Mã cấu hình và tên cấu hình không được để trống.\n"
+            "Cú pháp: `/add_hisl2 <mã cấu hình> | <tên cấu hình> | [giá trị mặc định] | [mô tả]`",
+            parse_mode='Markdown'
+        )
+        return
+
+    ma_cauhinh = subparts[0]
+    ten_cauhinh = subparts[1]
+    gia_tri_mac_dinh = subparts[2] if len(subparts) > 2 else ""
+    mo_ta = subparts[3] if len(subparts) > 3 else ""
+
+    if not ma_cauhinh or not ten_cauhinh:
+        bot.reply_to(
+            message,
+            "⚠️ Mã cấu hình và tên cấu hình không được để trống.",
+            parse_mode='Markdown'
+        )
+        return
+
+    # Check if code already exists in memory
+    exists = False
+    for item in _hisl2_data:
+        if item.get("Mã cấu hình", "").strip().lower() == ma_cauhinh.lower():
+            exists = True
+            break
+
+    if exists:
+        bot.reply_to(message, f"⚠️ Mã cấu hình `{ma_cauhinh}` đã tồn tại trong danh sách HIS L2!", parse_mode='Markdown')
+        return
+
+    # Create new configuration object
+    new_entry = {
+        "Mã cấu hình": ma_cauhinh,
+        "Tên cấu hình": ten_cauhinh
+    }
+    if gia_tri_mac_dinh:
+        new_entry["Giá trị mặc định"] = gia_tri_mac_dinh
+    if mo_ta:
+        new_entry["Mô tả"] = mo_ta
+
+    # Append to memory list
+    _hisl2_data.append(new_entry)
+
+    # Append to file
+    try:
+        with open(HISL2_CONFIG_PATH, "r", encoding="utf-8") as f:
+            full_data = json.load(f)
+
+        if "Sheet1" not in full_data:
+            full_data["Sheet1"] = []
+            
+        full_data["Sheet1"].append(new_entry)
+
+        with open(HISL2_CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(full_data, f, indent=4, ensure_ascii=False)
+
+        bot.send_message(chat_id, f"💾 Đã lưu cục bộ. Đang đồng bộ GitHub...", parse_mode='Markdown')
+        success, git_msg = sync_file_to_git(HISL2_CONFIG_PATH, f"feat: Add HIS L2 Config '{ma_cauhinh}' via bot")
+
+        if success:
+            bot.send_message(chat_id, f"✅ **Đã thêm cấu hình HIS L2 thành công!**\n\n📌 `{ma_cauhinh}`\n*{ten_cauhinh}*\nGiá trị mặc định: `{gia_tri_mac_dinh}`\n_{mo_ta}_\n\n⚙️ _Đồng bộ GitHub:_ `{git_msg}`", parse_mode='Markdown')
+        else:
+            bot.send_message(chat_id, f"⚠️ **Đã lưu cục bộ nhưng lỗi đồng bộ GitHub:**\n`{git_msg}`\n\n📌 `{ma_cauhinh}`\n*{ten_cauhinh}*", parse_mode='Markdown')
+    except Exception as e:
+        bot.reply_to(message, f"❌ Lỗi ghi file cấu hình HIS L2: {e}")
 
 
 # ----------------------------------------------------------------------
