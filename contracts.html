@@ -918,7 +918,7 @@
                         "signedTime": "01/01/2026 10:00:00"
                   }
             ],
-            "khuVuc": "Bàu Bàng"
+            "khuVuc": ""
       },
       {
             "id": "tyt_phuong_phu_an",
@@ -968,7 +968,7 @@
                         "signedTime": "01/01/2026 10:00:00"
                   }
             ],
-            "khuVuc": "Bàu Bàng"
+            "khuVuc": ""
       },
       {
             "id": "tyt_xa_tru_van_tho",
@@ -993,7 +993,7 @@
                         "signedTime": "01/01/2026 10:00:00"
                   }
             ],
-            "khuVuc": "Bàu Bàng"
+            "khuVuc": ""
       },
       {
             "id": "tyt_xa_phu_giao",
@@ -1193,7 +1193,7 @@
                         "signedTime": "01/01/2026 10:00:00"
                   }
             ],
-            "khuVuc": "Bắc Tân Uyên"
+            "khuVuc": ""
       },
       {
             "id": "tyt_xa_bac_tan_uyen",
@@ -1243,7 +1243,7 @@
                         "signedTime": "01/01/2026 10:00:00"
                   }
             ],
-            "khuVuc": "Bắc Tân Uyên"
+            "khuVuc": ""
       },
       {
             "id": "tyt_phuong_chanh_phu_hoa",
@@ -2027,7 +2027,7 @@
                         "signedTime": "04/04/2026 10:00:00"
                   }
             ],
-            "khuVuc": "Bàu Bàng"
+            "khuVuc": ""
       },
       {
             "id": "benh_vien_ben_san",
@@ -2121,6 +2121,7 @@
     let selectedContractId = null;
     let selectedSignMethod = '';
     let checkedContractIds = []; // Stores IDs of checked contracts
+    let editingUnitIdForKhuVuc = null;
 
     function toggleTheme() {
       const currentTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
@@ -2275,24 +2276,29 @@
       optAll.textContent = 'Tất cả khu vực';
       select.appendChild(optAll);
       
-      // Extract unique non-empty regions
-      const regions = new Set();
-      let hasEmpty = false;
-      units.forEach(u => {
-        const kv = (u.khuVuc || '').trim();
-        if (kv) {
-          regions.add(kv);
-        } else {
-          hasEmpty = true;
-        }
-      });
+      // List of 7 official regions
+      const officialRegions = [
+        "Thủ Dầu Một",
+        "Bến Cát",
+        "Phú Giáo",
+        "Tân Uyên",
+        "Dầu Tiếng",
+        "Thuận An",
+        "Dĩ An"
+      ];
       
-      // Add sorted regions
-      Array.from(regions).sort((a, b) => a.localeCompare(b, 'vi')).forEach(r => {
+      // Sort and populate official regions
+      officialRegions.sort((a, b) => a.localeCompare(b, 'vi')).forEach(r => {
         const opt = document.createElement('option');
         opt.value = r;
         opt.textContent = r;
         select.appendChild(opt);
+      });
+      
+      // Check if there are any units with unassigned/empty regions or regions outside the 7
+      let hasEmpty = units.some(u => {
+        const kv = (u.khuVuc || '').trim();
+        return !kv || !officialRegions.includes(kv);
       });
       
       // Add empty option if any unit is unassigned
@@ -2455,10 +2461,36 @@
       const unit = units.find(u => u.id === unitId);
       if (!unit) return;
       
-      const newKv = prompt(`Nhập địa bàn/khu vực vị trí địa lý mới cho đơn vị ${unit.name} (để trống nếu chưa rõ):`, unit.khuVuc || '');
-      if (newKv === null) return; // Cancelled
+      editingUnitIdForKhuVuc = unitId;
       
-      unit.khuVuc = newKv.trim();
+      const label = document.getElementById('edit-khuvuc-unit-name');
+      if (label) label.textContent = `Đơn vị: ${unit.name}`;
+      
+      const select = document.getElementById('edit-khuvuc-select');
+      if (select) {
+        select.value = unit.khuVuc || '';
+      }
+      
+      const modal = document.getElementById('edit-khuvuc-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeEditKhuVucModal() {
+      const modal = document.getElementById('edit-khuvuc-modal');
+      if (modal) modal.classList.remove('active');
+      editingUnitIdForKhuVuc = null;
+    }
+
+    function submitEditKhuVuc() {
+      if (!editingUnitIdForKhuVuc) return;
+      
+      const unit = units.find(u => u.id === editingUnitIdForKhuVuc);
+      if (!unit) return;
+      
+      const select = document.getElementById('edit-khuvuc-select');
+      const newKv = select ? select.value : '';
+      
+      unit.khuVuc = newKv;
       
       // Save to localStorage
       localStorage.setItem('vnpt_his_units', JSON.stringify(units));
@@ -2468,6 +2500,8 @@
       
       // Render table again
       renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
+      
+      closeEditKhuVucModal();
       
       alert(`Đã cập nhật địa bàn/khu vực của ${unit.name} thành: "${unit.khuVuc || 'Chưa thiết lập'}"\n\n👉 Nhấn nút "Xuất File HTML" ở thanh tiêu đề trên cùng để tải xuống và thay thế file contracts.html!`);
     }
@@ -3556,6 +3590,36 @@
       <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.8rem;">
         <button class="btn-secondary" onclick="closeAddContractModal()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Hủy</button>
         <button class="btn-primary" onclick="submitAddContract()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Lưu Hợp đồng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DIALOG FOR EDITING REGION -->
+  <div class="modal-overlay" id="edit-khuvuc-modal">
+    <div class="modal-card glass-card" style="width: 380px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary);">Cập nhật Khu vực</h3>
+        <button onclick="closeEditKhuVucModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label style="font-size: 0.82rem; color: var(--color-text-secondary); margin-bottom: 0.4rem; display: block; font-weight: 600;" id="edit-khuvuc-unit-name">Đơn vị y tế</label>
+          <select id="edit-khuvuc-select" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px; background-color: var(--color-bg-secondary); color: var(--color-text-primary);">
+            <option value="">-- Chưa thiết lập (Để trống) --</option>
+            <option value="Thủ Dầu Một">Thủ Dầu Một</option>
+            <option value="Bến Cát">Bến Cát</option>
+            <option value="Phú Giáo">Phú Giáo</option>
+            <option value="Tân Uyên">Tân Uyên</option>
+            <option value="Dầu Tiếng">Dầu Tiếng</option>
+            <option value="Thuận An">Thuận An</option>
+            <option value="Dĩ An">Dĩ An</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top: 1.8rem; display: flex; justify-content: flex-end; gap: 0.8rem;">
+        <button class="btn-secondary" onclick="closeEditKhuVucModal()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Hủy</button>
+        <button class="btn-primary" onclick="submitEditKhuVuc()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Cập nhật</button>
       </div>
     </div>
   </div>
