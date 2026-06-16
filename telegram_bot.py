@@ -26,6 +26,7 @@ BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8226594395:AAFd-FhOxxtmhyP4j9D
 HTML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "contracts.html")
 HISL2_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hisl2_config.json")
 ATTT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "thi_attt_f12.json")
+TRANSTYPE_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "transtype_emr.json")
 
 # Load HIS L2 config data into memory
 _hisl2_data = []
@@ -47,6 +48,15 @@ try:
 except Exception as _e:
     print(f"⚠️ Could not load thi_attt_f12.json: {_e}")
 
+# Load EMR TransType data into memory
+_emr_data = []
+try:
+    with open(TRANSTYPE_CONFIG_PATH, "r", encoding="utf-8") as _f:
+        _emr_data = json.load(_f)
+    print(f"✅ Loaded {len(_emr_data)} EMR TransType entries")
+except Exception as _e:
+    print(f"⚠️ Could not load transtype_emr.json: {_e}")
+
 if BOT_TOKEN == "YOUR_TELEGRAM_BOT_TOKEN_HERE":
     print("WARNING: Please set your TELEGRAM_BOT_TOKEN in the script or environment variable.")
 
@@ -59,6 +69,7 @@ try:
         types.BotCommand("add_contract", "➕ Bắt đầu thêm hợp đồng mới"),
         types.BotCommand("tracuu", "🔍 Tra cứu cấu hình HIS L2"),
         types.BotCommand("attt", "🛡️ Tra cứu đáp án thi An toàn thông tin"),
+        types.BotCommand("emr", "📄 Tra cứu mã TransType EMR"),
         types.BotCommand("check_tasks", "⏱️ Kiểm tra thời gian các task"),
         types.BotCommand("garmin", "🏊 Xem và đồng bộ số liệu bơi Garmin"),
         types.BotCommand("help", "❓ Hướng dẫn sử dụng")
@@ -206,6 +217,7 @@ def send_welcome(message):
         "📋 /list_units : Xem danh sách các đơn vị và tổng giá trị hợp đồng.\n"
         "🔍 /tracuu <từ khóa> : Tra cứu cấu hình HIS L2.\n"
         "🛡️ /attt <từ khóa> : Tra cứu đáp án thi An toàn thông tin.\n"
+        "📄 /emr <từ khóa> : Tra cứu mã TransType EMR.\n"
         "⏱️ /check_tasks : Kiểm tra thời gian còn lại của các task đang chạy.\n"
         "❓ /help : Xem hướng dẫn sử dụng."
     )
@@ -617,6 +629,78 @@ def search_attt(message):
 
     if total_found > 8:
         lines.append(f"_...và {total_found - 8} câu hỏi khác. Hãy dùng từ khóa cụ thể hơn._")
+
+    full_msg = "\n".join(lines)
+    if len(full_msg) > 4000:
+        full_msg = full_msg[:4000] + "\n_(Cắt bớt do vượt quá độ dài tin nhắn)_"
+
+    bot.send_message(chat_id, full_msg, parse_mode='Markdown')
+
+
+@bot.message_handler(commands=['emr', 'traemr'])
+def search_emr_transtype(message):
+    """Search EMR TransType mapping by keyword or code."""
+    chat_id = message.chat.id
+    save_chat_id(chat_id)
+    parts = message.text.strip().split(None, 1)
+    if len(parts) < 2 or not parts[1].strip():
+        bot.reply_to(
+            message,
+            "📄 *Tra cứu mã TransType EMR*\n\n"
+            "Cú pháp: `/emr <từ khóa>`\n"
+            "Ví dụ:\n"
+            "  `/emr sản khoa`\n"
+            "  `/emr bệnh án`\n"
+            "  `/emr 34`\n\n"
+            f"📊 Tổng số tài liệu EMR cấu hình: *{len(_emr_data)}*",
+            parse_mode='Markdown'
+        )
+        return
+
+    raw_query = parts[1].strip()
+    # Normalize query: collapse spaces, convert to lowercase
+    query = re.sub(r'\s+', ' ', raw_query).strip().lower()
+    
+    bot.send_message(chat_id, f"⏳ Đang tìm kiếm tài liệu EMR: `{raw_query}`...", parse_mode='Markdown')
+
+    results = []
+    for row in _emr_data:
+        name = row.get('name', '')
+        code = row.get('code', '')
+        # Normalize name and code
+        norm_name = re.sub(r'\s+', ' ', name).strip().lower()
+        norm_code = str(code).strip().lower()
+        
+        # Check if query matches code or is a substring of name
+        if query == norm_code or query in norm_name:
+            results.append((name, code))
+            if len(results) >= 10:
+                break
+
+    if not results:
+        bot.send_message(
+            chat_id,
+            f"❌ Không tìm thấy tài liệu EMR nào phù hợp với từ khóa: *{raw_query}*\n"
+            "Vui lòng thử từ khóa khác.",
+            parse_mode='Markdown'
+        )
+        return
+
+    # Count total found
+    total_found = 0
+    for row in _emr_data:
+        norm_name = re.sub(r'\s+', ' ', row.get('name', '')).strip().lower()
+        norm_code = str(row.get('code', '')).strip().lower()
+        if query == norm_code or query in norm_name:
+            total_found += 1
+
+    lines = [f"📄 *Kết quả tra cứu EMR:* `{raw_query}`\n"]
+    for idx, (name, code) in enumerate(results):
+        clean_name = re.sub(r'\s+', ' ', name).strip()
+        lines.append(f"{idx+1}. *{clean_name}* ➔ TransType `{code}`")
+
+    if total_found > 10:
+        lines.append(f"\n_...và {total_found - 10} kết quả khác. Hãy nhập từ khóa cụ thể hơn._")
 
     full_msg = "\n".join(lines)
     if len(full_msg) > 4000:

@@ -1,0 +1,2234 @@
+[
+    {
+        "name": "Bệnh án nội  khoa",
+        "code": "20"
+    },
+    {
+        "name": "Bệnh án ngoại  trú",
+        "code": "30"
+    },
+    {
+        "name": "Bệnh án tai -  mũi - họng",
+        "code": "31"
+    },
+    {
+        "name": "Bệnh án răng -  hàm - mặt",
+        "code": "32"
+    },
+    {
+        "name": "Bệnh án sản  khoa",
+        "code": "34"
+    },
+    {
+        "name": "Bệnh án chấn  thương mắt",
+        "code": "35"
+    },
+    {
+        "name": "Bệnh án mắt -  bán phần trước",
+        "code": "36"
+    },
+    {
+        "name": "Bệnh án tâm  thần",
+        "code": "37"
+    },
+    {
+        "name": "Bệnh án điều  dưỡng và phục hồi chức năng",
+        "code": "38"
+    },
+    {
+        "name": "Bệnh án ngoại  khoa",
+        "code": "41"
+    },
+    {
+        "name": "Bệnh án nhi  khoa",
+        "code": "43"
+    },
+    {
+        "name": "Bệnh án mắt  lác",
+        "code": "47"
+    },
+    {
+        "name": "Bệnh án phụ  khoa",
+        "code": "52"
+    },
+    {
+        "name": "Bệnh án nội  trú y học cổ truyền/BM_BA_YHCT_NOITRU_53",
+        "code": "53"
+    },
+    {
+        "name": "Bệnh án thận",
+        "code": "193"
+    },
+    {
+        "name": "Bệnh án tay  chân miệng",
+        "code": "308"
+    },
+    {
+        "name": "Biên bản tử  vong",
+        "code": "326"
+    },
+    {
+        "name": "Phiếu khám  bệnh vào viện",
+        "code": "06"
+    },
+    {
+        "name": "Bệnh án phục  hồi chức năng",
+        "code": "38"
+    },
+    {
+        "name": "Bệnh án sơ  sinh",
+        "code": "42"
+    },
+    {
+        "name": "Giấy chuyển  viện",
+        "code": "09"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm",
+        "code": "16"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm in từ HIS",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu chỉ định  CĐHA",
+        "code": "05"
+    },
+    {
+        "name": "MS01 - Xquang  bụng",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm có header",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm có header",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu hội chẩn",
+        "code": "15"
+    },
+    {
+        "name": "MS03 Kết quả  siêu âm phần cổ và mặt",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm tế bào học",
+        "code": "17"
+    },
+    {
+        "name": "Kế hoạch chăm  sóc",
+        "code": "149"
+    },
+    {
+        "name": "Phiếu trả kết  quả xét nghiệm PAP SMEAR",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thử phản  ứng thuốc",
+        "code": "98"
+    },
+    {
+        "name": "Thực hiện xét  nghiệm giải phẫu bệnh",
+        "code": "134"
+    },
+    {
+        "name": "Đánh giá người  bệnh nhập viện",
+        "code": "310"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm test nhanh covid",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu truyền  máu",
+        "code": "101"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm covid",
+        "code": "192"
+    },
+    {
+        "name": "Kết quả siêu  âm ảnh phải có header",
+        "code": "07"
+    },
+    {
+        "name": "MS18 - San soi  co tu cung",
+        "code": "07"
+    },
+    {
+        "name": "MS16 - Chup  nong va dat stent dong mach vanh",
+        "code": "07"
+    },
+    {
+        "name": "MS15 - Chup  dong mach vanh",
+        "code": "07"
+    },
+    {
+        "name": "MS14 - Soi can  thiep lam clo test nhiem hpylori",
+        "code": "07"
+    },
+    {
+        "name": "MS13 - Soi dai  truc trang",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm khám sức khỏe có header",
+        "code": "07"
+    },
+    {
+        "name": "PHIẾU KQ NỘI  SOI",
+        "code": "07"
+    },
+    {
+        "name": "MS02 - SA Van  tim Doppler",
+        "code": "07"
+    },
+    {
+        "name": "MS06 - CLVT 32  lồng ngực không tiêm thuốc",
+        "code": "07"
+    },
+    {
+        "name": "PHIẾU KQ CHỤP  CỘNG HƯỞNG TỪ",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả CĐHA  CT",
+        "code": "07"
+    },
+    {
+        "name": "MS10 - Não đồ  thông thường",
+        "code": "78"
+    },
+    {
+        "name": "MS12 - Soi  thuc quan da day ta trang",
+        "code": "145"
+    },
+    {
+        "name": "Kết quả CĐHA  MRI",
+        "code": "146"
+    },
+    {
+        "name": "MS07 - Lưu  huyết não",
+        "code": "146"
+    },
+    {
+        "name": "MS11 - Soi  truc trang ong mem khong sinh thiết",
+        "code": "178"
+    },
+    {
+        "name": "MS09 - Tin  thường",
+        "code": "310"
+    },
+    {
+        "name": "MS08 - Loãng  xương",
+        "code": "334"
+    },
+    {
+        "name": "Phiếu chỉ định  PTTT",
+        "code": "18"
+    },
+    {
+        "name": "Đơn thuốc mua  ngoài",
+        "code": "89"
+    },
+    {
+        "name": "Phiếu theo dõi  chức năng sống",
+        "code": "113"
+    },
+    {
+        "name": "Theo dõi bệnh  nhân sau mổ",
+        "code": "313"
+    },
+    {
+        "name": "Phiếu khám  chuyên khoa",
+        "code": "77"
+    },
+    {
+        "name": "Phiếu gây mê  hồi sức",
+        "code": "124"
+    },
+    {
+        "name": "Bảng kiểm an  toàn phẩu thuật",
+        "code": "171"
+    },
+    {
+        "name": "Bảng kiểm soát  bệnh nhân trước mổ",
+        "code": "123"
+    },
+    {
+        "name": "Giấy chứng  nhận PTTT",
+        "code": "94"
+    },
+    {
+        "name": "Phiếu công  khai thuốc",
+        "code": "23"
+    },
+    {
+        "name": "Phiếu công  khai thuốc",
+        "code": "23"
+    },
+    {
+        "name": "Bảng kiểm đếm  gạc,dụng cụ sắc nhọn,dụng cụ PT-06",
+        "code": "87"
+    },
+    {
+        "name": "Phiếu công  khai dịch vụ",
+        "code": "322"
+    },
+    {
+        "name": "Bảng kê chi  phí khám bệnh BHYT",
+        "code": "10"
+    },
+    {
+        "name": "Bảng kê chi  phí khám bệnh BHYT nội trú",
+        "code": "10"
+    },
+    {
+        "name": "Đánh giá người  bệnh chuyển viện, xuất viện.",
+        "code": "311"
+    },
+    {
+        "name": "Phiếu theo dõi  đường huyết",
+        "code": "188"
+    },
+    {
+        "name": "Đánh giá nguy  cơ ngã",
+        "code": "312"
+    },
+    {
+        "name": "Phiếu sàng lọc  và đánh giá tình trạng loét tỳ đè",
+        "code": "190"
+    },
+    {
+        "name": "Tóm tắt bệnh  án (dùng chung bệnh án)",
+        "code": "125"
+    },
+    {
+        "name": "Giấy ra viện",
+        "code": "11"
+    },
+    {
+        "name": "Giấy xác nhận  bệnh nhân đang nằm viện",
+        "code": "11"
+    },
+    {
+        "name": "Phiếu thuốc H",
+        "code": "04"
+    },
+    {
+        "name": "Phiếu thuốc  gây nghiện",
+        "code": "04"
+    },
+    {
+        "name": "Phiếu thuốc",
+        "code": "04"
+    },
+    {
+        "name": "Giấy chứng  nhận nghỉ việc hưởng BHXH (Mẫu số 07 - TT25)",
+        "code": "1300"
+    },
+    {
+        "name": "Phiếu xét  nghiệm đường máu mao mạch",
+        "code": "0"
+    },
+    {
+        "name": "Phiếu tổng",
+        "code": "01"
+    },
+    {
+        "name": "BẢNG HỎI TÌNH  TRẠNG SỨC KHỎE NGƯỜI HIẾN MÁU",
+        "code": "01"
+    },
+    {
+        "name": "PHIẾU ĐĂNG KÝ  SỬ DỤNG DỊCH VỤ VẬN CHUYỂN BỆNH NHÂN",
+        "code": "1"
+    },
+    {
+        "name": "BẢNG THEO DÕI  BỆNH NHÂN LỌC MÁU CẤP CỨU",
+        "code": "01"
+    },
+    {
+        "name": "PHIẾU CHỈ ĐỊNH  LỌC MÁU IHD",
+        "code": "01"
+    },
+    {
+        "name": "PHIẾU TIÊM  CHỦNG VẮC XIN DẠI",
+        "code": "01"
+    },
+    {
+        "name": "PHIẾU MƯỢN ĐỒ  DÙNG",
+        "code": "01"
+    },
+    {
+        "name": "Bảng kê sử  dụng thuốc - vật tư tiêu hao",
+        "code": "1"
+    },
+    {
+        "name": "Biên bản duyệt  phẫu thuật",
+        "code": "1"
+    },
+    {
+        "name": "HỒ SƠ BỆNH ÁN  TIÊM HUYẾT THANH VÀ VẮC XIN PHÒNG DẠI",
+        "code": "1"
+    },
+    {
+        "name": "KẾT QUẢ CẤY  MÁY TẠO NHỊP TIM VĨNH VIỄN",
+        "code": "01"
+    },
+    {
+        "name": "PHIẾU ĐÁNH GIÁ  TÌNH TRẠNG DINH DƯỠNG",
+        "code": "1"
+    },
+    {
+        "name": "MẪU PHIẾU YÊU  CẦU SỬ DỤNG KHÁNG SINH CẦN ƯU TIÊN QUẢN LÝ",
+        "code": "1"
+    },
+    {
+        "name": "ĐƠN XIN LỌC  MÁU",
+        "code": "1"
+    },
+    {
+        "name": "GIẤY CHỨNG  NHẬN NẰM VIỆN",
+        "code": "1"
+    },
+    {
+        "name": "BẢNG THEO LỌC  HUYẾT TƯƠNG",
+        "code": "01"
+    },
+    {
+        "name": "BẢNG KÊ SỬ  DỤNG THUỐC - VẬT TƯ TIÊU HAO",
+        "code": "01"
+    },
+    {
+        "name": "PHIẾU CHẨN  ĐOÁN NGUYÊN NHÂN TỬ VONG",
+        "code": "1"
+    },
+    {
+        "name": "PHIẾU DỰ TRÙ  MÁU - CHẾ PHẨM MÁU",
+        "code": "01"
+    },
+    {
+        "name": "PHIẾU CHỈ ĐỊNH  LỌC MÁU LIÊN TỤC",
+        "code": "01"
+    },
+    {
+        "name": "Phiếu đánh giá  ban đầu",
+        "code": "02"
+    },
+    {
+        "name": "Phiếu đăng ký  khám bệnh",
+        "code": "03"
+    },
+    {
+        "name": "Phiếu đăng ký  khám bệnh",
+        "code": "03"
+    },
+    {
+        "name": "Phiếu thuốc  gộp",
+        "code": "04"
+    },
+    {
+        "name": "Gộp đơn thuốc  ký số",
+        "code": "04"
+    },
+    {
+        "name": "Đơn thuốc  không thuốc",
+        "code": "04"
+    },
+    {
+        "name": "Đơn thuốc cổ  truyền, dược liệu ngoại trú",
+        "code": "04"
+    },
+    {
+        "name": "Đơn thuốc cổ  truyền, dược liệu",
+        "code": "04"
+    },
+    {
+        "name": "TEM_NGT006_DONTHUOC_17DBV01_TT052016_A5_BPC",
+        "code": "04"
+    },
+    {
+        "name": "abcd",
+        "code": "04"
+    },
+    {
+        "name": "Phiếu thuốc  thang",
+        "code": "04"
+    },
+    {
+        "name": "Phiếu vật tư",
+        "code": "04"
+    },
+    {
+        "name": "Phiếu chỉ định  CĐHA",
+        "code": "05"
+    },
+    {
+        "name": "Phiếu kết quả  XQUANG BS tại HIS",
+        "code": "05"
+    },
+    {
+        "name": "Phiếu chỉ định  CĐHA 54195",
+        "code": "05"
+    },
+    {
+        "name": "1",
+        "code": "5"
+    },
+    {
+        "name": "NGT_PHIEU_CDHA_BH",
+        "code": "05"
+    },
+    {
+        "name": "EMR Phiếu chỉ  định CĐHA",
+        "code": "05"
+    },
+    {
+        "name": "phiếu chỉ định  cdha 987 lsn",
+        "code": "05"
+    },
+    {
+        "name": "Phiếu chỉ định  CĐHA BPC",
+        "code": "05"
+    },
+    {
+        "name": "Phiếu chỉ định  CĐHA",
+        "code": "05"
+    },
+    {
+        "name": "Phiếu khám và  theo dõi bệnh nhân lưu",
+        "code": "06"
+    },
+    {
+        "name": "PHIẾU KQ NỘI  SOI ĐẠI, TRỰC TRÀNG",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA cắt lớp vi tính",
+        "code": "07"
+    },
+    {
+        "name": "emr kết quả dạ  dày bắc sơn lsn",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu soi cổ  tử cung",
+        "code": "07"
+    },
+    {
+        "name": "MS01 - Mẫu kết  quả Xquang BDG",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm có hình NTN",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  Siêu âm",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện Xquang",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  nội soi dạ dày VQ LSN",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả nội  soi có table",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  Xquang",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu chăm sóc  cấp 2,3",
+        "code": "07"
+    },
+    {
+        "name": "EMR Phiếu CDHA  987 LSN CHUNG",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  nội soi đại trực tràng VQ LSN",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  nội soi phế quản VQ LSN",
+        "code": "07"
+    },
+    {
+        "name": "emr Phiếu kết  quả điện tim bình gia lsn",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  Xquang",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  Xquang",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  Xquang",
+        "code": "07"
+    },
+    {
+        "name": "EMR Phiếu XQ  số hóa LSN",
+        "code": "07"
+    },
+    {
+        "name": "EMR_Phiếu  xquang 987 LSN",
+        "code": "07"
+    },
+    {
+        "name": "emr Phiếu kết  quả điện tim bình gia lsn",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả Cấy  máy tạo nhịp tim",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả Động  mạch vành",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  điện tim CNNH",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu KQ  holter huyết áp",
+        "code": "07"
+    },
+    {
+        "name": "EMR_Phiếu  holter điện tâm đồ",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả Siêu  âm BS LSN",
+        "code": "07"
+    },
+    {
+        "name": "MS09 - Tin  thường",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  Siêu âm",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm có hình",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả chụp  cắt lớp vi tính NTN",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu KQ điện  tim DKLS",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  Siêu âm",
+        "code": "07"
+    },
+    {
+        "name": "MS11 - Soi  truc trang ong mem khong sinh thiết",
+        "code": "07"
+    },
+    {
+        "name": "emr kết quả  soi cổ tử cung bình gia lsn",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm có hình",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  Siêu âm",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả Xquang  BS LSN",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả chẩn  đoán hình ảnh dùng chung NTN",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "MS18 - San soi  co tu cung",
+        "code": "07"
+    },
+    {
+        "name": "MS16 - Chup  nong va dat stent dong mach vanh",
+        "code": "07"
+    },
+    {
+        "name": "MS15 - Chup  dong mach vanh",
+        "code": "07"
+    },
+    {
+        "name": "MS14 - Soi can  thiep lam clo test nhiem hpylori",
+        "code": "07"
+    },
+    {
+        "name": "MS13 - Soi dai  truc trang",
+        "code": "07"
+    },
+    {
+        "name": "MS12 - Soi  thuc quan da day ta trang",
+        "code": "07"
+    },
+    {
+        "name": "Biểu đồ chuyển  dạ",
+        "code": "07"
+    },
+    {
+        "name": "MS03 Kết quả  siêu âm",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  nội soi đại trực tràng VQ LSN",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  điện tim 12/BV-02",
+        "code": "07"
+    },
+    {
+        "name": "MS09 - Phiếu  điện tim thường/Điện não",
+        "code": "07"
+    },
+    {
+        "name": "MS09 - Phiếu  điện tim thường/Điện não",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm no header",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm khám sức khỏe không header",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả chụp X  quang có header",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả nội  soi ảnh trái no header",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả siêu  âm ảnh phải no header",
+        "code": "07"
+    },
+    {
+        "name": "PHIẾU KQ NỘI  SOI TRỰC TRÀNG",
+        "code": "07"
+    },
+    {
+        "name": "PHIẾU KQ NỘI  SOI MẬT TỤY (ERCP)",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  nội soi không liên hệ (TMH)",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Hướng dẫn khai  thác tiền sử dị ứng",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu thực  hiện giải phẫu tế bào",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu đánh giá  tình trạng dinh dưỡng",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  siêu âm Doppler Tim",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  nội soi có liên hệ ( TQ DD TT)",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả nội  soi có table",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả Xquang  khám sức khỏe có header",
+        "code": "07"
+    },
+    {
+        "name": "Kết quả Xquang  khám sức khỏe no header",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  CĐHA",
+        "code": "07"
+    },
+    {
+        "name": "Phiếu kết quả  siêu âm",
+        "code": "07"
+    },
+    {
+        "name": "Bệnh lịch",
+        "code": "08"
+    },
+    {
+        "name": "TEM_NGT003_GIAYCHUYENTUYEN_TT14_A4_BPC",
+        "code": "09"
+    },
+    {
+        "name": "Bảng kê",
+        "code": "10"
+    },
+    {
+        "name": "Bảng kê chi  phí chênh khám bệnh BHYT",
+        "code": "10"
+    },
+    {
+        "name": "Bảng kê",
+        "code": "10"
+    },
+    {
+        "name": "Bảng kê",
+        "code": "10"
+    },
+    {
+        "name": "Bảng kê VIP",
+        "code": "10"
+    },
+    {
+        "name": "Bảng kê",
+        "code": "10"
+    },
+    {
+        "name": "Bảng kê VIP",
+        "code": "10"
+    },
+    {
+        "name": "Bảng kê",
+        "code": "10"
+    },
+    {
+        "name": "Giấy chứng  nhận nằm viện",
+        "code": "11"
+    },
+    {
+        "name": "TEM_NTU009_GIAYRAVIEN_01BV01_QD4069_A5_BPC",
+        "code": "11"
+    },
+    {
+        "name": "Phiếu điều trị",
+        "code": "12"
+    },
+    {
+        "name": "Tờ điều trị  khoa YHCT",
+        "code": "12"
+    },
+    {
+        "name": "Phiếu điều trị  trẻ sơ sinh TT32",
+        "code": "12"
+    },
+    {
+        "name": "Phiếu điều trị  all",
+        "code": "12"
+    },
+    {
+        "name": "Tờ điều trị  bệnh án ngoại trú",
+        "code": "12"
+    },
+    {
+        "name": "Diễn tiến điều  trị bệnh tay chân miệng",
+        "code": "12"
+    },
+    {
+        "name": "Giấy cam kết  từ chối sử dụng dịch vụ khám bệnh, chữa bệnh theo TT32",
+        "code": "12"
+    },
+    {
+        "name": "Tờ điều trị  phá thai bằng thuốc",
+        "code": "12"
+    },
+    {
+        "name": "Phiếu điều trị  PHCN LSN",
+        "code": "12"
+    },
+    {
+        "name": "Phiếu chăm sóc",
+        "code": "13"
+    },
+    {
+        "name": "Phiếu biên bản  bàn giao người bệnh sau PTTT khoa gây mê hồi sức GMHS",
+        "code": "13"
+    },
+    {
+        "name": "Phiếu theo dõi  lọc máu",
+        "code": "13"
+    },
+    {
+        "name": "Phiếu chăm sóc  all văn quan lsn",
+        "code": "13"
+    },
+    {
+        "name": "Phiếu chăm sóc  cấp 1",
+        "code": "13"
+    },
+    {
+        "name": "Phiếu chăm sóc  chạy thận",
+        "code": "13"
+    },
+    {
+        "name": "Phiếu CS cấp  2-3",
+        "code": "13"
+    },
+    {
+        "name": "Phiếu theo dõi  tình trạng trong phòng hồi tỉnh PT-07",
+        "code": "13"
+    },
+    {
+        "name": "Phiếu sơ kết  điều trị",
+        "code": "14"
+    },
+    {
+        "name": "Biên bản hội  chẩn trước PT",
+        "code": "15"
+    },
+    {
+        "name": "Sổ biên bản  hội chẩn",
+        "code": "15"
+    },
+    {
+        "name": "Phiếu nhận  định phân loại người bệnh tại khoa cấp cứu theo TT32",
+        "code": "15"
+    },
+    {
+        "name": "Phiếu chỉ định  coronavirus mẫu đơn miến phí",
+        "code": "16"
+    },
+    {
+        "name": "PHIEU_CHIDINH_XETNGHIEM_54195",
+        "code": "16"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm",
+        "code": "16"
+    },
+    {
+        "name": "e",
+        "code": "16"
+    },
+    {
+        "name": "bpc",
+        "code": "16"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm TT32 DKLSN",
+        "code": "16"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm A4",
+        "code": "16"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm",
+        "code": "16"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm",
+        "code": "16"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm có header",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  xét nghiệm cho vi khuẩn soi đờm",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu xét  nghiệm nước dịch 21/BV-02",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  sinh thiết",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm vi sinh - KSĐ ký sinh trùng",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm chung",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  xét nghiệm Nước tiểu",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm in từ HIS NTN",
+        "code": "17"
+    },
+    {
+        "name": "PHIẾU KQ SH",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm Sinh hoá máu",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm in từ HIS NTN dùng chung",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  xét nghiệm Huyết học PYN",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm in từ HIS-pyn",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  xét nghiệm Nước tiểu PYN",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm sinh hóa",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm Sinh hoá",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm Sinh hóa",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm in từ HIS NTN",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm nước tiểu",
+        "code": "17"
+    },
+    {
+        "name": "TEM_PHIEUXETNGHIEM_BPC",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm in từ HIS-pyn",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  xét nghiệm huyết học PHCN LSN",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  xét nghiệm đông cầm máu",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm in từ HIS-pyn",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  xét nghiệm Sinh hóa",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm HH PHCN LSN",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu trả kết  quả xét nghiệm",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm nước tiểu",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu kết quả  xét nghiệm Nước tiểu PYN",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm nồng độ cồn",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm theo nhóm",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm chi tiet",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm sinh thiết",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm rut gọn",
+        "code": "17"
+    },
+    {
+        "name": "Phiếu chỉ định  PTTT BDHCM",
+        "code": "18"
+    },
+    {
+        "name": "v",
+        "code": "18"
+    },
+    {
+        "name": "d",
+        "code": "18"
+    },
+    {
+        "name": "TEM_CHIDINH_PTTT_BPC",
+        "code": "18"
+    },
+    {
+        "name": "Phiếu thực  hiện PTTT",
+        "code": "19"
+    },
+    {
+        "name": "Phiếu kiểm tra  bệnh án và tuân thủ phát đồ",
+        "code": "21"
+    },
+    {
+        "name": "Bảng kiểm hồ  sơ bệnh án",
+        "code": "21"
+    },
+    {
+        "name": "Phiếu truyền  dịch",
+        "code": "22"
+    },
+    {
+        "name": "Phiếu công  khai thuốc",
+        "code": "23"
+    },
+    {
+        "name": "Phiếu công  khai thuốc pha chế",
+        "code": "23"
+    },
+    {
+        "name": "Phiếu tiêu hao  trong gây mê",
+        "code": "23"
+    },
+    {
+        "name": "Phiếu công  khai vật tư",
+        "code": "24"
+    },
+    {
+        "name": "Phiếu công  khai vật tư",
+        "code": "24"
+    },
+    {
+        "name": "Phiếu y lệnh  theo ngày",
+        "code": "24"
+    },
+    {
+        "name": "Phiếu công  khai vật tư",
+        "code": "24"
+    },
+    {
+        "name": "Phiếu hẹn khám",
+        "code": "25"
+    },
+    {
+        "name": "TEM_NGT014_GIAYHENKHAMLAI_TT402015_A4_BPC",
+        "code": "25"
+    },
+    {
+        "name": "Giấy giử thẻ",
+        "code": "27"
+    },
+    {
+        "name": "Nghỉ hưởng  BHXH",
+        "code": "28"
+    },
+    {
+        "name": "TEM_NGHI_HUONG_BHXH_BPC",
+        "code": "28"
+    },
+    {
+        "name": "Phiếu sàng lọc  dinh dưỡng",
+        "code": "29"
+    },
+    {
+        "name": "Phiếu sàng lọc  dinh dưỡng phụ nữ mang thai",
+        "code": "29"
+    },
+    {
+        "name": "Bệnh án ngoại  trú răng hàm mặt",
+        "code": "33"
+    },
+    {
+        "name": "BAN_ngoại trú  PHCN",
+        "code": "38"
+    },
+    {
+        "name": "Bệnh án phục  hồi chức năng nhi",
+        "code": "38"
+    },
+    {
+        "name": "Bệnh án đáy  mắt",
+        "code": "39"
+    },
+    {
+        "name": "Bệnh án mắt  trẻ em",
+        "code": "40"
+    },
+    {
+        "name": "Bệnh án huyết  học và truyền máu",
+        "code": "45"
+    },
+    {
+        "name": "Bệnh án YHCT  Ngoại trú",
+        "code": "46"
+    },
+    {
+        "name": "Bệnh án ngoại  trú tai mũi họng",
+        "code": "48"
+    },
+    {
+        "name": "Bệnh án truyền  nhiễm",
+        "code": "49"
+    },
+    {
+        "name": "Bệnh án da  liễu",
+        "code": "50"
+    },
+    {
+        "name": "Bệnh án ung  bướu",
+        "code": "51"
+    },
+    {
+        "name": "Bệnh án nhi  khoa PHCH",
+        "code": "53"
+    },
+    {
+        "name": "Bệnh án mắt  glocom",
+        "code": "54"
+    },
+    {
+        "name": "Bệnh án ngoại  trú dài ngày",
+        "code": "55"
+    },
+    {
+        "name": "Bệnh án ngoại  trú cấp cứu",
+        "code": "56"
+    },
+    {
+        "name": "Bệnh án bỏng",
+        "code": "57"
+    },
+    {
+        "name": "Phiếu tổng hợp  y lệnh",
+        "code": "65"
+    },
+    {
+        "name": "Phiếu nội soi  (chỉ định)",
+        "code": "68"
+    },
+    {
+        "name": "Phiếu chụp  X-Quang (chỉ định)",
+        "code": "69"
+    },
+    {
+        "name": "Bệnh án điều  trị cắt cơn nghiện ma túy",
+        "code": "70"
+    },
+    {
+        "name": "Phiếu điện não  đồ HNI",
+        "code": "72"
+    },
+    {
+        "name": "Phiếu điện tim  (chỉ định)",
+        "code": "73"
+    },
+    {
+        "name": "Phiếu chụp cắt  lớp vi tính (chỉ định)",
+        "code": "74"
+    },
+    {
+        "name": "Phiếu cộng  hưởng từ",
+        "code": "75"
+    },
+    {
+        "name": "Phiếu xét  nghiệm sinh thiết (chỉ định)",
+        "code": "76"
+    },
+    {
+        "name": "Phiếu điều trị  kết hợp",
+        "code": "77"
+    },
+    {
+        "name": "Phiếu tạm ứng",
+        "code": "78"
+    },
+    {
+        "name": "Bệnh án nhi  nội trú y học cổ truyền",
+        "code": "84"
+    },
+    {
+        "name": "Phiếu khám và  chỉ định phục hồi chức năng",
+        "code": "87"
+    },
+    {
+        "name": "Phiếu đếm gạc,  dụng cụ",
+        "code": "87"
+    },
+    {
+        "name": "Phiếu lĩnh  thuốc HT - NGHIEN",
+        "code": "89"
+    },
+    {
+        "name": "Giấy chứng  sinh",
+        "code": "90"
+    },
+    {
+        "name": "Giấy chứng  sinh - mang thai hộ (ban hành kèm theo TT22)",
+        "code": "90"
+    },
+    {
+        "name": "Giấy chứng  sinh T22",
+        "code": "90"
+    },
+    {
+        "name": "Phiếu hẹn soi  đại tràng",
+        "code": "95"
+    },
+    {
+        "name": "Phiếu theo dõi  chạy thận nhân tạo",
+        "code": "97"
+    },
+    {
+        "name": "Phiếu thủ  thuật YHCT",
+        "code": "99"
+    },
+    {
+        "name": "Giấy chứng  nhận thương tích",
+        "code": "100"
+    },
+    {
+        "name": "Phiếu xét  nghiệm hòa hợp miễn dịch truyền máu",
+        "code": "101"
+    },
+    {
+        "name": "Phiếu điều trị  vật lý trị liệu",
+        "code": "102"
+    },
+    {
+        "name": "Phiếu tư vấn -  giải thích trong mổ",
+        "code": "105"
+    },
+    {
+        "name": "Biên bản bệnh  nhân chết trước khi vào viện",
+        "code": "107"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm (gửi ngoài)",
+        "code": "108"
+    },
+    {
+        "name": "Phiếu hẹn phẫu  thuật",
+        "code": "109"
+    },
+    {
+        "name": "Phiếu khám  chữa bệnh theo yêu cầu",
+        "code": "110"
+    },
+    {
+        "name": "Tường trình  tán sỏi ngoài cơ thể",
+        "code": "111"
+    },
+    {
+        "name": "Phiếu công  khai dịch vụ",
+        "code": "115"
+    },
+    {
+        "name": "Phiếu công  khai dịch vụ",
+        "code": "115"
+    },
+    {
+        "name": "Phiếu dự trù  và cung cấp máu (phần lưu tại khoa lâm sàng)",
+        "code": "116"
+    },
+    {
+        "name": "Giấy cam kết  chụp CT",
+        "code": "117"
+    },
+    {
+        "name": "Phiếu xác nhận  xét nghiệm HIV",
+        "code": "118"
+    },
+    {
+        "name": "Biên bản kiểm  thảo tử vong",
+        "code": "119"
+    },
+    {
+        "name": "Bảng kiểm tra  trước tiêm chủng đối với người lớn",
+        "code": "121"
+    },
+    {
+        "name": "Bảng kiểm Tiêm  chủng đối với trẻ sơ sinh",
+        "code": "121"
+    },
+    {
+        "name": "Báo cáo duyệt  mổ",
+        "code": "122"
+    },
+    {
+        "name": "Bảng kiểm  chuẩn bị và bàn giao người bệnh trước PT (PT-02)",
+        "code": "123"
+    },
+    {
+        "name": "Phiếu gây mê  hồi sức",
+        "code": "124"
+    },
+    {
+        "name": "Tóm tắt bệnh  án (dùng chung bệnh án)",
+        "code": "125"
+    },
+    {
+        "name": "Phiếu TDCN Đo  hô hấp ký",
+        "code": "136"
+    },
+    {
+        "name": "Kết quả đo  thính lực đồ",
+        "code": "138"
+    },
+    {
+        "name": "Kết quả Phiếu  đo loãng xương",
+        "code": "139"
+    },
+    {
+        "name": "Giấy mời hội  chẩn",
+        "code": "140"
+    },
+    {
+        "name": "Phiếu góp ý  bệnh nhân qua thời gian nằm viện",
+        "code": "142"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm giải phẫu bệnh",
+        "code": "143"
+    },
+    {
+        "name": "Phiếu siêu âm  đen trắng",
+        "code": "144"
+    },
+    {
+        "name": "Phiếu kết quả  xquang VQ LSN",
+        "code": "144"
+    },
+    {
+        "name": "Phiếu siêu âm  đen trắng",
+        "code": "144"
+    },
+    {
+        "name": "Phiếu siêu âm  màu",
+        "code": "144"
+    },
+    {
+        "name": "Hướng dẫn khai  thác tiền sử dị ứng",
+        "code": "145"
+    },
+    {
+        "name": "Bản cam kết  chung",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu đăng ký  sử dụng dịch vụ giường lưu trú cho người nhà người bệnh",
+        "code": "146"
+    },
+    {
+        "name": "Cam kết CHỤP  CẮT LỚP VI TÍNH CÓ TIÊM THUỐC CẢN QUANG - DKLS",
+        "code": "146"
+    },
+    {
+        "name": "Giấy khám/chữa  bệnh theo yêu cầu theo TT32",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu cung cấp  thông tin NB tại khoa HSTC",
+        "code": "146"
+    },
+    {
+        "name": "Cam kết CHỤP  MRI CÓ TIÊM THUỐC- DKLS",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu kiểm tra  an toàn chụp MRI",
+        "code": "146"
+    },
+    {
+        "name": "Giấy cam đoan  chấp nhận dùng thuốc đồng chi trả theo danh mục BHYT",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu xác nhận  đồng ý xét nghiệm HIV",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu cam kết  điều trị bằng xạ trị",
+        "code": "146"
+    },
+    {
+        "name": "Giấy khám chữa  bệnh theo yêu cầu.",
+        "code": "146"
+    },
+    {
+        "name": "ĐƠN XIN DÙNG  THUỐC VÀ VẬT TƯ TỰ TÚC",
+        "code": "146"
+    },
+    {
+        "name": "ĐƠN XIN DÙNG  THUỐC VÀ VẬT TƯ TỰ TÚC",
+        "code": "146"
+    },
+    {
+        "name": "Cam kết chăm  sóc người bệnh",
+        "code": "146"
+    },
+    {
+        "name": "Cam kết về  việc xét nghiệm HCG",
+        "code": "146"
+    },
+    {
+        "name": "Giấy cam đoan  chấp nhận phẫu thuật, thủ thuật và gây mê hồi sức",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu cam kết  thực hiện nội quy",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu cam kết  điều trị bệnh nhân",
+        "code": "146"
+    },
+    {
+        "name": "Phiếu cam đoan  làm thủ thuật và chi trả kinh phí DV KTC",
+        "code": "146"
+    },
+    {
+        "name": "Cam kết đặt  máy hút áp lực âm (VAC)",
+        "code": "147"
+    },
+    {
+        "name": "Phiếu chăm sóc  cấp 2,3 BDG TTYT Khu vực Tân Uyên",
+        "code": "149"
+    },
+    {
+        "name": "Phiếu chỉ định  PTTT BDHCM",
+        "code": "150"
+    },
+    {
+        "name": "Phiếu chỉ định  CĐHA BDHCM",
+        "code": "151"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm BDHCM",
+        "code": "152"
+    },
+    {
+        "name": "Khám tiền mê  (PT-03)",
+        "code": "154"
+    },
+    {
+        "name": "Phiếu sàng lọc  dinh dưỡng",
+        "code": "155"
+    },
+    {
+        "name": "Phiếu sàng lọc  và đánh giá dinh dưỡng người bệnh nội trú",
+        "code": "155"
+    },
+    {
+        "name": "Phiếu sàng lọc  dinh dưỡng nội trú",
+        "code": "155"
+    },
+    {
+        "name": "Bảng tổng hợp  thanh toán tiền ăn",
+        "code": "156"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm tế bào cổ tử cung",
+        "code": "160"
+    },
+    {
+        "name": "Phiếu thực  hiện xét nghiệm doubletest",
+        "code": "161"
+    },
+    {
+        "name": "Tường trình  phẫu thuật, thủ thuật",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu phẫu  thuật thể thủy tinh phối hợp cắt bè",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu phẫu  thuật mộng",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu phẫu  thuật lác",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu phẫu  thuật bề mặt nhãn cầu",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu phẫu  thuật Glocom",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu phẫu  thuật sụp mi",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu phẫu  thuật thuỷ tinh thể",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu phẫu  thuật quặm",
+        "code": "163"
+    },
+    {
+        "name": "Phiếu yêu cầu  (BN mua dịch vụ)",
+        "code": "166"
+    },
+    {
+        "name": "Phiếu khám của  BN khám sức khỏe",
+        "code": "167"
+    },
+    {
+        "name": "Phiếu khám của  BN khám sức khỏe",
+        "code": "168"
+    },
+    {
+        "name": "Tờ bìa BA điều  trị ngoại trú trong ngành",
+        "code": "169"
+    },
+    {
+        "name": "Bảng kiểm ATPT",
+        "code": "171"
+    },
+    {
+        "name": "Phiếu chuẩn bị  người bệnh trước mổ",
+        "code": "172"
+    },
+    {
+        "name": "Phiếu chuẩn bị  bệnh nhân trước mổ",
+        "code": "172"
+    },
+    {
+        "name": "Phiếu chỉ định  xét nghiệm tinh dịch đồ",
+        "code": "173"
+    },
+    {
+        "name": "Phiếu yêu cầu  sử dụng kháng sinh",
+        "code": "174"
+    },
+    {
+        "name": "Phiếu yêu cầu  sử dụng kháng sinh ưu tiên quản lý",
+        "code": "174"
+    },
+    {
+        "name": "Phiếu yêu cầu  sử dụng kháng sinh",
+        "code": "174"
+    },
+    {
+        "name": "Giấy khám sức  khỏe trên 18T",
+        "code": "177"
+    },
+    {
+        "name": "Giấy khám sức  khỏe dưới 18T",
+        "code": "177"
+    },
+    {
+        "name": "Sàng lọc dinh  dường đối tượng mang thai",
+        "code": "178"
+    },
+    {
+        "name": "Phiếu đánh giá  tình trạng dinh dưỡng (Trưởng thành)",
+        "code": "178"
+    },
+    {
+        "name": "Phiếu đánh giá  tình trạng dinh dưỡng cho phụ nữ mang thai",
+        "code": "178"
+    },
+    {
+        "name": "Phiếu đánh giá  tình trạng dinh dưỡng >= 18 tuổi, không mang thai",
+        "code": "178"
+    },
+    {
+        "name": "Phiếu đánh giá  tình trạng dinh dưỡng (Nhi)",
+        "code": "178"
+    },
+    {
+        "name": "Sàng lọc dinh  dường đối tượng trên 18",
+        "code": "178"
+    },
+    {
+        "name": "Sàng lọc dinh  dường đối tượng dưới 18",
+        "code": "178"
+    },
+    {
+        "name": "Phiếu dị ứng  thuốc",
+        "code": "180"
+    },
+    {
+        "name": "Phiếu khám  GMHS trước PTTT",
+        "code": "181"
+    },
+    {
+        "name": "Bệnh án mắt",
+        "code": "182"
+    },
+    {
+        "name": "Phiếu tổng kết  tại khoa đẻ",
+        "code": "183"
+    },
+    {
+        "name": "Phiếu điều trị  sơ sinh TT32",
+        "code": "184"
+    },
+    {
+        "name": "PHIẾU KQ HUYẾT  TÙY ĐỒ",
+        "code": "186"
+    },
+    {
+        "name": "Phiếu chăm sóc  bệnh nhân lọc máu",
+        "code": "187"
+    },
+    {
+        "name": "Bảng theo dõi  đường huyết [Nội] - TDDHN",
+        "code": "188"
+    },
+    {
+        "name": "Phiếu theo dõi  Khí máu, ĐG, LT",
+        "code": "189"
+    },
+    {
+        "name": "Phiếu lọc máu  HDF",
+        "code": "194"
+    },
+    {
+        "name": "Phiếu duyệt mổ",
+        "code": "195"
+    },
+    {
+        "name": "Phiếu duyệt mổ",
+        "code": "195"
+    },
+    {
+        "name": "Phiếu tóm tắt  duyệt mổ",
+        "code": "195"
+    },
+    {
+        "name": "Phiếu theo dõi  thực hiện kế hoạch chăm sóc người bệnh",
+        "code": "196"
+    },
+    {
+        "name": "Phiếu bàn giao  người bệnh chuyển khoa (Dành cho bác sỹ) theo TT32",
+        "code": "196"
+    },
+    {
+        "name": "Phiếu biên bản  bàn giao người bệnh",
+        "code": "196"
+    },
+    {
+        "name": "Phiếu bàn giao  người bệnh chuyển khoa (Dành cho bác sỹ) theo TT32",
+        "code": "196"
+    },
+    {
+        "name": "Thẻ bảo hiểm y  tế",
+        "code": "300"
+    },
+    {
+        "name": "Phiếu khám sức  khỏe định kỳ",
+        "code": "300"
+    },
+    {
+        "name": "Giấy khám sức  khỏe lái xe",
+        "code": "301"
+    },
+    {
+        "name": "Giấy khám sức  khỏe lái xe ô tô",
+        "code": "302"
+    },
+    {
+        "name": "Bệnh án vô  sinh",
+        "code": "307"
+    },
+    {
+        "name": "Bệnh án phá  thai",
+        "code": "309"
+    },
+    {
+        "name": "Phiếu lượng  giá và sự tham gia",
+        "code": "310"
+    },
+    {
+        "name": "Phiếu khám và  chỉ định phục hồi chức năng",
+        "code": "310"
+    },
+    {
+        "name": "Bệnh án thần  kinh",
+        "code": "315"
+    },
+    {
+        "name": "Phiếu khai  thác tiền sử người chụp cộng hưởng từ",
+        "code": "318"
+    },
+    {
+        "name": "Bìa bệnh án",
+        "code": "321"
+    },
+    {
+        "name": "Phiếu theo dõi  sản phụ sau đẻ",
+        "code": "322"
+    },
+    {
+        "name": "Phiếu chăm sóc  người bệnh 1A -PSS",
+        "code": "323"
+    },
+    {
+        "name": "Phiếu công  khai thuốc",
+        "code": "323"
+    },
+    {
+        "name": "Phiếu chăm sóc  - PCS",
+        "code": "323"
+    },
+    {
+        "name": "Phiếu sơ sinh  -PSS",
+        "code": "325"
+    },
+    {
+        "name": "Phiếu chăm sóc  nhi -PSS",
+        "code": "326"
+    },
+    {
+        "name": "Giấy cung cấp  thông tin và cam kết chung về nhập viện nội trú TT32",
+        "code": "327"
+    },
+    {
+        "name": "Biểu đồ chuyển  dạ",
+        "code": "328"
+    },
+    {
+        "name": "Biên bản hội  chẩn thông qua mổ (PT-01)",
+        "code": "329"
+    },
+    {
+        "name": "Bảng theo dõi  hồi tỉnh",
+        "code": "329"
+    },
+    {
+        "name": "Biên bản tử  vong",
+        "code": "330"
+    },
+    {
+        "name": "Giấy báo tử",
+        "code": "330"
+    },
+    {
+        "name": "Bệnh án cấp  cứu",
+        "code": "335"
+    },
+    {
+        "name": "Phiếu khám  thai TT32",
+        "code": "340"
+    },
+    {
+        "name": "Phiếu Tư vấn -  Hướng dẫn - Giáo dục sức khỏe",
+        "code": "341"
+    },
+    {
+        "name": "Đánh giá tình  trạng người bệnh ra viện",
+        "code": "347"
+    },
+    {
+        "name": "Phiếu kết quả  Xquang PYN v3",
+        "code": "351"
+    },
+    {
+        "name": "Bệnh án hồi  sức cấp cứu",
+        "code": "355"
+    },
+    {
+        "name": "Giấy Chứng  Nhận Nghỉ Dưỡng Thai",
+        "code": "357"
+    },
+    {
+        "name": "Phiếu mẫu chữ  ký thân nhân bệnh nhân",
+        "code": "360"
+    },
+    {
+        "name": "Phiếu chăm sóc  cấp 1",
+        "code": "361"
+    },
+    {
+        "name": "df",
+        "code": "361"
+    },
+    {
+        "name": "Phiếu chăm sóc  cấp 1 sản khoa BDG BVMP 1",
+        "code": "361"
+    },
+    {
+        "name": "Phiếu chăm sóc  cấp 2,3 BDG",
+        "code": "362"
+    },
+    {
+        "name": "Phiếu chăm sóc  cấp 1, 2, 3 BDG TTYT Khu vực Tân Uyên 202511",
+        "code": "362"
+    },
+    {
+        "name": "CS23",
+        "code": "362"
+    },
+    {
+        "name": "Phiếu chăm sóc  cấp 2,3 sản khoa",
+        "code": "362"
+    },
+    {
+        "name": "Trích biên bản  kiểm thảo tử vong",
+        "code": "364"
+    },
+    {
+        "name": "Giấy cam kết  ra viện không theo chỉ định của bác sỹ TT32",
+        "code": "365"
+    },
+    {
+        "name": "Giấy cam kết  từ chối sử dụng dịch vụ khám bệnh, chữa bệnh theo TT32",
+        "code": "370"
+    },
+    {
+        "name": "Phiếu đánh giá  trước khi người bệnh ra khỏi phòng hồi tỉnh (PT-08)",
+        "code": "372"
+    },
+    {
+        "name": "Giấy cung cấp  thông tin và cam kết chung về nhập viện nội trú TT32",
+        "code": "374"
+    },
+    {
+        "name": "Giấy cam kết  chuyển cơ sở khám, chữa bệnh TT32",
+        "code": "375"
+    },
+    {
+        "name": "Biên bản hội  chẩn thông tin thông qua mổ",
+        "code": "379"
+    },
+    {
+        "name": "Phiếu khám phụ  khoa",
+        "code": "383"
+    },
+    {
+        "name": "Phiếu bàn giao  người bệnh chuyển khoa (Dành cho bác sỹ)",
+        "code": "384"
+    },
+    {
+        "name": "Phiếu bàn giao  người bệnh chuyển khoa (Dành cho điều dưỡng) theo TT32",
+        "code": "385"
+    },
+    {
+        "name": "Bảng kiểm  trước tiêm chủng đối với trẻ dưới 01 tháng tuổi",
+        "code": "387"
+    },
+    {
+        "name": "Phiếu nhận  định phân loại người bệnh tại khoa cấp cứu theo TT32",
+        "code": "388"
+    },
+    {
+        "name": "PHIẾU TÓM TẮT  THÔNG TIN NGƯỜI BỆNH NẶNG XIN VỀ",
+        "code": "389"
+    },
+    {
+        "name": "Lệnh điều xe",
+        "code": "392"
+    },
+    {
+        "name": "Phiếu chẩn  đoán nguyên nhân tử vong",
+        "code": "398"
+    },
+    {
+        "name": "Cam kết chấp  nhận điều trị bằng hóa trị - xạ trị",
+        "code": "399"
+    },
+    {
+        "name": "Cam kết điều  trị Xạ Trị - DKLS",
+        "code": "400"
+    },
+    {
+        "name": "Phiếu sàng lọc  nguy cơ dinh dưỡng cho NB ngoại trú",
+        "code": "402"
+    },
+    {
+        "name": "Phiếu lượng  giá và sự tham gia",
+        "code": "408"
+    },
+    {
+        "name": "Giấy cam kết  chấp thuận PTTT - GMHS",
+        "code": "408"
+    },
+    {
+        "name": "Giấy cam kết  chấp thuận PTTT - GMHS",
+        "code": "408"
+    },
+    {
+        "name": "Phiếu khám nhi  khoa",
+        "code": "411"
+    },
+    {
+        "name": "PHIẾU SÀNG LỌC  VÀ ĐÁNH GIÁ DINH DƯỠNG BỆNH NHI SƠ SINH CV65",
+        "code": "412"
+    },
+    {
+        "name": "PHIẾU SÀNG LỌC  VÀ ĐÁNH GIÁ DINH DƯỠNG BỆNH NHI",
+        "code": "413"
+    },
+    {
+        "name": "06/TT25 Giấy  xác nhận quá trình điều trị nội trú",
+        "code": "432"
+    },
+    {
+        "name": "Giấy xác nhận  quá trình điều trị nội trú",
+        "code": "432"
+    },
+    {
+        "name": "Giấy xác nhận  quá trình điều trị vô sinh của lao động nữ",
+        "code": "433"
+    },
+    {
+        "name": "Tường trình  quá trình kỹ thuật Điện châm",
+        "code": "439"
+    },
+    {
+        "name": "Phiếu sáng lọc  tim bẩm sinh",
+        "code": "443"
+    },
+    {
+        "name": "Bảng kiểm  trước phẫu thuật",
+        "code": "444"
+    },
+    {
+        "name": "BẢN CAM KẾT  NỘI SOI TIÊU HÓA CÓ GÂY MÊ VÀ KHÔNG GÂY MÊ",
+        "code": "445"
+    },
+    {
+        "name": "Phiếu tư vấn  hướng dẫn giáo dục sức khỏe",
+        "code": "453"
+    },
+    {
+        "name": "Hình ảnh bệnh  lý",
+        "code": "500"
+    },
+    {
+        "name": "Phiếu in kết  quả xét nghiệm Papanicolaou",
+        "code": "544"
+    },
+    {
+        "name": "Cam kết truyền  máu",
+        "code": "569"
+    },
+    {
+        "name": "Bảng kiểm xác  định chính xác người bệnh",
+        "code": "571"
+    },
+    {
+        "name": "Phiếu yêu cầu  xét nghiệm nồng độ cồn trong máu",
+        "code": "577"
+    },
+    {
+        "name": "Cam kết về  việc sử dụng thuốc gây nghiện của người bệnh/người đại diện của người bệnh",
+        "code": "590"
+    },
+    {
+        "name": "PHIẾU THEO DÕI  VÀ RA QUYẾT ĐỊNH ĐIỀU TRỊ BỆNH TAY CHÂN MIỆNG",
+        "code": "594"
+    },
+    {
+        "name": "Phiếu khám  thai tiền mê",
+        "code": "600"
+    },
+    {
+        "name": "Phiếu khám  thai tiền mê",
+        "code": "600"
+    },
+    {
+        "name": "Phản ứng có  hại của thuốc",
+        "code": "636"
+    },
+    {
+        "name": "Phiếu kết quả  vi khuẩn kháng thuốc định tính",
+        "code": "655"
+    },
+    {
+        "name": "Phiếu xét  nghiệm nước dịch",
+        "code": "656"
+    },
+    {
+        "name": "Giấy khám sức  khỏe cho trẻ dưới 6 tuổi",
+        "code": "679"
+    },
+    {
+        "name": "Phiếu tư vấn  ngâm tắm thuốc tím",
+        "code": "680"
+    },
+    {
+        "name": "Bệnh án ngoại  trú phục hồi chức năng",
+        "code": "1112"
+    },
+    {
+        "name": "Phiếu ký BHYT  130",
+        "code": "1300"
+    },
+    {
+        "name": "Giấy ra viện  TT25",
+        "code": "1300"
+    },
+    {
+        "name": "Giấy xác nhận  không đủ sức khỏe để chăm sóc con (Mẫu số 10 - TT25)",
+        "code": "1300"
+    },
+    {
+        "name": "Phiếu ký xml  chung",
+        "code": "1300"
+    },
+    {
+        "name": "Phiếu ký xml  checkin",
+        "code": "1300"
+    },
+    {
+        "name": "Giấy nghỉ  dưỡng thai (Mẫu số 11 - TT25)",
+        "code": "1300"
+    },
+    {
+        "name": "Giấy xác nhận  điều trị vô sinh (Mẫu số 09 - TT25)",
+        "code": "1300"
+    },
+    {
+        "name": "Giấy xác nhận  quá trình điều trị nội trú (Mẫu số 06 - TT25)",
+        "code": "1300"
+    },
+    {
+        "name": "Tóm tắt hồ  sơ bệnh án (Mẫu số 03 - TT25)",
+        "code": "1300"
+    },
+    {
+        "name": "XML_GIAYBAOTU",
+        "code": "1300"
+    },
+    {
+        "name": "XML_GIAYKSKLAIXE",
+        "code": "1300"
+    },
+    {
+        "name": "Mẫu 05/DM – DM  dịch vụ khám bệnh, chữa bệnh thanh toán BHYT",
+        "code": "1300"
+    },
+    {
+        "name": "Mẫu 06/DM – DM  Thiết bị y tế thực hiện dịch vụ kỹ thuật",
+        "code": "1300"
+    },
+    {
+        "name": "Mẫu 03/DM – DM  thuốc, máu, chế phẩm máu thanh toán BHYT",
+        "code": "1300"
+    },
+    {
+        "name": "Mẫu 04/DM – DM  thiết bị y tế thanh toán BHYT",
+        "code": "1300"
+    },
+    {
+        "name": "Mẫu 01/DM – DM  bộ phận chuyên môn",
+        "code": "1300"
+    },
+    {
+        "name": "Mẫu 02/DM – DM  nhân lực tham gia KB, CB",
+        "code": "1300"
+    },
+    {
+        "name": "Mẫu 01BH C79",
+        "code": "1300"
+    },
+    {
+        "name": "Giấy chứng  sinh TT25 gửi BHXH",
+        "code": "1301"
+    }
+]
