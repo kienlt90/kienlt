@@ -1352,13 +1352,13 @@ def handle_garmin(message):
         bot.send_message(chat_id, "⏳ Đang kết nối Garmin Connect và tải dữ liệu mới nhất (90 ngày qua)...")
         try:
             sync_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sync_garmin.py")
-            res = subprocess.run([sys.executable, sync_script], capture_output=True, text=True)
+            res = subprocess.run([sys.executable, sync_script], capture_output=True, text=True, encoding="utf-8")
             if res.returncode == 0:
                 report = build_garmin_summary_text()
                 bot.send_message(chat_id, f"✅ **Đồng bộ thành công!**\n\n{report}", parse_mode='Markdown')
             else:
-                stdout = res.stdout.strip()
-                stderr = res.stderr.strip()
+                stdout = (res.stdout or "").strip()
+                stderr = (res.stderr or "").strip()
                 err_msg = stdout if stdout else stderr
                 bot.send_message(chat_id, f"❌ **Lỗi đồng bộ Garmin:**\n`{err_msg}`", parse_mode='Markdown')
         except Exception as e:
