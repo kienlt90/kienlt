@@ -474,59 +474,7 @@
     </div>
   </footer>
 
-  <!-- MODAL ĐỘI HÌNH TRẬN ĐẤU -->
-  <div class="modal-overlay" id="lineup-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div id="lineup-modal-title" style="flex-grow: 1;">
-          <!-- Điền bằng JS -->
-        </div>
-        <button class="modal-close-btn" onclick="closeLineupModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <!-- Tab selector -->
-        <div class="lineup-tabs" style="display: flex; gap: 10px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 10px;">
-          <button class="action-btn lineup-tab-btn active" data-tab="list" style="padding: 6px 15px; font-size: 13px;">📋 Danh sách đội hình</button>
-          <button class="action-btn secondary-btn lineup-tab-btn" data-tab="pitch" style="padding: 6px 15px; font-size: 13px;">🏟️ Sơ đồ chiến thuật</button>
-        </div>
-        
-        <!-- Tab Content: List View -->
-        <div id="lineup-tab-list" class="lineup-tab-content">
-          <div class="lineup-grid">
-            <!-- Team 1 Lineup Column -->
-            <div class="lineup-team-column" id="lineup-col-team1">
-              <!-- Điền bằng JS -->
-            </div>
-            <!-- Team 2 Lineup Column -->
-            <div class="lineup-team-column" id="lineup-col-team2">
-              <!-- Điền bằng JS -->
-            </div>
-          </div>
-        </div>
-        
-        <!-- Tab Content: Pitch View -->
-        <div id="lineup-tab-pitch" class="lineup-tab-content" style="display: none;">
-          <div class="soccer-field-container">
-            <div class="soccer-field" id="soccer-field-pitch">
-              <!-- Field markings -->
-              <div class="field-marking field-half-line"></div>
-              <div class="field-marking field-center-circle"></div>
-              <div class="field-center-spot"></div>
-              <div class="field-marking field-penalty-box-top"></div>
-              <div class="field-marking field-penalty-box-bottom"></div>
-              <div class="field-marking field-goal-box-top"></div>
-              <div class="field-marking field-goal-box-bottom"></div>
-              <div class="field-marking field-penalty-arc-top"></div>
-              <div class="field-marking field-penalty-arc-bottom"></div>
-              
-              <!-- Players positions (rendered dynamically) -->
-              <div id="pitch-players-container"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Scripts -->
   <script src="data.js"></script>
