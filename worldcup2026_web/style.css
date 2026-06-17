@@ -1385,4 +1385,432 @@ body.light-theme .scorer-item {
   font-weight: 600;
 }
 
+/* LiveScore-style Lineups Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(3, 7, 18, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 950px;
+  height: 85%;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  transform: scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.modal-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 28px;
+  cursor: pointer;
+  transition: color 0.2s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.modal-close-btn:hover {
+  color: var(--primary);
+}
+
+.lineup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .lineup-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lineup-team-column {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.team-header-lineup {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 12px;
+}
+
+.team-name-flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.formation-badge {
+  background: var(--primary-glow);
+  color: var(--primary);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.player-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-list-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+body.light-theme .player-row {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.player-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.03);
+}
+
+body.light-theme .player-row:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.player-info-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.player-row.star .player-number {
+  background: var(--primary);
+  color: #030712;
+  border-color: var(--primary);
+}
+
+.player-name-text {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.player-row.star .player-name-text {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.player-pos-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+body.light-theme .player-pos-badge {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.player-row.star .player-pos-badge {
+  background: var(--primary-glow);
+  color: var(--primary);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.coach-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  font-size: 13px;
+  border-top: 1px solid var(--card-border);
+  color: var(--text-main);
+  margin-top: 8px;
+}
+
+body.light-theme .coach-info {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Soccer field styles */
+.soccer-field-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background: var(--bg-primary);
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+}
+
+.soccer-field {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 580px;
+  background: linear-gradient(180deg, #1b5e20 0%, #2e7d32 100%);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.soccer-field::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 40px,
+    transparent 40px,
+    transparent 80px
+  );
+  pointer-events: none;
+}
+
+.field-marking {
+  position: absolute;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+.field-half-line {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 0;
+  transform: translateY(-50%);
+}
+
+.field-center-circle {
+  top: 50%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.field-center-spot {
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  pointer-events: none;
+}
+
+.field-penalty-box-top {
+  top: -2px;
+  left: 50%;
+  width: 180px;
+  height: 75px;
+  transform: translateX(-50%);
+  border-top: none;
+}
+
+.field-penalty-box-bottom {
+  bottom: -2px;
+  left: 50%;
+  width: 180px;
+  height: 75px;
+  transform: translateX(-50%);
+  border-bottom: none;
+}
+
+.field-goal-box-top {
+  top: -2px;
+  left: 50%;
+  width: 80px;
+  height: 25px;
+  transform: translateX(-50%);
+  border-top: none;
+}
+
+.field-goal-box-bottom {
+  bottom: -2px;
+  left: 50%;
+  width: 80px;
+  height: 25px;
+  transform: translateX(-50%);
+  border-bottom: none;
+}
+
+.field-penalty-arc-top {
+  top: 55px;
+  left: 50%;
+  width: 60px;
+  height: 35px;
+  border-radius: 0 0 30px 30px;
+  transform: translateX(-50%);
+  border-top: none;
+}
+
+.field-penalty-arc-bottom {
+  bottom: 55px;
+  left: 50%;
+  width: 60px;
+  height: 35px;
+  border-radius: 30px 30px 0 0;
+  transform: translateX(-50%);
+  border-bottom: none;
+}
+
+.pitch-player {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.pitch-player:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.player-shirt {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 2px solid #fff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pitch-player.team-1 .player-shirt {
+  background: #1d4ed8;
+}
+
+.pitch-player.team-2 .player-shirt {
+  background: #dc2626;
+}
+
+.pitch-player.star .player-shirt {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #030712;
+}
+
+.player-shirt-label {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 1px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  background: rgba(3, 7, 18, 0.6);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
