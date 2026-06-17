@@ -1,7 +1,7 @@
 $dataJsPath = "$PSScriptRoot\data.js"
 
 # 1. Read the existing data.js
-$lines = Get-Content -Path $dataJsPath -Encoding utf8
+$lines = [System.IO.File]::ReadAllLines($dataJsPath, [System.Text.Encoding]::UTF8)
 
 # Find boundaries dynamically using comment/variable markers
 $headIndex = -1
@@ -155,7 +155,7 @@ foreach ($e in $events) {
 
 # 3. Format JavaScript replacement content
 $sb = [System.Text.StringBuilder]::new()
-[void]$sb.AppendLine("// Dữ liệu lịch thi đấu chính thức vòng bảng World Cup 2026 từ ESPN API (72 trận đấu)")
+[void]$sb.AppendLine("// Official Match Schedule for World Cup 2026 from ESPN API (72 matches)")
 [void]$sb.AppendLine("const OFFICIAL_MATCHES_RAW = [")
 
 foreach ($m in $wcMatches) {
@@ -202,7 +202,7 @@ foreach ($m in $wcMatches) {
 }
 [void]$sb.AppendLine("];")
 [void]$sb.AppendLine("")
-[void]$sb.AppendLine("// Hàm bổ trợ tìm kiếm thông tin chi tiết của đội bóng theo ID")
+[void]$sb.AppendLine("// Helper function to find team details by ID")
 [void]$sb.AppendLine("function findTeamById(teamId) {")
 [void]$sb.AppendLine("  for (const groupLetter of Object.keys(WORLD_CUP_DATA.groups)) {")
 [void]$sb.AppendLine("    const team = WORLD_CUP_DATA.groups[groupLetter].find(t => t.id === teamId);")
@@ -211,7 +211,7 @@ foreach ($m in $wcMatches) {
 [void]$sb.AppendLine("  return null;")
 [void]$sb.AppendLine("}")
 [void]$sb.AppendLine("")
-[void]$sb.AppendLine("// Khởi tạo DEFAULT_MATCHES với đầy đủ thông tin tên tiếng Việt, cờ và cờ hiệu")
+[void]$sb.AppendLine("// Initialize DEFAULT_MATCHES with full info")
 [void]$sb.AppendLine("const DEFAULT_MATCHES = OFFICIAL_MATCHES_RAW.map(match => {")
 [void]$sb.AppendLine("  const t1 = findTeamById(match.team1Id);")
 [void]$sb.AppendLine("  const t2 = findTeamById(match.team2Id);")
@@ -231,6 +231,6 @@ $middlePart = $sb.ToString()
 
 # 4. Concatenate and write back to data.js
 $newContent = ($headLines -join "`r`n") + "`r`n`r`n" + $middlePart + "`r`n`r`n" + ($tailLines -join "`r`n")
-[System.IO.File]::WriteAllText($dataJsPath, $newContent, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText($dataJsPath, $newContent, [System.Text.UTF8Encoding]::new($false))
 
 Write-Output "Successfully updated data.js with 72 official matches, cards and scorers!"
