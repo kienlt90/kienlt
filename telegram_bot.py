@@ -1072,6 +1072,7 @@ def scrape_active_tasks(pause_if_running=True):
                             req_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]/following::input[1]")
                             req_val_str = req_el.get_attribute('value') or req_el.text
                             if req_val_str:
+                                req_val_str = req_val_str.replace(',', '.')
                                 required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
                         except Exception:
                             pass
@@ -1080,6 +1081,7 @@ def scrape_active_tasks(pause_if_running=True):
                             act_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ thực hiện')]/following::input[1]")
                             act_val_str = act_el.get_attribute('value') or act_el.text
                             if act_val_str:
+                                act_val_str = act_val_str.replace(',', '.')
                                 actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
                         except Exception:
                             pass

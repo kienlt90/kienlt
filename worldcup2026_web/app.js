@@ -1554,8 +1554,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateThemeIcon(newTheme);
   };
 
-  }
-
   // --- LIVESCORE-STYLE STARTING LINEUPS GENERATOR ---
   const NAME_POOL = {
     spanish: {
