@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
        // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
-    const CURRENT_VERSION = "14.0";
+    const CURRENT_VERSION = "15.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -147,6 +147,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupSelect = document.getElementById("filter-group-select");
     const roundSelect = document.getElementById("filter-round-select");
     const statusSelect = document.getElementById("filter-status-select");
+    const dateSelect = document.getElementById("filter-date-select");
+
+    // Điền danh sách các ngày thi đấu động từ dữ liệu trận đấu
+    populateDateFilter();
 
     const filterHandler = () => {
       renderSimulator();
@@ -155,6 +159,40 @@ document.addEventListener("DOMContentLoaded", () => {
     groupSelect.addEventListener("change", filterHandler);
     roundSelect.addEventListener("change", filterHandler);
     statusSelect.addEventListener("change", filterHandler);
+    if (dateSelect) {
+      dateSelect.addEventListener("change", filterHandler);
+    }
+  }
+
+  // Tự động tạo danh sách ngày thi đấu duy nhất từ danh sách trận đấu và sắp xếp theo trình tự thời gian
+  function populateDateFilter() {
+    const dateSelect = document.getElementById("filter-date-select");
+    if (!dateSelect) return;
+
+    const currentValue = dateSelect.value;
+    const dates = [...new Set(matches.map(m => m.date))];
+    
+    // Sắp xếp ngày dạng DD/MM/YYYY tăng dần
+    dates.sort((a, b) => {
+      const [dayA, monthA, yearA] = a.split("/").map(Number);
+      const [dayB, monthB, yearB] = b.split("/").map(Number);
+      return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+    });
+
+    dateSelect.innerHTML = '<option value="ALL">Tất cả ngày</option>';
+    dates.forEach(d => {
+      const option = document.createElement("option");
+      option.value = d;
+      option.innerText = d;
+      dateSelect.appendChild(option);
+    });
+
+    // Khôi phục giá trị đã chọn trước đó nếu vẫn tồn tại
+    if (dates.includes(currentValue)) {
+      dateSelect.value = currentValue;
+    } else {
+      dateSelect.value = "ALL";
+    }
   }
 
   // --- CÁC HÀNH ĐỘNG TOÀN CỤC ---
@@ -697,13 +735,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupFilter = document.getElementById("filter-group-select").value;
     const roundFilter = document.getElementById("filter-round-select").value;
     const statusFilter = document.getElementById("filter-status-select").value;
+    const dateSelectEl = document.getElementById("filter-date-select");
+    const dateFilter = dateSelectEl ? dateSelectEl.value : "ALL";
 
     // Lọc trận đấu dựa trên bộ lọc đã chọn
     const filteredMatches = matches.filter(m => {
       const passGroup = groupFilter === "ALL" || m.group === groupFilter;
       const passRound = roundFilter === "ALL" || String(m.round) === roundFilter;
       const passStatus = statusFilter === "ALL" || m.status === statusFilter;
-      return passGroup && passRound && passStatus;
+      const passDate = dateFilter === "ALL" || m.date === dateFilter;
+      return passGroup && passRound && passStatus && passDate;
     });
     // Sắp xếp các trận đấu theo ngày và giờ (Cũ đến mới)
     filteredMatches.sort((a, b) => {
@@ -1320,13 +1361,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupFilter = document.getElementById("filter-group-select").value;
     const roundFilter = document.getElementById("filter-round-select").value;
     const statusFilter = document.getElementById("filter-status-select").value;
+    const dateSelectEl = document.getElementById("filter-date-select");
+    const dateFilter = dateSelectEl ? dateSelectEl.value : "ALL";
 
     matches.forEach(m => {
       // Xác định xem trận đấu này có nằm trong bộ lọc không
       const passGroup = groupFilter === "ALL" || m.group === groupFilter;
       const passRound = roundFilter === "ALL" || String(m.round) === roundFilter;
       const passStatus = statusFilter === "ALL" || m.status === statusFilter;
-      const isVisible = passGroup && passRound && passStatus;
+      const passDate = dateFilter === "ALL" || m.date === dateFilter;
+      const isVisible = passGroup && passRound && passStatus && passDate;
 
       // Điều kiện chạy mô phỏng:
       // - Nếu allMatches = true: Mô phỏng tất cả trận CHƯA ĐẤU trong hệ thống
@@ -1365,14 +1409,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupFilter = document.getElementById("filter-group-select").value;
     const roundFilter = document.getElementById("filter-round-select").value;
     const statusFilter = document.getElementById("filter-status-select").value;
+    const dateSelectEl = document.getElementById("filter-date-select");
+    const dateFilter = dateSelectEl ? dateSelectEl.value : "ALL";
 
     let resetCount = 0;
     matches.forEach(m => {
       const passGroup = groupFilter === "ALL" || m.group === groupFilter;
       const passRound = roundFilter === "ALL" || String(m.round) === roundFilter;
       const passStatus = statusFilter === "ALL" || m.status === statusFilter;
+      const passDate = dateFilter === "ALL" || m.date === dateFilter;
 
-      if (passGroup && passRound && passStatus) {
+      if (passGroup && passRound && passStatus && passDate) {
         m.score1 = null;
         m.score2 = null;
         m.yc1 = 0;
