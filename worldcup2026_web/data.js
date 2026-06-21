@@ -118,8 +118,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Hwang In-Beom", min: "67'" }, { name: "Oh Hyeon-Gyu", min: "80'" }],
     scorers2: [{ name: "Ladislav Krejcí", min: "59'" }],
-    assists1: ["Vladimír Coufal", "Lee Kang-In", "Hwang In-Beom"],
-    assists2: [],
+    assists1: ["Lee Kang-In", "Hwang In-Beom"],
+    assists2: ["Vladimír Coufal"],
     matchTime: ""
   },
   {
@@ -140,8 +140,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Cyle Larin", min: "78'" }],
     scorers2: [{ name: "Jovo Lukic", min: "21'" }],
-    assists1: ["Sead Kolasinac", "Promise David"],
-    assists2: [],
+    assists1: ["Promise David"],
+    assists2: ["Sead Kolasinac"],
     matchTime: ""
   },
   {
@@ -162,8 +162,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Damián Bobadilla (OG)", min: "7'" }, { name: "Folarin Balogun", min: "31'" }, { name: "Folarin Balogun", min: "45'+5'" }, { name: "Giovanni Reyna", min: "90'+8'" }],
     scorers2: [{ name: "Maurício", min: "73'" }],
-    assists1: ["Christian Pulisic", "Malik Tillman", "Julio Enciso", "Alex Freeman"],
-    assists2: [],
+    assists1: ["Christian Pulisic", "Malik Tillman", "Alex Freeman"],
+    assists2: ["Julio Enciso"],
     matchTime: ""
   },
   {
@@ -206,8 +206,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Vinícius Júnior", min: "32'" }],
     scorers2: [{ name: "Ismael Saibari", min: "21'" }],
-    assists1: ["Brahim Díaz", "Bruno Guimarães"],
-    assists2: [],
+    assists1: ["Bruno Guimarães"],
+    assists2: ["Brahim Díaz"],
     matchTime: ""
   },
   {
@@ -294,8 +294,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Virgil van Dijk", min: "51'" }, { name: "Crysencio Summerville", min: "64'" }],
     scorers2: [{ name: "Keito Nakamura", min: "57'" }, { name: "Daichi Kamada", min: "89'" }],
-    assists1: ["Ryan Gravenberch", "Takefusa Kubo", "Ryan Gravenberch", "Koki Ogawa"],
-    assists2: [],
+    assists1: ["Ryan Gravenberch", "Ryan Gravenberch"],
+    assists2: ["Takefusa Kubo", "Koki Ogawa"],
     matchTime: ""
   },
   {
@@ -338,8 +338,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Yasin Ayari", min: "7'" }, { name: "Alexander Isak", min: "30'" }, { name: "Viktor Gyökeres", min: "59'" }, { name: "Mattias Svanberg", min: "84'" }, { name: "Yasin Ayari", min: "90'+6'" }],
     scorers2: [{ name: "Omar Rekik", min: "43'" }],
-    assists1: ["Viktor Gyökeres", "Hannibal Mejbri", "Alexander Isak", "Alexander Isak", "Lucas Bergvall"],
-    assists2: [],
+    assists1: ["Viktor Gyökeres", "Alexander Isak", "Alexander Isak", "Lucas Bergvall"],
+    assists2: ["Hannibal Mejbri"],
     matchTime: ""
   },
   {
@@ -382,8 +382,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Mohamed Hany (OG)", min: "66'" }],
     scorers2: [{ name: "Emam Ashour", min: "20'" }],
-    assists1: ["Mohamed Salah"],
-    assists2: [],
+    assists1: [],
+    assists2: ["Mohamed Salah"],
     matchTime: ""
   },
   {
@@ -426,8 +426,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Ramin Rezaeian", min: "32'" }, { name: "Mohammad Mohebbi", min: "64'" }],
     scorers2: [{ name: "Elijah Just", min: "7'" }, { name: "Elijah Just", min: "54'" }],
-    assists1: ["Chris Wood", "Chris Wood", "Ramin Rezaeian"],
-    assists2: [],
+    assists1: ["Ramin Rezaeian"],
+    assists2: ["Chris Wood", "Chris Wood"],
     matchTime: ""
   },
   {
@@ -448,8 +448,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Kylian Mbappé", min: "66'" }, { name: "Bradley Barcola", min: "82'" }, { name: "Kylian Mbappé", min: "90'+6'" }],
     scorers2: [{ name: "Ibrahim Mbaye", min: "90'+5'" }],
-    assists1: ["Michael Olise", "Adrien Rabiot", "Iliman Ndiaye"],
-    assists2: [],
+    assists1: ["Michael Olise", "Adrien Rabiot"],
+    assists2: ["Iliman Ndiaye"],
     matchTime: ""
   },
   {
@@ -470,8 +470,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Aymen Hussein", min: "39'" }],
     scorers2: [{ name: "Erling Haaland", min: "29'" }, { name: "Erling Haaland", min: "43'" }, { name: "Leo Østigard", min: "76'" }, { name: "Aymen Hussein (OG)", min: "90'+6'" }],
-    assists1: ["David Møller Wolfe", "Amir Al-Ammari", "Martin Ødegaard"],
-    assists2: [],
+    assists1: ["Amir Al-Ammari"],
+    assists2: ["David Møller Wolfe", "Martin Ødegaard"],
     matchTime: ""
   },
   {
@@ -514,8 +514,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Romano Schmid", min: "21'" }, { name: "Yazan Al-Arab (OG)", min: "76'" }, { name: "Marko Arnautovic", min: "90'+12'" }],
     scorers2: [{ name: "Ali Olwan", min: "50'" }],
-    assists1: ["Xaver Schlager", "Noor Al-Rawabdeh"],
-    assists2: [],
+    assists1: ["Xaver Schlager"],
+    assists2: ["Noor Al-Rawabdeh"],
     matchTime: ""
   },
   {
@@ -536,8 +536,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "João Neves", min: "6'" }],
     scorers2: [{ name: "Yoane Wissa", min: "45'+5'" }],
-    assists1: ["Pedro Neto", "Arthur Masuaku"],
-    assists2: [],
+    assists1: ["Pedro Neto"],
+    assists2: ["Arthur Masuaku"],
     matchTime: ""
   },
   {
@@ -558,8 +558,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Harry Kane", min: "12'" }, { name: "Harry Kane", min: "42'" }, { name: "Jude Bellingham", min: "47'" }, { name: "Marcus Rashford", min: "85'" }],
     scorers2: [{ name: "Martin Baturina", min: "36'" }, { name: "Petar Musa", min: "45'+5'" }],
-    assists1: ["Petar Sucic", "Declan Rice", "Ivan Perisic", "Elliot Anderson", "Bukayo Saka"],
-    assists2: [],
+    assists1: ["Declan Rice", "Elliot Anderson", "Bukayo Saka"],
+    assists2: ["Petar Sucic", "Ivan Perisic"],
     matchTime: ""
   },
   {
@@ -602,8 +602,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Abbosbek Fayzullaev", min: "60'" }],
     scorers2: [{ name: "Daniel Muñoz", min: "40'" }, { name: "Luis Díaz", min: "65'" }, { name: "Jáminton Campaz", min: "90'+9'" }],
-    assists1: ["Luis Díaz", "Gustavo Puerta", "Cucho Hernández"],
-    assists2: [],
+    assists1: [],
+    assists2: ["Luis Díaz", "Gustavo Puerta", "Cucho Hernández"],
     matchTime: ""
   },
   {
@@ -800,8 +800,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Brian Brobbey", min: "5'" }, { name: "Brian Brobbey", min: "17'" }, { name: "Cody Gakpo", min: "47'" }, { name: "Cody Gakpo", min: "54'" }, { name: "Crysencio Summerville", min: "89'" }],
     scorers2: [{ name: "Anthony Elanga", min: "59'" }],
-    assists1: ["Cody Gakpo", "Denzel Dumfries", "Denzel Dumfries", "Crysencio Summerville", "Alexander Isak", "Memphis Depay"],
-    assists2: [],
+    assists1: ["Cody Gakpo", "Denzel Dumfries", "Denzel Dumfries", "Crysencio Summerville", "Memphis Depay"],
+    assists2: ["Alexander Isak"],
     matchTime: ""
   },
   {

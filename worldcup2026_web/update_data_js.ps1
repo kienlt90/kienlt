@@ -54,7 +54,7 @@ function Normalize-Name ($name) {
 function Get-IsInScorers ($name, $scorersList) {
     $norm = Normalize-Name $name
     foreach ($s in $scorersList) {
-        if (Normalize-Name $s.name -eq $norm) {
+        if ((Normalize-Name $s.name) -eq $norm) {
             return $true
         }
     }
