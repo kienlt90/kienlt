@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let groupStandings = {}; // { A: [team1, team2, team3, team4], ... }
   let thirdPlaceStandings = []; // Danh sách 12 đội xếp thứ 3
   let activePlayerStats = {}; // Thống kê tất cả cầu thủ thực tế ghi bàn/kiến tạo
+  let isFirstLoad = true;
 
   // Helper lấy thông tin cầu thủ theo chỉ số mục tiêu
   function getPlayerFromTeam(teamName, idx) {
@@ -205,8 +206,22 @@ document.addEventListener("DOMContentLoaded", () => {
       dateSelect.appendChild(option);
     });
 
-    // Khôi phục giá trị đã chọn trước đó nếu vẫn tồn tại
-    if (dates.includes(currentValue)) {
+    // Định dạng ngày hôm nay (DD/MM/YYYY)
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const todayStr = `${day}/${month}/${year}`;
+
+    // Khôi phục giá trị đã chọn trước đó nếu vẫn tồn tại, hoặc tự động chọn ngày hôm nay nếu có trận đấu và là lần tải đầu tiên
+    if (isFirstLoad) {
+      isFirstLoad = false;
+      if (dates.includes(todayStr)) {
+        dateSelect.value = todayStr;
+      } else {
+        dateSelect.value = "ALL";
+      }
+    } else if (dates.includes(currentValue)) {
       dateSelect.value = currentValue;
     } else {
       dateSelect.value = "ALL";
