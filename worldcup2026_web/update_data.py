@@ -328,3 +328,19 @@ try:
     print("Successfully updated data.js with 72 official matches, cards, scorers AND assists!")
 except Exception as e:
     print(f"Error writing to data.js: {e}")
+
+# 5. Update index.html query string version to force browser cache bypass
+index_path = os.path.join(script_dir, "index.html")
+if os.path.exists(index_path):
+    try:
+        with open(index_path, "r", encoding="utf-8") as f:
+            index_content = f.read()
+        current_date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+        new_index_content = re.sub(r'data\.js\?v=[a-zA-Z0-9_-]+', f"data.js?v={current_date_str}", index_content)
+        new_index_content = re.sub(r'app\.js\?v=[a-zA-Z0-9_-]+', f"app.js?v={current_date_str}", new_index_content)
+        with open(index_path, "w", encoding="utf-8") as f:
+            f.write(new_index_content)
+        print(f"Successfully updated cache-busting version in index.html to {current_date_str}")
+    except Exception as e:
+        print(f"Error updating index.html cache-busting version: {e}")
+

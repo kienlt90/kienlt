@@ -35,6 +35,75 @@ if ($headIndex -eq -1 -or $tailIndex -eq -1) {
 $headLines = $lines[0..$headIndex]
 $tailLines = $lines[$tailIndex..($lines.Count - 1)]
 
+# Helper functions for assist extraction
+function Normalize-Name ($name) {
+    if ($name -eq $null -or $name -eq "") { return "" }
+    $normalized = $name.Normalize([System.Text.NormalizationForm]::FormD)
+    $sb = [System.Text.StringBuilder]::new()
+    foreach ($c in $normalized.ToCharArray()) {
+        if ([System.Globalization.CharUnicodeInfo]::GetUnicodeCategory($c) -ne [System.Globalization.UnicodeCategory]::NonSpacingMark) {
+            [void]$sb.Append($c)
+        }
+    }
+    $res = $sb.ToString().ToLower().Replace('-', ' ').Trim()
+    $res = $res -replace ' \(og\)', ''
+    $res = $res -replace '\(og\)', ''
+    return $res.Trim()
+}
+
+function Get-IsInScorers ($name, $scorersList) {
+    $norm = Normalize-Name $name
+    foreach ($s in $scorersList) {
+        if (Normalize-Name $s.name -eq $norm) {
+            return $true
+        }
+    }
+    return $false
+}
+
+function Get-Assists ($eventId, $scorers1, $scorers2, $t1Name, $t2Name) {
+    $assists1 = @()
+    $assists2 = @()
+    $summaryUrl = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=$eventId"
+    try {
+        $summary = Invoke-RestMethod -Uri $summaryUrl -TimeoutSec 5
+        $commentary = $summary.commentary
+        if ($commentary -ne $null) {
+            foreach ($c in $commentary) {
+                $text = $c.text
+                if ($text -ne $null -and $text.ToLower().Contains("goal!")) {
+                    $play = $c.play
+                    if ($play -ne $null -and $play.participants -ne $null -and $play.participants.Count -ge 2) {
+                        $scorerName = $play.participants[0].athlete.displayName
+                        $assister = $play.participants[1].athlete.displayName
+                        $playTeam = if ($play.team -ne $null) { $play.team.displayName } else { "" }
+                        
+                        if ($assister -ne $null -and $scorerName -ne $null) {
+                            if (Get-IsInScorers $scorerName $scorers1) {
+                                $assists1 += $assister
+                            } elseif (Get-IsInScorers $scorerName $scorers2) {
+                                $assists2 += $assister
+                            } elseif ($playTeam -ne "") {
+                                $normPlayTeam = Normalize-Name $playTeam
+                                $normT1 = Normalize-Name $t1Name
+                                $normT2 = Normalize-Name $t2Name
+                                if ($normPlayTeam -eq $normT1 -or $normPlayTeam.Contains($normT1) -or $normT1.Contains($normPlayTeam)) {
+                                    $assists1 += $assister
+                                } elseif ($normPlayTeam -eq $normT2 -or $normPlayTeam.Contains($normT2) -or $normT2.Contains($normPlayTeam)) {
+                                    $assists2 += $assister
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } catch {
+        # Silent warning
+    }
+    return @($assists1, $assists2)
+}
+
 # 2. Fetch the ESPN World Cup 2026 scoreboard
 $uri = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=150"
 $resp = Invoke-RestMethod -Uri $uri
@@ -56,6 +125,8 @@ foreach ($e in $events) {
     
     $t1Id = $c1.team.abbreviation
     $t2Id = $c2.team.abbreviation
+    $t1Name = $c1.team.displayName
+    $t2Name = $c2.team.displayName
     
     # Track appearances for rounds
     if (-not $teamAppearances.ContainsKey($t1Id)) { $teamAppearances[$t1Id] = 0 }
@@ -91,6 +162,8 @@ foreach ($e in $events) {
     
     $scorers1 = @()
     $scorers2 = @()
+    $assists1 = @()
+    $assists2 = @()
     
     $state = $e.status.type.state
     if ($state -eq "post" -or $state -eq "in") {
@@ -103,30 +176,43 @@ foreach ($e in $events) {
         $t2Uid = $c2.team.id
         if ($comp.details -ne $null) {
             foreach ($d in $comp.details) {
-                # Cards
-                if ($d.yellowCard -eq $true) {
-                    if ($d.team.id -eq $t1Uid) { $yc1++ }
-                    elseif ($d.team.id -eq $t2Uid) { $yc2++ }
-                }
-                if ($d.redCard -eq $true) {
-                    if ($d.team.id -eq $t1Uid) { $rc1++ }
-                    elseif ($d.team.id -eq $t2Uid) { $rc2++ }
+                # Safe check team properties
+                if ($d.team -ne $null -and $d.team.id -ne $null) {
+                    # Cards
+                    if ($d.yellowCard -eq $true) {
+                        if ($d.team.id -eq $t1Uid) { $yc1++ }
+                        elseif ($d.team.id -eq $t2Uid) { $yc2++ }
+                    }
+                    if ($d.redCard -eq $true) {
+                        if ($d.team.id -eq $t1Uid) { $rc1++ }
+                        elseif ($d.team.id -eq $t2Uid) { $rc2++ }
+                    }
                 }
                 # Scorers
                 if ($d.scoringPlay -eq $true -or $d.type.text -eq "Goal" -or $d.type.id -eq "70") {
-                    $pName = if ($d.athletesInvolved -ne $null) { $d.athletesInvolved[0].displayName } else { "Unknown" }
-                    $min = $d.clock.displayValue
+                    $pName = if ($d.athletesInvolved -ne $null -and $d.athletesInvolved.Count -gt 0) { $d.athletesInvolved[0].displayName } else { "Unknown" }
+                    $min = if ($d.clock -ne $null) { $d.clock.displayValue } else { "" }
                     if ($d.ownGoal -eq $true) {
                         $pName = "$pName (OG)"
                     }
                     $sObj = @{ name = $pName; min = $min }
-                    if ($d.team.id -eq $t1Uid) {
-                        $scorers1 += $sObj
-                    } else {
-                        $scorers2 += $sObj
+                    if ($d.team -ne $null -and $d.team.id -ne $null) {
+                        if ($d.team.id -eq $t1Uid) {
+                            $scorers1 += $sObj
+                        } else {
+                            $scorers2 += $sObj
+                        }
                     }
                 }
             }
+        }
+        
+        # Fetch assists if there is a goal
+        if ($score1 -gt 0 -or $score2 -gt 0) {
+            Write-Output "Fetching assists for Match $($matchId): $t1Id vs $t2Id ($($e.id))..."
+            $resAssists = Get-Assists $e.id $scorers1 $scorers2 $t1Name $t2Name
+            $assists1 = $resAssists[0]
+            $assists2 = $resAssists[1]
         }
     }
     
@@ -148,6 +234,8 @@ foreach ($e in $events) {
         status = $status
         scorers1 = $scorers1
         scorers2 = $scorers2
+        assists1 = $assists1
+        assists2 = $assists2
     }
     $wcMatches += $mObj
     $matchId += 1
@@ -155,7 +243,7 @@ foreach ($e in $events) {
 
 # 3. Format JavaScript replacement content
 $sb = [System.Text.StringBuilder]::new()
-[void]$sb.AppendLine("// Official Match Schedule for World Cup 2026 from ESPN API (72 matches)")
+[void]$sb.AppendLine("// Dữ liệu lịch thi đấu chính thức vòng bảng World Cup 2026 từ ESPN API (72 trận đấu)")
 [void]$sb.AppendLine("const OFFICIAL_MATCHES_RAW = [")
 
 foreach ($m in $wcMatches) {
@@ -179,6 +267,26 @@ foreach ($m in $wcMatches) {
         $scorers2Val = "[" + ($items -join ", ") + "]"
     }
 
+    $assists1Val = "[]"
+    if ($m.assists1.Count -gt 0) {
+        $items = @()
+        foreach ($a in $m.assists1) {
+            $cleaned = $a.Replace('"', '\"')
+            $items += "`"$cleaned`""
+        }
+        $assists1Val = "[" + ($items -join ", ") + "]"
+    }
+
+    $assists2Val = "[]"
+    if ($m.assists2.Count -gt 0) {
+        $items = @()
+        foreach ($a in $m.assists2) {
+            $cleaned = $a.Replace('"', '\"')
+            $items += "`"$cleaned`""
+        }
+        $assists2Val = "[" + ($items -join ", ") + "]"
+    }
+
     [void]$sb.AppendLine("  {")
     [void]$sb.AppendLine("    id: `"$($m.id)`",")
     [void]$sb.AppendLine("    group: `"$($m.group)`",")
@@ -197,12 +305,14 @@ foreach ($m in $wcMatches) {
     [void]$sb.AppendLine("    status: `"$($m.status)`",")
     [void]$sb.AppendLine("    scorers1: $($scorers1Val),")
     [void]$sb.AppendLine("    scorers2: $($scorers2Val),")
+    [void]$sb.AppendLine("    assists1: $($assists1Val),")
+    [void]$sb.AppendLine("    assists2: $($assists2Val),")
     [void]$sb.AppendLine("    matchTime: `"`"")
     [void]$sb.AppendLine("  },")
 }
 [void]$sb.AppendLine("];")
 [void]$sb.AppendLine("")
-[void]$sb.AppendLine("// Helper function to find team details by ID")
+[void]$sb.AppendLine("// Hàm bổ trợ tìm kiếm thông tin chi tiết của đội bóng theo ID")
 [void]$sb.AppendLine("function findTeamById(teamId) {")
 [void]$sb.AppendLine("  for (const groupLetter of Object.keys(WORLD_CUP_DATA.groups)) {")
 [void]$sb.AppendLine("    const team = WORLD_CUP_DATA.groups[groupLetter].find(t => t.id === teamId);")
@@ -211,7 +321,7 @@ foreach ($m in $wcMatches) {
 [void]$sb.AppendLine("  return null;")
 [void]$sb.AppendLine("}")
 [void]$sb.AppendLine("")
-[void]$sb.AppendLine("// Initialize DEFAULT_MATCHES with full info")
+[void]$sb.AppendLine("// Khởi tạo DEFAULT_MATCHES với đầy đủ thông tin tên tiếng Việt, cờ và cờ hiệu")
 [void]$sb.AppendLine("const DEFAULT_MATCHES = OFFICIAL_MATCHES_RAW.map(match => {")
 [void]$sb.AppendLine("  const t1 = findTeamById(match.team1Id);")
 [void]$sb.AppendLine("  const t2 = findTeamById(match.team2Id);")
@@ -231,6 +341,19 @@ $middlePart = $sb.ToString()
 
 # 4. Concatenate and write back to data.js
 $newContent = ($headLines -join "`r`n") + "`r`n`r`n" + $middlePart + "`r`n`r`n" + ($tailLines -join "`r`n")
-[System.IO.File]::WriteAllText($dataJsPath, $newContent, [System.Text.UTF8Encoding]::new($false))
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText($dataJsPath, $newContent, $utf8NoBom)
 
-Write-Output "Successfully updated data.js with 72 official matches, cards and scorers!"
+Write-Output "Successfully updated data.js with 72 official matches, cards, scorers AND assists!"
+
+# 5. Update index.html query string version to force browser cache bypass
+$indexPath = "$PSScriptRoot\index.html"
+if (Test-Path $indexPath) {
+    $indexContent = [System.IO.File]::ReadAllText($indexPath, [System.Text.Encoding]::UTF8)
+    $currentDateStr = (Get-Date).ToString("yyyyMMdd_HHmmss")
+    $newIndexContent = $indexContent -replace 'data\.js\?v=[a-zA-Z0-9_-]+', "data.js?v=$currentDateStr"
+    $newIndexContent = $newIndexContent -replace 'app\.js\?v=[a-zA-Z0-9_-]+', "app.js?v=$currentDateStr"
+    [System.IO.File]::WriteAllText($indexPath, $newIndexContent, $utf8NoBom)
+    Write-Output "Successfully updated cache-busting version in index.html to $currentDateStr"
+}
+

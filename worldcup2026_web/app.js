@@ -60,22 +60,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
-       // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch)
-    const CURRENT_VERSION = "16.0";
+    // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch và tự động đồng bộ kết quả chính thức đã kết thúc)
+    const CURRENT_VERSION = "17.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
     if (savedVersion !== CURRENT_VERSION) {
       console.log("Phiên bản mới phát hiện. Khởi tạo lại toàn bộ dữ liệu sạch cho World Cup 2026.");
-      localStorage.removeItem("wc2026_matches");
       localStorage.setItem("wc2026_version", CURRENT_VERSION);
       matches = [...DEFAULT_MATCHES];
     } else if (savedMatches) {
-      matches = JSON.parse(savedMatches);
+      try {
+        const parsed = JSON.parse(savedMatches);
+        // Tự động đồng bộ các trận đấu đã kết thúc từ DEFAULT_MATCHES để tránh lệch kết quả chính thức
+        matches = DEFAULT_MATCHES.map(defaultMatch => {
+          const savedMatch = parsed.find(m => m.id === defaultMatch.id);
+          if (savedMatch) {
+            // Nếu trận đấu trong mã nguồn mặc định đã Kết thúc, bắt buộc lấy từ mặc định
+            if (defaultMatch.status === "Kết thúc") {
+              return defaultMatch;
+            }
+            return savedMatch;
+          }
+          return defaultMatch;
+        });
+      } catch (e) {
+        console.error("Lỗi parse savedMatches:", e);
+        matches = [...DEFAULT_MATCHES];
+      }
     } else {
       matches = [...DEFAULT_MATCHES];
       localStorage.setItem("wc2026_version", CURRENT_VERSION);
     }
+    // Lưu lại trạng thái đã đồng bộ/cập nhật vào localStorage
+    localStorage.setItem("wc2026_matches", JSON.stringify(matches));
 
     // 2. Thiết lập chuyển Tab
     setupTabs();
@@ -1447,8 +1465,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // Gọi API Scoreboard bóng đá World Cup của ESPN (CORS-enabled)
-      const response = await fetch("https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard");
+      // Gọi API Scoreboard bóng đá World Cup của ESPN (CORS-enabled) với đầy đủ ngày và giới hạn số trận đấu
+      const response = await fetch("https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=150");
       if (!response.ok) throw new Error("Không thể kết nối với máy chủ ESPN.");
 
       const data = await response.json();
@@ -1505,14 +1523,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
               if (competition.details && competition.details.length > 0) {
                 competition.details.forEach(d => {
-                  // Thẻ phạt
-                  if (d.yellowCard === true) {
-                    if (d.team.id === homeUid) { if (isHomeTeam1) yc1++; else yc2++; }
-                    else if (d.team.id === awayUid) { if (isHomeTeam1) yc2++; else yc1++; }
-                  }
-                  if (d.redCard === true) {
-                    if (d.team.id === homeUid) { if (isHomeTeam1) rc1++; else rc2++; }
-                    else if (d.team.id === awayUid) { if (isHomeTeam1) rc2++; else rc1++; }
+                  // Safe check team properties
+                  if (d.team && d.team.id) {
+                    // Thẻ phạt
+                    if (d.yellowCard === true) {
+                      if (d.team.id === homeUid) { if (isHomeTeam1) yc1++; else yc2++; }
+                      else if (d.team.id === awayUid) { if (isHomeTeam1) yc2++; else yc1++; }
+                    }
+                    if (d.redCard === true) {
+                      if (d.team.id === homeUid) { if (isHomeTeam1) rc1++; else rc2++; }
+                      else if (d.team.id === awayUid) { if (isHomeTeam1) rc2++; else rc1++; }
+                    }
                   }
                   // Cầu thủ ghi bàn
                   if (d.scoringPlay === true || (d.type && (d.type.text === "Goal" || d.type.id === "70"))) {
@@ -1522,10 +1543,12 @@ document.addEventListener("DOMContentLoaded", () => {
                       pName = pName + " (OG)";
                     }
                     const sObj = { name: pName, min: min };
-                    if (d.team.id === homeUid) {
-                      if (isHomeTeam1) scorers1.push(sObj); else scorers2.push(sObj);
-                    } else if (d.team.id === awayUid) {
-                      if (isHomeTeam1) scorers2.push(sObj); else scorers1.push(sObj);
+                    if (d.team && d.team.id) {
+                      if (d.team.id === homeUid) {
+                        if (isHomeTeam1) scorers1.push(sObj); else scorers2.push(sObj);
+                      } else if (d.team.id === awayUid) {
+                        if (isHomeTeam1) scorers2.push(sObj); else scorers1.push(sObj);
+                      }
                     }
                   }
                 });

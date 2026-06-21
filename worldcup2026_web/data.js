@@ -76,7 +76,7 @@ const WORLD_CUP_DATA = {
   }
 };
 
-// Official Match Schedule for World Cup 2026 from ESPN API (72 matches)
+// Dá»¯ liá»‡u lá»‹ch thi Ä‘áº¥u chÃ­nh thá»©c vÃ²ng báº£ng World Cup 2026 tá»« ESPN API (72 tráº­n Ä‘áº¥u)
 const OFFICIAL_MATCHES_RAW = [
   {
     id: "M01",
@@ -96,6 +96,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Julián Quiñones", min: "9'" }, { name: "Raúl Jiménez", min: "67'" }],
     scorers2: [],
+    assists1: ["Érik Lira", "Roberto Alvarado"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -116,6 +118,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Hwang In-Beom", min: "67'" }, { name: "Oh Hyeon-Gyu", min: "80'" }],
     scorers2: [{ name: "Ladislav Krejcí", min: "59'" }],
+    assists1: ["Vladimír Coufal", "Lee Kang-In", "Hwang In-Beom"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -136,6 +140,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Cyle Larin", min: "78'" }],
     scorers2: [{ name: "Jovo Lukic", min: "21'" }],
+    assists1: ["Sead Kolasinac", "Promise David"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -156,6 +162,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Damián Bobadilla (OG)", min: "7'" }, { name: "Folarin Balogun", min: "31'" }, { name: "Folarin Balogun", min: "45'+5'" }, { name: "Giovanni Reyna", min: "90'+8'" }],
     scorers2: [{ name: "Maurício", min: "73'" }],
+    assists1: ["Christian Pulisic", "Malik Tillman", "Julio Enciso", "Alex Freeman"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -176,6 +184,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Miro Muheim (OG)", min: "90'+4'" }],
     scorers2: [{ name: "Breel Embolo", min: "17'" }],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -196,6 +206,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Vinícius Júnior", min: "32'" }],
     scorers2: [{ name: "Ismael Saibari", min: "21'" }],
+    assists1: ["Brahim Díaz", "Bruno Guimarães"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -216,6 +228,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [],
     scorers2: [{ name: "John McGinn", min: "28'" }],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -236,6 +250,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Nestory Irankunda", min: "27'" }, { name: "Connor Metcalfe", min: "75'" }],
     scorers2: [],
+    assists1: ["Paul Okon-Engstler"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -256,6 +272,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Felix Nmecha", min: "6'" }, { name: "Nico Schlotterbeck", min: "38'" }, { name: "Kai Havertz", min: "45'+5'" }, { name: "Jamal Musiala", min: "47'" }, { name: "Nathaniel Brown", min: "68'" }, { name: "Deniz Undav", min: "78'" }, { name: "Kai Havertz", min: "88'" }],
     scorers2: [{ name: "Livano Comenencia", min: "21'" }],
+    assists1: ["Florian Wirtz", "Nathaniel Brown", "Joshua Kimmich", "Deniz Undav", "Joshua Kimmich", "Deniz Undav"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -276,6 +294,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Virgil van Dijk", min: "51'" }, { name: "Crysencio Summerville", min: "64'" }],
     scorers2: [{ name: "Keito Nakamura", min: "57'" }, { name: "Daichi Kamada", min: "89'" }],
+    assists1: ["Ryan Gravenberch", "Takefusa Kubo", "Ryan Gravenberch", "Koki Ogawa"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -296,6 +316,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Amad Diallo", min: "90'" }],
     scorers2: [],
+    assists1: ["Wilfried Singo"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -316,6 +338,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Yasin Ayari", min: "7'" }, { name: "Alexander Isak", min: "30'" }, { name: "Viktor Gyökeres", min: "59'" }, { name: "Mattias Svanberg", min: "84'" }, { name: "Yasin Ayari", min: "90'+6'" }],
     scorers2: [{ name: "Omar Rekik", min: "43'" }],
+    assists1: ["Viktor Gyökeres", "Hannibal Mejbri", "Alexander Isak", "Alexander Isak", "Lucas Bergvall"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -336,6 +360,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -356,6 +382,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Mohamed Hany (OG)", min: "66'" }],
     scorers2: [{ name: "Emam Ashour", min: "20'" }],
+    assists1: ["Mohamed Salah"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -376,6 +404,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Abdulelah Al-Amri", min: "41'" }],
     scorers2: [{ name: "Maxi Araújo", min: "80'" }],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -396,6 +426,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Ramin Rezaeian", min: "32'" }, { name: "Mohammad Mohebbi", min: "64'" }],
     scorers2: [{ name: "Elijah Just", min: "7'" }, { name: "Elijah Just", min: "54'" }],
+    assists1: ["Chris Wood", "Chris Wood", "Ramin Rezaeian"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -416,6 +448,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Kylian Mbappé", min: "66'" }, { name: "Bradley Barcola", min: "82'" }, { name: "Kylian Mbappé", min: "90'+6'" }],
     scorers2: [{ name: "Ibrahim Mbaye", min: "90'+5'" }],
+    assists1: ["Michael Olise", "Adrien Rabiot", "Iliman Ndiaye"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -436,6 +470,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Aymen Hussein", min: "39'" }],
     scorers2: [{ name: "Erling Haaland", min: "29'" }, { name: "Erling Haaland", min: "43'" }, { name: "Leo Østigard", min: "76'" }, { name: "Aymen Hussein (OG)", min: "90'+6'" }],
+    assists1: ["David Møller Wolfe", "Amir Al-Ammari", "Martin Ødegaard"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -456,6 +492,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Lionel Messi", min: "17'" }, { name: "Lionel Messi", min: "60'" }, { name: "Lionel Messi", min: "76'" }],
     scorers2: [],
+    assists1: ["Rodrigo De Paul", "Nico González"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -476,6 +514,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Romano Schmid", min: "21'" }, { name: "Yazan Al-Arab (OG)", min: "76'" }, { name: "Marko Arnautovic", min: "90'+12'" }],
     scorers2: [{ name: "Ali Olwan", min: "50'" }],
+    assists1: ["Xaver Schlager", "Noor Al-Rawabdeh"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -496,6 +536,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "João Neves", min: "6'" }],
     scorers2: [{ name: "Yoane Wissa", min: "45'+5'" }],
+    assists1: ["Pedro Neto", "Arthur Masuaku"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -516,6 +558,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Harry Kane", min: "12'" }, { name: "Harry Kane", min: "42'" }, { name: "Jude Bellingham", min: "47'" }, { name: "Marcus Rashford", min: "85'" }],
     scorers2: [{ name: "Martin Baturina", min: "36'" }, { name: "Petar Musa", min: "45'+5'" }],
+    assists1: ["Petar Sucic", "Declan Rice", "Ivan Perisic", "Elliot Anderson", "Bukayo Saka"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -536,6 +580,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Caleb Yirenkyi", min: "90'+5'" }],
     scorers2: [],
+    assists1: ["Brandon Thomas-Asante"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -556,6 +602,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Abbosbek Fayzullaev", min: "60'" }],
     scorers2: [{ name: "Daniel Muñoz", min: "40'" }, { name: "Luis Díaz", min: "65'" }, { name: "Jáminton Campaz", min: "90'+9'" }],
+    assists1: ["Luis Díaz", "Gustavo Puerta", "Cucho Hernández"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -576,6 +624,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Michal Sadílek", min: "6'" }],
     scorers2: [{ name: "Teboho Mokoena", min: "83'" }],
+    assists1: ["Alexandr Sojka"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -596,6 +646,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Johan Manzambi", min: "74'" }, { name: "Rubén Vargas", min: "84'" }, { name: "Johan Manzambi", min: "90'" }, { name: "Granit Xhaka", min: "90'+7'" }],
     scorers2: [{ name: "Ermin Mahmic", min: "90'+3'" }],
+    assists1: ["Breel Embolo", "Rubén Vargas"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -616,6 +668,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Cyle Larin", min: "16'" }, { name: "Jonathan David", min: "29'" }, { name: "Jonathan David", min: "45'+3'" }, { name: "Nathan Saliba", min: "64'" }, { name: "Mohamed Manai (OG)", min: "75'" }, { name: "Jonathan David", min: "90'+2'" }],
     scorers2: [],
+    assists1: ["Nathan Saliba"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -636,6 +690,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Kết thúc",
     scorers1: [{ name: "Luis Romo", min: "50'" }],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -647,15 +703,17 @@ const OFFICIAL_MATCHES_RAW = [
     time: "02:00",
     team1Id: "USA",
     team2Id: "AUS",
-    score1: null,
-    score2: null,
-    yc1: 0,
+    score1: 2,
+    score2: 0,
+    yc1: 3,
     rc1: 0,
-    yc2: 0,
+    yc2: 4,
     rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
+    status: "Kết thúc",
+    scorers1: [{ name: "Cameron Burgess (OG)", min: "11'" }, { name: "Alex Freeman", min: "43'" }],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -667,15 +725,17 @@ const OFFICIAL_MATCHES_RAW = [
     time: "05:00",
     team1Id: "SCO",
     team2Id: "MAR",
-    score1: null,
-    score2: null,
-    yc1: 0,
+    score1: 0,
+    score2: 1,
+    yc1: 1,
     rc1: 0,
-    yc2: 0,
+    yc2: 1,
     rc2: 0,
-    status: "Chưa đấu",
+    status: "Kết thúc",
     scorers1: [],
-    scorers2: [],
+    scorers2: [{ name: "Ismael Saibari", min: "2'" }],
+    assists1: [],
+    assists2: ["Brahim Díaz"],
     matchTime: ""
   },
   {
@@ -687,15 +747,17 @@ const OFFICIAL_MATCHES_RAW = [
     time: "07:30",
     team1Id: "BRA",
     team2Id: "HAI",
-    score1: null,
-    score2: null,
-    yc1: 0,
+    score1: 3,
+    score2: 0,
+    yc1: 1,
     rc1: 0,
-    yc2: 0,
+    yc2: 3,
     rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
+    status: "Kết thúc",
+    scorers1: [{ name: "Matheus Cunha", min: "23'" }, { name: "Matheus Cunha", min: "36'" }, { name: "Vinícius Júnior", min: "45'+3'" }],
     scorers2: [],
+    assists1: ["Vinícius Júnior", "Lucas Paquetá"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -707,15 +769,17 @@ const OFFICIAL_MATCHES_RAW = [
     time: "10:00",
     team1Id: "TUR",
     team2Id: "PAR",
-    score1: null,
-    score2: null,
-    yc1: 0,
+    score1: 0,
+    score2: 1,
+    yc1: 2,
     rc1: 0,
-    yc2: 0,
-    rc2: 0,
-    status: "Chưa đấu",
+    yc2: 1,
+    rc2: 1,
+    status: "Kết thúc",
     scorers1: [],
-    scorers2: [],
+    scorers2: [{ name: "Matías Galarza", min: "2'" }],
+    assists1: [],
+    assists2: ["Julio Enciso"],
     matchTime: ""
   },
   {
@@ -727,15 +791,17 @@ const OFFICIAL_MATCHES_RAW = [
     time: "00:00",
     team1Id: "NED",
     team2Id: "SWE",
-    score1: null,
-    score2: null,
+    score1: 5,
+    score2: 1,
     yc1: 0,
     rc1: 0,
-    yc2: 0,
+    yc2: 3,
     rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
+    status: "Kết thúc",
+    scorers1: [{ name: "Brian Brobbey", min: "5'" }, { name: "Brian Brobbey", min: "17'" }, { name: "Cody Gakpo", min: "47'" }, { name: "Cody Gakpo", min: "54'" }, { name: "Crysencio Summerville", min: "89'" }],
+    scorers2: [{ name: "Anthony Elanga", min: "59'" }],
+    assists1: ["Cody Gakpo", "Denzel Dumfries", "Denzel Dumfries", "Crysencio Summerville", "Alexander Isak", "Memphis Depay"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -747,15 +813,17 @@ const OFFICIAL_MATCHES_RAW = [
     time: "03:00",
     team1Id: "GER",
     team2Id: "CIV",
-    score1: null,
-    score2: null,
+    score1: 2,
+    score2: 1,
     yc1: 0,
     rc1: 0,
     yc2: 0,
     rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
+    status: "Kết thúc",
+    scorers1: [{ name: "Deniz Undav", min: "68'" }, { name: "Deniz Undav", min: "90'+4'" }],
+    scorers2: [{ name: "Franck Kessié", min: "30'" }],
+    assists1: ["Nadiem Amiri", "Felix Nmecha"],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -767,15 +835,17 @@ const OFFICIAL_MATCHES_RAW = [
     time: "07:00",
     team1Id: "ECU",
     team2Id: "CUW",
-    score1: null,
-    score2: null,
-    yc1: 0,
+    score1: 0,
+    score2: 0,
+    yc1: 1,
     rc1: 0,
-    yc2: 0,
+    yc2: 5,
     rc2: 0,
-    status: "Chưa đấu",
+    status: "Kết thúc",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -787,15 +857,17 @@ const OFFICIAL_MATCHES_RAW = [
     time: "11:00",
     team1Id: "TUN",
     team2Id: "JPN",
-    score1: null,
-    score2: null,
+    score1: 0,
+    score2: 4,
     yc1: 0,
     rc1: 0,
     yc2: 0,
     rc2: 0,
-    status: "Chưa đấu",
+    status: "Kết thúc",
     scorers1: [],
-    scorers2: [],
+    scorers2: [{ name: "Daichi Kamada", min: "4'" }, { name: "Ayase Ueda", min: "31'" }, { name: "Junya Ito", min: "69'" }, { name: "Ayase Ueda", min: "83'" }],
+    assists1: [],
+    assists2: ["Keito Nakamura", "Kou Itakura", "Ayase Ueda", "Kaishu Sano"],
     matchTime: ""
   },
   {
@@ -816,6 +888,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -836,6 +910,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -856,6 +932,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -876,6 +954,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -896,6 +976,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -916,6 +998,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -936,6 +1020,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -956,6 +1042,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -976,6 +1064,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -996,6 +1086,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1016,6 +1108,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1036,6 +1130,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1056,6 +1152,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1076,6 +1174,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1096,6 +1196,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1116,6 +1218,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1136,6 +1240,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1156,6 +1262,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1176,6 +1284,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1196,6 +1306,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1216,6 +1328,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1236,6 +1350,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1256,6 +1372,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1276,6 +1394,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1296,6 +1416,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1316,6 +1438,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1336,6 +1460,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1356,6 +1482,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1376,6 +1504,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1396,6 +1526,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1416,6 +1548,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1436,6 +1570,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1456,6 +1592,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1476,6 +1614,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1496,6 +1636,8 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
   {
@@ -1516,11 +1658,13 @@ const OFFICIAL_MATCHES_RAW = [
     status: "Chưa đấu",
     scorers1: [],
     scorers2: [],
+    assists1: [],
+    assists2: [],
     matchTime: ""
   },
 ];
 
-// Helper function to find team details by ID
+// HÃ m bá»• trá»£ tÃ¬m kiáº¿m thÃ´ng tin chi tiáº¿t cá»§a Ä‘á»™i bÃ³ng theo ID
 function findTeamById(teamId) {
   for (const groupLetter of Object.keys(WORLD_CUP_DATA.groups)) {
     const team = WORLD_CUP_DATA.groups[groupLetter].find(t => t.id === teamId);
@@ -1529,7 +1673,7 @@ function findTeamById(teamId) {
   return null;
 }
 
-// Initialize DEFAULT_MATCHES with full info
+// Khá»Ÿi táº¡o DEFAULT_MATCHES vá»›i Ä‘áº§y Ä‘á»§ thÃ´ng tin tÃªn tiáº¿ng Viá»‡t, cá» vÃ  cá» hiá»‡u
 const DEFAULT_MATCHES = OFFICIAL_MATCHES_RAW.map(match => {
   const t1 = findTeamById(match.team1Id);
   const t2 = findTeamById(match.team2Id);
