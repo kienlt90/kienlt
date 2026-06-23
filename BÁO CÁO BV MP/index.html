@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo Triển khai Bệnh án Điện tử (EMR) - BVĐK Mỹ Phước</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-tertiary: #1f2937;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --accent-color: #0ea5e9;
+      --accent-hover: #38bdf8;
+      --accent-light: rgba(14, 165, 233, 0.1);
+      --border-color: #374151;
+      --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.1);
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.1);
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.1);
+      --info: #3b82f6;
+      --info-light: rgba(59, 130, 246, 0.1);
+      --purple: #8b5cf6;
+      --purple-light: rgba(139, 92, 246, 0.1);
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --transition-speed: 0.3s;
+    }
+
+    body.light-theme {
+      --bg-primary: #f3f4f6;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f9fafb;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --accent-color: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-light: rgba(2, 132, 199, 0.1);
+      --border-color: #e5e7eb;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --success-light: rgba(16, 185, 129, 0.15);
+      --warning-light: rgba(245, 158, 11, 0.15);
+      --danger-light: rgba(239, 68, 68, 0.15);
+      --info-light: rgba(59, 130, 246, 0.15);
+      --purple-light: rgba(139, 92, 246, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding: 1.5rem;
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header styling */
+    header {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(17, 24, 39, 0.8) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .header-info h1 {
+      font-family: var(--font-heading);
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #ffffff, #9ca3af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    body.light-theme .header-info h1 {
+      background: linear-gradient(to right, #111827, #4b5563);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-info p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    /* Buttons styling */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      font-family: var(--font-heading);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border-color: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--bg-tertiary);
+      border-color: var(--text-secondary);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--bg-tertiary);
+      transform: rotate(15deg);
+    }
+
+    /* KPI Grid styling */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-color);
+    }
+
+    .kpi-title {
+      font-size: 0.825rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .kpi-value {
+      font-family: var(--font-heading);
+      font-size: 2.25rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .kpi-subtitle {
+      font-size: 0.775rem;
+      color: var(--text-secondary);
+      margin-top: auto;
+    }
+
+    .kpi-badge {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Tabs navigation */
+    .tabs-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      font-family: var(--font-heading);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--accent-color);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--accent-color);
+      border-radius: 3px;
+    }
+
+    /* Content Area & Tabs */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Interactive Filters */
+    .filter-bar {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.625rem 1rem 0.625rem 2.5rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.875rem;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-color);
+      outline: none;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 0.825rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .select-input {
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.625rem 2rem 0.625rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.875rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+      cursor: pointer;
+      min-width: 160px;
+    }
+
+    .select-input:focus {
+      border-color: var(--accent-color);
+      outline: none;
+    }
+
+    /* General Mapped Form Table */
+    .table-container {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--bg-tertiary);
+      padding: 1rem 1.25rem;
+      font-family: var(--font-heading);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 1rem 1.25rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: rgba(31, 41, 55, 0.3);
+    }
+    
+    body.light-theme tr:hover td {
+      background-color: rgba(243, 244, 246, 0.7);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.025em;
+    }
+
+    .badge-success {
+      background-color: var(--success-light);
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background-color: var(--warning-light);
+      color: var(--warning);
+    }
+
+    .badge-danger {
+      background-color: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .badge-info {
+      background-color: var(--info-light);
+      color: var(--info);
+    }
+
+    .badge-purple {
+      background-color: var(--purple-light);
+      color: var(--purple);
+    }
+
+    .badge-neutral {
+      background-color: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Grid for layout in overview */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Panel Card */
+    .panel {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--card-shadow);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+
+    .panel-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Progress Checklist */
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.875rem;
+      padding: 0.875rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .checklist-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .checklist-status {
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+
+    .checklist-content {
+      flex: 1;
+    }
+
+    .checklist-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.125rem;
+    }
+
+    .checklist-desc {
+      font-size: 0.775rem;
+      color: var(--text-secondary);
+    }
+
+    /* Interactive charts inside overview */
+    .progress-bar-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .progress-blue { background-color: var(--accent-color); }
+    .progress-green { background-color: var(--success); }
+    .progress-orange { background-color: var(--warning); }
+    .progress-purple { background-color: var(--purple); }
+
+    /* Circular progress indicator */
+    .circular-progress-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 0;
+    }
+
+    .circular-chart {
+      width: 140px;
+      height: 140px;
+    }
+
+    .circle-bg {
+      fill: none;
+      stroke: var(--bg-tertiary);
+      stroke-width: 2.8;
+    }
+
+    .circle {
+      fill: none;
+      stroke-width: 2.8;
+      stroke-linecap: round;
+      transition: stroke-dasharray 0.8s ease;
+    }
+
+    .circle-blue { stroke: var(--accent-color); }
+    .circle-green { stroke: var(--success); }
+
+    .percentage {
+      font-family: var(--font-heading);
+      fill: var(--text-primary);
+      font-size: 0.55rem;
+      text-anchor: middle;
+      font-weight: 700;
+    }
+
+    /* Print Template Layout */
+    .print-report-container {
+      background-color: #ffffff;
+      color: #111827;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      max-width: 900px;
+      margin: 0 auto 2rem auto;
+      font-family: 'Times New Roman', Times, serif;
+      line-height: 1.6;
+      border: 1px solid #d1d5db;
+      min-height: 1000px;
+    }
+
+    .print-report-container[contenteditable="true"]:focus {
+      outline: 2px solid var(--accent-color);
+      outline-offset: 4px;
+    }
+
+    .print-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .print-title {
+      font-size: 1.6rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin: 1.5rem 0 0.5rem 0;
+    }
+
+    .print-subtitle {
+      font-size: 1.1rem;
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+
+    .print-org {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .print-section-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 1.5rem 0 0.75rem 0;
+      border-bottom: 1px solid #111827;
+      padding-bottom: 0.25rem;
+      text-transform: uppercase;
+    }
+
+    .print-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .print-table th, .print-table td {
+      border: 1px solid #111827;
+      padding: 0.5rem;
+      text-align: left;
+      color: #111827;
+      background: none;
+    }
+
+    .print-table th {
+      font-weight: bold;
+      text-align: center;
+      background-color: #f3f4f6;
+    }
+
+    .print-table td.center {
+      text-align: center;
+    }
+
+    .print-signatures {
+      margin-top: 3rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .print-signature-box {
+      width: 45%;
+      text-align: center;
+    }
+
+    .print-signature-title {
+      font-weight: bold;
+      margin-bottom: 4rem;
+    }
+
+    /* Print media styling */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+      }
+
+      .container {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      header, .kpi-grid, .tabs-nav, .filter-bar, .table-container, .overview-grid, .theme-toggle, .btn, .no-print {
+        display: none !important;
+      }
+
+      .tab-content {
+        display: none !important;
+      }
+
+      .tab-content#printableReport {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .print-report-container {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        background: transparent !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Top Header -->
+    <header>
+      <div class="header-info">
+        <h1>BÁO CÁO TIẾN ĐỘ BỆNH ÁN ĐIỆN TỬ</h1>
+        <p>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Bệnh viện Đa khoa Mỹ Phước (MPH) • Cập nhật: 23/06/2026
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline no-print" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          In báo cáo (PDF)
+        </button>
+        <button class="theme-toggle no-print" id="themeToggle" title="Chuyển chế độ Sáng/Tối">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="sunIcon" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="moonIcon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- KPI Metrics Dashboard -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-title">Bệnh án điện tử</span>
+        <span class="kpi-value">18 / 18</span>
+        <span class="kpi-subtitle">Mẫu bệnh án đã cấu hình HIS</span>
+        <div class="kpi-badge badge-success-light" style="color: var(--success);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+      </div>
+      <div class="kpi-card" onclick="filterBySign('Ký số trên HIS')" style="cursor:pointer;">
+        <span class="kpi-title">Ký số trên HIS / LIS / RIS</span>
+        <span class="kpi-value" id="countKySo">34</span>
+        <span class="kpi-subtitle">Mẫu ký số trực tiếp trên hệ thống</span>
+        <div class="kpi-badge badge-info-light" style="color: var(--info);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.66V17c0 .55-.45 1-1 1H4v-2.5c0-.55-.45-1-1-1S2 15 2 15.5V19c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4.34c0-.55-.45-1-1-1s-1 .45-1 1zM12 3a1 1 0 0 1 1 1v7.59l2.3-2.3a1 1 0 0 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.42l2.3 2.3V4a1 1 0 0 1 1-1z"/></svg>
+        </div>
+      </div>
+      <div class="kpi-card" onclick="filterBySign('Scan')" style="cursor:pointer;">
+        <span class="kpi-title">Mẫu Scan &amp; Ký số</span>
+        <span class="kpi-value" id="countScan">43</span>
+        <span class="kpi-subtitle">Mẫu scan/ký số hồ sơ giấy</span>
+        <div class="kpi-badge badge-warning-light" style="color: var(--warning);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+        </div>
+      </div>
+      <div class="kpi-card" onclick="switchTab('requestedTab')" style="cursor:pointer;">
+        <span class="kpi-title">Bổ sung &amp; Đang thực hiện</span>
+        <span class="kpi-value">15</span>
+        <span class="kpi-subtitle">8 biểu mẫu mới + 7 biểu mẫu cải tiến</span>
+        <div class="kpi-badge badge-purple-light" style="color: var(--purple);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-nav no-print">
+      <button class="tab-btn active" onclick="switchTab('overviewTab')">Tổng quan Tiến độ</button>
+      <button class="tab-btn" onclick="switchTab('listTab')">Danh sách Biểu mẫu</button>
+      <button class="tab-btn" id="requestedTabBtn" onclick="switchTab('requestedTab')">Yêu cầu Bổ sung &amp; Đang làm</button>
+      <button class="tab-btn" onclick="switchTab('printableReport')">Mẫu Văn bản Báo cáo (Soạn thảo)</button>
+    </div>
+
+    <!-- TAB 1: TỔNG QUAN TIẾN ĐỘ -->
+    <div id="overviewTab" class="tab-content active">
+      <div class="overview-grid">
+        <!-- Tiến độ tổng hợp -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Tiến độ chi tiết phân loại ký số &amp; ban hành</span>
+            <span class="badge badge-success">Đang triển khai</span>
+          </div>
+          <div class="progress-bar-group">
+            <div class="progress-bar-label">
+              <span>Bệnh án đã cấu hình hoàn chỉnh trên HIS</span>
+              <strong>18/18 mẫu (100%)</strong>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill progress-green" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div class="progress-bar-group">
+            <div class="progress-bar-label">
+              <span>Các mẫu giấy, phiếu hành chính, cam kết (Mục I)</span>
+              <strong>10/10 mẫu (100%)</strong>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill progress-blue" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div class="progress-bar-group">
+            <div class="progress-bar-label">
+              <span>Khám, đánh giá, theo dõi, chăm sóc, bàn giao (Mục II)</span>
+              <strong>15/15 mẫu (100%)</strong>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill progress-blue" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div class="progress-bar-group">
+            <div class="progress-bar-label">
+              <span>Gây mê, phẫu thuật, thủ thuật (Mục III)</span>
+              <strong>12/12 mẫu (100%)</strong>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill progress-blue" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div class="progress-bar-group">
+            <div class="progress-bar-label">
+              <span>Chỉ định, cận lâm sàng, dinh dưỡng (Mục IV)</span>
+              <strong>13/13 mẫu (100%)</strong>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill progress-blue" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div class="progress-bar-group">
+            <div class="progress-bar-label">
+              <span>Chuyển viện, ra viện, tóm tắt hồ sơ (Mục V)</span>
+              <strong>28/28 mẫu (100%)</strong>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill progress-blue" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+            <p>💡 <strong>Ghi chú kỹ thuật:</strong> 34 mẫu biểu chuyên môn được ký số trực tiếp trên hệ thống HIS/LIS/RIS bởi nhân viên y tế. 43 mẫu giấy tờ khác tiếp tục áp dụng quy trình <strong>Scan đính kèm ký số</strong>. Riêng 15 mẫu mới/cải tiến đặc thù được nâng cấp toàn diện sang phương thức <strong>Ký số/Ký vân tay/Sigpad</strong> trực tiếp trên thiết bị chuyên dụng.</p>
+          </div>
+        </div>
+
+        <!-- Biểu đồ tỷ lệ Ký số vs Scan -->
+        <div class="panel" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div class="panel-header" style="width:100%;">
+            <span class="panel-title">Cơ cấu Ký số vs Scan chuẩn (78 mẫu Y)</span>
+          </div>
+          <div class="circular-progress-container">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+              <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <!-- Total 78. Ky so: 34 (43.6%), Scan: 43 (55.1%), Chua ky: 1 -->
+              <path class="circle circle-blue" stroke-dasharray="43.6, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <text x="18" y="20.3" class="percentage">43.6%</text>
+            </svg>
+            <div style="text-align: center; margin-top: 1rem;">
+              <p style="font-size: 0.9rem; font-weight: 600;">Tỷ lệ Mẫu Ký số trên HIS/LIS/RIS</p>
+              <p style="font-size: 0.775rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                <span style="display:inline-block; width:10px; height:10px; background-color: var(--accent-color); border-radius:50%; margin-right:4px;"></span> Ký số HIS/LIS/RIS: 34 mẫu (43.6%)<br>
+                <span style="display:inline-block; width:10px; height:10px; background-color: var(--bg-tertiary); border-radius:50%; margin-right:4px; margin-left:8px;"></span> Mẫu Scan đính kèm: 43 mẫu (55.1%)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tình hình các mẫu bổ sung & Đang làm -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Tình hình triển khai biểu mẫu bổ sung &amp; phát sinh thiết yếu</span>
+          <span class="badge badge-warning">Đang xử lý</span>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+          <div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--warning);">1. Bổ sung theo yêu cầu (8 mẫu cam kết, dinh dưỡng)</h4>
+            <div class="checklist-item">
+              <span class="badge badge-success">Đã cấu hình</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Phiếu chuyển xác &amp; Giấy cam đoan xin xác về</div>
+                <div class="checklist-desc">Bổ sung hồ sơ bàn giao, giải quyết thi hài bệnh nhân tử vong (Ký số/Ký vân tay/Sigpad)</div>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <span class="badge badge-success">Đã cấu hình</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Giấy cam đoan điều trị nội trú &amp; xin về</div>
+                <div class="checklist-desc">Bổ sung hồ sơ tự nguyện xin điều trị hoặc xin về không theo chỉ định (Ký số/Ký vân tay/Sigpad)</div>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <span class="badge badge-success">Đã cấu hình</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Giấy cam kết truyền máu &amp; Giấy cam kết từ chối SD dịch vụ KCB</div>
+                <div class="checklist-desc">Biểu mẫu pháp lý đồng ý truyền máu và từ chối điều trị (Ký số/Ký vân tay/Sigpad)</div>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <span class="badge badge-success">Đã cấu hình</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Phiếu dinh dưỡng bệnh nhân nội trú &amp; bệnh nhi (CV65 DD-03 &amp; DD-06)</div>
+                <div class="checklist-desc">Sàng lọc và đánh giá tình trạng dinh dưỡng (Ký số/Ký vân tay/Sigpad)</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--accent-color);">2. Đang phát triển / Thử nghiệm (7 mẫu quy trình)</h4>
+            <div class="checklist-item">
+              <span class="badge badge-warning">Đang code</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Phiếu sàng lọc &amp; đánh giá dinh dưỡng phụ nữ mang thai</div>
+                <div class="checklist-desc">Đang thiết lập thông tin sàng lọc và can thiệp dinh dưỡng thai kỳ (Ký số/Ký vân tay/Sigpad).</div>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <span class="badge badge-warning">Đang code</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Phiếu theo dõi truyền máu &amp; Phiếu dự trù, cung cấp máu</div>
+                <div class="checklist-desc">Quy trình tiếp nhận, dự trù, cung cấp và theo dõi truyền máu an toàn (Ký số/Ký vân tay/Sigpad).</div>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <span class="badge badge-warning">Đang code</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Phiếu truyền máu cấp cứu &amp; Hội chẩn truyền máu cấp cứu</div>
+                <div class="checklist-desc">Cấu hình luồng duyệt khẩn cấp cho các trường hợp cấp cứu truyền máu (Ký số/Ký vân tay/Sigpad).</div>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <span class="badge badge-warning">Đang code</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Phiếu yêu cầu sử dụng kháng sinh (KS hạn chế)</div>
+                <div class="checklist-desc">Thiết lập luồng phê duyệt và giám sát sử dụng kháng sinh ưu tiên (Ký số/Ký vân tay/Sigpad).</div>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <span class="badge badge-warning">Đang code</span>
+              <div class="checklist-content">
+                <div class="checklist-name">Phiếu khảo sát trước khi chụp CT Scan có thuốc cản quang</div>
+                <div class="checklist-desc">Kiểm tra thông tin dị ứng, chức năng thận trước chỉ định CT (Ký số/Ký vân tay/Sigpad).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DANH SÁCH BIỂU MẪU MAPPED -->
+    <div id="listTab" class="tab-content">
+      <!-- Search & Filters -->
+      <div class="filter-bar no-print">
+        <div class="search-box">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" id="searchInput" placeholder="Tìm kiếm tên biểu mẫu..." onkeyup="filterForms()">
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Chuyên mục:</span>
+          <select class="select-input" id="sectionFilter" onchange="filterForms()">
+            <option value="ALL">-- Tất cả chuyên mục --</option>
+            <option value="I">I. Hành chính, cam kết</option>
+            <option value="II">II. Khám, đánh giá, theo dõi</option>
+            <option value="III">III. Gây mê, phẫu thuật, thủ thuật</option>
+            <option value="IV">IV. Chỉ định, cận lâm sàng, dinh dưỡng</option>
+            <option value="V">V. Chuyển viện, ra viện, tóm tắt</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Loại ký số:</span>
+          <select class="select-input" id="typeFilter" onchange="filterForms()">
+            <option value="ALL">-- Tất cả loại --</option>
+            <option value="Ký số trên HIS">Ký số trên HIS</option>
+            <option value="Ký số trên LIS">Ký số trên LIS</option>
+            <option value="Ký số trên RIS">Ký số trên RIS</option>
+            <option value="Scan">Scan &amp; Ký số</option>
+            <option value="Ký số/Ký vân tay/Sigpad">Ký số/Ký vân tay/Sigpad</option>
+            <option value="Chưa ký số">Chưa ký số</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Trạng thái:</span>
+          <select class="select-input" id="statusFilter" onchange="filterForms()">
+            <option value="ALL">-- Tất cả trạng thái --</option>
+            <option value="Đã ban hành">Đã ban hành</option>
+            <option value="Chưa ban hành">Chưa ban hành</option>
+          </select>
+        </div>
+        <button class="btn btn-outline" onclick="resetFilters()">Đặt lại</button>
+      </div>
+
+      <!-- Table of forms -->
+      <div class="table-container">
+        <table id="formsTable">
+          <thead>
+            <tr>
+              <th style="width: 60px; text-align: center;">STT</th>
+              <th style="width: 120px;">Mục</th>
+              <th>Tên Biểu mẫu, Phiếu Y (Theo TT 32/2023/TT-BYT)</th>
+              <th style="width: 160px; text-align: center;">Phân loại Ký số</th>
+              <th style="width: 150px; text-align: center;">Ghi chú / Tiến trình</th>
+            </tr>
+          </thead>
+          <tbody id="formsTableBody">
+            <!-- Rendered dynamically by javascript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: YÊU CẦU BỔ SUNG & ĐANG THỰC HIỆN -->
+    <div id="requestedTab" class="tab-content">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Checklist Bổ sung -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title" style="color: var(--warning);">8 biểu mẫu bổ sung theo yêu cầu đặc thù</span>
+            <span class="badge badge-warning">Đã cấu hình</span>
+          </div>
+          <table class="print-table" style="width:100%; border:none; margin:0; font-family: inherit;">
+            <thead>
+              <tr style="background:var(--bg-tertiary);">
+                <th style="border:none; color:var(--text-secondary); text-align:left; font-size:0.8rem; padding:0.5rem 1rem;">Tên biểu mẫu bổ sung</th>
+                <th style="border:none; color:var(--text-secondary); text-align:center; font-size:0.8rem; padding:0.5rem 1rem; width:180px;">Loại ký số</th>
+                <th style="border:none; color:var(--text-secondary); text-align:center; font-size:0.8rem; padding:0.5rem 1rem; width:120px;">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">1. Phiếu chuyển xác</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-success">Đã hoàn thành</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">2. Giấy cam đoan điều trị nội trú</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-success">Đã hoàn thành</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">3. Giấy cam đoan xin về</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-success">Đã hoàn thành</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">4. Giấy cam đoan xin xác về</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-success">Đã hoàn thành</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">5. Giấy cam kết truyền máu</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-success">Đã hoàn thành</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">6. Giấy cam kết từ chối sử dụng dịch vụ KCB</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-success">Đã hoàn thành</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">7. Phiếu sàng lọc và đánh giá dinh dưỡng BN nội trú (CV65 DD-03)</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-success">Đã hoàn thành</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; padding: 0.8rem 1rem;">8. Phiếu sàng lọc và đánh giá dinh dưỡng bệnh nhi (CV65 DD-06)</td>
+                <td style="border:none; padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-success">Đã hoàn thành</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Checklist Đang làm -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title" style="color: var(--accent-color);">7 biểu mẫu đang thực hiện cấu hình quy trình</span>
+            <span class="badge badge-info">Đang phát triển</span>
+          </div>
+          <table class="print-table" style="width:100%; border:none; margin:0; font-family: inherit;">
+            <thead>
+              <tr style="background:var(--bg-tertiary);">
+                <th style="border:none; color:var(--text-secondary); text-align:left; font-size:0.8rem; padding:0.5rem 1rem;">Tên biểu mẫu / quy trình phát sinh</th>
+                <th style="border:none; color:var(--text-secondary); text-align:center; font-size:0.8rem; padding:0.5rem 1rem; width:180px;">Loại ký số</th>
+                <th style="border:none; color:var(--text-secondary); text-align:center; font-size:0.8rem; padding:0.5rem 1rem; width:120px;">Tiến độ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">1. Phiếu sàng lọc và đánh giá dinh dưỡng phụ nữ mang thai</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-warning">Đang code 60%</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">2. Mẫu phiếu theo dõi truyền máu</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-warning">Đang code 70%</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">3. Mẫu phiếu yêu cầu sử dụng kháng sinh (hạn chế)</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-warning">Đang code 80%</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">4. Phiếu dự trù và cung cấp máu</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-warning">Đang code 50%</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">5. Phiếu khảo sát trước khi chụp CT Scan có thuốc cản quang</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-warning">Đang code 40%</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem;">6. Phiếu truyền máu cấp cứu</td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-warning">Đang code 70%</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; padding: 0.8rem 1rem;">7. Hội chẩn truyền máu cấp cứu</td>
+                <td style="border:none; padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-neutral" style="background-color: var(--purple-light); color: var(--purple);">Ký số/Vân tay/Sigpad</span></td>
+                <td style="border:none; padding: 0.8rem 1rem; text-align:center;"><span class="badge badge-warning">Đang code 75%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: MẪU VĂN BẢN BÁO CÁO (EDITABLE & PRINTABLE) -->
+    <div id="printableReport" class="tab-content">
+      <!-- Toolbar for Editor -->
+      <div class="no-print" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; justify-content: space-between; align-items: center; background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 1rem; border-radius: 12px; box-shadow: var(--card-shadow);">
+        <span style="font-size: 0.875rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"/></svg>
+          <span><strong>Chế độ chỉnh sửa trực tiếp:</strong> Nhấp chuột vào bất cứ dòng nào bên dưới để sửa nội dung báo cáo.</span>
+        </span>
+        <div style="display: flex; gap: 0.75rem;">
+          <button class="btn" style="background-color: #2b579a; color: #ffffff;" onclick="exportToWord()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Xuất file Word (.doc)
+          </button>
+          <button class="btn btn-primary" onclick="window.print()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Xuất file PDF (Không chỉnh sửa)
+          </button>
+        </div>
+      </div>
+
+      <div class="print-report-container" id="reportContent" contenteditable="true" title="Nhấp chuột vào đây để trực tiếp chỉnh sửa văn bản này">
+        <div class="print-header">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="print-org" style="text-align: left;">
+              SỞ Y TẾ TỈNH BÌNH DƯƠNG<br>
+              <strong>BỆNH VIỆN ĐA KHOA MỸ PHƯỚC</strong><br>
+              Số: _____/BC-BVMP
+            </div>
+            <div style="text-align: right; font-size: 1rem; font-style: italic;">
+              Bình Dương, ngày 23 tháng 06 năm 2026
+            </div>
+          </div>
+          
+          <div class="print-title">BÁO CÁO TỔNG HỢP TIẾN ĐỘ<br>TRIỂN KHAI BỆNH ÁN ĐIỆN TỬ TẠI BỆNH VIỆN MỸ PHƯỚC</div>
+          <div class="print-subtitle">Kèm theo cuộc họp sơ kết và rà soát các danh mục biểu mẫu chuyên môn</div>
+        </div>
+
+        <p>Kính gửi: Ban Giám đốc Bệnh viện Đa khoa Mỹ Phước và các phòng ban chuyên môn.</p>
+        <br>
+        <p>Nhằm báo cáo chi tiết về tình hình thực tế cấu hình danh mục bệnh án và phân loại biểu mẫu giấy/phiếu chuyên môn phục vụ số hóa hồ sơ bệnh án điện tử (EMR) tại Bệnh viện Đa khoa Mỹ Phước theo Thông tư số 32/2023/TT-BYT ngày 31/12/2023 của Bộ Y tế, tổ triển khai xin báo cáo cụ thể như sau:</p>
+
+        <div class="print-section-title">I. Triển khai các mẫu bệnh án (EMR)</div>
+        <p>Hiện tại, hệ thống phần mềm VNPT HIS đã hoàn thành cấu hình và tích hợp thành công <strong>18 mẫu Bệnh án điện tử</strong> chuẩn của Bộ Y tế, bao gồm bệnh án các chuyên khoa chính: Nội khoa, Ngoại khoa, Phụ khoa, Sản khoa, Nhi khoa, Sơ sinh, Mắt, Tai Mũi Họng, Răng Hàm Mặt, Da liễu, Tâm thần, Lao, Truyền nhiễm, Y học cổ truyền, Phục hồi chức năng, Ung bướu, Ngoại trú và Cấp cứu. Toàn bộ 18 mẫu bệnh án trên đã sẵn sàng phục vụ quy trình chuyên môn tại các khoa lâm sàng.</p>
+
+        <div class="print-section-title">II. Phân loại và triển khai các biểu mẫu giấy, phiếu Y (TT 32/2023/TT-BYT)</div>
+        <p>Dựa trên danh mục mẫu giấy, phiếu Y ban hành kèm theo Thông tư số 32/2023/TT-BYT, tổ kỹ thuật đã tiến hành lọc phân loại thành 2 nhóm chính phục vụ ký số và số hóa bệnh án:</p>
+        <ul>
+          <li><strong>Nhóm 1 (Ký số trên HIS/LIS/RIS):</strong> Gồm các phiếu khám bệnh vào viện, biên bản hội chẩn, phiếu điều trị, phiếu theo dõi điều trị/truyền dịch, phiếu chăm sóc cấp 1/2/3, phiếu bàn giao chuyển khoa, biên bản phẫu thuật/thủ thuật, các phiếu chỉ định và phiếu trả kết quả cận lâm sàng. Các biểu mẫu này sẽ được ký số trực tiếp bằng chứng thư số cá nhân của y bác sĩ trên hệ thống. <strong>(Tổng số: 34 mẫu)</strong>.</li>
+          <li><strong>Nhóm 2 (Mẫu Scan giấy):</strong> Áp dụng cho các mẫu giấy tờ hành chính, giấy cam đoan chấp thuận, phiếu khảo sát có chữ ký trực tiếp của người bệnh/người nhà bệnh nhân. Các biểu mẫu này được thực hiện in giấy ký tay theo quy định, sau đó quét (scan) đính kèm vào phần mềm EMR và ký số xác nhận của nhân viên phụ trách. <strong>(Tổng số: 44 mẫu)</strong>.</li>
+        </ul>
+
+        <div class="print-section-title">III. Bổ sung các mẫu theo yêu cầu đặc thù của bệnh viện</div>
+        <p>Thực hiện chỉ đạo của Ban Giám đốc và các khoa lâm sàng, tổ triển khai đã bổ sung cấu hình và hoàn thành <strong>08 biểu mẫu đặc thù</strong> dưới dạng quy trình nâng cấp <strong>Ký số/Ký vân tay/Sigpad</strong> bao gồm:</p>
+        <ol>
+          <li>Phiếu chuyển xác</li>
+          <li>Giấy cam đoan điều trị nội trú</li>
+          <li>Giấy cam đoan xin về</li>
+          <li>Giấy cam đoan xin xác về</li>
+          <li>Giấy cam kết truyền máu</li>
+          <li>Giấy cam kết từ chối sử dụng dịch vụ khám bệnh, chữa bệnh (Cập nhật mẫu I.9)</li>
+          <li>Phiếu sàng lọc và đánh giá dinh dưỡng bệnh nhân nội trú (CV65 DD-03) (Cập nhật mẫu IV.B-3)</li>
+          <li>Phiếu sàng lọc và đánh giá dinh dưỡng bệnh nhi (CV65 DD-06) (Cập nhật mẫu IV.B-6)</li>
+        </ol>
+
+        <div class="print-section-title">IV. Các biểu mẫu đang trong quá trình thực hiện cấu hình</div>
+        <p>Hiện nay, tổ triển khai đang khẩn trương lập trình, cấu hình luồng thông tin và chạy thử nghiệm <strong>07 biểu mẫu/quy trình</strong> phát sinh thiết yếu sau dưới dạng nâng cấp <strong>Ký số/Ký vân tay/Sigpad</strong>:</p>
+        <ol>
+          <li>Phiếu sàng lọc và đánh giá dinh dưỡng phụ nữ mang thai (Đang hoàn thiện 60%).</li>
+          <li>Mẫu phiếu theo dõi truyền máu (Đang hoàn thiện 70% trên HIS).</li>
+          <li>Mẫu phiếu yêu cầu sử dụng kháng sinh hạn chế (Đang hoàn thiện 80% luồng duyệt).</li>
+          <li>Phiếu dự trù và cung cấp máu (Đang cấu hình quy trình kết nối khoa xét nghiệm 50%).</li>
+          <li>Phiếu khảo sát trước khi chụp CT Scan có thuốc cản quang (Đang hoàn thiện 40%).</li>
+          <li>Phiếu truyền máu cấp cứu (Đang hoàn thiện 70%).</li>
+          <li>Hội chẩn truyền máu cấp cứu (Đang cấu hình luồng duyệt khẩn 75%).</li>
+        </ol>
+
+        <div class="print-section-title">V. Đề xuất kiến nghị</div>
+        <p>1. Kính đề nghị các trưởng khoa/phòng chỉ đạo các y bác sĩ, điều dưỡng rà soát kỹ lại nội dung in ra của 78 biểu mẫu chuẩn và 8 mẫu bổ sung xem đã đáp ứng chính xác nhu cầu sử dụng thực tế chưa.</p>
+        <p>2. Phối hợp với tổ IT/kỹ thuật để test thử nghiệm luồng phê duyệt đối với các mẫu đang thực hiện (đặc biệt là phiếu yêu cầu sử dụng kháng sinh hạn chế và quy trình truyền máu cấp cứu) trước khi ban hành chính thức.</p>
+
+        <div class="print-signatures">
+          <table style="width: 100%; border: none; margin-top: 30px;">
+            <tr style="background: none;">
+              <td style="border: none; width: 50%; text-align: center; color: #111827; padding: 0;">
+                T/M TỔ TRIỂN KHAI EMR<br>
+                <strong>Tổ trưởng</strong>
+                <br><br><br><br><br>
+                _________________________
+              </td>
+              <td style="border: none; width: 50%; text-align: center; color: #111827; padding: 0;">
+                BAN GIÁM ĐỐC BỆNH VIỆN<br>
+                <strong>Giám đốc</strong>
+                <br><br><br><br><br>
+                _________________________
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Embedded database
+    const formsData = [
+      // Section I
+      { id: 1, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Bìa hồ sơ bệnh án", type: "Chưa ký số", note: "Bìa cứng lưu trữ", status: "Đã ban hành" },
+      { id: 2, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Giấy đề nghị làm người đại diện cho người bệnh", type: "Scan", note: "Bệnh nhân/Người nhà ký tay", status: "Đã ban hành" },
+      { id: 3, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Giấy mời hội chẩn", type: "Scan", note: "Quét đính kèm file", status: "Đã ban hành" },
+      { id: 4, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Biên bản hội chẩn", type: "Ký số trên HIS", note: "Hội chẩn qua phần mềm", status: "Đã ban hành" },
+      { id: 5, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Giấy cam kết chấp thuận phẫu thuật, thủ thuật và gây mê hồi sức", type: "Scan", note: "Bắt buộc ký tay trước mổ", status: "Đã ban hành" },
+      { id: 6, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Giấy cung cấp thông tin và cam kết chung về nhập viện nội trú", type: "Scan", note: "Ký tay khi nhập viện", status: "Đã ban hành" },
+      { id: 7, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Giấy cam kết chấp thuận điều trị bằng hóa trị - xạ trị", type: "Scan", note: "Khoa Ung bướu quản lý", status: "Đã ban hành" },
+      { id: 8, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Giấy cam kết chấp thuận điều trị bằng xạ trị", type: "Scan", note: "Khoa Ung bướu quản lý", status: "Đã ban hành" },
+      { id: 9, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Giấy cam kết từ chối sử dụng dịch vụ khám bệnh, chữa bệnh", type: "Scan", note: "Cập nhật theo yêu cầu", status: "Đã ban hành" },
+      { id: 10, section: "I", sectionName: "I. Các mẫu giấy, phiếu hành chính, cam kết (10 mẫu)", name: "Phiếu cung cấp thông tin người bệnh tại khoa hồi sức tích cực", type: "Scan", note: "Ký tay lưu hồ sơ ICU", status: "Đã ban hành" },
+
+      // Section II - A
+      { id: 11, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu khám bệnh vào viện (Tại khoa khám bệnh)", type: "Ký số trên HIS", note: "Bác sĩ phòng khám ký số", status: "Đã ban hành" },
+      { id: 12, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu khám chuyên khoa", type: "Scan", note: "Ký tay bản giấy", status: "Đã ban hành" },
+      { id: 13, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu khám và chỉ định phục hồi chức năng", type: "Scan", note: "Ký tay bản giấy", status: "Đã ban hành" },
+      { id: 14, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu nhận định – phân loại người bệnh tại khoa cấp cứu", type: "Scan", note: "Điều dưỡng phòng cấp cứu", status: "Đã ban hành" },
+      { id: 15, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu khám thai", type: "Scan", note: "Bác sĩ sản khoa", status: "Đã ban hành" },
+      { id: 16, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu điều trị sơ sinh sau đẻ", type: "Ký số trên HIS", note: "Bác sĩ khoa nhi/sơ sinh", status: "Đã ban hành" },
+      { id: 17, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu nhận định ban đầu người bệnh nội trú (dành cho điều dưỡng – lúc nhập viện/nhập khoa)", type: "Scan", note: "Điều dưỡng nhập khoa", status: "Đã ban hành" },
+      
+      // Section II - B
+      { id: 18, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu theo dõi điều trị", type: "Ký số trên HIS", note: "Tờ điều trị của bác sĩ", status: "Đã ban hành" },
+      { id: 19, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu theo dõi truyền dịch", type: "Ký số trên HIS", note: "Điều dưỡng thực hiện", status: "Đã ban hành" },
+      { id: 20, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Biểu đồ theo dõi chuyển dạ", type: "Ký số trên HIS", note: "Nữ hộ sinh nhập liệu", status: "Đã ban hành" },
+
+      // Section II - C
+      { id: 21, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu theo dõi – chăm sóc (cấp 1)", type: "Ký số trên HIS", note: "Theo dõi sát, điều dưỡng ký", status: "Đã ban hành" },
+      { id: 22, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu theo dõi chức năng sống (cấp 2-3)", type: "Ký số trên HIS", note: "Điều dưỡng đo chỉ số sinh tồn", status: "Đã ban hành" },
+      { id: 23, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu thực hiện kỹ thuật phục hồi chức năng", type: "Scan", note: "Kỹ thuật viên ký xác nhận", status: "Đã ban hành" },
+
+      // Section II - D
+      { id: 24, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu bàn giao người bệnh chuyển khoa (Dành cho bác sỹ)", type: "Ký số trên HIS", note: "BS chuyển khoa ký số", status: "Đã ban hành" },
+      { id: 25, section: "II", sectionName: "II. Các mẫu phiếu khám, đánh giá, theo dõi, chăm sóc, bàn giao", name: "Phiếu bàn giao người bệnh chuyển khoa (Dành cho điều dưỡng)", type: "Ký số trên HIS", note: "ĐD chuyển khoa ký số", status: "Đã ban hành" },
+
+      // Section III
+      { id: 26, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Biên bản hội chẩn thông qua phẫu thuật", type: "Ký số trên HIS", note: "Tổ chức hội chẩn ngoại khoa", status: "Đã ban hành" },
+      { id: 27, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Bảng kiểm chuẩn bị và bàn giao người bệnh trước phẫu thuật", type: "Ký số trên HIS", note: "Checklist ĐD phòng mổ", status: "Đã ban hành" },
+      { id: 28, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Phiếu khám tiền mê", type: "Ký số trên HIS", note: "Bác sĩ gây mê ký", status: "Đã ban hành" },
+      { id: 29, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Bảng kiểm an toàn phẫu thuật", type: "Ký số trên HIS", note: "Checklist kíp mổ", status: "Đã ban hành" },
+      { id: 30, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Phiếu theo dõi gây mê hồi sức", type: "Ký số trên HIS", note: "Kíp gây mê cập nhật", status: "Đã ban hành" },
+      { id: 31, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Bảng kiểm đếm gạc, dụng cụ sắc nhọn, dụng cụ", type: "Ký số trên HIS", note: "Đảm bảo an toàn ngoại khoa", status: "Đã ban hành" },
+      { id: 32, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Phiếu theo dõi tại phòng hồi tỉnh", type: "Ký số trên HIS", note: "Ghi nhận chỉ số sau mổ", status: "Đã ban hành" },
+      { id: 33, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Phiếu đánh giá trước khi cho người bệnh ra khỏi phòng hồi tỉnh", type: "Ký số trên HIS", note: "BS Gây mê đánh giá ra viện/khoa", status: "Đã ban hành" },
+      { id: 34, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Phiếu theo dõi người bệnh sau khi mổ (trong 24 giờ đầu)", type: "Scan", note: "Theo dõi sát, ký tay", status: "Đã ban hành" },
+      { id: 35, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Phiếu theo dõi và hồi sức người bệnh chưa mổ và sau mổ (từ giờ thứ 25 trở đi)", type: "Scan", note: "Ký tay bản giấy", status: "Đã ban hành" },
+      { id: 36, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Phiếu thủ thuật", type: "Ký số trên HIS", note: "Mô tả thủ thuật làm", status: "Đã ban hành" },
+      { id: 37, section: "III", sectionName: "III. Các mẫu phiếu gây mê, phẫu thuật, thủ thuật (12 mẫu)", name: "Phiếu phẫu thuật", type: "Ký số trên HIS", note: "Mô tả phẫu thuật làm", status: "Đã ban hành" },
+
+      // Section IV - A
+      { id: 38, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu chỉ định xét nghiệm", type: "Ký số trên HIS", note: "Bác sĩ ra y lệnh chỉ định", status: "Đã ban hành" },
+      { id: 39, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu chỉ định phẫu thuật thủ thuật", type: "Ký số trên HIS", note: "Bác sĩ ra y lệnh chỉ định", status: "Đã ban hành" },
+      { id: 40, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu chỉ định chẩn đoán hình ảnh", type: "Ký số trên HIS", note: "Bác sĩ ra y lệnh chỉ định", status: "Đã ban hành" },
+      { id: 41, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu kết quả xét nghiệm", type: "Ký số trên LIS", note: "Chữ ký khoa xét nghiệm", status: "Đã ban hành" },
+      { id: 42, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu kết quả chuẩn đoán hình ảnh", type: "Ký số trên RIS", note: "BS Chẩn đoán hình ảnh ký số", status: "Đã ban hành" },
+      { id: 43, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu kết quả thăm dò chức năng", type: "Ký số trên HIS", note: "Bổ sung chuẩn theo TT32", status: "Đã ban hành" },
+
+      // Section IV - B
+      { id: 44, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu sàng lọc nguy cơ suy dinh dưỡng cho người bệnh ngoại trú", type: "Scan", note: "Dùng cho phòng khám", status: "Đã ban hành" },
+      { id: 45, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu khám và tư vấn dinh dưỡng cho người bệnh ngoại trú", type: "Scan", note: "Dùng cho phòng khám", status: "Đã ban hành" },
+      { id: 46, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu sàng lọc và đánh giá dinh dưỡng người bệnh nội trú (CV65 DD-03)", type: "Scan", note: "Cấu hình bản Scan mặc định", status: "Đã ban hành" },
+      { id: 47, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu hướng dẫn chế độ dinh dưỡng cho người bệnh nội trú", type: "Scan", note: "Kế hoạch ăn uống", status: "Đã ban hành" },
+      { id: 48, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu sàng lọc và đánh giá dinh dưỡng bệnh nhi sơ sinh", type: "Scan", note: "Khoa nhi/sơ sinh", status: "Đã ban hành" },
+      { id: 49, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu sàng lọc và đánh giá dinh dưỡng bệnh nhi (CV65 DD-06)", type: "Scan", note: "Cấu hình bản Scan mặc định", status: "Đã ban hành" },
+      { id: 50, section: "IV", sectionName: "IV. Mẫu chỉ định, dinh dưỡng, giáo dục sức khỏe", name: "Phiếu tư vấn, hướng dẫn, giáo dục sức khỏe", type: "Scan", note: "Đồng ký bác sĩ-bệnh nhân", status: "Đã ban hành" },
+
+      // Section V
+      { id: 51, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Bản tóm tắt hồ sơ bệnh án", type: "Ký số trên HIS", note: "Xuất file khi bệnh nhân ra viện", status: "Đã ban hành" },
+      { id: 52, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy đề nghị cung cấp bản tóm tắt hồ sơ bệnh án/tài liệu liên quan", type: "Scan", note: "Bệnh nhân/Người nhà làm đơn", status: "Đã ban hành" },
+      { id: 53, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy cam kết chuyển cơ sở khám bệnh, chữa bệnh", type: "Scan", note: "Ký tay khi tự chuyển tuyến", status: "Đã ban hành" },
+      { id: 54, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy cam kết ra viện không theo chỉ định của bác sỹ (khi chưa kết thúc việc chữa bệnh)", type: "Scan", note: "Hồ sơ pháp lý bệnh viện", status: "Đã ban hành" },
+      { id: 55, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Biên bản kiểm thảo tử vong", type: "Ký số trên HIS", note: "Họp kiểm thảo khoa lâm sàng", status: "Đã ban hành" },
+      { id: 56, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Trích biên bản kiểm thảo tử vong", type: "Ký số trên HIS", note: "Trích xuất gửi ban giám đốc", status: "Đã ban hành" },
+      { id: 57, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Biên bản bàn giao người bệnh tử vong", type: "Scan", note: "Bàn giao cho nhà đại thể", status: "Đã ban hành" },
+      { id: 58, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Biên bản người bệnh tử vong trước khi vào cơ sở khám bệnh, chữa bệnh", type: "Scan", note: "Hồ sơ cấp cứu ngoài viện", status: "Đã ban hành" },
+      { id: 59, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Biên bản tử vong ngoại viện", type: "Scan", note: "Lập khi xác nhận tử vong", status: "Đã ban hành" },
+      { id: 60, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Phiếu chẩn đoán nguyên nhân tử vong", type: "Scan", note: "BS pháp y/lâm sàng", status: "Đã ban hành" },
+      { id: 61, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Phiếu tóm tắt thông tin người bệnh nặng xin về", type: "Scan", note: "Ký tay của đại diện gia đình", status: "Đã ban hành" },
+      { id: 62, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy chứng nhận phẫu thuật", type: "Ký số trên HIS", note: "Sau khi phẫu thuật thành công", status: "Đã ban hành" },
+      { id: 63, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Hướng dẫn ghi chép bệnh án nội trú y học cổ truyền và bệnh án nội trú nhi y học cổ truyền", type: "Scan", note: "Tài liệu hướng dẫn đính kèm", status: "Đã ban hành" },
+      { id: 64, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Hướng dẫn ghi chép bệnh án ngoại trú y học cổ truyền", type: "Scan", note: "Tài liệu hướng dẫn đính kèm", status: "Đã ban hành" },
+      { id: 65, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Hướng dẫn ghi chép bệnh án y học hiện đại", type: "Scan", note: "Tài liệu hướng dẫn đính kèm", status: "Đã ban hành" },
+      { id: 66, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy chuyển tuyến khám bệnh, chữa bệnh bảo hiểm y tế", type: "Ký số trên HIS", note: "BS chuyển viện ký số", status: "Đã ban hành" },
+      { id: 67, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy hẹn khám lại", type: "Scan", note: "Bác sĩ phòng khám cấp", status: "Đã ban hành" },
+      { id: 68, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy ra viện", type: "Ký số trên HIS", note: "Xác nhận ra viện từ khoa", status: "Đã ban hành" },
+      { id: 69, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy chứng nhận nghỉ việc hưởng bảo hiểm xã hội", type: "Ký số trên HIS", note: "Đẩy dữ liệu BHXH tự động", status: "Đã ban hành" },
+      { id: 70, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Phiếu truyền máu", type: "Ký số trên HIS", note: "Phiếu truyền máu chung", status: "Đã ban hành" },
+      { id: 71, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Phiếu dự trù và cung cấp máu cho các cơ sở khám bệnh, chữa bệnh", type: "Scan", note: "Quy trình bản giấy", status: "Đã ban hành" },
+      { id: 72, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Phiếu xác nhận đồng ý xét nghiệm HIV", type: "Scan", note: "Ký tay của người bệnh", status: "Đã ban hành" },
+      { id: 73, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Mẫu bảng kê chi phí khám bệnh, chữa bệnh", type: "Scan", note: "Bảng kê viện phí thanh toán", status: "Đã ban hành" },
+      { id: 74, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Phiếu công khai dịch vụ khám, chữa bệnh nội trú", type: "Scan", note: "Ký xác nhận hàng ngày", status: "Đã ban hành" },
+      { id: 75, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy báo tử", type: "Scan", note: "Hoàn thiện hồ sơ giải quyết", status: "Đã ban hành" },
+      { id: 76, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy chứng nhận thương tích (1)", type: "Scan", note: "Phục vụ pháp y/giám định", status: "Đã ban hành" },
+      { id: 77, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy chứng nhận thương tích (2)", type: "Scan", note: "Bản lưu hồ sơ hành chính", status: "Đã ban hành" },
+      { id: 78, section: "V", sectionName: "V. Các mẫu chuyển viện, ra viện, bản tóm tắt hồ sơ bệnh án", name: "Giấy chứng sinh", type: "Scan", note: "Khoa sản cấp, quét đính kèm", status: "Đã ban hành" }
+    ];
+
+    // Function to render forms table
+    function renderTable(data) {
+      const tbody = document.getElementById("formsTableBody");
+      tbody.innerHTML = "";
+      
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 2rem;">Không tìm thấy biểu mẫu nào khớp với bộ lọc.</td></tr>`;
+        return;
+      }
+
+      data.forEach((item, index) => {
+        const tr = document.createElement("tr");
+        
+        let typeBadgeClass = "badge-neutral";
+        if (item.type.includes("HIS")) typeBadgeClass = "badge-info";
+        else if (item.type.includes("LIS")) typeBadgeClass = "badge-purple";
+        else if (item.type.includes("RIS")) typeBadgeClass = "badge-success";
+        
+        let statusBadgeClass = "badge-success";
+        if (item.status === "Chưa ban hành") statusBadgeClass = "badge-danger";
+
+        tr.innerHTML = `
+          <td style="text-align: center;">${index + 1}</td>
+          <td><span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">${item.section}</span></td>
+          <td>
+            <div style="font-weight: 500;">${item.name}</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.125rem;">${item.sectionName}</div>
+          </td>
+          <td style="text-align: center;">
+            <span class="badge ${typeBadgeClass}">${item.type}</span>
+          </td>
+          <td style="text-align: center;">
+            <span class="badge ${statusBadgeClass}">${item.status}</span>
+            <div style="font-size: 0.725rem; color: var(--text-secondary); margin-top: 0.25rem;">${item.note || ''}</div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Filter logic
+    function filterForms() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const section = document.getElementById("sectionFilter").value;
+      const type = document.getElementById("typeFilter").value;
+      const status = document.getElementById("statusFilter").value;
+
+      const filtered = formsData.filter(item => {
+        const matchesQuery = item.name.toLowerCase().includes(query) || (item.note && item.note.toLowerCase().includes(query));
+        const matchesSection = section === "ALL" || item.section === section;
+        const matchesType = type === "ALL" || item.type === type;
+        const matchesStatus = status === "ALL" || item.status === status;
+        
+        return matchesQuery && matchesSection && matchesType && matchesStatus;
+      });
+
+      renderTable(filtered);
+    }
+
+    // Reset filters
+    function resetFilters() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("sectionFilter").value = "ALL";
+      document.getElementById("typeFilter").value = "ALL";
+      document.getElementById("statusFilter").value = "ALL";
+      renderTable(formsData);
+    }
+
+    // Custom quick KPI filters
+    function filterBySign(type) {
+      switchTab('listTab');
+      document.getElementById("typeFilter").value = type;
+      filterForms();
+    }
+
+    // Tab switcher
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(tab => {
+        tab.classList.remove("active");
+      });
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+      document.getElementById(tabId).classList.add("active");
+      
+      // Find matching button and make active
+      const buttons = document.querySelectorAll(".tab-btn");
+      buttons.forEach(btn => {
+        if (btn.getAttribute("onclick").includes(tabId) || (tabId === 'requestedTab' && btn.id === 'requestedTabBtn')) {
+          btn.classList.add("active");
+        }
+      });
+    }
+
+    // Theme toggle
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const sunIcon = document.getElementById("sunIcon");
+    const moonIcon = document.getElementById("moonIcon");
+
+    themeToggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("light-theme");
+      if (document.body.classList.contains("light-theme")) {
+        sunIcon.style.display = "block";
+        moonIcon.style.display = "none";
+      } else {
+        sunIcon.style.display = "none";
+        moonIcon.style.display = "block";
+      }
+    });
+
+    // Client-side Word Exporter
+    function exportToWord() {
+      const content = document.getElementById("reportContent").innerHTML;
+      
+      const header = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Báo cáo Triển khai EMR</title>
+<style>
+  body {
+    font-family: 'Times New Roman', serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    margin: 1in;
+  }
+  p { margin: 0 0 10pt; text-align: justify; text-indent: 0.5in; }
+  ul, ol { margin: 0 0 10pt 20pt; }
+  h1, h2, h3, h4 { font-family: 'Times New Roman', serif; margin: 12pt 0 6pt; }
+  .print-header { margin-bottom: 24pt; }
+  .print-title { font-size: 16pt; font-weight: bold; text-align: center; text-transform: uppercase; margin: 18pt 0 6pt; }
+  .print-subtitle { font-size: 11pt; font-style: italic; text-align: center; margin-bottom: 18pt; }
+  .print-org { font-weight: bold; font-size: 10pt; line-height: 1.2; }
+  .print-section-title { font-size: 12pt; font-weight: bold; margin: 18pt 0 6pt; border-bottom: 1px solid #000000; padding-bottom: 3pt; text-transform: uppercase; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 12pt; }
+  th, td { border: 1.0pt solid windowtext; padding: 6pt; text-align: left; font-size: 10.5pt; }
+  th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
+  .print-signatures { margin-top: 36pt; width: 100%; }
+</style>
+</head>
+<body>`;
+      const footer = `</body></html>`;
+      const docHtml = header + content + footer;
+      
+      const blob = new Blob(['\ufeff' + docHtml], { type: 'application/msword;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Bao_cao_trien_khai_EMR.doc";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Initial render
+    window.onload = () => {
+      // Calculate dynamic values for KPIs
+      const kySoCount = formsData.filter(i => i.type.includes("HIS") || i.type.includes("LIS") || i.type.includes("RIS")).length;
+      const scanCount = formsData.filter(i => i.type === "Scan").length;
+      
+      document.getElementById("countKySo").textContent = kySoCount;
+      document.getElementById("countScan").textContent = scanCount;
+
+      renderTable(formsData);
+    };
+  </script>
+</body>
+</html>
