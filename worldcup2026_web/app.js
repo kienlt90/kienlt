@@ -842,7 +842,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const dashPlayerGoalsTbody = document.getElementById("dash-player-goals-tbody");
       if (dashPlayerGoalsTbody) {
         dashPlayerGoalsTbody.innerHTML = "";
-        topScorers.slice(0, 5).forEach((player, idx) => {
+        topScorers.slice(0, 10).forEach((player, idx) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
@@ -864,7 +864,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const dashPlayerAssistsTbody = document.getElementById("dash-player-assists-tbody");
       if (dashPlayerAssistsTbody) {
         dashPlayerAssistsTbody.innerHTML = "";
-        topAssists.slice(0, 5).forEach((player, idx) => {
+        topAssists.slice(0, 10).forEach((player, idx) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
@@ -886,7 +886,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const dashPlayerXGTbody = document.getElementById("dash-player-xg-tbody");
       if (dashPlayerXGTbody) {
         dashPlayerXGTbody.innerHTML = "";
-        topXG.slice(0, 5).forEach((player, idx) => {
+        topXG.slice(0, 10).forEach((player, idx) => {
           const diff = player.goals - player.xg;
           const diffColor = diff >= 0 ? "var(--emerald)" : "var(--red)";
           const diffSign = diff >= 0 ? "+" : "";
