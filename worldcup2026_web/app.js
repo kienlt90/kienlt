@@ -1112,10 +1112,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${flag1Html}
                 <span>${match.team1 || "Chưa xác định"}</span>
               </div>
-              <div class="score-input-container">
-                <button class="score-control-btn btn-score-dec" data-match-id="${match.id}" data-team="1">-</button>
-                <input type="number" class="score-val-input score-team-1" data-match-id="${match.id}" min="0" value="${match.score1 !== null ? match.score1 : ''}" placeholder="-">
-                <button class="score-control-btn btn-score-inc" data-match-id="${match.id}" data-team="1">+</button>
+              <div class="score-display-value">
+                ${match.score1 !== null ? match.score1 : '-'}
               </div>
             </div>
             
@@ -1127,49 +1125,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${flag2Html}
                 <span>${match.team2 || "Chưa xác định"}</span>
               </div>
-              <div class="score-input-container">
-                <button class="score-control-btn btn-score-dec" data-match-id="${match.id}" data-team="2">-</button>
-                <input type="number" class="score-val-input score-team-2" data-match-id="${match.id}" min="0" value="${match.score2 !== null ? match.score2 : ''}" placeholder="-">
-                <button class="score-control-btn btn-score-inc" data-match-id="${match.id}" data-team="2">+</button>
+              <div class="score-display-value">
+                ${match.score2 !== null ? match.score2 : '-'}
               </div>
             </div>
           </div>
 
           <!-- Danh sách ghi bàn -->
           ${scorersHtml}
-
-          <!-- Thẻ phạt -->
-          <div class="cards-manager">
-            <div class="cards-team-box">
-              <div class="card-control">
-                <span class="card-icon yellow-card"></span>
-                <button class="card-btn btn-card-dec" data-match-id="${match.id}" data-card="yc1">-</button>
-                <span class="card-val">${match.yc1 || 0}</span>
-                <button class="card-btn btn-card-inc" data-match-id="${match.id}" data-card="yc1">+</button>
-              </div>
-              <div class="card-control">
-                <span class="card-icon red-card"></span>
-                <button class="card-btn btn-card-dec" data-match-id="${match.id}" data-card="rc1">-</button>
-                <span class="card-val">${match.rc1 || 0}</span>
-                <button class="card-btn btn-card-inc" data-match-id="${match.id}" data-card="rc1">+</button>
-              </div>
-            </div>
-            
-            <div class="cards-team-box">
-              <div class="card-control">
-                <span class="card-icon yellow-card"></span>
-                <button class="card-btn btn-card-dec" data-match-id="${match.id}" data-card="yc2">-</button>
-                <span class="card-val">${match.yc2 || 0}</span>
-                <button class="card-btn btn-card-inc" data-match-id="${match.id}" data-card="yc2">+</button>
-              </div>
-              <div class="card-control">
-                <span class="card-icon red-card"></span>
-                <button class="card-btn btn-card-dec" data-match-id="${match.id}" data-card="rc2">-</button>
-                <span class="card-val">${match.rc2 || 0}</span>
-                <button class="card-btn btn-card-inc" data-match-id="${match.id}" data-card="rc2">+</button>
-              </div>
-            </div>
-          </div>
         </div>
       `;
     }
