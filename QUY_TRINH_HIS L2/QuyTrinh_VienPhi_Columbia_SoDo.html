@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sơ đồ quy trình viện phí - BV Columbia (Trình Chiếu)</title>
+    <!-- Load Mermaid.js for diagram rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <!-- Load svg-pan-zoom library from CDN for zoom in / zoom out / pan controls -->
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #1e3a8a, #0f172a); /* Premium Navy/Slate gradient */
+            color: white;
+            padding: 45px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+        }
+        .header h1 {
+            margin: 0 0 12px 0;
+            font-size: 2.6rem;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+        
+        /* Modern Full-Bleed Section Design (No more boxes) */
+        .section-flow {
+            background: #ffffff;
+            padding: 40px 0;
+            margin-bottom: 60px;
+            border-bottom: 1px solid #e2e8f0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .section-flow h2 {
+            border-left: 6px solid #2563eb;
+            padding-left: 20px;
+            color: #1e3a8a;
+            margin-top: 0;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        .section-desc {
+            color: #64748b;
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            margin-top: 0;
+            padding-left: 20px;
+        }
+        .diagram-container {
+            width: 100%;
+            background: #fdfdfd;
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            cursor: zoom-in;
+            transition: all 0.3s ease;
+        }
+        .diagram-container:hover {
+            background: #f8fafc;
+        }
+        /* Make the Mermaid SVG stretch to full container width on page */
+        .diagram-container svg {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 450px;
+        }
+        .mermaid {
+            width: 100%;
+        }
+
+        /* 
+           FORCE STYLES ON MERMAID ELEMENTS TO AVOID RENDER BUGS 
+           Yellow theme for the diagram itself, dark text for legibility.
+        */
+        svg g.cluster rect {
+            fill: #fef9c3 !important; /* Light yellow background for subgraphs */
+            stroke: #eab308 !important; /* Yellow border */
+            stroke-width: 2px !important;
+            rx: 8px !important;
+            ry: 8px !important;
+        }
+        svg g.node rect, svg g.node polygon, svg g.node circle, svg g.node path {
+            fill: #fffde7 !important; /* Yellow background for nodes */
+            stroke: #ca8a04 !important; /* Warm gold/dark yellow border */
+            stroke-width: 1.5px !important;
+            rx: 6px !important;
+            ry: 6px !important;
+        }
+        svg text, svg .label, svg div, svg span {
+            fill: #0f172a !important; /* Force dark text for contrast */
+            color: #0f172a !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+        
+        /* 
+           FIX MISSING LINES AND ARROWS BUG (BULLETPROOF)
+           Forcing the svg connector paths and markers to render correctly.
+        */
+        svg path.path,
+        svg .edgePath .path,
+        svg .edgePath path,
+        svg g.edgePath path,
+        svg .edgePaths path,
+        svg g.edgePaths path {
+            stroke: #d97706 !important; /* Dark orange/yellow lines */
+            stroke-width: 2.5px !important;
+            fill: none !important;
+            opacity: 1 !important;
+        }
+        svg marker path, 
+        svg .marker path, 
+        svg #arrowhead path,
+        svg g.marker path,
+        svg marker polygon,
+        svg .marker polygon {
+            fill: #d97706 !important; /* Solid dark orange/yellow arrow heads */
+            stroke: #d97706 !important;
+            opacity: 1 !important;
+        }
+        svg .edgeLabel rect {
+            fill: #ffffff !important;
+            background-color: #ffffff !important;
+            opacity: 0.9 !important;
+        }
+
+        /* TRUE FULL-SCREEN PRESENTATION OVERLAY */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff; /* Clean white canvas background */
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .modal.active {
+            display: block;
+        }
+        .modal-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        /* 
+           FIX CENTERING BUG: 
+           Using relative block container instead of flexbox to allow 
+           svg-pan-zoom to calculate exact dimensions and center coordinates.
+        */
+        #zoomed-svg-container {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            display: block;
+        }
+        #zoomed-svg-container svg {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+            max-height: none !important;
+        }
+        .control-panel {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            z-index: 10000;
+            display: flex;
+            gap: 12px;
+        }
+        .btn-ctrl {
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+        .btn-ctrl:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        .btn-close {
+            background: #dc2626;
+        }
+        .btn-close:hover {
+            background: #991b1b;
+        }
+        .instructions-hint {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            background: rgba(15, 23, 42, 0.95);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SƠ ĐỒ QUY TRÌNH VIỆN PHÍ - BV COLUMBIA</h1>
+            <p>🔎 Click vào bất kỳ sơ đồ nào để mở <b>Trình chiếu Phóng to / Thu nhỏ / Di chuyển (Pan & Zoom)</b>.</p>
+        </div>
+
+        <!-- Quy trình 1 -->
+        <div class="section-flow">
+            <h2>1. Quy trình tiếp nhận & thanh toán Ngoại trú</h2>
+            <p class="section-desc">Thể hiện luồng phân loại phí khám tiếp nhận tự động (mới/cũ) và quy trình bác sĩ hẹn lịch thực hiện CLS ở ngày tương lai.</p>
+            <div class="diagram-container">
+                <div class="mermaid" id="diag1">
+                graph TD
+                    Start([Bắt đầu Tiếp nhận]) --> CheckPatient{"Bệnh nhân mới hay cũ?"}
+                    
+                    CheckPatient -->|Bệnh nhân mới| NewFee["Tự động cộng Phí mới:<br><b>25.000đ</b>"]
+                    CheckPatient -->|Bệnh nhân cũ| OldFee["Tự động cộng Phí cũ:<br><b>15.000đ</b>"]
+                    
+                    NewFee --> DoctorExam["Bác sĩ khám bệnh &<br>Chỉ định CLS"]
+                    OldFee --> DoctorExam
+                    
+                    DoctorExam --> ServiceType{Có chỉ định CLS ngày khác?}
+                    
+                    ServiceType -->|Có chỉ định ngày khác| PreOrder["Bác sĩ đặt lịch CLS<br>cho ngày tương lai"]
+                    ServiceType -->|Thực hiện trong ngày| StandardFlow["Thanh toán & Thực hiện CLS<br>ngay trong ngày"]
+                    
+                    PreOrder --> BillPre["Thu ngân thu tiền trước<br>dịch vụ CLS"]
+                    
+                    BillPre --> PatientConfirm{Bệnh nhân đồng ý đóng tiền?}
+                    
+                    PatientConfirm -->|Đồng ý| PaySuccess["Thanh toán thành công &<br>Hẹn ngày thực hiện"]
+                    PatientConfirm -->|Không đồng ý| CancelOrder["Hủy phiếu chỉ định CLS"]
+                    
+                    PaySuccess --> FutureExecution["Đến ngày hẹn:<br>Thực hiện CLS & Khám kết quả"]
+                </div>
+            </div>
+        </div>
+
+        <!-- Quy trình 2 -->
+        <div class="section-flow">
+            <h2>2. So sánh Cấu trúc bảng kê chi phí Nội trú</h2>
+            <p class="section-desc">So sánh cấu trúc phân tán truyền thống (Nhóm BYT) và cấu trúc gom nhóm theo từng ca mổ/thủ thuật đặc thù của Columbia.</p>
+            <div class="diagram-container">
+                <div class="mermaid" id="diag2">
+                graph TD
+                    subgraph "1. Cấu trúc HIS thông thường (Nhóm Bộ Y Tế)"
+                        StandardHIS[Bảng kê chi phí tổng] --> Group1[Nhóm Tiền Khám]
+                        StandardHIS --> Group2[Nhóm Tiền Giường]
+                        StandardHIS --> Group3["Nhóm Phẫu thuật/Thủ thuật<br>(Chỉ gồm phí mổ)"]
+                        StandardHIS --> Group4["Nhóm Vật tư hao phí (Riêng biệt)"]
+                        StandardHIS --> Group5[Nhóm Tiền Thuốc]
+                    end
+
+                    subgraph "2. Cấu trúc Bảng kê BV Columbia (Gom theo Ca Phẫu thuật)"
+                        ColumbiaHIS[Bảng kê chi phí tổng] --> GroupA[Nhóm Tiền Khám]
+                        ColumbiaHIS --> GroupB[Nhóm Tiền Giường]
+                        ColumbiaHIS --> SurgicalPackage["Nhóm dịch vụ Phẫu thuật 1"]
+                        
+                        SurgicalPackage --> Det1[Chi phí Bác sĩ mổ chính]
+                        SurgicalPackage --> Det2[Chi phí Bác sĩ mổ phụ]
+                        SurgicalPackage --> Det3[Chi phí Vật tư mổ]
+                        SurgicalPackage --> Det4[Chi phí Điều dưỡng]
+                        SurgicalPackage --> Det5[Chi phí Phòng mổ]
+                        SurgicalPackage --> Det6[Chi phí Hỗ trợ y tế]
+                    end
+                </div>
+            </div>
+        </div>
+
+        <!-- Quy trình 3 -->
+        <div class="section-flow">
+            <h2>3. Sơ đồ Quy trình Tách Hóa Đơn Đa Nguồn</h2>
+            <p class="section-desc">Quy trình nhân viên viện phí lựa chọn các dịch vụ thuộc phạm vi chi trả để phân rã ra tối đa 5 hóa đơn/bảng kê cho các bên bảo lãnh.</p>
+            <div class="diagram-container">
+                <div class="mermaid" id="diag3">
+                graph TD
+                    Start[Danh sách dịch vụ chỉ định] --> Selection["Nhân viên Viện phí<br>tích chọn dịch vụ"]
+                    
+                    Selection --> Split{"Tách thành các nguồn"}
+                    
+                    Split --> P1["1. Hóa đơn BHXH"]
+                    Split --> P2["2. Hóa đơn BH Nhân thọ"]
+                    Split --> P3["3. Hóa đơn BH Khác 1"]
+                    Split --> P4["4. Hóa đơn BH Khác 2"]
+                    Split --> P5["5. Hóa đơn BN Tự chi trả"]
+                    
+                    P1 --> GenBill["Tổng hợp 5 bảng kê<br>thanh toán riêng biệt"]
+                    P2 --> GenBill
+                    P3 --> GenBill
+                    P4 --> GenBill
+                    P5 --> GenBill
+                    
+                    GenBill --> FinalReceipt["In Phiếu thu hiển thị rõ:<br>- Tiền từng bảo hiểm bảo lãnh<br>- Số tiền BN thực tế phải đóng thêm"]
+                </div>
+            </div>
+        </div>
+
+        <!-- Quy trình 4 -->
+        <div class="section-flow">
+            <h2>4. Sơ đồ Thuật toán Tính tiền & Quyết toán Bảo hiểm Tư nhân</h2>
+            <p class="section-desc">Mô phỏng thuật toán tính toán thu hồi phần chiết khấu giảm giá của phần bảo hiểm từ chối duyệt để cộng ngược lại vào hóa đơn tự trả của bệnh nhân.</p>
+            <div class="diagram-container">
+                <div class="mermaid" id="diag4">
+                graph TD
+                    Start([Giá gốc LAB A: 100.000đ]) --> ApplyDiscount["Áp giảm giá 8% BHTN<br>(Giảm 8.000đ)"]
+                    
+                    ApplyDiscount --> SendClaim["Đơn giá gửi Bảo hiểm:<br><b>92.000đ</b>"]
+                    
+                    SendClaim --> InsuranceDecision{"Bảo hiểm duyệt bảo lãnh?"}
+                    
+                    InsuranceDecision -->|Ví dụ: Duyệt 50.000đ| CoPay["Phần chưa bảo lãnh:<br>92.000đ - 50.000đ = <b>42.000đ</b>"]
+                    
+                    CoPay --> ReverseDiscount["Thu hồi 8% giảm giá trên phần chênh lệch<br>(Do Bảo hiểm không bảo lãnh)"]
+                    
+                    ReverseDiscount --> CalcFormula["Tính tiền BN trả:<br>42.000đ + (42.000đ x 8%) = <b>45.360đ</b>"]
+                    
+                    CalcFormula --> FinalPay([Hoàn thành Quyết toán:<br>- Bảo hiểm trả: 50.000đ<br>- Bệnh nhân trả: 45.360đ])
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Modal Overlay -->
+    <div id="presentation-modal" class="modal">
+        <div class="modal-content">
+            <!-- Floating Zoom / Control Panel -->
+            <div class="control-panel">
+                <button class="btn-ctrl" onclick="zoomIn()">Phóng to (+)</button>
+                <button class="btn-ctrl" onclick="zoomOut()">Thu nhỏ (-)</button>
+                <button class="btn-ctrl" onclick="resetZoom()">Đặt lại</button>
+                <button class="btn-ctrl btn-close" onclick="closeModal()">Đóng (X)</button>
+            </div>
+            <!-- Dynamic SVG container for pan-zoom -->
+            <div id="zoomed-svg-container"></div>
+            <div class="instructions-hint">💡 CUỘN CHUỘT để phóng to/nhỏ | BẤM GIỮ & KÉO để di chuyển sơ đồ</div>
+        </div>
+    </div>
+
+    <script>
+        // Configure Mermaid using standard/default theme to ensure stable rendering of arrow lines
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default'
+        });
+
+        let panZoomInstance = null;
+
+        // Initialize presentation mode when elements click
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.querySelectorAll('.diagram-container').forEach(container => {
+                    container.addEventListener('click', function() {
+                        const svgElement = this.querySelector('svg');
+                        if (!svgElement) return;
+                        
+                        const modal = document.getElementById('presentation-modal');
+                        const zoomedContainer = document.getElementById('zoomed-svg-container');
+                        
+                        // Clear old contents
+                        zoomedContainer.innerHTML = '';
+                        
+                        // Clone the SVG element
+                        const clone = svgElement.cloneNode(true);
+                        clone.id = 'active-zoomed-svg';
+                        
+                        // Completely strip the absolute width & height attributes AND inline style properties
+                        // set by Mermaid so that it flows and scales naturally to the center of the screen.
+                        clone.removeAttribute('width');
+                        clone.removeAttribute('height');
+                        clone.removeAttribute('style');
+                        
+                        // Append clone
+                        zoomedContainer.appendChild(clone);
+                        modal.classList.add('active');
+                        
+                        // Initialize SVG Pan Zoom
+                        panZoomInstance = svgPanZoom('#active-zoomed-svg', {
+                            zoomEnabled: true,
+                            controlIconsEnabled: false, // Custom panel
+                            fit: true,
+                            center: true,
+                            minZoom: 0.05,
+                            maxZoom: 20,
+                            zoomScaleSensitivity: 0.2
+                        });
+                    });
+                });
+            }, 1000);
+        });
+
+        // Zoom action helper functions
+        function zoomIn() {
+            if (panZoomInstance) panZoomInstance.zoomIn();
+        }
+
+        function zoomOut() {
+            if (panZoomInstance) panZoomInstance.zoomOut();
+        }
+
+        function resetZoom() {
+            if (panZoomInstance) {
+                panZoomInstance.resetZoom();
+                panZoomInstance.center();
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('presentation-modal');
+            modal.classList.remove('active');
+            if (panZoomInstance) {
+                panZoomInstance.destroy();
+                panZoomInstance = null;
+            }
+        }
+    </script>
+</body>
+</html>
