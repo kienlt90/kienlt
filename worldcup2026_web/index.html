@@ -315,10 +315,16 @@
         <div class="filter-group">
           <label for="filter-round-select">Vòng Đấu:</label>
           <select id="filter-round-select">
-            <option value="ALL">Tất cả lượt đấu</option>
-            <option value="1">Lượt đấu 1</option>
-            <option value="2">Lượt đấu 2</option>
-            <option value="3">Lượt đấu 3</option>
+            <option value="ALL">Tất cả các vòng</option>
+            <option value="1">Vòng bảng - Lượt 1</option>
+            <option value="2">Vòng bảng - Lượt 2</option>
+            <option value="3">Vòng bảng - Lượt 3</option>
+            <option value="32">Vòng 32 đội</option>
+            <option value="16">Vòng 16 đội</option>
+            <option value="8">Tứ kết</option>
+            <option value="4">Bán kết</option>
+            <option value="2">Tranh hạng ba</option>
+            <option value="1">Chung kết</option>
           </select>
         </div>
 
@@ -345,7 +351,7 @@
       </div>
 
       <!-- Matches Container -->
-      <div class="matches-list" id="matches-container">
+      <div id="matches-container">
         <!-- Danh sách trận đấu được render tại đây -->
       </div>
     </section>
@@ -454,17 +460,6 @@
         <p>Sơ đồ nhánh đấu tự động cập nhật các đội đi tiếp từ Vòng Bảng. Nhấn nút để xem Vòng 32 Đội hoặc Sơ đồ hình cây từ Vòng 16 Đội.</p>
       </div>
 
-      <!-- Toggles -->
-      <div class="filter-bar" style="margin-bottom: 25px; justify-content: center; border-radius: 12px; padding: 10px;">
-        <button class="action-btn btn-toggle-bracket active" data-type="r16" style="min-width: 190px;">🌳 Sơ Đồ Nhánh Cây (Vòng 16)</button>
-        <button class="action-btn secondary-btn btn-toggle-bracket" data-type="r32" style="min-width: 190px; margin-left: 10px;">📋 Cặp Đấu Vòng 32 Đội</button>
-      </div>
-
-      <!-- Round of 32 Grid (Hidden by default) -->
-      <div id="bracket-r32-view" class="matches-list" style="display: none;">
-        <!-- Tự động điền bằng JS -->
-      </div>
-
       <!-- Round of 16 Tree View (Shown by default) -->
       <div id="bracket-tree-view" class="bracket-wrapper" style="overflow-x: auto;">
         <!-- Tự động vẽ bằng JS -->
@@ -484,7 +479,7 @@
 
 
   <!-- Scripts -->
-  <script src="data.js?v=20260623_210539"></script>
-  <script src="app.js?v=20260623_210539"></script>
+  <script src="data.js?v=20260624_221254"></script>
+  <script src="app.js?v=20260624_221254"></script>
 </body>
 </html>
