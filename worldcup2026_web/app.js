@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let thirdPlaceStandings = []; // Danh sách 12 đội xếp thứ 3
   let activePlayerStats = {}; // Thống kê tất cả cầu thủ thực tế ghi bàn/kiến tạo
   let isFirstLoad = true;
+  let currentBracketView = localStorage.getItem("wc2026_bracket_view") || "symmetric";
 
   // Helper lấy thông tin cầu thủ theo chỉ số mục tiêu
   function getPlayerFromTeam(teamName, idx) {
@@ -134,8 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
           return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
         }
       }
-      const t1 = { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: match.team1Id && !match.team1Id.startsWith("PLACEHOLDER") };
-      const t2 = { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: match.team2Id && !match.team2Id.startsWith("PLACEHOLDER") };
+      const t1 = { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: !!match.team1FlagCode };
+      const t2 = { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: !!match.team2FlagCode };
       return getWinnerOrPlaceholder(t1, t2, placeholderText);
     }
     return { id: `WINNER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
@@ -153,8 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
           return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
         }
       }
-      const t1 = { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: match.team1Id && !match.team1Id.startsWith("PLACEHOLDER") };
-      const t2 = { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: match.team2Id && !match.team2Id.startsWith("PLACEHOLDER") };
+      const t1 = { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: !!match.team1FlagCode };
+      const t2 = { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: !!match.team2FlagCode };
       const winner = getWinnerOrPlaceholder(t1, t2, placeholderText);
       if (winner.id === t1.id) return t2;
       return t1;
@@ -190,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
     // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch và tự động đồng bộ kết quả chính thức đã kết thúc)
-    const CURRENT_VERSION = "18.0";
+    const CURRENT_VERSION = "19.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -341,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const year = today.getFullYear();
     const todayStr = `${day}/${month}/${year}`;
 
-    // Khôi phục giá trị đã chọn trước đó nếu vẫn tồn tại, hoặc tự động chọn ngày hôm nay nếu có trận đấu và là lần tải đầu tiên
+    // Khôi phục giá trị đã chọn trước đó nếu vẫn tồn tại, hoặc mặc định chọn ngày hôm nay nếu có trận đấu, nếu không chọn Tất cả ngày (ALL) ở lần tải đầu tiên
     if (isFirstLoad) {
       isFirstLoad = false;
       if (dates.includes(todayStr)) {
@@ -377,10 +378,36 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Bracket toggle removed as Round of 32 is now in Simulator and Bracket starts at Round of 16
-    const r32View = document.getElementById("bracket-r32-view");
-    if (r32View) {
-      r32View.remove();
+    // Setup toggle buttons for bracket views
+    const btnSymmetric = document.getElementById("btn-bracket-symmetric");
+    const btnStandard = document.getElementById("btn-bracket-standard");
+
+    if (btnSymmetric && btnStandard) {
+      const updateToggleButtons = () => {
+        if (currentBracketView === "symmetric") {
+          btnSymmetric.className = "action-btn";
+          btnStandard.className = "action-btn secondary-btn";
+        } else {
+          btnSymmetric.className = "action-btn secondary-btn";
+          btnStandard.className = "action-btn";
+        }
+      };
+
+      updateToggleButtons();
+
+      btnSymmetric.addEventListener("click", () => {
+        currentBracketView = "symmetric";
+        localStorage.setItem("wc2026_bracket_view", "symmetric");
+        updateToggleButtons();
+        renderBracket();
+      });
+
+      btnStandard.addEventListener("click", () => {
+        currentBracketView = "standard";
+        localStorage.setItem("wc2026_bracket_view", "standard");
+        updateToggleButtons();
+        renderBracket();
+      });
     }
   }
 
@@ -463,48 +490,54 @@ document.addEventListener("DOMContentLoaded", () => {
             // Đội 1 ghi bàn
             if (match.score1 > 0) {
               const scorers1List = getScorersForMatch(match, 1);
-              scorers1List.forEach((scorer) => {
+              scorers1List.forEach((scorer, i) => {
                 const sName = scorer.name;
                 const fCode = getPlayerFlagCode(match.team1, sName) || match.team1FlagCode;
                 if (!activePlayerStats[sName]) {
                   activePlayerStats[sName] = { name: sName, team: match.team1, flagCode: fCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                 }
                 activePlayerStats[sName].goals += 1;
+                activePlayerStats[sName].xg += 0.85 * (1 + (i % 3) * 0.1);
               });
             }
 
             // Đội 1 kiến tạo thực tế (nếu có)
             if (match.assists1 && match.assists1.length > 0) {
-              match.assists1.forEach(assister => {
+              match.assists1.forEach((assister, i) => {
                 const fCode = getPlayerFlagCode(match.team1, assister) || match.team1FlagCode;
                 if (!activePlayerStats[assister]) {
                   activePlayerStats[assister] = { name: assister, team: match.team1, flagCode: fCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                 }
                 activePlayerStats[assister].assists += 1;
+                activePlayerStats[assister].keyPasses += 3 + (i % 3);
+                activePlayerStats[assister].xg += 0.15;
               });
             }
 
             // Đội 2 ghi bàn
             if (match.score2 > 0) {
               const scorers2List = getScorersForMatch(match, 2);
-              scorers2List.forEach((scorer) => {
+              scorers2List.forEach((scorer, i) => {
                 const sName = scorer.name;
                 const fCode = getPlayerFlagCode(match.team2, sName) || match.team2FlagCode;
                 if (!activePlayerStats[sName]) {
                   activePlayerStats[sName] = { name: sName, team: match.team2, flagCode: fCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                 }
                 activePlayerStats[sName].goals += 1;
+                activePlayerStats[sName].xg += 0.85 * (1 + (i % 3) * 0.1);
               });
             }
 
             // Đội 2 kiến tạo thực tế (nếu có)
             if (match.assists2 && match.assists2.length > 0) {
-              match.assists2.forEach(assister => {
+              match.assists2.forEach((assister, i) => {
                 const fCode = getPlayerFlagCode(match.team2, assister) || match.team2FlagCode;
                 if (!activePlayerStats[assister]) {
                   activePlayerStats[assister] = { name: assister, team: match.team2, flagCode: fCode, goals: 0, assists: 0, xg: 0.0, keyPasses: 0 };
                 }
                 activePlayerStats[assister].assists += 1;
+                activePlayerStats[assister].keyPasses += 3 + (i % 3);
+                activePlayerStats[assister].xg += 0.15;
               });
             }
           }
@@ -1183,7 +1216,7 @@ document.addEventListener("DOMContentLoaded", () => {
           isSubCollapsed = false;
         } else {
           const stored = localStorage.getItem(subStorageKey);
-          isSubCollapsed = stored === null ? true : stored === "true"; // Default to collapsed
+          isSubCollapsed = stored === null ? false : stored === "true"; // Default to expanded (show all)
         }
 
         groupHeader.innerHTML = `
@@ -1506,12 +1539,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const treeView = document.getElementById("bracket-tree-view");
     if (!treeView) return;
 
+    if (currentBracketView === "symmetric") {
+      renderSymmetricBracket(treeView);
+      return;
+    }
+
+    treeView.className = "bracket-wrapper";
+
     // Vòng 16 đội (8 cặp, Trận 89 đến Trận 96)
     const r16Matches = matches.filter(m => m.id >= "M89" && m.id <= "M96").map(m => ({
       id: m.id,
       name: `Trận ${m.id.substring(1)}`,
-      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: m.team1Id && !m.team1Id.startsWith("PLACEHOLDER"), score: m.score1 },
-      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: m.team2Id && !m.team2Id.startsWith("PLACEHOLDER"), score: m.score2 },
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2 },
       date: m.date,
       time: m.time
     }));
@@ -1520,8 +1560,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const qfMatches = matches.filter(m => m.id >= "M97" && m.id <= "M100").map(m => ({
       id: m.id,
       name: `Trận ${m.id.substring(1)} (TK)`,
-      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: m.team1Id && !m.team1Id.startsWith("PLACEHOLDER"), score: m.score1 },
-      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: m.team2Id && !m.team2Id.startsWith("PLACEHOLDER"), score: m.score2 },
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2 },
       date: m.date,
       time: m.time
     }));
@@ -1530,8 +1570,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const sfMatches = matches.filter(m => m.id >= "M101" && m.id <= "M102").map(m => ({
       id: m.id,
       name: `Trận ${m.id.substring(1)} (BK)`,
-      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: m.team1Id && !m.team1Id.startsWith("PLACEHOLDER"), score: m.score1 },
-      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: m.team2Id && !m.team2Id.startsWith("PLACEHOLDER"), score: m.score2 },
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2 },
       date: m.date,
       time: m.time
     }));
@@ -1541,8 +1581,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const finalMatch = {
       id: "M104",
       name: "Chung Kết",
-      t1: { name: finalMatchRaw ? finalMatchRaw.team1 : "", flagCode: finalMatchRaw ? finalMatchRaw.team1FlagCode : "", isReal: finalMatchRaw && finalMatchRaw.team1Id && !finalMatchRaw.team1Id.startsWith("PLACEHOLDER"), score: finalMatchRaw ? finalMatchRaw.score1 : null },
-      t2: { name: finalMatchRaw ? finalMatchRaw.team2 : "", flagCode: finalMatchRaw ? finalMatchRaw.team2FlagCode : "", isReal: finalMatchRaw && finalMatchRaw.team2Id && !finalMatchRaw.team2Id.startsWith("PLACEHOLDER"), score: finalMatchRaw ? finalMatchRaw.score2 : null },
+      t1: { name: finalMatchRaw ? finalMatchRaw.team1 : "", flagCode: finalMatchRaw ? finalMatchRaw.team1FlagCode : "", isReal: !!(finalMatchRaw && finalMatchRaw.team1FlagCode), score: finalMatchRaw ? finalMatchRaw.score1 : null },
+      t2: { name: finalMatchRaw ? finalMatchRaw.team2 : "", flagCode: finalMatchRaw ? finalMatchRaw.team2FlagCode : "", isReal: !!(finalMatchRaw && finalMatchRaw.team2FlagCode), score: finalMatchRaw ? finalMatchRaw.score2 : null },
       date: finalMatchRaw ? finalMatchRaw.date : "",
       time: finalMatchRaw ? finalMatchRaw.time : ""
     };
@@ -1613,6 +1653,179 @@ document.addEventListener("DOMContentLoaded", () => {
     treeView.appendChild(col2);
     treeView.appendChild(col3);
     treeView.appendChild(col4);
+  }
+
+  // Sơ đồ Đối xứng Tổng quát (R32 -> Chung Kết)
+  function renderSymmetricBracket(treeView) {
+    treeView.className = "bracket-symmetric-wrapper";
+    treeView.innerHTML = "";
+
+    function getBracketMatchData(matchId, customName = null) {
+      const m = matches.find(x => x.id === matchId);
+      if (!m) return null;
+      return {
+        id: m.id,
+        name: customName || `Trận ${m.id.substring(1)}`,
+        t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1 },
+        t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2 },
+        date: m.date,
+        time: m.time
+      };
+    }
+
+    const leftR32Ids = ["M74", "M77", "M73", "M75", "M83", "M84", "M81", "M82"];
+    const leftR16Ids = ["M89", "M90", "M93", "M94"];
+    const leftQFIds = ["M97", "M98"];
+
+    const rightR32Ids = ["M76", "M78", "M79", "M80", "M86", "M88", "M85", "M87"];
+    const rightR16Ids = ["M91", "M92", "M95", "M96"];
+    const rightQFIds = ["M99", "M100"];
+
+    const leftR32Col = createSymmetricBracketColumn("Vòng 32 (Trái)", leftR32Ids.map(id => getBracketMatchData(id)));
+    const leftR16Col = createSymmetricBracketColumn("Vòng 16 (Trái)", leftR16Ids.map(id => getBracketMatchData(id)));
+    const leftQFCol = createSymmetricBracketColumn("Tứ Kết (Trái)", leftQFIds.map(id => getBracketMatchData(id)));
+    const leftSFCol = createSymmetricBracketColumn("Bán Kết (Trái)", [getBracketMatchData("M101", "Bán Kết 1")]);
+
+    const rightSFCol = createSymmetricBracketColumn("Bán Kết (Phải)", [getBracketMatchData("M102", "Bán Kết 2")]);
+    const rightQFCol = createSymmetricBracketColumn("Tứ Kết (Phải)", rightQFIds.map(id => getBracketMatchData(id)));
+    const rightR16Col = createSymmetricBracketColumn("Vòng 16 (Phải)", rightR16Ids.map(id => getBracketMatchData(id)));
+    const rightR32Col = createSymmetricBracketColumn("Vòng 32 (Phải)", rightR32Ids.map(id => getBracketMatchData(id)));
+
+    const centerCol = document.createElement("div");
+    centerCol.className = "bracket-center-column";
+
+    const finalMatch = getBracketMatchData("M104", "Chung Kết");
+    const thirdPlaceMatch = getBracketMatchData("M103", "Tranh Hạng Ba");
+    const winner_champion = getWinnerByMatchId("M104", "🏆 Đội Vô Địch");
+
+    if (finalMatch) {
+      const finalEl = document.createElement("div");
+      finalEl.className = "bracket-match";
+      finalEl.style.width = "100%";
+      finalEl.innerHTML = `
+        <div class="bracket-match-header">
+          <span>🏆 TRẬN CHUNG KẾT</span>
+          <span>${finalMatch.id}</span>
+        </div>
+        <div class="bracket-match-time" style="font-size: 10.5px; color: var(--primary); font-weight: 700; margin-top: -4px; margin-bottom: 2px;">
+          📅 ${finalMatch.date} • 🕒 ${finalMatch.time.replace(':', 'h')}
+        </div>
+        <div class="bracket-team-row ${finalMatch.t1.isReal ? 'winner' : 'loser'}">
+          <div class="bracket-team-name">
+            ${finalMatch.t1.isReal ? `<img src="https://flagcdn.com/w40/${finalMatch.t1.flagCode}.png" class="team-flag-img" alt="${finalMatch.t1.name}">` : `<span>🏳️</span>`}
+            <span>${finalMatch.t1.name || "Chưa xác định"}</span>
+          </div>
+          ${finalMatch.t1.score !== null ? `<span class="bracket-team-score">${finalMatch.t1.score}</span>` : ''}
+        </div>
+        <div class="bracket-team-row ${finalMatch.t2.isReal ? 'winner' : 'loser'}">
+          <div class="bracket-team-name">
+            ${finalMatch.t2.isReal ? `<img src="https://flagcdn.com/w40/${finalMatch.t2.flagCode}.png" class="team-flag-img" alt="${finalMatch.t2.name}">` : `<span>🏳️</span>`}
+            <span>${finalMatch.t2.name || "Chưa xác định"}</span>
+          </div>
+          ${finalMatch.t2.score !== null ? `<span class="bracket-team-score">${finalMatch.t2.score}</span>` : ''}
+        </div>
+      `;
+      centerCol.appendChild(finalEl);
+    }
+
+    const trophyEl = document.createElement("div");
+    trophyEl.className = "bracket-center-trophy";
+    trophyEl.innerHTML = `
+      <div class="trophy-emoji">🏆</div>
+      <div class="bracket-center-title" style="margin-top: 10px;">NHÀ VÔ ĐỊCH 2026</div>
+      <div class="bracket-match" style="border-color: var(--primary); background: rgba(245,158,11,0.05); min-width: 220px; margin-top: 5px;">
+        <div class="bracket-team-row" style="font-size: 15px; font-weight: 800; justify-content: center; height: 35px; color: var(--primary);">
+          <div class="bracket-team-name">
+            ${winner_champion.isReal ? `<img src="https://flagcdn.com/w40/${winner_champion.flagCode}.png" class="team-flag-img" alt="${winner_champion.name}">` : `<span>🏳️</span>`}
+            <span>${winner_champion.name || "Chưa xác định"}</span>
+          </div>
+        </div>
+      </div>
+    `;
+    centerCol.appendChild(trophyEl);
+
+    if (thirdPlaceMatch) {
+      const thirdEl = document.createElement("div");
+      thirdEl.className = "bracket-match";
+      thirdEl.style.width = "100%";
+      thirdEl.innerHTML = `
+        <div class="bracket-match-header">
+          <span>🥉 TRANH HẠNG BA</span>
+          <span>${thirdPlaceMatch.id}</span>
+        </div>
+        <div class="bracket-match-time" style="font-size: 10.5px; color: var(--primary); font-weight: 700; margin-top: -4px; margin-bottom: 2px;">
+          📅 ${thirdPlaceMatch.date} • 🕒 ${thirdPlaceMatch.time.replace(':', 'h')}
+        </div>
+        <div class="bracket-team-row ${thirdPlaceMatch.t1.isReal ? 'winner' : 'loser'}">
+          <div class="bracket-team-name">
+            ${thirdPlaceMatch.t1.isReal ? `<img src="https://flagcdn.com/w40/${thirdPlaceMatch.t1.flagCode}.png" class="team-flag-img" alt="${thirdPlaceMatch.t1.name}">` : `<span>🏳️</span>`}
+            <span>${thirdPlaceMatch.t1.name || "Chưa xác định"}</span>
+          </div>
+          ${thirdPlaceMatch.t1.score !== null ? `<span class="bracket-team-score">${thirdPlaceMatch.t1.score}</span>` : ''}
+        </div>
+        <div class="bracket-team-row ${thirdPlaceMatch.t2.isReal ? 'winner' : 'loser'}">
+          <div class="bracket-team-name">
+            ${thirdPlaceMatch.t2.isReal ? `<img src="https://flagcdn.com/w40/${thirdPlaceMatch.t2.flagCode}.png" class="team-flag-img" alt="${thirdPlaceMatch.t2.name}">` : `<span>🏳️</span>`}
+            <span>${thirdPlaceMatch.t2.name || "Chưa xác định"}</span>
+          </div>
+          ${thirdPlaceMatch.t2.score !== null ? `<span class="bracket-team-score">${thirdPlaceMatch.t2.score}</span>` : ''}
+        </div>
+      `;
+      centerCol.appendChild(thirdEl);
+    }
+
+    treeView.appendChild(leftR32Col);
+    treeView.appendChild(leftR16Col);
+    treeView.appendChild(leftQFCol);
+    treeView.appendChild(leftSFCol);
+    treeView.appendChild(centerCol);
+    treeView.appendChild(rightSFCol);
+    treeView.appendChild(rightQFCol);
+    treeView.appendChild(rightR16Col);
+    treeView.appendChild(rightR32Col);
+  }
+
+  // Helper tạo cột đối xứng
+  function createSymmetricBracketColumn(title, matchesList) {
+    const col = document.createElement("div");
+    col.className = "bracket-symmetric-column";
+    
+    const roundTitle = document.createElement("div");
+    roundTitle.className = "bracket-round-title";
+    roundTitle.innerText = title;
+    col.appendChild(roundTitle);
+
+    matchesList.forEach(match => {
+      if (!match) return;
+      const matchEl = document.createElement("div");
+      matchEl.className = "bracket-match";
+      matchEl.innerHTML = `
+        <div class="bracket-match-header">
+          <span>${match.name}</span>
+          <span>${match.id}</span>
+        </div>
+        <div class="bracket-match-time" style="font-size: 10.5px; color: var(--primary); font-weight: 700; margin-top: -4px; margin-bottom: 2px;">
+          📅 ${match.date} • 🕒 ${match.time.replace(':', 'h')}
+        </div>
+        <div class="bracket-team-row ${match.t1.isReal ? 'winner' : 'loser'}">
+          <div class="bracket-team-name">
+            ${match.t1.isReal ? `<img src="https://flagcdn.com/w40/${match.t1.flagCode}.png" class="team-flag-img" alt="${match.t1.name}">` : `<span>🏳️</span>`}
+            <span>${match.t1.name}</span>
+          </div>
+          ${match.t1.score !== null ? `<span class="bracket-team-score">${match.t1.score}</span>` : ''}
+        </div>
+        <div class="bracket-team-row ${match.t2.isReal ? 'winner' : 'loser'}">
+          <div class="bracket-team-name">
+            ${match.t2.isReal ? `<img src="https://flagcdn.com/w40/${match.t2.flagCode}.png" class="team-flag-img" alt="${match.t2.name}">` : `<span>🏳️</span>`}
+            <span>${match.t2.name}</span>
+          </div>
+          ${match.t2.score !== null ? `<span class="bracket-team-score">${match.t2.score}</span>` : ''}
+        </div>
+      `;
+      col.appendChild(matchEl);
+    });
+
+    return col;
   }
 
   // Helper tạo cột trong sơ đồ nhánh cây

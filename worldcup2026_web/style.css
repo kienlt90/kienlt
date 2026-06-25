@@ -1504,3 +1504,61 @@ body.light-theme .stage-section-header {
 body.light-theme .stage-section-header:hover {
   background: rgba(255, 255, 255, 0.9);
 }
+
+/* --- SYMMETRIC BRACKET STYLING --- */
+.bracket-symmetric-wrapper {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 30px 10px;
+  min-height: 980px;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.bracket-symmetric-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  min-width: 210px;
+  flex: 1;
+}
+
+.bracket-center-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 250px;
+  gap: 20px;
+}
+
+.bracket-center-trophy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.bracket-center-trophy .trophy-emoji {
+  font-size: 80px;
+  filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6));
+  animation: floatTrophy 4s ease-in-out infinite;
+}
+
+@keyframes floatTrophy {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.bracket-center-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
