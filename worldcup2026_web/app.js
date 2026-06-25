@@ -34,6 +34,134 @@ document.addEventListener("DOMContentLoaded", () => {
     return "";
   }
 
+  // Helper: Lấy đội tuyển từ vòng bảng hoặc placeholder
+  function getTeamOrPlaceholder(groupLetter, rankIndex, placeholderText) {
+    const stands = groupStandings[groupLetter];
+    if (stands && stands[rankIndex]) {
+      const isGroupFinished = stands.every(t => t.played === 3);
+      if (isGroupFinished) {
+        const team = stands[rankIndex];
+        return { id: team.id, name: team.name, flag: team.flag, flagCode: team.flagCode, isReal: true };
+      }
+    }
+    return { id: `PLACEHOLDER-${groupLetter}-${rankIndex}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
+  }
+
+  // Helper: Phân bổ 8 đội xếp thứ 3 tốt nhất bằng thuật toán Backtracking chính thức theo FIFA
+  function assignThirdPlacedTeams(qualifiedThirds) {
+    const slots = [
+      { id: "M74", allowedGroups: ["A", "B", "C", "D", "F"] },
+      { id: "M77", allowedGroups: ["C", "D", "F", "G", "H"] },
+      { id: "M79", allowedGroups: ["C", "E", "F", "H", "I"] },
+      { id: "M80", allowedGroups: ["E", "H", "I", "J", "K"] },
+      { id: "M81", allowedGroups: ["B", "E", "F", "I", "J"] },
+      { id: "M82", allowedGroups: ["A", "E", "H", "I", "J"] },
+      { id: "M85", allowedGroups: ["E", "F", "G", "I", "J"] },
+      { id: "M87", allowedGroups: ["D", "E", "I", "J", "L"] }
+    ];
+
+    const assignment = {};
+    const used = new Array(qualifiedThirds.length).fill(false);
+
+    function backtrack(slotIdx) {
+      if (slotIdx === slots.length) return true;
+      const slot = slots[slotIdx];
+      for (let i = 0; i < qualifiedThirds.length; i++) {
+        if (!used[i]) {
+          const team = qualifiedThirds[i];
+          if (slot.allowedGroups.includes(team.group)) {
+            used[i] = true;
+            assignment[slot.id] = team;
+            if (backtrack(slotIdx + 1)) return true;
+            used[i] = false;
+            delete assignment[slot.id];
+          }
+        }
+      }
+      return false;
+    }
+
+    const success = backtrack(0);
+    if (success) {
+      return assignment;
+    } else {
+      const fallbackAssignment = {};
+      slots.forEach((slot, idx) => {
+        fallbackAssignment[slot.id] = qualifiedThirds[idx] || null;
+      });
+      return fallbackAssignment;
+    }
+  }
+
+  // Lấy thông tin đội thứ 3 đã được gán hoặc placeholder tương ứng
+  function getAssignedThirdOrPlaceholder(matchKey, allowedGroupsText, assignedThirds) {
+    const team = assignedThirds[matchKey];
+    if (team) {
+      return { id: team.id, name: team.name, flag: team.flag, flagCode: team.flagCode, isReal: true };
+    }
+    return { id: `PLACEHOLDER-3RD-${matchKey}`, name: `Hạng 3 Bảng ${allowedGroupsText}`, flag: "🏳️", flagCode: "", isReal: false };
+  }
+
+  // Helper: Dự đoán/Xác định đội thắng cuộc đi tiếp trong sơ đồ mô phỏng
+  function getWinnerOrPlaceholder(t1, t2, placeholderText) {
+    if (t1.isReal && t2.isReal) {
+      const stat1 = teamStats[t1.id];
+      const stat2 = teamStats[t2.id];
+      if (stat1 && stat2) {
+        if (stat1.points !== stat2.points) {
+          return stat1.points > stat2.points ? t1 : t2;
+        }
+        if (stat1.gd !== stat2.gd) {
+          return stat1.gd > stat2.gd ? t1 : t2;
+        }
+      }
+      return t1;
+    }
+    if (t1.isReal) return t1;
+    if (t2.isReal) return t2;
+    return { id: `WINNER-OF-${t1.name}-${t2.name}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
+  }
+
+  function getWinnerByMatchId(matchId, placeholderText) {
+    const match = matches.find(m => m.id === matchId);
+    if (match) {
+      if (match.score1 !== null && match.score2 !== null) {
+        if (match.score1 > match.score2) {
+          return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
+        } else if (match.score1 < match.score2) {
+          return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
+        } else {
+          return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
+        }
+      }
+      const t1 = { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: match.team1Id && !match.team1Id.startsWith("PLACEHOLDER") };
+      const t2 = { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: match.team2Id && !match.team2Id.startsWith("PLACEHOLDER") };
+      return getWinnerOrPlaceholder(t1, t2, placeholderText);
+    }
+    return { id: `WINNER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
+  }
+
+  function getLoserByMatchId(matchId, placeholderText) {
+    const match = matches.find(m => m.id === matchId);
+    if (match) {
+      if (match.score1 !== null && match.score2 !== null) {
+        if (match.score1 > match.score2) {
+          return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
+        } else if (match.score1 < match.score2) {
+          return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
+        } else {
+          return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
+        }
+      }
+      const t1 = { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: match.team1Id && !match.team1Id.startsWith("PLACEHOLDER") };
+      const t2 = { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: match.team2Id && !match.team2Id.startsWith("PLACEHOLDER") };
+      const winner = getWinnerOrPlaceholder(t1, t2, placeholderText);
+      if (winner.id === t1.id) return t2;
+      return t1;
+    }
+    return { id: `LOSER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
+  }
+
   // Helper thống nhất để lấy danh sách cầu thủ ghi bàn của trận đấu
   function getScorersForMatch(match, teamNum) {
     const score = teamNum === 1 ? match.score1 : match.score2;
@@ -62,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
     // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch và tự động đồng bộ kết quả chính thức đã kết thúc)
-    const CURRENT_VERSION = "17.0";
+    const CURRENT_VERSION = "18.0";
     const savedVersion = localStorage.getItem("wc2026_version");
     const savedMatches = localStorage.getItem("wc2026_matches");
 
@@ -249,29 +377,11 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Nút chuyển đổi giao diện sơ đồ thi đấu (r16 tree vs r32 list)
-    document.querySelectorAll(".btn-toggle-bracket").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".btn-toggle-bracket").forEach(b => {
-          b.classList.remove("active");
-          b.classList.add("secondary-btn");
-        });
-        btn.classList.add("active");
-        btn.classList.remove("secondary-btn");
-
-        const targetType = btn.getAttribute("data-type");
-        const r32View = document.getElementById("bracket-r32-view");
-        const treeView = document.getElementById("bracket-tree-view");
-
-        if (targetType === "r32") {
-          r32View.style.display = "grid";
-          treeView.style.display = "none";
-        } else {
-          r32View.style.display = "none";
-          treeView.style.display = "flex";
-        }
-      });
-    });
+    // Bracket toggle removed as Round of 32 is now in Simulator and Bracket starts at Round of 16
+    const r32View = document.getElementById("bracket-r32-view");
+    if (r32View) {
+      r32View.remove();
+    }
   }
 
   // --- THUẬT TOÁN TÍNH TOÁN & XẾP HẠNG (CORE) ---
@@ -314,7 +424,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const t1 = teamStats[match.team1Id];
         const t2 = teamStats[match.team2Id];
 
-        if (t1 && t2) {
+        // Chỉ tính điểm và bàn thắng cho vòng bảng (round <= 3) để xếp hạng
+        const isGroupStage = match.round <= 3;
+
+        if (t1 && t2 && isGroupStage) {
           t1.played += 1;
           t2.played += 1;
 
@@ -343,6 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
             t2.drawn += 1;
             t2.points += 1;
           }
+        }
 
           // Tích lũy thông số cầu thủ động từ kết quả tỉ số của trận đấu thực tế
           if (typeof TEAM_PLAYERS !== "undefined") {
@@ -394,7 +508,6 @@ document.addEventListener("DOMContentLoaded", () => {
               });
             }
           }
-        }
       }
     });
 
@@ -445,6 +558,136 @@ document.addEventListener("DOMContentLoaded", () => {
       if (b.fairPlay !== a.fairPlay) return b.fairPlay - a.fairPlay;
       return a.id.localeCompare(b.id);
     });
+
+    // Tiến hành xếp hạng xong vòng bảng, tính toán các đội hạng 3 tốt nhất
+    const allGroupsFinished = Object.values(groupStandings).every(stands => stands.every(t => t.played === 3));
+    const activeThirds = allGroupsFinished ? thirdPlaceStandings.slice(0, 8) : [];
+    const assignedThirds = assignThirdPlacedTeams(activeThirds);
+
+    // Resolve Round of 32 matches (M73 to M88)
+    const r32MatchesList = matches.filter(m => m.id >= "M73" && m.id <= "M88");
+    r32MatchesList.forEach(m => {
+      let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+      let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+
+      if (m.id === "M73") { t1 = getTeamOrPlaceholder("A", 1, "Nhì Bảng A"); t2 = getTeamOrPlaceholder("B", 1, "Nhì Bảng B"); }
+      else if (m.id === "M74") { t1 = getTeamOrPlaceholder("E", 0, "Nhất Bảng E"); t2 = getAssignedThirdOrPlaceholder("M74", "A/B/C/D/F", assignedThirds); }
+      else if (m.id === "M75") { t1 = getTeamOrPlaceholder("F", 0, "Nhất Bảng F"); t2 = getTeamOrPlaceholder("C", 1, "Nhì Bảng C"); }
+      else if (m.id === "M76") { t1 = getTeamOrPlaceholder("C", 0, "Nhất Bảng C"); t2 = getTeamOrPlaceholder("F", 1, "Nhì Bảng F"); }
+      else if (m.id === "M77") { t1 = getTeamOrPlaceholder("I", 0, "Nhất Bảng I"); t2 = getAssignedThirdOrPlaceholder("M77", "C/D/F/G/H", assignedThirds); }
+      else if (m.id === "M78") { t1 = getTeamOrPlaceholder("E", 1, "Nhì Bảng E"); t2 = getTeamOrPlaceholder("I", 1, "Nhì Bảng I"); }
+      else if (m.id === "M79") { t1 = getTeamOrPlaceholder("A", 0, "Nhất Bảng A"); t2 = getAssignedThirdOrPlaceholder("M79", "C/E/F/H/I", assignedThirds); }
+      else if (m.id === "M80") { t1 = getTeamOrPlaceholder("L", 0, "Nhất Bảng L"); t2 = getAssignedThirdOrPlaceholder("M80", "E/H/I/J/K", assignedThirds); }
+      else if (m.id === "M81") { t1 = getTeamOrPlaceholder("D", 0, "Nhất Bảng D"); t2 = getAssignedThirdOrPlaceholder("M81", "B/E/F/I/J", assignedThirds); }
+      else if (m.id === "M82") { t1 = getTeamOrPlaceholder("G", 0, "Nhất Bảng G"); t2 = getAssignedThirdOrPlaceholder("M82", "A/E/H/I/J", assignedThirds); }
+      else if (m.id === "M83") { t1 = getTeamOrPlaceholder("K", 1, "Nhì Bảng K"); t2 = getTeamOrPlaceholder("L", 1, "Nhì Bảng L"); }
+      else if (m.id === "M84") { t1 = getTeamOrPlaceholder("H", 0, "Nhất Bảng H"); t2 = getTeamOrPlaceholder("J", 1, "Nhì Bảng J"); }
+      else if (m.id === "M85") { t1 = getTeamOrPlaceholder("B", 0, "Nhất Bảng B"); t2 = getAssignedThirdOrPlaceholder("M85", "E/F/G/I/J", assignedThirds); }
+      else if (m.id === "M86") { t1 = getTeamOrPlaceholder("J", 0, "Nhất Bảng J"); t2 = getTeamOrPlaceholder("H", 1, "Nhì Bảng H"); }
+      else if (m.id === "M87") { t1 = getTeamOrPlaceholder("K", 0, "Nhất Bảng K"); t2 = getAssignedThirdOrPlaceholder("M87", "D/E/I/J/L", assignedThirds); }
+      else if (m.id === "M88") { t1 = getTeamOrPlaceholder("D", 1, "Nhì Bảng D"); t2 = getTeamOrPlaceholder("G", 1, "Nhì Bảng G"); }
+
+      m.team1 = t1.name;
+      m.team1Id = t1.id;
+      m.team1FlagCode = t1.flagCode;
+      m.team1Flag = t1.flag;
+      m.team2 = t2.name;
+      m.team2Id = t2.id;
+      m.team2FlagCode = t2.flagCode;
+      m.team2Flag = t2.flag;
+    });
+
+    // Resolve Round of 16 matches (M89 to M96)
+    const r16MatchesList = matches.filter(m => m.id >= "M89" && m.id <= "M96");
+    r16MatchesList.forEach(m => {
+      let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+      let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+      if (m.id === "M89") { t1 = getWinnerByMatchId("M74", "Thắng Trận 74"); t2 = getWinnerByMatchId("M77", "Thắng Trận 77"); }
+      else if (m.id === "M90") { t1 = getWinnerByMatchId("M73", "Thắng Trận 73"); t2 = getWinnerByMatchId("M75", "Thắng Trận 75"); }
+      else if (m.id === "M91") { t1 = getWinnerByMatchId("M76", "Thắng Trận 76"); t2 = getWinnerByMatchId("M78", "Thắng Trận 78"); }
+      else if (m.id === "M92") { t1 = getWinnerByMatchId("M79", "Thắng Trận 79"); t2 = getWinnerByMatchId("M80", "Thắng Trận 80"); }
+      else if (m.id === "M93") { t1 = getWinnerByMatchId("M83", "Thắng Trận 83"); t2 = getWinnerByMatchId("M84", "Thắng Trận 84"); }
+      else if (m.id === "M94") { t1 = getWinnerByMatchId("M81", "Thắng Trận 81"); t2 = getWinnerByMatchId("M82", "Thắng Trận 82"); }
+      else if (m.id === "M95") { t1 = getWinnerByMatchId("M86", "Thắng Trận 86"); t2 = getWinnerByMatchId("M88", "Thắng Trận 88"); }
+      else if (m.id === "M96") { t1 = getWinnerByMatchId("M85", "Thắng Trận 85"); t2 = getWinnerByMatchId("M87", "Thắng Trận 87"); }
+
+      m.team1 = t1.name;
+      m.team1Id = t1.id;
+      m.team1FlagCode = t1.flagCode;
+      m.team1Flag = t1.flag;
+      m.team2 = t2.name;
+      m.team2Id = t2.id;
+      m.team2FlagCode = t2.flagCode;
+      m.team2Flag = t2.flag;
+    });
+
+    // Resolve Quarter-finals matches (M97 to M100)
+    const qfMatchesList = matches.filter(m => m.id >= "M97" && m.id <= "M100");
+    qfMatchesList.forEach(m => {
+      let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+      let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+      if (m.id === "M97") { t1 = getWinnerByMatchId("M89", "Thắng Trận 89"); t2 = getWinnerByMatchId("M90", "Thắng Trận 90"); }
+      else if (m.id === "M98") { t1 = getWinnerByMatchId("M93", "Thắng Trận 93"); t2 = getWinnerByMatchId("M94", "Thắng Trận 94"); }
+      else if (m.id === "M99") { t1 = getWinnerByMatchId("M91", "Thắng Trận 91"); t2 = getWinnerByMatchId("M92", "Thắng Trận 92"); }
+      else if (m.id === "M100") { t1 = getWinnerByMatchId("M95", "Thắng Trận 95"); t2 = getWinnerByMatchId("M96", "Thắng Trận 96"); }
+
+      m.team1 = t1.name;
+      m.team1Id = t1.id;
+      m.team1FlagCode = t1.flagCode;
+      m.team1Flag = t1.flag;
+      m.team2 = t2.name;
+      m.team2Id = t2.id;
+      m.team2FlagCode = t2.flagCode;
+      m.team2Flag = t2.flag;
+    });
+
+    // Resolve Semi-finals matches (M101 to M102)
+    const sfMatchesList = matches.filter(m => m.id >= "M101" && m.id <= "M102");
+    sfMatchesList.forEach(m => {
+      let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+      let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+      if (m.id === "M101") { t1 = getWinnerByMatchId("M97", "Thắng Trận 97"); t2 = getWinnerByMatchId("M98", "Thắng Trận 98"); }
+      else if (m.id === "M102") { t1 = getWinnerByMatchId("M99", "Thắng Trận 99"); t2 = getWinnerByMatchId("M100", "Thắng Trận 100"); }
+
+      m.team1 = t1.name;
+      m.team1Id = t1.id;
+      m.team1FlagCode = t1.flagCode;
+      m.team1Flag = t1.flag;
+      m.team2 = t2.name;
+      m.team2Id = t2.id;
+      m.team2FlagCode = t2.flagCode;
+      m.team2Flag = t2.flag;
+    });
+
+    // Resolve Third place match (M103)
+    const m103 = matches.find(m => m.id === "M103");
+    if (m103) {
+      const t1 = getLoserByMatchId("M101", "Thua BK 1");
+      const t2 = getLoserByMatchId("M102", "Thua BK 2");
+      m103.team1 = t1.name;
+      m103.team1Id = t1.id;
+      m103.team1FlagCode = t1.flagCode;
+      m103.team1Flag = t1.flag;
+      m103.team2 = t2.name;
+      m103.team2Id = t2.id;
+      m103.team2FlagCode = t2.flagCode;
+      m103.team2Flag = t2.flag;
+    }
+
+    // Resolve Final match (M104)
+    const m104 = matches.find(m => m.id === "M104");
+    if (m104) {
+      const t1 = getWinnerByMatchId("M101", "Thắng BK 1");
+      const t2 = getWinnerByMatchId("M102", "Thắng BK 2");
+      m104.team1 = t1.name;
+      m104.team1Id = t1.id;
+      m104.team1FlagCode = t1.flagCode;
+      m104.team1Flag = t1.flag;
+      m104.team2 = t2.name;
+      m104.team2Id = t2.id;
+      m104.team2FlagCode = t2.flagCode;
+      m104.team2Flag = t2.flag;
+    }
 
     // Lưu lại lịch đấu vào localStorage
     localStorage.setItem("wc2026_matches", JSON.stringify(matches));
@@ -580,7 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (topScorers.length === 0) {
           dashPlayerGoalsTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 15px;">Chưa có dữ liệu bàn thắng</td></tr>`;
         } else {
-          topScorers.slice(0, 5).forEach((player, idx) => {
+          topScorers.slice(0, 10).forEach((player, idx) => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
               <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
@@ -606,7 +849,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (topAssists.length === 0) {
           dashPlayerAssistsTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 15px;">Chưa có dữ liệu kiến tạo</td></tr>`;
         } else {
-          topAssists.slice(0, 5).forEach((player, idx) => {
+          topAssists.slice(0, 10).forEach((player, idx) => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
               <td><span class="rank-num ${idx === 0 ? 'rank-gold' : 'rank-neutral'}">${idx + 1}</span></td>
@@ -632,7 +875,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (topXG.length === 0) {
           dashPlayerXGTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 15px;">Chưa có dữ liệu hiệu suất</td></tr>`;
         } else {
-          topXG.slice(0, 5).forEach((player, idx) => {
+          topXG.slice(0, 10).forEach((player, idx) => {
             const diff = player.goals - player.xg;
             const diffColor = diff >= 0 ? "var(--emerald)" : "var(--red)";
             const diffSign = diff >= 0 ? "+" : "";
@@ -774,7 +1017,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (a.timestamp && b.timestamp) {
         return a.timestamp - b.timestamp;
       }
-      // Fallback nếu không có timestamp (ví dụ dữ liệu cũ)
       const [dayA, monthA, yearA] = a.date.split(/[\/\-\.]/);
       const [dayB, monthB, yearB] = b.date.split(/[\/\-\.]/);
       const dateA = new Date(`${yearA}-${monthA}-${dayA}T${a.time}:00`);
@@ -791,11 +1033,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    filteredMatches.forEach(match => {
-      const card = document.createElement("div");
-      card.className = "match-card";
-      card.id = `match-card-${match.id}`;
+    // Split matches into group matches and knockout matches
+    const groupMatches = filteredMatches.filter(m => m.round <= 3);
+    const r32Matches = filteredMatches.filter(m => m.round === 32);
+    const otherKnockoutMatches = filteredMatches.filter(m => m.round > 3 && m.round !== 32);
 
+    // Helper to render match card HTML
+    function getMatchCardHtml(match) {
       const isPlayed = match.score1 !== null && match.score2 !== null;
       let statusClass = "status-unplayed";
       let statusText = "Chưa đấu";
@@ -808,60 +1052,252 @@ document.addEventListener("DOMContentLoaded", () => {
         statusText = "Kết thúc";
       }
 
-      card.innerHTML = `
-        <div class="match-top-info" style="margin-bottom: 6px;">
-          <span>BẢNG ${match.group} • LƯỢT ${match.round} • TRẬN ${match.id}</span>
-          <span class="match-status-badge ${statusClass}">${statusText}</span>
-        </div>
-        <div style="font-size: 11.5px; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 5px; margin-top: -4px; margin-bottom: 6px; letter-spacing: 0.3px;">
-          📅 ${match.date} • 🕒 ${match.time.replace(':', 'h')} (Giờ VN)
-        </div>
-        
-        <div class="scoreboard" style="margin: 12px 0;">
-          <!-- Đội 1 -->
-          <div class="team-score-block team-left">
-            <div class="team-identity">
-              <img src="https://flagcdn.com/w40/${match.team1FlagCode}.png" class="team-flag-img" alt="${match.team1}">
-              <span>${match.team1}</span>
-            </div>
-            <div class="score-display-value">
-              ${match.score1 !== null ? match.score1 : '-'}
-            </div>
-          </div>
-          
-          <div class="vs-text" style="color: var(--text-dark); font-weight: 800; font-size: 12px;">VS</div>
-          
-          <!-- Đội 2 -->
-          <div class="team-score-block team-right">
-            <div class="team-identity">
-              <img src="https://flagcdn.com/w40/${match.team2FlagCode}.png" class="team-flag-img" alt="${match.team2}">
-              <span>${match.team2}</span>
-            </div>
-            <div class="score-display-value">
-              ${match.score2 !== null ? match.score2 : '-'}
-            </div>
-          </div>
-        </div>
+      // Check if it's a knockout match to label it appropriately
+      let matchLabel = "";
+      if (match.round <= 3) {
+        matchLabel = `BẢNG ${match.group} • LƯỢT ${match.round} • TRẬN ${match.id}`;
+      } else {
+        let roundName = "";
+        if (match.round === 32) roundName = "VÒNG 32 ĐỘI";
+        else if (match.round === 16) roundName = "VÒNG 16 ĐỘI";
+        else if (match.round === 8) roundName = "TỨ KẾT";
+        else if (match.round === 4) roundName = "BÁN KẾT";
+        else if (match.round === 2) roundName = "TRANH HẠNG BA";
+        else if (match.round === 1) roundName = "CHUNG KẾT";
+        matchLabel = `${roundName} • TRẬN ${match.id}`;
+      }
 
-        <!-- Danh sách ghi bàn -->
-        ${(() => {
-          const scorers1 = getScorersForMatch(match, 1);
-          const scorers2 = getScorersForMatch(match, 2);
-          if (scorers1.length === 0 && scorers2.length === 0) return "";
+      const flag1Html = match.team1FlagCode ? `<img src="https://flagcdn.com/w40/${match.team1FlagCode}.png" class="team-flag-img" alt="${match.team1}">` : `<span class="team-flag" style="font-size: 16px;">🏳️</span>`;
+      const flag2Html = match.team2FlagCode ? `<img src="https://flagcdn.com/w40/${match.team2FlagCode}.png" class="team-flag-img" alt="${match.team2}">` : `<span class="team-flag" style="font-size: 16px;">🏳️</span>`;
+
+      // Get scorers list HTML
+      const scorers1 = getScorersForMatch(match, 1);
+      const scorers2 = getScorersForMatch(match, 2);
+      let scorersHtml = "";
+      if (scorers1.length > 0 || scorers2.length > 0) {
+        const s1Html = scorers1.map(s => `<div class="scorer-item">⚽ ${s.name} <span class="minute">(${s.min})</span></div>`).join("");
+        const s2Html = scorers2.map(s => `<div class="scorer-item"><span class="minute">(${s.min})</span> ${s.name} ⚽</div>`).join("");
+        scorersHtml = `
+          <div class="match-scorers">
+            <div class="scorers-left">${s1Html}</div>
+            <div class="scorers-right">${s2Html}</div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="match-card" id="match-card-${match.id}">
+          <div class="match-top-info" style="margin-bottom: 6px;">
+            <span>${matchLabel}</span>
+            <span class="match-status-badge ${statusClass}">${statusText}</span>
+          </div>
+          <div style="font-size: 11.5px; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 5px; margin-top: -4px; margin-bottom: 6px; letter-spacing: 0.3px;">
+            📅 ${match.date} • 🕒 ${match.time.replace(':', 'h')} (Giờ VN)
+          </div>
           
-          const s1Html = scorers1.map(s => `<div class="scorer-item">⚽ ${s.name} <span class="minute">(${s.min})</span></div>`).join("");
-          const s2Html = scorers2.map(s => `<div class="scorer-item"><span class="minute">(${s.min})</span> ${s.name} ⚽</div>`).join("");
-          
-          return `
-            <div class="match-scorers">
-              <div class="scorers-left">${s1Html}</div>
-              <div class="scorers-right">${s2Html}</div>
+          <div class="scoreboard" style="margin: 12px 0;">
+            <!-- Đội 1 -->
+            <div class="team-score-block team-left">
+              <div class="team-identity" style="color: ${match.team1Id && !match.team1Id.startsWith("PLACEHOLDER") ? 'var(--text-main)' : 'var(--text-dark)'};">
+                ${flag1Html}
+                <span>${match.team1 || "Chưa xác định"}</span>
+              </div>
+              <div class="score-display-value">
+                ${match.score1 !== null ? match.score1 : '-'}
+              </div>
             </div>
-          `;
-        })()}
+            
+            <div class="vs-text" style="color: var(--text-dark); font-weight: 800; font-size: 12px;">VS</div>
+            
+            <!-- Đội 2 -->
+            <div class="team-score-block team-right">
+              <div class="team-identity" style="color: ${match.team2Id && !match.team2Id.startsWith("PLACEHOLDER") ? 'var(--text-main)' : 'var(--text-dark)'};">
+                ${flag2Html}
+                <span>${match.team2 || "Chưa xác định"}</span>
+              </div>
+              <div class="score-display-value">
+                ${match.score2 !== null ? match.score2 : '-'}
+              </div>
+            </div>
+          </div>
+
+          <!-- Danh sách ghi bàn -->
+          ${scorersHtml}
+        </div>
       `;
-      container.appendChild(card);
-    });
+    }
+
+    // Render group stage matches collapsible section
+    if (groupMatches.length > 0) {
+      const groupSection = document.createElement("div");
+      groupSection.className = "stage-section";
+      
+      const header = document.createElement("div");
+      header.className = "stage-section-header";
+      const isCollapsed = localStorage.getItem("stage-section-group-stage-collapsed") === "true";
+      header.innerHTML = `
+        <h3>⚽ VÒNG BẢNG (${groupMatches.length} trận đấu)</h3>
+        <span class="toggle-icon">${isCollapsed ? "▲" : "▼"}</span>
+      `;
+      header.onclick = () => {
+        const content = document.getElementById("stage-section-group-stage");
+        const icon = header.querySelector(".toggle-icon");
+        const coll = content.style.display === "none";
+        content.style.display = coll ? "block" : "none";
+        icon.innerText = coll ? "▼" : "▲";
+        localStorage.setItem("stage-section-group-stage-collapsed", String(!coll));
+      };
+      groupSection.appendChild(header);
+
+      const content = document.createElement("div");
+      content.id = "stage-section-group-stage";
+      content.style.display = isCollapsed ? "none" : "block";
+
+      // Group matches by group letter
+      const matchesByGroup = {};
+      groupMatches.forEach(m => {
+        if (!matchesByGroup[m.group]) {
+          matchesByGroup[m.group] = [];
+        }
+        matchesByGroup[m.group].push(m);
+      });
+
+      const groupLetters = Object.keys(matchesByGroup).sort();
+      groupLetters.forEach(letter => {
+        const groupMatchesList = matchesByGroup[letter];
+        const groupBlock = document.createElement("div");
+        groupBlock.className = "group-stage-block";
+        groupBlock.style.marginBottom = "15px";
+
+        const groupHeader = document.createElement("div");
+        groupHeader.className = "stage-section-header";
+        groupHeader.style.padding = "10px 16px";
+        groupHeader.style.marginBottom = "10px";
+        groupHeader.style.background = "rgba(255, 255, 255, 0.02)";
+        groupHeader.style.borderStyle = "dashed";
+        
+        const subStorageKey = `stage-section-group-${letter}-collapsed`;
+        const isSingleGroupFiltered = groupFilter !== "ALL";
+        let isSubCollapsed = false;
+        if (isSingleGroupFiltered) {
+          isSubCollapsed = false;
+        } else {
+          const stored = localStorage.getItem(subStorageKey);
+          isSubCollapsed = stored === null ? true : stored === "true"; // Default to collapsed
+        }
+
+        groupHeader.innerHTML = `
+          <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 6px;">
+            📊 BẢNG ${letter} (${groupMatchesList.length} trận)
+          </h4>
+          <span class="toggle-icon" style="font-size: 11px;">${isSubCollapsed ? "▲" : "▼"}</span>
+        `;
+
+        const groupMatchesContainer = document.createElement("div");
+        groupMatchesContainer.id = `group-matches-container-${letter}`;
+        groupMatchesContainer.className = "matches-list";
+        groupMatchesContainer.style.display = isSubCollapsed ? "none" : "grid";
+
+        groupHeader.onclick = () => {
+          const coll = groupMatchesContainer.style.display === "none";
+          groupMatchesContainer.style.display = coll ? "grid" : "none";
+          groupHeader.querySelector(".toggle-icon").innerText = coll ? "▼" : "▲";
+          localStorage.setItem(subStorageKey, String(!coll));
+        };
+
+        groupMatchesList.forEach(m => {
+          groupMatchesContainer.innerHTML += getMatchCardHtml(m);
+        });
+
+        groupBlock.appendChild(groupHeader);
+        groupBlock.appendChild(groupMatchesContainer);
+        content.appendChild(groupBlock);
+      });
+
+      groupSection.appendChild(content);
+      container.appendChild(groupSection);
+    }
+
+    // Render Round of 32 collapsible section
+    if (r32Matches.length > 0) {
+      const r32Section = document.createElement("div");
+      r32Section.className = "stage-section";
+      r32Section.style.marginTop = "30px";
+      
+      const header = document.createElement("div");
+      header.className = "stage-section-header";
+      const isCollapsed = localStorage.getItem("stage-section-r32-stage-collapsed") === "true";
+      header.innerHTML = `
+        <h3>⚔️ VÒNG 32 ĐỘI (${r32Matches.length} trận đấu)</h3>
+        <span class="toggle-icon">${isCollapsed ? "▲" : "▼"}</span>
+      `;
+      header.onclick = () => {
+        const content = document.getElementById("stage-section-r32-stage");
+        const icon = header.querySelector(".toggle-icon");
+        const coll = content.style.display === "none";
+        content.style.display = coll ? "grid" : "none";
+        icon.innerText = coll ? "▼" : "▲";
+        localStorage.setItem("stage-section-r32-stage-collapsed", String(!coll));
+      };
+      r32Section.appendChild(header);
+
+      const content = document.createElement("div");
+      content.id = "stage-section-r32-stage";
+      content.className = "matches-list";
+      content.style.display = isCollapsed ? "none" : "grid";
+      r32Matches.forEach(m => {
+        content.innerHTML += getMatchCardHtml(m);
+      });
+      r32Section.appendChild(content);
+      r32Section.querySelector(".stage-section-header").style.marginTop = "0";
+      container.appendChild(r32Section);
+    }
+
+    // Render other knockout sections
+    if (otherKnockoutMatches.length > 0) {
+      const rounds = [...new Set(otherKnockoutMatches.map(m => m.round))];
+      rounds.forEach(r => {
+        const matchesInRound = otherKnockoutMatches.filter(m => m.round === r);
+        let roundName = "";
+        if (r === 16) roundName = "VÒNG 16 ĐỘI";
+        else if (r === 8) roundName = "TỨ KẾT";
+        else if (r === 4) roundName = "BÁN KẾT";
+        else if (r === 2) roundName = "TRANH HẠNG BA";
+        else if (r === 1) roundName = "CHUNG KẾT";
+
+        const section = document.createElement("div");
+        section.className = "stage-section";
+        section.style.marginTop = "30px";
+        
+        const header = document.createElement("div");
+        header.className = "stage-section-header";
+        const storageKey = `stage-section-r${r}-stage-collapsed`;
+        const isCollapsed = localStorage.getItem(storageKey) === "true";
+        header.innerHTML = `
+          <h3>🏆 ${roundName} (${matchesInRound.length} trận đấu)</h3>
+          <span class="toggle-icon">${isCollapsed ? "▲" : "▼"}</span>
+        `;
+        header.onclick = () => {
+          const content = document.getElementById(`stage-section-r${r}-stage`);
+          const icon = header.querySelector(".toggle-icon");
+          const coll = content.style.display === "none";
+          content.style.display = coll ? "grid" : "none";
+          icon.innerText = coll ? "▼" : "▲";
+          localStorage.setItem(storageKey, String(!coll));
+        };
+        section.appendChild(header);
+
+        const content = document.createElement("div");
+        content.id = `stage-section-r${r}-stage`;
+        content.className = "matches-list";
+        content.style.display = isCollapsed ? "none" : "grid";
+        matchesInRound.forEach(m => {
+          content.innerHTML += getMatchCardHtml(m);
+        });
+        section.appendChild(content);
+        container.appendChild(section);
+      });
+    }
 
     // Gán lại sự kiện tương tác
     attachMatchCardEvents();
@@ -1067,220 +1503,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- RENDER TAB SƠ ĐỒ THI ĐẤU (BRACKET) ---
   function renderBracket() {
-    const r32View = document.getElementById("bracket-r32-view");
     const treeView = document.getElementById("bracket-tree-view");
+    if (!treeView) return;
 
-    if (!r32View || !treeView) return;
+    // Vòng 16 đội (8 cặp, Trận 89 đến Trận 96)
+    const r16Matches = matches.filter(m => m.id >= "M89" && m.id <= "M96").map(m => ({
+      id: m.id,
+      name: `Trận ${m.id.substring(1)}`,
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: m.team1Id && !m.team1Id.startsWith("PLACEHOLDER"), score: m.score1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: m.team2Id && !m.team2Id.startsWith("PLACEHOLDER"), score: m.score2 },
+      date: m.date,
+      time: m.time
+    }));
 
-    // Helper 1: Lấy đội tuyển từ vòng bảng hoặc placeholder
-    function getTeamOrPlaceholder(groupLetter, rankIndex, placeholderText) {
-      const stands = groupStandings[groupLetter];
-      if (stands && stands[rankIndex]) {
-        const isGroupFinished = stands.every(t => t.played === 3);
-        if (isGroupFinished) {
-          const team = stands[rankIndex];
-          return { id: team.id, name: team.name, flag: team.flag, flagCode: team.flagCode, isReal: true };
-        }
-      }
-      return { id: `PLACEHOLDER-${groupLetter}-${rankIndex}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
-    }
+    // Tứ kết (4 cặp, Trận 97 đến Trận 100)
+    const qfMatches = matches.filter(m => m.id >= "M97" && m.id <= "M100").map(m => ({
+      id: m.id,
+      name: `Trận ${m.id.substring(1)} (TK)`,
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: m.team1Id && !m.team1Id.startsWith("PLACEHOLDER"), score: m.score1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: m.team2Id && !m.team2Id.startsWith("PLACEHOLDER"), score: m.score2 },
+      date: m.date,
+      time: m.time
+    }));
 
-    // Helper 2: Phân bổ 8 đội xếp thứ 3 tốt nhất bằng thuật toán Backtracking chính thức theo FIFA
-    function assignThirdPlacedTeams(qualifiedThirds) {
-      const slots = [
-        { id: "M74", allowedGroups: ["A", "B", "C", "D", "F"] },
-        { id: "M77", allowedGroups: ["C", "D", "F", "G", "H"] },
-        { id: "M79", allowedGroups: ["C", "E", "F", "H", "I"] },
-        { id: "M80", allowedGroups: ["E", "H", "I", "J", "K"] },
-        { id: "M81", allowedGroups: ["B", "E", "F", "I", "J"] },
-        { id: "M82", allowedGroups: ["A", "E", "H", "I", "J"] },
-        { id: "M85", allowedGroups: ["E", "F", "G", "I", "J"] },
-        { id: "M87", allowedGroups: ["D", "E", "I", "J", "L"] }
-      ];
+    // Bán kết (2 cặp, Trận 101 và Trận 102)
+    const sfMatches = matches.filter(m => m.id >= "M101" && m.id <= "M102").map(m => ({
+      id: m.id,
+      name: `Trận ${m.id.substring(1)} (BK)`,
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: m.team1Id && !m.team1Id.startsWith("PLACEHOLDER"), score: m.score1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: m.team2Id && !m.team2Id.startsWith("PLACEHOLDER"), score: m.score2 },
+      date: m.date,
+      time: m.time
+    }));
 
-      const assignment = {};
-      const used = new Array(qualifiedThirds.length).fill(false);
+    // Chung kết (Trận 104)
+    const finalMatchRaw = matches.find(m => m.id === "M104");
+    const finalMatch = {
+      id: "M104",
+      name: "Chung Kết",
+      t1: { name: finalMatchRaw ? finalMatchRaw.team1 : "", flagCode: finalMatchRaw ? finalMatchRaw.team1FlagCode : "", isReal: finalMatchRaw && finalMatchRaw.team1Id && !finalMatchRaw.team1Id.startsWith("PLACEHOLDER"), score: finalMatchRaw ? finalMatchRaw.score1 : null },
+      t2: { name: finalMatchRaw ? finalMatchRaw.team2 : "", flagCode: finalMatchRaw ? finalMatchRaw.team2FlagCode : "", isReal: finalMatchRaw && finalMatchRaw.team2Id && !finalMatchRaw.team2Id.startsWith("PLACEHOLDER"), score: finalMatchRaw ? finalMatchRaw.score2 : null },
+      date: finalMatchRaw ? finalMatchRaw.date : "",
+      time: finalMatchRaw ? finalMatchRaw.time : ""
+    };
+    const winner_champion = getWinnerByMatchId("M104", "🏆 Đội Vô Địch");
 
-      function backtrack(slotIdx) {
-        if (slotIdx === slots.length) return true;
-        const slot = slots[slotIdx];
-        for (let i = 0; i < qualifiedThirds.length; i++) {
-          if (!used[i]) {
-            const team = qualifiedThirds[i];
-            if (slot.allowedGroups.includes(team.group)) {
-              used[i] = true;
-              assignment[slot.id] = team;
-              if (backtrack(slotIdx + 1)) return true;
-              used[i] = false;
-              delete assignment[slot.id];
-            }
-          }
-        }
-        return false;
-      }
-
-      const success = backtrack(0);
-      if (success) {
-        return assignment;
-      } else {
-        // Fallback gán theo thứ tự nếu chưa đủ 8 đội đá xong
-        const fallbackAssignment = {};
-        slots.forEach((slot, idx) => {
-          fallbackAssignment[slot.id] = qualifiedThirds[idx] || null;
-        });
-        return fallbackAssignment;
-      }
-    }
-
-    const allGroupsFinished = Object.values(groupStandings).every(stands => stands.every(t => t.played === 3));
-    const activeThirds = allGroupsFinished ? thirdPlaceStandings.slice(0, 8) : [];
-    const assignedThirds = assignThirdPlacedTeams(activeThirds);
-
-    // Lấy thông tin đội thứ 3 đã được gán hoặc placeholder tương ứng
-    function getAssignedThirdOrPlaceholder(matchKey, allowedGroupsText) {
-      const team = assignedThirds[matchKey];
-      if (team) {
-        return { id: team.id, name: team.name, flag: team.flag, flagCode: team.flagCode, isReal: true };
-      }
-      return { id: `PLACEHOLDER-3RD-${matchKey}`, name: `Hạng 3 Bảng ${allowedGroupsText}`, flag: "🏳️", flagCode: "", isReal: false };
-    }
-
-    // Helper 3: Dự đoán/Xác định đội thắng cuộc đi tiếp trong sơ đồ mô phỏng
-    function getWinnerOrPlaceholder(t1, t2, placeholderText) {
-      if (t1.isReal && t2.isReal) {
-        const stat1 = teamStats[t1.id];
-        const stat2 = teamStats[t2.id];
-        if (stat1 && stat2) {
-          // Dự báo đi tiếp dựa trên thành tích vòng bảng (nhiều điểm hơn, hiệu số cao hơn)
-          if (stat1.points !== stat2.points) {
-            return stat1.points > stat2.points ? t1 : t2;
-          }
-          if (stat1.gd !== stat2.gd) {
-            return stat1.gd > stat2.gd ? t1 : t2;
-          }
-        }
-        return t1; // mặc định t1
-      }
-      if (t1.isReal) return t1;
-      if (t2.isReal) return t2;
-      return { id: `WINNER-OF-${t1.name}-${t2.name}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
-    }
-
-    // 1. Định nghĩa 16 cặp đấu Vòng 32 Đội chính xác 100% theo mã trận đấu của FIFA (Trận 73 đến Trận 88)
-    const r32Matches = [
-      { id: "M73", name: "Trận 73", t1: getTeamOrPlaceholder("A", 1, "Nhì Bảng A"), t2: getTeamOrPlaceholder("B", 1, "Nhì Bảng B") },
-      { id: "M74", name: "Trận 74", t1: getTeamOrPlaceholder("E", 0, "Nhất Bảng E"), t2: getAssignedThirdOrPlaceholder("M74", "A/B/C/D/F") },
-      { id: "M75", name: "Trận 75", t1: getTeamOrPlaceholder("F", 0, "Nhất Bảng F"), t2: getTeamOrPlaceholder("C", 1, "Nhì Bảng C") },
-      { id: "M76", name: "Trận 76", t1: getTeamOrPlaceholder("C", 0, "Nhất Bảng C"), t2: getTeamOrPlaceholder("F", 1, "Nhì Bảng F") },
-      { id: "M77", name: "Trận 77", t1: getTeamOrPlaceholder("I", 0, "Nhất Bảng I"), t2: getAssignedThirdOrPlaceholder("M77", "C/D/F/G/H") },
-      { id: "M78", name: "Trận 78", t1: getTeamOrPlaceholder("E", 1, "Nhì Bảng E"), t2: getTeamOrPlaceholder("I", 1, "Nhì Bảng I") },
-      { id: "M79", name: "Trận 79", t1: getTeamOrPlaceholder("A", 0, "Nhất Bảng A"), t2: getAssignedThirdOrPlaceholder("M79", "C/E/F/H/I") },
-      { id: "M80", name: "Trận 80", t1: getTeamOrPlaceholder("L", 0, "Nhất Bảng L"), t2: getAssignedThirdOrPlaceholder("M80", "E/H/I/J/K") },
-      { id: "M81", name: "Trận 81", t1: getTeamOrPlaceholder("D", 0, "Nhất Bảng D"), t2: getAssignedThirdOrPlaceholder("M81", "B/E/F/I/J") },
-      { id: "M82", name: "Trận 82", t1: getTeamOrPlaceholder("G", 0, "Nhất Bảng G"), t2: getAssignedThirdOrPlaceholder("M82", "A/E/H/I/J") },
-      { id: "M83", name: "Trận 83", t1: getTeamOrPlaceholder("K", 1, "Nhì Bảng K"), t2: getTeamOrPlaceholder("L", 1, "Nhì Bảng L") },
-      { id: "M84", name: "Trận 84", t1: getTeamOrPlaceholder("H", 0, "Nhất Bảng H"), t2: getTeamOrPlaceholder("J", 1, "Nhì Bảng J") },
-      { id: "M85", name: "Trận 85", t1: getTeamOrPlaceholder("B", 0, "Nhất Bảng B"), t2: getAssignedThirdOrPlaceholder("M85", "E/F/G/I/J") },
-      { id: "M86", name: "Trận 86", t1: getTeamOrPlaceholder("J", 0, "Nhất Bảng J"), t2: getTeamOrPlaceholder("H", 1, "Nhì Bảng H") },
-      { id: "M87", name: "Trận 87", t1: getTeamOrPlaceholder("K", 0, "Nhất Bảng K"), t2: getAssignedThirdOrPlaceholder("M87", "D/E/I/J/L") },
-      { id: "M88", name: "Trận 88", t1: getTeamOrPlaceholder("D", 1, "Nhì Bảng D"), t2: getTeamOrPlaceholder("G", 1, "Nhì Bảng G") }
-    ];
-
-    // 2. Render Vòng 32 Đội dưới dạng Danh Sách Cặp Đấu
-    r32View.innerHTML = "";
-    r32Matches.forEach(match => {
-      const card = document.createElement("div");
-      card.className = "match-card";
-      card.innerHTML = `
-        <div class="match-top-info" style="margin-bottom: 6px;">
-          <span>VÒNG 32 ĐỘI • ${match.name}</span>
-          <span class="match-status-badge ${match.t1.isReal && match.t2.isReal ? 'status-played' : 'status-unplayed'}">
-            ${match.t1.isReal && match.t2.isReal ? 'Xác định' : 'Chưa đấu'}
-          </span>
-        </div>
-        <div class="scoreboard" style="margin: 8px 0;">
-          <div class="team-score-block team-left">
-            <div class="team-identity" style="color: ${match.t1.isReal ? 'var(--text-main)' : 'var(--text-dark)'};">
-              ${match.t1.isReal ? `<img src="https://flagcdn.com/w40/${match.t1.flagCode}.png" class="team-flag-img" alt="${match.t1.name}">` : `<span class="team-flag">🏳️</span>`}
-              <span>${match.t1.name}</span>
-            </div>
-          </div>
-          <div class="vs-text">VS</div>
-          <div class="team-score-block team-right">
-            <div class="team-identity" style="color: ${match.t2.isReal ? 'var(--text-main)' : 'var(--text-dark)'};">
-              ${match.t2.isReal ? `<img src="https://flagcdn.com/w40/${match.t2.flagCode}.png" class="team-flag-img" alt="${match.t2.name}">` : `<span class="team-flag">🏳️</span>`}
-              <span>${match.t2.name}</span>
-            </div>
-          </div>
-        </div>
-      `;
-      r32View.appendChild(card);
-    });
-
-    // Helper phụ lấy đội thắng của vòng trước theo mã trận đấu
-    function getWinnerByMatchId(matchId, placeholderText) {
-      const match = r32Matches.find(m => m.id === matchId);
-      if (match) {
-        return getWinnerOrPlaceholder(match.t1, match.t2, placeholderText);
-      }
-      return { id: `WINNER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
-    }
-
-    // Vòng 16 đội (8 cặp, Trận 89 đến Trận 96 chính xác theo sơ đồ của FIFA)
-    const r16Matches = [
-      { id: "M89", name: "Trận 89", t1: getWinnerByMatchId("M74", "Thắng Trận 74"), t2: getWinnerByMatchId("M77", "Thắng Trận 77") },
-      { id: "M90", name: "Trận 90", t1: getWinnerByMatchId("M73", "Thắng Trận 73"), t2: getWinnerByMatchId("M75", "Thắng Trận 75") },
-      { id: "M91", name: "Trận 91", t1: getWinnerByMatchId("M76", "Thắng Trận 76"), t2: getWinnerByMatchId("M78", "Thắng Trận 78") },
-      { id: "M92", name: "Trận 92", t1: getWinnerByMatchId("M79", "Thắng Trận 79"), t2: getWinnerByMatchId("M80", "Thắng Trận 80") },
-      { id: "M93", name: "Trận 93", t1: getWinnerByMatchId("M83", "Thắng Trận 83"), t2: getWinnerByMatchId("M84", "Thắng Trận 84") },
-      { id: "M94", name: "Trận 94", t1: getWinnerByMatchId("M81", "Thắng Trận 81"), t2: getWinnerByMatchId("M82", "Thắng Trận 82") },
-      { id: "M95", name: "Trận 95", t1: getWinnerByMatchId("M86", "Thắng Trận 86"), t2: getWinnerByMatchId("M88", "Thắng Trận 88") },
-      { id: "M96", name: "Trận 96", t1: getWinnerByMatchId("M85", "Thắng Trận 85"), t2: getWinnerByMatchId("M87", "Thắng Trận 87") }
-    ];
-
-    function getR16WinnerByMatchId(matchId, placeholderText) {
-      const match = r16Matches.find(m => m.id === matchId);
-      if (match) {
-        return getWinnerOrPlaceholder(match.t1, match.t2, placeholderText);
-      }
-      return { id: `WINNER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
-    }
-
-    // Tứ kết (4 cặp, Trận 97 đến Trận 100 chính xác theo sơ đồ của FIFA)
-    const qfMatches = [
-      { id: "M97", name: "Trận 97 (TK 1)", t1: getR16WinnerByMatchId("M89", "Thắng Trận 89"), t2: getR16WinnerByMatchId("M90", "Thắng Trận 90") },
-      { id: "M98", name: "Trận 98 (TK 2)", t1: getR16WinnerByMatchId("M93", "Thắng Trận 93"), t2: getR16WinnerByMatchId("M94", "Thắng Trận 94") },
-      { id: "M99", name: "Trận 99 (TK 3)", t1: getR16WinnerByMatchId("M91", "Thắng Trận 91"), t2: getR16WinnerByMatchId("M92", "Thắng Trận 92") },
-      { id: "M100", name: "Trận 100 (TK 4)", t1: getR16WinnerByMatchId("M95", "Thắng Trận 95"), t2: getR16WinnerByMatchId("M96", "Thắng Trận 96") }
-    ];
-
-    function getQFWinnerByMatchId(matchId, placeholderText) {
-      const match = qfMatches.find(m => m.id === matchId);
-      if (match) {
-        return getWinnerOrPlaceholder(match.t1, match.t2, placeholderText);
-      }
-      return { id: `WINNER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
-    }
-
-    // Bán kết (2 cặp, Trận 101 và Trận 102 chính xác theo sơ đồ của FIFA)
-    const sfMatches = [
-      { id: "M101", name: "Trận 101 (BK 1)", t1: getQFWinnerByMatchId("M97", "Thắng Trận 97"), t2: getQFWinnerByMatchId("M98", "Thắng Trận 98") },
-      { id: "M102", name: "Trận 102 (BK 2)", t1: getQFWinnerByMatchId("M99", "Thắng Trận 99"), t2: getQFWinnerByMatchId("M100", "Thắng Trận 100") }
-    ];
-
-    function getSFWinnerByMatchId(matchId, placeholderText) {
-      const match = sfMatches.find(m => m.id === matchId);
-      if (match) {
-        return getWinnerOrPlaceholder(match.t1, match.t2, placeholderText);
-      }
-      return { id: `WINNER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
-    }
-
-    // Chung kết (Trận 104 chính xác theo sơ đồ của FIFA)
-    const finalMatch = { id: "M104", name: "Chung Kết", t1: getSFWinnerByMatchId("M101", "Thắng BK 1"), t2: getSFWinnerByMatchId("M102", "Thắng BK 2") };
-    const winner_champion = getWinnerOrPlaceholder(finalMatch.t1, finalMatch.t2, "🏆 Đội Vô Địch");
-
-    // 4. Vẽ Sơ Đồ Nhánh Cây (Round of 16 -> Final)
+    // Vẽ Sơ Đồ Nhánh Cây (Round of 16 -> Final)
     treeView.innerHTML = "";
 
     const col1 = createBracketColumn("Vòng 16 Đội", r16Matches);
@@ -1302,17 +1570,22 @@ document.addEventListener("DOMContentLoaded", () => {
         <span>🏆 TRẬN CHUNG KẾT</span>
         <span>${finalMatch.id}</span>
       </div>
+      <div class="bracket-match-time" style="font-size: 10.5px; color: var(--primary); font-weight: 700; margin-top: -4px; margin-bottom: 2px;">
+        📅 ${finalMatch.date} • 🕒 ${finalMatch.time.replace(':', 'h')}
+      </div>
       <div class="bracket-team-row ${finalMatch.t1.isReal ? 'winner' : 'loser'}">
         <div class="bracket-team-name">
           ${finalMatch.t1.isReal ? `<img src="https://flagcdn.com/w40/${finalMatch.t1.flagCode}.png" class="team-flag-img" alt="${finalMatch.t1.name}">` : `<span>🏳️</span>`}
-          <span>${finalMatch.t1.name}</span>
+          <span>${finalMatch.t1.name || "Chưa xác định"}</span>
         </div>
+        ${finalMatch.t1.score !== null ? `<span class="bracket-team-score">${finalMatch.t1.score}</span>` : ''}
       </div>
       <div class="bracket-team-row ${finalMatch.t2.isReal ? 'winner' : 'loser'}">
         <div class="bracket-team-name">
           ${finalMatch.t2.isReal ? `<img src="https://flagcdn.com/w40/${finalMatch.t2.flagCode}.png" class="team-flag-img" alt="${finalMatch.t2.name}">` : `<span>🏳️</span>`}
-          <span>${finalMatch.t2.name}</span>
+          <span>${finalMatch.t2.name || "Chưa xác định"}</span>
         </div>
+        ${finalMatch.t2.score !== null ? `<span class="bracket-team-score">${finalMatch.t2.score}</span>` : ''}
       </div>
     `;
     col4.appendChild(finalMatchEl);
@@ -1330,7 +1603,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="bracket-team-row" style="font-size: 16px; font-weight: 800; justify-content: center; height: 35px; color: var(--primary);">
         <div class="bracket-team-name">
           ${winner_champion.isReal ? `<img src="https://flagcdn.com/w40/${winner_champion.flagCode}.png" class="team-flag-img" alt="${winner_champion.name}">` : `<span>🏳️</span>`}
-          <span>${winner_champion.name}</span>
+          <span>${winner_champion.name || "Chưa xác định"}</span>
         </div>
       </div>
     `;
@@ -1360,17 +1633,22 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>${match.name}</span>
           <span>${match.id}</span>
         </div>
+        <div class="bracket-match-time" style="font-size: 10.5px; color: var(--primary); font-weight: 700; margin-top: -4px; margin-bottom: 2px;">
+          📅 ${match.date} • 🕒 ${match.time.replace(':', 'h')}
+        </div>
         <div class="bracket-team-row ${match.t1.isReal ? 'winner' : 'loser'}">
           <div class="bracket-team-name">
             ${match.t1.isReal ? `<img src="https://flagcdn.com/w40/${match.t1.flagCode}.png" class="team-flag-img" alt="${match.t1.name}">` : `<span>🏳️</span>`}
             <span>${match.t1.name}</span>
           </div>
+          ${match.t1.score !== null ? `<span class="bracket-team-score">${match.t1.score}</span>` : ''}
         </div>
         <div class="bracket-team-row ${match.t2.isReal ? 'winner' : 'loser'}">
           <div class="bracket-team-name">
             ${match.t2.isReal ? `<img src="https://flagcdn.com/w40/${match.t2.flagCode}.png" class="team-flag-img" alt="${match.t2.name}">` : `<span>🏳️</span>`}
             <span>${match.t2.name}</span>
           </div>
+          ${match.t2.score !== null ? `<span class="bracket-team-score">${match.t2.score}</span>` : ''}
         </div>
       `;
       col.appendChild(matchEl);

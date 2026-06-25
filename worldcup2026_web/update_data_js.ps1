@@ -107,7 +107,7 @@ function Get-Assists ($eventId, $scorers1, $scorers2, $t1Name, $t2Name) {
 # 2. Fetch the ESPN World Cup 2026 scoreboard
 $uri = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=150"
 $resp = Invoke-RestMethod -Uri $uri
-$events = $resp.events | Select-Object -First 72
+$events = $resp.events | Select-Object -First 104
 
 # Status variables in Vietnamese
 $statusKetThuc = "K" + [char]0x1ebf + "t th" + [char]0x00fa + "c"
@@ -128,20 +128,30 @@ foreach ($e in $events) {
     $t1Name = $c1.team.displayName
     $t2Name = $c2.team.displayName
     
-    # Track appearances for rounds
-    if (-not $teamAppearances.ContainsKey($t1Id)) { $teamAppearances[$t1Id] = 0 }
-    if (-not $teamAppearances.ContainsKey($t2Id)) { $teamAppearances[$t2Id] = 0 }
+    # Round logic
+    if ($matchId -le 72) {
+        # Track appearances for rounds in group stage
+        if (-not $teamAppearances.ContainsKey($t1Id)) { $teamAppearances[$t1Id] = 0 }
+        if (-not $teamAppearances.ContainsKey($t2Id)) { $teamAppearances[$t2Id] = 0 }
+        $teamAppearances[$t1Id] += 1
+        $teamAppearances[$t2Id] += 1
+        $round = [Math]::Max($teamAppearances[$t1Id], $teamAppearances[$t2Id])
+    } else {
+        if ($matchId -le 88) { $round = 32 }      # Round of 32
+        elseif ($matchId -le 96) { $round = 16 }  # Round of 16
+        elseif ($matchId -le 100) { $round = 8 }  # Quarter-finals
+        elseif ($matchId -le 102) { $round = 4 }  # Semi-finals
+        elseif ($matchId -eq 103) { $round = 2 }  # Third place
+        else { $round = 1 }                       # Final
+    }
     
-    $teamAppearances[$t1Id] += 1
-    $teamAppearances[$t2Id] += 1
-    
-    $round = [Math]::Max($teamAppearances[$t1Id], $teamAppearances[$t2Id])
-    
-    # Group extraction from altGameNote
+    # Group extraction from altGameNote (Only for group stage)
     $group = ""
-    $note = $comp.altGameNote
-    if ($note -match 'Group ([A-L])') {
-        $group = $Matches[1]
+    if ($matchId -le 72) {
+        $note = $comp.altGameNote
+        if ($note -match 'Group ([A-L])') {
+            $group = $Matches[1]
+        }
     }
     
     # Date/Time conversion to Vietnam Time (GMT+7)
@@ -344,7 +354,7 @@ $newContent = ($headLines -join "`r`n") + "`r`n`r`n" + $middlePart + "`r`n`r`n" 
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($dataJsPath, $newContent, $utf8NoBom)
 
-Write-Output "Successfully updated data.js with 72 official matches, cards, scorers AND assists!"
+Write-Output "Successfully updated data.js with 104 official matches, cards, scorers AND assists!"
 
 # 5. Update index.html query string version to force browser cache bypass
 $indexPath = "$PSScriptRoot\index.html"

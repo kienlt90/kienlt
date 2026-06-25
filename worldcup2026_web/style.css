@@ -1461,3 +1461,46 @@ body.light-theme .scorer-item {
   color: var(--primary);
   font-weight: 600;
 }
+
+/* --- STAGE SECTION COLLAPSIBLE HEADERS --- */
+.stage-section-header {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  margin-bottom: 15px;
+  user-select: none;
+}
+.stage-section-header:hover {
+  background: var(--card-bg-hover);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.stage-section-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stage-section-header .toggle-icon {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: var(--transition-fast);
+}
+body.light-theme .stage-section-header {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+body.light-theme .stage-section-header:hover {
+  background: rgba(255, 255, 255, 0.9);
+}

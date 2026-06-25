@@ -57,8 +57,8 @@ except Exception as e:
     sys.exit(1)
 
 events = data.get('events', [])
-# Limit to first 72 matches of group stage
-events = events[:72]
+# Limit to first 104 matches of tournament
+events = events[:104]
 
 # Helpers to fetch assists from summary
 def fetch_assists(event_id, scorers1, scorers2, t1_name, t2_name):
@@ -129,17 +129,26 @@ for e in events:
     t1_name = c1.get('team', {}).get('displayName')
     t2_name = c2.get('team', {}).get('displayName')
     
-    # appearances for rounds
-    team_appearances[t1_id] = team_appearances.get(t1_id, 0) + 1
-    team_appearances[t2_id] = team_appearances.get(t2_id, 0) + 1
-    round_val = max(team_appearances[t1_id], team_appearances[t2_id])
-    
-    # group from altGameNote
+    # Round logic
+    if match_id <= 72:
+        team_appearances[t1_id] = team_appearances.get(t1_id, 0) + 1
+        team_appearances[t2_id] = team_appearances.get(t2_id, 0) + 1
+        round_val = max(team_appearances[t1_id], team_appearances[t2_id])
+    else:
+        if match_id <= 88: round_val = 32
+        elif match_id <= 96: round_val = 16
+        elif match_id <= 100: round_val = 8
+        elif match_id <= 102: round_val = 4
+        elif match_id == 103: round_val = 2
+        else: round_val = 1
+        
+    # Group from altGameNote (Only for group stage)
     group = ""
-    note = comp.get('altGameNote', '')
-    g_match = re.search(r'Group ([A-L])', note)
-    if g_match:
-        group = g_match.group(1)
+    if match_id <= 72:
+        note = comp.get('altGameNote', '')
+        g_match = re.search(r'Group ([A-L])', note)
+        if g_match:
+            group = g_match.group(1)
         
     # Date/Time conversion to Vietnam Time (GMT+7)
     date_str = e.get('date', '')
@@ -325,7 +334,7 @@ new_content = "".join(head_lines) + "\n\n" + middle_part + "\n\n" + "".join(tail
 try:
     with open(data_js_path, "w", encoding="utf-8") as f:
         f.write(new_content)
-    print("Successfully updated data.js with 72 official matches, cards, scorers AND assists!")
+    print("Successfully updated data.js with 104 official matches, cards, scorers AND assists!")
 except Exception as e:
     print(f"Error writing to data.js: {e}")
 
