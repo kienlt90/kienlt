@@ -72,7 +72,6 @@ try:
         types.BotCommand("emr", "📄 Tra cứu mã TransType EMR"),
         types.BotCommand("add_emr", "➕ Bổ sung mã TransType EMR"),
         types.BotCommand("add_hisl2", "➕ Bổ sung cấu hình HIS L2"),
-        types.BotCommand("check_tasks", "⏱️ Kiểm tra thời gian các task"),
         types.BotCommand("help", "❓ Hướng dẫn sử dụng")
     ])
 except Exception as e:
@@ -221,7 +220,6 @@ def send_welcome(message):
         "📄 /emr <từ khóa> : Tra cứu mã TransType EMR.\n"
         "➕ /add_emr <tên> | <mã> : Bổ sung mã TransType EMR mới.\n"
         "➕ /add_hisl2 <mã> | <tên> | [mặc định] | [mô tả] : Bổ sung cấu hình HIS L2 mới.\n"
-        "⏱️ /check_tasks : Kiểm tra thời gian còn lại của các task đang chạy.\n"
         "❓ /help : Xem hướng dẫn sử dụng."
     )
     bot.reply_to(message, welcome_text, parse_mode='Markdown')
@@ -926,6 +924,44 @@ def save_running_tasks_state(state):
     except Exception as e:
         print(f"Error saving running tasks state: {e}")
 
+def close_active_dialogs(driver):
+    try:
+        driver.execute_script("""
+            var dialogs = document.querySelectorAll('.e-dialog');
+            for (var i = 0; i < dialogs.length; i++) {
+                var style = window.getComputedStyle(dialogs[i]);
+                if (style.display !== 'none' && style.visibility !== 'hidden') {
+                    var closeBtn = dialogs[i].querySelector('.e-dlg-closeicon-btn');
+                    if (closeBtn) {
+                        closeBtn.click();
+                    } else if (dialogs[i].ej2_instances && dialogs[i].ej2_instances.length > 0) {
+                        dialogs[i].ej2_instances[0].hide();
+                    }
+                }
+            }
+        """)
+        # Chờ các overlays và dialogs ẩn hẳn
+        start = time.time()
+        while time.time() - start < 3.0:
+            active = driver.execute_script("""
+                var dialogs = document.querySelectorAll('.e-dialog');
+                for (var i = 0; i < dialogs.length; i++) {
+                    var style = window.getComputedStyle(dialogs[i]);
+                    if (style.display !== 'none' && style.visibility !== 'hidden') return true;
+                }
+                var overlays = document.querySelectorAll('.e-dlg-overlay');
+                for (var i = 0; i < overlays.length; i++) {
+                    var style = window.getComputedStyle(overlays[i]);
+                    if (style.display !== 'none' && style.visibility !== 'hidden') return true;
+                }
+                return false;
+            """)
+            if not active:
+                break
+            time.sleep(0.2)
+    except Exception as e:
+        print(f"Lỗi đóng modal: {e}")
+
 def scrape_active_tasks(pause_if_running=True):
     chrome_options = Options()
     chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
@@ -936,6 +972,13 @@ def scrape_active_tasks(pause_if_running=True):
         return {"error": f"Không thể kết nối đến Chrome qua port 9222. Đảm bảo Chrome đã chạy ở chế độ debug. Chi tiết: {e}"}
         
     try:
+        # Tự động tối đa hóa cửa sổ để kích hoạt lại Chrome tránh bị tạm dừng (suspension)
+        try:
+            driver.maximize_window()
+            time.sleep(0.5)
+        except Exception:
+            pass
+            
         try:
             current_url = driver.current_url
         except Exception:
@@ -945,27 +988,8 @@ def scrape_active_tasks(pause_if_running=True):
             driver.get("https://cds.hcmict.io/#/work/current_work_dashboard")
             time.sleep(3)
             
-        # Đóng tất cả modal/overlay đang mở sẵn để tránh lỗi click intercepted
-        try:
-            # Gửi phím ESCAPE vô điều kiện trước để đóng mọi modal hiện tại
-            driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-            time.sleep(1)
-            
-            # Nếu vẫn còn overlay (ví dụ ESCAPE không tác dụng), thử click nút đóng
-            overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
-            if overlays:
-                close_buttons = driver.find_elements(By.XPATH, 
-                    "//button[contains(@class, 'close') or contains(@class, 'e-close-icon') or contains(@class, 'btn-close')] | //span[contains(@class, 'close') or text()='×' or text()='x']"
-                )
-                for btn in close_buttons:
-                    try:
-                        driver.execute_script("arguments[0].click();", btn)
-                        time.sleep(1)
-                        break
-                    except Exception:
-                        pass
-        except Exception as e:
-            print(f"Lỗi đóng modal có sẵn: {e}")
+        # Đóng tất cả modal/overlay đang mở sẵn
+        close_active_dialogs(driver)
             
         # Tìm phần container chứa "VIỆC TÔI ĐƯỢC GIAO"
         headers = driver.find_elements(By.XPATH, "//div[contains(@class, 'group-header') and contains(text(), 'VIỆC TÔI ĐƯỢC GIAO')]")
@@ -995,10 +1019,29 @@ def scrape_active_tasks(pause_if_running=True):
             if not any(kw in title_text for kw in ["Đang thực hiện", "Đã nhận"]):
                 continue
                 
-            cards = col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+            # Sử dụng fresh lookup cho cards trong vòng lặp chính để tránh stale elements
+            cards_count = len(col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]"))
             
-            for card in cards:
+            for card_idx in range(cards_count):
                 try:
+                    # Fresh lookup của cột và card ở mỗi vòng lặp
+                    fresh_columns = scroll_container.find_elements(By.CLASS_NAME, "border-col-task")
+                    # Tìm lại cột tương ứng
+                    matching_col = None
+                    for fc in fresh_columns:
+                        fc_title_els = fc.find_elements(By.CLASS_NAME, "title")
+                        fc_title = fc_title_els[0].text.strip() if fc_title_els else ""
+                        if fc_title == title_text:
+                            matching_col = fc
+                            break
+                    if not matching_col:
+                        continue
+                        
+                    fresh_cards = matching_col.find_elements(By.XPATH, ".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ')]")
+                    if card_idx >= len(fresh_cards):
+                        continue
+                    card = fresh_cards[card_idx]
+                    
                     text = card.text.strip()
                     code_match = re.search(r'\b\d{3}\.\d{6}\b', text)
                     if not code_match:
@@ -1021,88 +1064,110 @@ def scrape_active_tasks(pause_if_running=True):
                             driver.execute_script("arguments[0].click();", pause_btn)
                             time.sleep(3)
                             
-                            # Cập nhật lại tham chiếu card và text sau khi re-render và di chuyển cột
-                            card = scroll_container.find_element(By.XPATH, f".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ') and contains(., '{code}')]")
-                            text = card.text.strip()
+                            # Cập nhật lại tham chiếu card sau khi re-render
+                            fresh_columns = scroll_container.find_elements(By.CLASS_NAME, "border-col-task")
+                            matching_col = None
+                            for fc in fresh_columns:
+                                fc_title_els = fc.find_elements(By.CLASS_NAME, "title")
+                                fc_title = fc_title_els[0].text.strip() if fc_title_els else ""
+                                if fc_title == title_text:
+                                    matching_col = fc
+                                    break
+                            if matching_col:
+                                fresh_cards = matching_col.find_elements(By.XPATH, f".//div[contains(concat(' ', normalize-space(@class), ' '), ' task-card ') and contains(., '{code}')]")
+                                if fresh_cards:
+                                    card = fresh_cards[0]
+                                    text = card.text.strip()
                         except Exception as pause_err:
                             print(f"Lỗi khi tạm dừng task {code} để check: {pause_err}")
-
-                    # Tìm phần tử tiêu đề để click (nút thực sự mở modal)
-                    click_target = card
-                    try:
-                        click_target = card.find_element(By.CLASS_NAME, "task-title")
-                    except Exception:
-                        pass
-                    
-                    # Click mở chi tiết task
+                            
+                    # Xác định phần tử để click mở modal
+                    click_target = card.find_element(By.CLASS_NAME, "task-title") if card.find_elements(By.CLASS_NAME, "task-title") else card
                     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", click_target)
-                    time.sleep(0.5)
+                    time.sleep(0.3)
                     
+                    # Click mở chi tiết task bằng Selenium native click
                     try:
                         click_target.click()
-                    except Exception:
+                    except Exception as click_err:
+                        print(f"Native click failed for task {code}: {click_err}, trying JS click")
                         driver.execute_script("arguments[0].click();", click_target)
                     
                     required_hours = None
                     actual_hours = None
-                    try:
-                        # Đợi modal hiển thị trong DOM (dùng presence_of_element_located để chạy tốt khi Chrome bị minimize)
-                        WebDriverWait(driver, 5).until(
-                            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]"))
-                        )
+                    opened = False
+                    
+                    # Chờ modal hiển thị và mã khớp với task bằng Javascript
+                    start_wait = time.time()
+                    while time.time() - start_wait < 5.0:
+                        ma_val = driver.execute_script("""
+                            var dialogs = document.querySelectorAll('.e-dialog');
+                            for (var i = 0; i < dialogs.length; i++) {
+                                var style = window.getComputedStyle(dialogs[i]);
+                                if (style.display !== 'none' && style.visibility !== 'hidden') {
+                                    var infoRows = dialogs[i].querySelectorAll('.info-row');
+                                    for (var j = 0; j < infoRows.length; j++) {
+                                        var keyEl = infoRows[j].querySelector('.key');
+                                        if (keyEl && (keyEl.innerText || '').trim() === 'Mã') {
+                                            var inputEl = infoRows[j].querySelector('input');
+                                            if (inputEl) return inputEl.value;
+                                        }
+                                    }
+                                }
+                            }
+                            return null;
+                        """)
+                        if ma_val and ma_val.strip() == code:
+                            opened = True
+                            break
+                        time.sleep(0.2)
                         
-                        # Xác thực Mã trong modal trùng với task code
-                        code_verified = False
-                        for _ in range(5):
-                            try:
-                                ma_el = driver.find_element(By.XPATH, "//*[text()='Mã']/following::input[1]")
-                                ma_val = (ma_el.get_attribute('value') or ma_el.text or "").strip()
-                                if ma_val == code:
-                                    code_verified = True
-                                    break
-                            except Exception:
-                                pass
-                            time.sleep(0.5)
-                            
-                        if not code_verified:
-                            print(f"Cảnh báo: Mã task trong modal không khớp với {code}")
-                            
-                        # Đọc Số giờ yêu cầu
-                        try:
-                            req_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ yêu cầu')]/following::input[1]")
-                            req_val_str = req_el.get_attribute('value') or req_el.text
-                            if req_val_str:
-                                req_val_str = req_val_str.replace(',', '.')
-                                required_hours = float(re.sub(r'[^\d.]', '', req_val_str))
-                        except Exception:
-                            pass
-                        # Đọc Số giờ thực hiện
-                        try:
-                            act_el = driver.find_element(By.XPATH, "//*[contains(text(), 'Số giờ thực hiện')]/following::input[1]")
-                            act_val_str = act_el.get_attribute('value') or act_el.text
-                            if act_val_str:
-                                act_val_str = act_val_str.replace(',', '.')
-                                actual_hours = float(re.sub(r'[^\d.]', '', act_val_str))
-                        except Exception:
-                            pass
-                    except Exception as ex:
-                        print(f"Lỗi đọc modal cho task {code}: {ex}")
-                    finally:
-                        # Đóng modal bằng Escape
-                        try:
-                            driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                        except Exception:
-                            pass
-                        time.sleep(0.5)  # Trễ cố định ngắn đề phòng Chrome bị minimize làm is_displayed() trả về False
-                        # Đợi cho overlay biến mất hẳn trước khi xử lý task tiếp theo
-                        for _ in range(10):
-                            try:
-                                overlays = driver.find_elements(By.CLASS_NAME, "e-dlg-overlay")
-                                if not any(o.is_displayed() for o in overlays):
-                                    break
-                            except Exception:
-                                break
-                            time.sleep(0.2)
+                    if not opened:
+                        print(f"Cảnh báo: Không thể đồng bộ đúng modal cho task {code}")
+                    else:
+                        # Đọc số giờ yêu cầu và số giờ thực hiện bằng JS
+                        vals = driver.execute_script("""
+                            var dialogs = document.querySelectorAll('.e-dialog');
+                            for (var i = 0; i < dialogs.length; i++) {
+                                var style = window.getComputedStyle(dialogs[i]);
+                                if (style.display !== 'none' && style.visibility !== 'hidden') {
+                                    var req = null;
+                                    var act = null;
+                                    var infoRows = dialogs[i].querySelectorAll('.info-row');
+                                    for (var j = 0; j < infoRows.length; j++) {
+                                        var keyEl = infoRows[j].querySelector('.key');
+                                        if (keyEl) {
+                                            var keyText = (keyEl.innerText || '').trim();
+                                            var inputEl = infoRows[j].querySelector('input');
+                                            if (inputEl) {
+                                                if (keyText.includes('Số giờ yêu cầu')) {
+                                                    req = inputEl.value;
+                                                } else if (keyText.includes('Số giờ thực hiện')) {
+                                                    act = inputEl.value;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    return {req: req, act: act};
+                                }
+                            }
+                            return null;
+                        """)
+                        if vals:
+                            if vals.get("req"):
+                                try:
+                                    required_hours = float(vals["req"].replace(',', '.'))
+                                except ValueError:
+                                    pass
+                            if vals.get("act"):
+                                try:
+                                    actual_hours = float(vals["act"].replace(',', '.'))
+                                except ValueError:
+                                    pass
+                                    
+                    # Đóng modal bằng JS helper
+                    close_active_dialogs(driver)
+                    time.sleep(0.5)
                     
                     clean_text = text.replace(code, "")
                     if date_str:
@@ -1112,7 +1177,7 @@ def scrape_active_tasks(pause_if_running=True):
                     hour_match = re.search(r'\((\d+(?:\.\d+)?)h\)', title)
                     if hour_match:
                         title = title.replace(hour_match.group(0), "").strip()
-                    
+                        
                     tasks.append({
                         "code": code,
                         "title": title,
@@ -1123,6 +1188,10 @@ def scrape_active_tasks(pause_if_running=True):
                     })
                 except Exception as e:
                     print(f"Lỗi xử lý card task: {e}")
+                    try:
+                        close_active_dialogs(driver)
+                    except:
+                        pass
                     continue
                     
         # Cập nhật trạng thái tracking thời gian thực của các task đang chạy
@@ -1155,10 +1224,16 @@ def scrape_active_tasks(pause_if_running=True):
             save_running_tasks_state(state)
         except Exception as state_err:
             print(f"Lỗi cập nhật trạng thái tracking chạy ngầm: {state_err}")
-
+            
         return {"tasks": tasks}
     except Exception as e:
         return {"error": f"Lỗi xảy ra khi quét dữ liệu trang: {e}"}
+    finally:
+        if driver:
+            try:
+                driver.minimize_window()
+            except Exception:
+                pass
 
 def calculate_time_remaining(task, current_time=None):
     if not current_time:
@@ -1169,7 +1244,10 @@ def calculate_time_remaining(task, current_time=None):
     code = task.get("code")
     
     # 1. Ưu tiên tính toán bằng giờ yêu cầu - giờ thực tế
-    if req_h is not None and act_h is not None:
+    if req_h is not None:
+        if act_h is None:
+            act_h = 0.0
+            
         state = load_running_tasks_state()
         if code in state:
             first_seen = state[code].get("first_seen_running", time.time())
@@ -1277,89 +1355,6 @@ def check_tasks_monitor_loop():
         except Exception as e:
             print(f"[Task Monitor] Loop error: {e}")
 
-@bot.message_handler(commands=['check_tasks', 'checktasks', 'task'])
-def handle_check_tasks(message):
-    chat_id = message.chat.id
-    save_chat_id(chat_id)
-    
-    bot.reply_to(message, "⏳ Đang kết nối tới Chrome để kiểm tra các task...", parse_mode='Markdown')
-    
-    res = scrape_active_tasks(pause_if_running=True)
-    if "error" in res:
-        bot.send_message(
-            chat_id, 
-            f"❌ *Lỗi kết nối Chrome:*\n{res['error']}\n\n"
-            "👉 Hãy đảm bảo bạn đã:\n"
-            "1. Tắt hết các cửa sổ Chrome đang chạy.\n"
-            "2. Mở Chrome debug bằng Command Prompt:\n"
-            '   `"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\\Users\\kienlt.bdg\\ChromeDebug"`\n'
-            "3. Đăng nhập vào website và mở tab dashboard.",
-            parse_mode='Markdown'
-        )
-        return
-        
-    tasks = res.get("tasks", [])
-    if not tasks:
-        bot.send_message(chat_id, "📋 Không tìm thấy task nào đang chạy dưới cột *'Đang thực hiện'* hoặc *'Đã nhận'*.", parse_mode='Markdown')
-        return
-        
-    lines = ["⏱️ **Thời gian còn lại của các task:**\n"]
-    now = datetime.now()
-    markup = types.InlineKeyboardMarkup()
-    
-    for idx, t in enumerate(tasks):
-        rem_mins = calculate_time_remaining(t, now)
-        is_running = "❚❚" in t.get("raw", "")
-        
-        if rem_mins is not None:
-            if rem_mins < 0:
-                time_str = f"🔴 Quá hạn {-rem_mins} phút"
-            elif rem_mins <= 60:
-                time_str = f"⚠️ Còn {rem_mins} phút"
-            else:
-                hours = rem_mins / 60.0
-                time_str = f"🟢 Còn {hours:.2f} giờ ({rem_mins} phút)"
-        else:
-            time_str = "Không xác định được thời hạn"
-            
-        hours_progress = ""
-        close_time_str = ""
-        if t.get("required_hours") is not None and t.get("actual_hours") is not None:
-            est_act = t.get("estimated_actual_hours", t.get("actual_hours"))
-            est_diff = t["required_hours"] - est_act
-            hours_progress = f"\n   • Số giờ: `{est_act}` / `{t['required_hours']}h` (Còn `{est_diff:.2f}h`)"
-            
-            if rem_mins is not None and rem_mins > 0:
-                buffer_mins = 15
-                target_duration_mins = rem_mins - buffer_mins
-                if target_duration_mins > 0:
-                    target_dt = now + timedelta(minutes=target_duration_mins)
-                    target_time_str = target_dt.strftime("%H:%M")
-                    if is_running:
-                        close_time_str = f"\n   • **Cần đóng task lúc**: `{target_time_str}` (sau `{target_duration_mins}` phút nữa)"
-                    else:
-                        close_time_str = f"\n   • **Cần đóng task (nếu chạy ngay)**: `{target_time_str}` (sau `{target_duration_mins}` phút)"
-                else:
-                    close_time_str = f"\n   • ⚠️ **Cần đóng task NGAY LẬP TỨC!**"
-            
-        lines.append(
-            f"{idx+1}. **{t['title']}**\n"
-            f"   • Mã: `{t['code']}`\n"
-            f"   • Trạng thái: {time_str} (Hạn chót: {t['deadline'] or 'Chưa rõ'}){hours_progress}{close_time_str}\n"
-        )
-        
-        # Add inline button for start/pause
-        code = t["code"]
-        if is_running:
-            btn_text = f"❚❚ Dừng task {code}"
-            callback_data = f"toggle:{code}:pause"
-        else:
-            btn_text = f"▶ Chạy task {code}"
-            callback_data = f"toggle:{code}:start"
-        markup.add(types.InlineKeyboardButton(text=btn_text, callback_data=callback_data))
-        
-    bot.send_message(chat_id, "\n".join(lines), reply_markup=markup, parse_mode='Markdown')
-
 @bot.callback_query_handler(func=lambda call: call.data.startswith('toggle:'))
 def handle_task_toggle(call):
     chat_id = call.message.chat.id
@@ -1380,6 +1375,11 @@ def handle_task_toggle(call):
     driver = None
     try:
         driver = webdriver.Chrome(options=chrome_options)
+        try:
+            driver.maximize_window()
+            time.sleep(0.5)
+        except Exception:
+            pass
     except Exception as e:
         bot.send_message(chat_id, f"❌ Lỗi kết nối Chrome: {e}")
         return
@@ -1513,6 +1513,12 @@ def handle_task_toggle(call):
             
     except Exception as e:
         bot.send_message(chat_id, f"❌ Lỗi xử lý click play/pause: {e}")
+    finally:
+        if driver:
+            try:
+                driver.minimize_window()
+            except Exception:
+                pass
 
 # Start polling
 if __name__ == "__main__":

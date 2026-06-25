@@ -76,7 +76,8 @@ const WORLD_CUP_DATA = {
   }
 };
 
-// Dá»¯ liá»‡u lá»‹ch thi Ä‘áº¥u chÃ­nh thá»©c vÃ²ng báº£ng World Cup 2026 tá»« ESPN API (72 tráº­n Ä‘áº¥u)
+
+// Dữ liệu lịch thi đấu chính thức vòng bảng World Cup 2026 từ ESPN API (72 trận đấu)
 const OFFICIAL_MATCHES_RAW = [
   {
     id: "M01",
@@ -879,16 +880,16 @@ const OFFICIAL_MATCHES_RAW = [
     time: "23:00",
     team1Id: "ESP",
     team2Id: "KSA",
-    score1: null,
-    score2: null,
+    score1: 4,
+    score2: 0,
     yc1: 0,
     rc1: 0,
-    yc2: 0,
+    yc2: 2,
     rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
+    status: "Kết thúc",
+    scorers1: [{ name: "Lamine Yamal", min: "10'" }, { name: "Mikel Oyarzabal", min: "21'" }, { name: "Mikel Oyarzabal", min: "24'" }, { name: "Hassan Al-Tambakti (OG)", min: "49'" }],
     scorers2: [],
-    assists1: [],
+    assists1: ["Mikel Oyarzabal", "Aymeric Laporte", "Dani Olmo"],
     assists2: [],
     matchTime: ""
   },
@@ -901,13 +902,13 @@ const OFFICIAL_MATCHES_RAW = [
     time: "02:00",
     team1Id: "BEL",
     team2Id: "IRN",
-    score1: null,
-    score2: null,
-    yc1: 0,
-    rc1: 0,
-    yc2: 0,
+    score1: 0,
+    score2: 0,
+    yc1: 1,
+    rc1: 1,
+    yc2: 1,
     rc2: 0,
-    status: "Chưa đấu",
+    status: "Kết thúc",
     scorers1: [],
     scorers2: [],
     assists1: [],
@@ -923,16 +924,16 @@ const OFFICIAL_MATCHES_RAW = [
     time: "05:00",
     team1Id: "URU",
     team2Id: "CPV",
-    score1: null,
-    score2: null,
-    yc1: 0,
+    score1: 2,
+    score2: 2,
+    yc1: 2,
     rc1: 0,
-    yc2: 0,
+    yc2: 2,
     rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
-    assists1: [],
+    status: "Kết thúc",
+    scorers1: [{ name: "Maxi Araújo", min: "44'" }, { name: "Agustín Canobbio", min: "45'+6'" }],
+    scorers2: [{ name: "Kevin Pina", min: "21'" }, { name: "Hélio Varela", min: "61'" }],
+    assists1: ["Maxi Araújo"],
     assists2: [],
     matchTime: ""
   },
@@ -945,13 +946,13 @@ const OFFICIAL_MATCHES_RAW = [
     time: "08:00",
     team1Id: "NZL",
     team2Id: "EGY",
-    score1: null,
-    score2: null,
+    score1: 0,
+    score2: 0,
     yc1: 0,
     rc1: 0,
     yc2: 0,
     rc2: 0,
-    status: "Chưa đấu",
+    status: "Đang đá",
     scorers1: [],
     scorers2: [],
     assists1: [],
@@ -1664,7 +1665,7 @@ const OFFICIAL_MATCHES_RAW = [
   },
 ];
 
-// HÃ m bá»• trá»£ tÃ¬m kiáº¿m thÃ´ng tin chi tiáº¿t cá»§a Ä‘á»™i bÃ³ng theo ID
+// Hàm bổ trợ tìm kiếm thông tin chi tiết của đội bóng theo ID
 function findTeamById(teamId) {
   for (const groupLetter of Object.keys(WORLD_CUP_DATA.groups)) {
     const team = WORLD_CUP_DATA.groups[groupLetter].find(t => t.id === teamId);
@@ -1673,7 +1674,7 @@ function findTeamById(teamId) {
   return null;
 }
 
-// Khá»Ÿi táº¡o DEFAULT_MATCHES vá»›i Ä‘áº§y Ä‘á»§ thÃ´ng tin tÃªn tiáº¿ng Viá»‡t, cá» vÃ  cá» hiá»‡u
+// Khởi tạo DEFAULT_MATCHES với đầy đủ thông tin tên tiếng Việt, cờ và cờ hiệu
 const DEFAULT_MATCHES = OFFICIAL_MATCHES_RAW.map(match => {
   const t1 = findTeamById(match.team1Id);
   const t2 = findTeamById(match.team2Id);
@@ -1688,7 +1689,6 @@ const DEFAULT_MATCHES = OFFICIAL_MATCHES_RAW.map(match => {
     matchTime: match.matchTime || ""
   };
 });
-
 
 // Dữ liệu thống kê cầu thủ World Cup 2026 (Mặc định khởi tạo 0, tự động tích lũy từ kết quả đấu)
 const PLAYER_STATS_DATA = [
