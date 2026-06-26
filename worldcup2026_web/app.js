@@ -132,9 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
           return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
         }
       }
-      const t1 = { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: !!match.team1FlagCode };
-      const t2 = { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: !!match.team2FlagCode };
-      return getWinnerOrPlaceholder(t1, t2, placeholderText);
     }
     return { id: `WINNER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
   }
@@ -151,11 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
           return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
         }
       }
-      const t1 = { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: !!match.team1FlagCode };
-      const t2 = { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: !!match.team2FlagCode };
-      const winner = getWinnerOrPlaceholder(t1, t2, placeholderText);
-      if (winner.id === t1.id) return t2;
-      return t1;
     }
     return { id: `LOSER-OF-${matchId}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
   }
