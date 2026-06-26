@@ -39,11 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function getTeamOrPlaceholder(groupLetter, rankIndex, placeholderText) {
     const stands = groupStandings[groupLetter];
     if (stands && stands[rankIndex]) {
-      const isGroupFinished = stands.every(t => t.played === 3);
-      if (isGroupFinished) {
-        const team = stands[rankIndex];
-        return { id: team.id, name: team.name, flag: team.flag, flagCode: team.flagCode, isReal: true };
-      }
+      const team = stands[rankIndex];
+      return { id: team.id, name: team.name, flag: team.flag, flagCode: team.flagCode, isReal: true };
     }
     return { id: `PLACEHOLDER-${groupLetter}-${rankIndex}`, name: placeholderText, flag: "🏳️", flagCode: "", isReal: false };
   }
@@ -592,9 +589,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return a.id.localeCompare(b.id);
     });
 
-    // Tiến hành xếp hạng xong vòng bảng, tính toán các đội hạng 3 tốt nhất
-    const allGroupsFinished = Object.values(groupStandings).every(stands => stands.every(t => t.played === 3));
-    const activeThirds = allGroupsFinished ? thirdPlaceStandings.slice(0, 8) : [];
+    // Tiến hành tính toán các đội hạng 3 tốt nhất dựa trên BXH hiện tại
+    const activeThirds = thirdPlaceStandings.slice(0, 8);
     const assignedThirds = assignThirdPlacedTeams(activeThirds);
 
     // Resolve Round of 32 matches (M73 to M88)
