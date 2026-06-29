@@ -1820,7 +1820,7 @@ const OFFICIAL_MATCHES_RAW = [
     rc2: 0,
     status: "Đang đá",
     scorers1: [],
-    scorers2: [],
+    scorers2: [{ name: "Kaishu Sano", min: "29'" }],
     assists1: [],
     assists2: [],
     winnerId: null,

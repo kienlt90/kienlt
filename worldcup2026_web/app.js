@@ -200,12 +200,17 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (savedMatches) {
       try {
         const parsed = JSON.parse(savedMatches);
-        // Tự động đồng bộ các trận đấu đã kết thúc từ DEFAULT_MATCHES để tránh lệch kết quả chính thức
+        // Tự động đồng bộ các trận đấu đã kết thúc hoặc đang đá từ DEFAULT_MATCHES để tránh lệch kết quả chính thức
         matches = DEFAULT_MATCHES.map(defaultMatch => {
           const savedMatch = parsed.find(m => m.id === defaultMatch.id);
           if (savedMatch) {
-            // Nếu trận đấu trong mã nguồn mặc định đã Kết thúc, bắt buộc lấy từ mặc định
-            if (defaultMatch.status === "Kết thúc") {
+            // Luôn đồng bộ ngày, giờ, timestamp chính thức từ file data.js để cập nhật lịch thi đấu mới nhất
+            savedMatch.date = defaultMatch.date;
+            savedMatch.time = defaultMatch.time;
+            savedMatch.timestamp = defaultMatch.timestamp;
+
+            // Nếu trận đấu trong mặc định đã Kết thúc hoặc Đang đá, bắt buộc lấy từ mặc định
+            if (defaultMatch.status === "Kết thúc" || defaultMatch.status === "Đang đá") {
               return defaultMatch;
             }
             return savedMatch;
