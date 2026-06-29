@@ -1522,10 +1522,10 @@ def handle_task_toggle(call):
 
 # Start polling
 if __name__ == "__main__":
-    # Khởi chạy thread giám sát chạy ngầm
-    monitor_thread = threading.Thread(target=check_tasks_monitor_loop, daemon=True)
-    monitor_thread.start()
-    print("✅ Background Task Monitor Thread started...")
+    # Khởi chạy thread giám sát chạy ngầm (đã tắt vì bỏ check task và chrome)
+    # monitor_thread = threading.Thread(target=check_tasks_monitor_loop, daemon=True)
+    # monitor_thread.start()
+    # print("✅ Background Task Monitor Thread started...")
     
     print("Telegram Contract Bot is running...")
     bot.infinity_polling()
