@@ -2294,7 +2294,7 @@ const OFFICIAL_MATCHES_RAW = [
     timestamp: 1783627200000,
     time: "03:00",
     team1Id: "RD16 W1",
-    team2Id: "CAN",
+    team2Id: "RD16 W2",
     score1: null,
     score2: null,
     yc1: 0,
