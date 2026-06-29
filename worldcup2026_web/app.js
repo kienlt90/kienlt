@@ -123,7 +123,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function getWinnerByMatchId(matchId, placeholderText) {
     const match = matches.find(m => m.id === matchId);
     if (match) {
-      if (match.score1 !== null && match.score2 !== null) {
+      if (match.status === "Kết thúc" && match.score1 !== null && match.score2 !== null) {
+        if (match.winnerId) {
+          const isT1 = match.winnerId === match.team1Id;
+          return { id: match.winnerId, name: isT1 ? match.team1 : match.team2, flagCode: isT1 ? match.team1FlagCode : match.team2FlagCode, flag: isT1 ? match.team1Flag : match.team2Flag, isReal: true };
+        }
         if (match.score1 > match.score2) {
           return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
         } else if (match.score1 < match.score2) {
@@ -139,7 +143,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function getLoserByMatchId(matchId, placeholderText) {
     const match = matches.find(m => m.id === matchId);
     if (match) {
-      if (match.score1 !== null && match.score2 !== null) {
+      if (match.status === "Kết thúc" && match.score1 !== null && match.score2 !== null) {
+        if (match.winnerId) {
+          const isT1 = match.winnerId === match.team1Id;
+          const loserId = isT1 ? match.team2Id : match.team1Id;
+          return { id: loserId, name: isT1 ? match.team2 : match.team1, flagCode: isT1 ? match.team2FlagCode : match.team1FlagCode, flag: isT1 ? match.team2Flag : match.team1Flag, isReal: true };
+        }
         if (match.score1 > match.score2) {
           return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
         } else if (match.score1 < match.score2) {
@@ -1997,6 +2006,14 @@ document.addEventListener("DOMContentLoaded", () => {
               matchedMatch.score2 = isHomeTeam1 ? (isNaN(score2) ? 0 : score2) : (isNaN(score1) ? 0 : score1);
               matchedMatch.status = espnState === "post" ? "Kết thúc" : "Đang đá";
               matchedMatch.matchTime = event.status.type.shortDetail || (event.status.displayClock ? event.status.displayClock + "'" : "");
+
+              let winnerId = null;
+              if (homeCompetitor.winner === true) {
+                winnerId = homeAbbr;
+              } else if (awayCompetitor.winner === true) {
+                winnerId = awayAbbr;
+              }
+              matchedMatch.winnerId = winnerId;
 
               // Trích xuất thẻ phạt và cầu thủ ghi bàn từ chi tiết trận đấu của ESPN
               let yc1 = 0, rc1 = 0, yc2 = 0, rc2 = 0;
