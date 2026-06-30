@@ -140,6 +140,9 @@
             <button class="dock-item" id="dock-item-8" onclick="selectPortalModule(8)">
               <span>⚽</span> Giải trí World Cup 2026
             </button>
+            <button class="dock-item" id="dock-item-9" onclick="selectPortalModule(9)">
+              <span>🔬</span> Bộ dịch JS Máy xét nghiệm (LIS)
+            </button>
           </div>
 
           <!-- Interactive Detail Card -->
@@ -276,10 +279,21 @@
         statusText: 'Đang hoạt động',
         actionText: 'Xem Lịch & Kết quả ➔',
         action: function() { window.open('worldcup2026_web/index.html', '_blank'); }
+      },
+      {
+        id: 9,
+        icon: '🔬',
+        shortTitle: 'Bộ dịch JS Máy xét nghiệm (LIS)',
+        title: 'LIS Machine JS Parser Developer Tool',
+        desc: 'Trình sinh code JS tự động từ chuỗi dữ liệu thô (Raw Data) của máy xét nghiệm, tích hợp môi trường lập trình và chạy thử (Test Live) kết quả bóc tách ngay trên trình duyệt.',
+        status: 'active',
+        statusText: 'Đang hoạt động',
+        actionText: 'Vào công cụ ➔',
+        action: function() { window.open('LIS-Parser-Tool.html', '_blank'); }
       }
     ];
 
-    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 2, 3, 4, 5, 6, 7, 8]');
+    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 2, 3, 4, 5, 6, 7, 8, 9]');
     let activeModuleId = 1;
 
     function getSortedModules() {
