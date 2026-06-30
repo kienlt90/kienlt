@@ -2228,4 +2228,5 @@ function updateThemeIcon(theme) {
 
   // Expose helper for testing purposes
   window.simulateRandomScores = simulateRandomScores;
+  window.matches = matches;
 });
