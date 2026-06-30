@@ -195,6 +195,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return result;
   }
 
+  function isRealTeam(teamId) {
+    if (!teamId) return false;
+    if (typeof WORLD_CUP_DATA !== "undefined" && WORLD_CUP_DATA.groups) {
+      for (const groupLetter of Object.keys(WORLD_CUP_DATA.groups)) {
+        const found = WORLD_CUP_DATA.groups[groupLetter].find(t => t.id === teamId);
+        if (found) return true;
+      }
+    }
+    return false;
+  }
+
   // --- PHẦN KHỞI TẠO (INIT) ---
   function init() {
     // 1. Tải dữ liệu từ localStorage hoặc dùng dữ liệu mặc định (Có kiểm tra phiên bản dữ liệu sạch và tự động đồng bộ kết quả chính thức đã kết thúc)
@@ -209,12 +220,17 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (savedMatches) {
       try {
         const parsed = JSON.parse(savedMatches);
+        const isSim = localStorage.getItem("wc2026_sim_active") === "true";
         // Tự động đồng bộ các trận đấu đã kết thúc từ DEFAULT_MATCHES để tránh lệch kết quả chính thức
         matches = DEFAULT_MATCHES.map(defaultMatch => {
           const savedMatch = parsed.find(m => m.id === defaultMatch.id);
           if (savedMatch) {
-            // Nếu trận đấu trong mã nguồn mặc định đã Kết thúc, bắt buộc lấy từ mặc định
-            if (defaultMatch.status === "Kết thúc") {
+            if (isSim) {
+              return savedMatch;
+            }
+            const hasRealTeams = defaultMatch.team1Id && defaultMatch.team2Id && 
+                                 isRealTeam(defaultMatch.team1Id) && isRealTeam(defaultMatch.team2Id);
+            if (defaultMatch.status === "Kết thúc" || defaultMatch.status === "Đang đá" || hasRealTeams) {
               return defaultMatch;
             }
             return savedMatch;
@@ -608,7 +624,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resolve Round of 32 matches (M73 to M88)
     const r32MatchesList = matches.filter(m => m.id >= "M73" && m.id <= "M88");
     r32MatchesList.forEach(m => {
-      if (isSimulationActive || m.status === "Chưa đấu") {
+      const hasRealTeams = m.team1Id && m.team2Id && isRealTeam(m.team1Id) && isRealTeam(m.team2Id);
+      if (isSimulationActive || !hasRealTeams) {
         let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
 
@@ -643,7 +660,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resolve Round of 16 matches (M89 to M96)
     const r16MatchesList = matches.filter(m => m.id >= "M89" && m.id <= "M96");
     r16MatchesList.forEach(m => {
-      if (isSimulationActive || m.status === "Chưa đấu") {
+      const hasRealTeams = m.team1Id && m.team2Id && isRealTeam(m.team1Id) && isRealTeam(m.team2Id);
+      if (isSimulationActive || !hasRealTeams) {
         let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         if (m.id === "M89") { t1 = getWinnerByMatchId("M73", "Thắng Trận 73"); t2 = getWinnerByMatchId("M75", "Thắng Trận 75"); }
@@ -669,7 +687,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resolve Quarter-finals matches (M97 to M100)
     const qfMatchesList = matches.filter(m => m.id >= "M97" && m.id <= "M100");
     qfMatchesList.forEach(m => {
-      if (isSimulationActive || m.status === "Chưa đấu") {
+      const hasRealTeams = m.team1Id && m.team2Id && isRealTeam(m.team1Id) && isRealTeam(m.team2Id);
+      if (isSimulationActive || !hasRealTeams) {
         let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         if (m.id === "M97") { t1 = getWinnerByMatchId("M89", "Thắng Trận 89"); t2 = getWinnerByMatchId("M90", "Thắng Trận 90"); }
@@ -691,7 +710,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resolve Semi-finals matches (M101 to M102)
     const sfMatchesList = matches.filter(m => m.id >= "M101" && m.id <= "M102");
     sfMatchesList.forEach(m => {
-      if (isSimulationActive || m.status === "Chưa đấu") {
+      const hasRealTeams = m.team1Id && m.team2Id && isRealTeam(m.team1Id) && isRealTeam(m.team2Id);
+      if (isSimulationActive || !hasRealTeams) {
         let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         if (m.id === "M101") { t1 = getWinnerByMatchId("M97", "Thắng Trận 97"); t2 = getWinnerByMatchId("M99", "Thắng Trận 99"); }
@@ -711,7 +731,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resolve Third place match (M103)
     const m103 = matches.find(m => m.id === "M103");
     if (m103) {
-      if (isSimulationActive || m103.status === "Chưa đấu") {
+      const hasRealTeams = m103.team1Id && m103.team2Id && isRealTeam(m103.team1Id) && isRealTeam(m103.team2Id);
+      if (isSimulationActive || !hasRealTeams) {
         const t1 = getLoserByMatchId("M101", "Thua BK 1");
         const t2 = getLoserByMatchId("M102", "Thua BK 2");
         m103.team1 = t1.name;
@@ -728,7 +749,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resolve Final match (M104)
     const m104 = matches.find(m => m.id === "M104");
     if (m104) {
-      if (isSimulationActive || m104.status === "Chưa đấu") {
+      const hasRealTeams = m104.team1Id && m104.team2Id && isRealTeam(m104.team1Id) && isRealTeam(m104.team2Id);
+      if (isSimulationActive || !hasRealTeams) {
         const t1 = getWinnerByMatchId("M101", "Thắng BK 1");
         const t2 = getWinnerByMatchId("M102", "Thắng BK 2");
         m104.team1 = t1.name;
