@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIS Machine JS Parser Tool - Trình Biên Soạn & Test Script Máy Xét Nghiệm</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.75);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --success: #34d399;
+            --danger: #f87171;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --editor-bg: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #090d16 0%, #1e1b4b 50%, #0f172a 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            color: #090d16;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffffff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .presets-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .presets-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        select.preset-select {
+            background: #1e293b;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            outline: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select.preset-select:hover {
+            border-color: var(--primary);
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #bae6fd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--editor-bg);
+            color: #e2e8f0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            outline: none;
+            resize: vertical;
+            transition: all 0.2s;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+        }
+
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button.btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: #0f172a;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+
+        button.btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.4);
+            transform: translateY(-1px);
+        }
+
+        button.btn-secondary {
+            background: #334155;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        button.btn-secondary:hover {
+            background: #475569;
+        }
+
+        button.btn-accent {
+            background: #4f46e5;
+            color: white;
+        }
+
+        button.btn-accent:hover {
+            background: #6366f1;
+        }
+
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            min-height: 0;
+        }
+
+        .output-box {
+            background: #020617;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 380px;
+        }
+
+        .output-box.error {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(127, 29, 29, 0.2);
+            color: var(--danger);
+        }
+
+        .output-box.success {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .tab-menu {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            gap: 5px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            border-radius: 0;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #1e293b;
+            color: #bae6fd;
+            font-weight: 600;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: #e2e8f0;
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(30, 41, 59, 0.3);
+        }
+
+        .log-line {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            white-space: pre-wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: rgba(52, 211, 153, 0.2); color: var(--success); }
+        .badge-danger { background: rgba(248, 113, 113, 0.2); color: var(--danger); }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e293b;
+            border-left: 4px solid var(--primary);
+            padding: 12px 24px;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 13px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .editor-container {
+            position: relative;
+        }
+
+        .editor-hint {
+            position: absolute;
+            right: 12px;
+            top: 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.6);
+            padding: 2px 6px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">L</div>
+            <div>
+                <h1>LIS Machine JS Parser Developer Tool</h1>
+                <div class="tagline">Xây dựng & Test live script phân tích chuỗi dữ liệu máy xét nghiệm</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <!-- BÊN TRÁI: INPUT & CODE -->
+        <div class="card">
+            <div class="card-title">
+                <span>Dữ liệu đầu vào (Raw Data)</span>
+                <span id="dataStatus" class="badge">Chưa tải</span>
+            </div>
+            
+            <div class="form-group">
+                <textarea id="rawDataInput" rows="7" placeholder="Dán dữ liệu truyền thô (Raw Data hoặc URL encoded...) từ máy xét nghiệm vào đây..."></textarea>
+            </div>
+            
+            <div class="btn-row">
+                <button class="btn-secondary" onclick="decodeURLInput()">Mã hóa URL (Decode)</button>
+                <button class="btn-secondary" onclick="convertCRtoLF()">Đổi \r sang \n để xem</button>
+                <button class="btn-secondary" onclick="clearDataInput()">Xóa sạch</button>
+            </div>
+
+            <div class="card-title" style="margin-top: 10px;">
+                <span>Script xử lý (Javascript IIFE Parser)</span>
+            </div>
+
+            <div class="form-group editor-container">
+                <div class="editor-hint">JS IIFE format</div>
+                <textarea id="jsCodeInput" rows="18" placeholder="Viết script Javascript dạng tự thực thi (IIFE) tại đây..." style="color: #67e8f9;"></textarea>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-primary" onclick="runScript()">⚡ Chạy Phân Tích (Test)</button>
+                <button class="btn-primary" onclick="autoBuildCode()" style="background: linear-gradient(135deg, var(--success) 0%, var(--primary) 100%); color: #0f172a; box-shadow: 0 4px 12px rgba(52, 211, 153, 0.25); font-weight: 600;">🪄 Tự động build code JS</button>
+                <button class="btn-secondary" onclick="downloadParserHTML()">Tải file HTML Parser</button>
+                <button class="btn-secondary" onclick="copyJSCode()">Copy mã JS</button>
+            </div>
+
+            <!-- COLLAPSIBLE REFERENCE GUIDE -->
+            <div class="card" style="margin-top: 15px; background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px; box-shadow: none;">
+                <div onclick="toggleCheatSheet()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+                    <span style="font-weight: 600; color: #94a3b8; display: flex; align-items: center; gap: 6px;">📘 Hướng dẫn tùy biến nhanh & Snippets JS</span>
+                    <span id="cheatSheetToggleIcon" style="color: #64748b; font-size: 0.8rem;">▼</span>
+                </div>
+                
+                <div id="cheatSheetContent" style="display: none; margin-top: 10px; font-size: 0.85rem; line-height: 1.45; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 10px;">
+                    <p style="margin-bottom: 10px; color: #94a3b8;">Bạn có thể chỉnh sửa trực tiếp đoạn code JS tự sinh để đáp ứng các nghiệp vụ phức tạp hơn:</p>
+                    
+                    <h4 style="color: #38bdf8; margin: 8px 0 4px 0; font-size: 0.85rem;">1. Đổi mã máy sang mã LIS bệnh viện</h4>
+                    <p style="color: #cbd5e1; margin-bottom: 6px; font-size: 0.8rem;">Đổi các mã mặc định như <code>CHISO_4</code> thành mã LIS (ví dụ <code>WBC</code>, <code>RBC</code>...):</p>
+                    <pre style="background: #0f172a; padding: 8px; border-radius: 4px; color: #38bdf8; font-family: monospace; font-size: 0.75rem; margin-bottom: 10px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.02);">// Đổi mã trong mảng mappings hoặc results:
+{ code: "WBC", line: 4 },
+{ code: "RBC", line: 5 }</pre>
+
+                    <h4 style="color: #38bdf8; margin: 8px 0 4px 0; font-size: 0.85rem;">2. Lọc sạch kết quả (Chỉ giữ lại số)</h4>
+                    <p style="color: #cbd5e1; margin-bottom: 6px; font-size: 0.8rem;">Dùng Regex để loại bỏ ký tự lạ, giữ lại số và dấu thập phân:</p>
+                    <pre style="background: #0f172a; padding: 8px; border-radius: 4px; color: #38bdf8; font-family: monospace; font-size: 0.75rem; margin-bottom: 10px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.02);">// Chỉ lấy số và dấu chấm thập phân:
+var cleanVal = rawVal.replace(/[^\d.-]/g, "");</pre>
+
+                    <h4 style="color: #38bdf8; margin: 8px 0 4px 0; font-size: 0.85rem;">3. Định vị cờ bất thường hoặc Dương/Âm tính</h4>
+                    <p style="color: #cbd5e1; margin-bottom: 6px; font-size: 0.8rem;">Cách đọc cờ cảnh báo của máy để đổi thành văn bản LIS:</p>
+                    <pre style="background: #0f172a; padding: 8px; border-radius: 4px; color: #38bdf8; font-family: monospace; font-size: 0.75rem; margin-bottom: 10px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.02);">if (rawVal.indexOf("+") >= 0) return "Dương tính";
+if (rawVal.indexOf("-") >= 0) return "Âm tính";</pre>
+
+                    <h4 style="color: #38bdf8; margin: 8px 0 4px 0; font-size: 0.85rem;">4. Tự động tính chỉ số phụ hoặc gộp dòng</h4>
+                    <p style="color: #cbd5e1; margin-bottom: 6px; font-size: 0.8rem;">Bạn có thể tính chỉ số mới từ các chỉ số máy gửi về:</p>
+                    <pre style="background: #0f172a; padding: 8px; border-radius: 4px; color: #38bdf8; font-family: monospace; font-size: 0.75rem; margin-bottom: 10px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.02);">// Ví dụ tự tính tỷ lệ Albumin/Globulin:
+// Tìm kết quả cũ trong dsketqua rồi tính toán chỉ số mới
+// và dsketqua.push({ stt: STT, ma_xn_may: "A/G", ketqua: AG_ratio });</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- BÊN PHẢI: KẾT QUẢ -->
+        <div class="card">
+            <div class="card-title">
+                <span>Console Logs & Kết quả kiểm thử</span>
+                <span id="runStatus" class="badge">Sẵn sàng</span>
+            </div>
+
+            <div class="tab-menu">
+                <button class="tab-btn active" onclick="switchTab('tableTab', this)">Bảng kết quả</button>
+                <button class="tab-btn" onclick="switchTab('jsonTab', this)">JSON thô</button>
+                <button class="tab-btn" onclick="switchTab('logsTab', this)">Nhật ký (Logs)</button>
+            </div>
+
+            <div class="results-container">
+                <!-- Tab 1: Table -->
+                <div id="tableTab" class="tab-content" style="display: block;">
+                    <div class="table-wrapper">
+                        <table id="resultTable">
+                            <thead>
+                                <tr>
+                                    <th>STT (Barcode)</th>
+                                    <th>Mã XN Máy</th>
+                                    <th>Kết quả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                        Nhấn nút "Chạy Phân Tích" để hiển thị dữ liệu bảng.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 2: JSON -->
+                <div id="jsonTab" class="tab-content" style="display: none; height: 100%;">
+                    <div id="jsonOutput" class="output-box success" style="height: 100%; white-space: pre;">
+// Kết quả JSON sẽ xuất hiện ở đây...
+                    </div>
+                </div>
+
+                <!-- Tab 3: Logs -->
+                <div id="logsTab" class="tab-content" style="display: none; height: 100%;">
+                    <div id="logsOutput" class="output-box" style="height: 100%; color: #cbd5e1;">
+// Nhật ký chạy & lệnh console.log sẽ xuất hiện ở đây...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Toast -->
+    <div id="toast" class="toast">Đã copy thành công!</div>
+
+    <script>
+        window.onload = function() {
+            document.getElementById("jsCodeInput").value = `var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
+(function (data, userdata) {
+    var dsketqua = [];
+    
+    // Viết code logic xử lý biến "data" tại đây
+    console.log("Chuỗi thô:", data);
+    
+    return dsketqua;
+})(JSHANDLER_CRLN_DATA_DECODED, JSHANDLER_CRLN_USERDATA_DECODED);`;
+            updateDataStatus();
+        };
+
+        function updateDataStatus() {
+            var data = document.getElementById("rawDataInput").value.trim();
+            var statusSpan = document.getElementById("dataStatus");
+            if (!data) {
+                statusSpan.innerText = "Chưa có dữ liệu";
+                statusSpan.className = "badge badge-danger";
+            } else {
+                statusSpan.innerText = data.includes('%') ? "Dữ liệu Encoded (URL)" : "Dữ liệu Plain Text";
+                statusSpan.className = "badge badge-success";
+            }
+        }
+
+        document.getElementById("rawDataInput").oninput = updateDataStatus;
+
+        function decodeURLInput() {
+            var inp = document.getElementById("rawDataInput").value;
+            try {
+                var decoded = decodeURIComponent(inp);
+                document.getElementById("rawDataInput").value = decoded;
+                showToast("Đã giải mã URL!");
+                updateDataStatus();
+            } catch (e) {
+                alert("Lỗi khi giải mã URL: " + e.message);
+            }
+        }
+
+        function convertCRToLFStr(str) {
+            return str.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        }
+
+        function convertCRtoLF() {
+            var inp = document.getElementById("rawDataInput").value;
+            var decoded = inp;
+            if (inp.includes('%')) {
+                try { decoded = decodeURIComponent(inp); } catch (e) {}
+            }
+            document.getElementById("rawDataInput").value = convertCRToLFStr(decoded);
+            showToast("Đã chuyển đổi các kí tự xuống dòng!");
+        }
+
+        function clearDataInput() {
+            document.getElementById("rawDataInput").value = "";
+            updateDataStatus();
+        }
+
+        function switchTab(tabId, btn) {
+            // Ẩn tất cả tab
+            var tabs = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = "none";
+            }
+            // Hiển thị tab được chọn
+            document.getElementById(tabId).style.display = "block";
+
+            // Active button
+            var buttons = document.getElementsByClassName("tab-btn");
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            btn.classList.add("active");
+        }
+
+        // --- 3. BỘ CHẠY SCRIPT (EVAL RUNNER) ---
+        function runScript() {
+            var rawData = document.getElementById("rawDataInput").value;
+            // Giải mã trước nếu vẫn đang ở dạng urlencoded
+            if (rawData.trim().startsWith("XP-100%") || rawData.includes("%5E") || rawData.includes("%7C")) {
+                try { rawData = decodeURIComponent(rawData); } catch(e) {}
+            }
+
+            var jsCode = document.getElementById("jsCodeInput").value;
+            
+            var runStatus = document.getElementById("runStatus");
+            var jsonOutput = document.getElementById("jsonOutput");
+            var logsOutput = document.getElementById("logsOutput");
+            var tableBody = document.querySelector("#resultTable tbody");
+
+            runStatus.innerText = "Đang chạy...";
+            runStatus.className = "badge";
+
+            // Bẫy console.log
+            var logs = [];
+            var originalLog = console.log;
+            console.log = function(...args) {
+                var message = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : a).join(' ');
+                logs.push(message);
+            };
+
+            var error = null;
+            var res = null;
+
+            try {
+                // Tạo biến môi trường tương đương
+                var JSHANDLER_CRLN_DATA_DECODED = rawData;
+                var JSHANDLER_CRLN_USERDATA_DECODED = "";
+                
+                // Thực thi script và lấy kết quả trả về cuối cùng
+                res = eval(jsCode);
+                
+                runStatus.innerText = "Chạy thành công";
+                runStatus.className = "badge badge-success";
+            } catch(e) {
+                error = e.toString() + "\n" + e.stack;
+                runStatus.innerText = "Có lỗi xảy ra";
+                runStatus.className = "badge badge-danger";
+            } finally {
+                // Trả lại console.log
+                console.log = originalLog;
+            }
+
+            // --- 4. HIỂN THỊ KẾT QUẢ ---
+            // Logs tab
+            if (error) {
+                logsOutput.className = "output-box error";
+                logsOutput.innerHTML = "❌ LỖI RUNTIME:\n" + error + "\n\n⚠️ NHẬT KÝ CHẠY ĐƯỢC:\n" + logs.map(l => '<div class="log-line">' + l + '</div>').join('');
+            } else {
+                logsOutput.className = "output-box success";
+                logsOutput.innerHTML = logs.length > 0 
+                    ? logs.map(l => '<div class="log-line">' + escapeHTML(l) + '</div>').join('')
+                    : "// Không có log nào được in ra (Sử dụng console.log() trong script để ghi log)";
+            }
+
+            // JSON tab
+            if (error) {
+                jsonOutput.className = "output-box error";
+                jsonOutput.innerText = "// Script bị lỗi, không có kết quả đầu ra.";
+            } else {
+                jsonOutput.className = "output-box success";
+                jsonOutput.innerText = JSON.stringify(res, null, 2);
+            }
+
+            // Table tab
+            tableBody.innerHTML = "";
+            if (error) {
+                tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--danger); padding:20px;">Lỗi script! Kiểm tra chi tiết trong tab "Nhật ký (Logs)".</td></tr>`;
+            } else if (!res || !Array.isArray(res) || res.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:30px;">Hàm trả về rỗng [] hoặc không đúng định dạng danh sách mảng.</td></tr>`;
+            } else {
+                res.forEach(function(item) {
+                    var tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${escapeHTML(item.stt || item.barcode || "(Trống)")}</td>
+                        <td><strong style="color:var(--primary)">${escapeHTML(item.ma_xn_may || "(Trống)")}</strong></td>
+                        <td><span style="background: rgba(56,189,248,0.1); padding:2px 8px; border-radius:4px; font-weight:600;">${escapeHTML(item.ketqua || "(Trống)")}</span></td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            showToast("Đã phân tích xong dữ liệu!");
+        }
+
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return String(str);
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // --- 5. TIỆN ÍCH KHÁC ---
+        function showToast(msg) {
+            var toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(function() {
+                toast.classList.remove("show");
+            }, 2500);
+        }
+
+        function copyJSCode() {
+            var code = document.getElementById("jsCodeInput").value;
+            navigator.clipboard.writeText(code).then(function() {
+                showToast("Đã copy code Javascript vào Clipboard!");
+            }, function() {
+                alert("Không thể tự động copy, hãy bôi đen và copy thủ công!");
+            });
+        }
+
+        function downloadParserHTML() {
+            var jsCode = document.getElementById("jsCodeInput").value;
+            var fileName = "Parser-Template.html";
+
+            var htmlTemplate = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+function onClickTest() {
+var JSHANDLER_CRLN_DATA_DECODED = decodeURIComponent('${encodeURIComponent(document.getElementById("rawDataInput").value)}');
+var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
+var res = ${jsCode}
+
+console.log("Parsed result:", res);
+var outputDiv = document.getElementById("output");
+if (outputDiv) {
+	outputDiv.innerHTML = JSON.stringify(res, null, 2);
+}
+}
+<\/script>
+</head>
+<body style="font-family: sans-serif; padding: 20px; background: #fafafa;">
+<button onclick="onClickTest()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Test</button>
+<h3>Kết quả phân tích (dsketqua):</h3>
+<pre id="output" style="border: 1px solid #ccc; padding: 15px; background: #f4f4f4; border-radius: 4px; overflow: auto; max-height: 500px;">(Nhấn nút "Test" ở trên để xem kết quả phân tích)</pre>
+</body>
+</html>`;
+
+            var blob = new Blob([htmlTemplate], {type: "text/html;charset=utf-8"});
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+            showToast("Đang tải file " + fileName + " về máy!");
+        }
+
+        // --- 6. TỰ ĐỘNG PHÂN TÍCH VÀ SINH CODE JS (AUTO GENERATE PARSER) ---
+        function autoBuildCode() {
+            var rawData = document.getElementById("rawDataInput").value.trim();
+            if (!rawData) {
+                alert("Vui lòng dán dữ liệu thô (Raw Data) vào ô dữ liệu đầu vào trước!");
+                return;
+            }
+            
+            var generatedCode = autoGenerateParser(rawData);
+            document.getElementById("jsCodeInput").value = generatedCode;
+            showToast("Đã tự động build code JS thành công!");
+            
+            // Tự động chạy thử luôn để hiển thị kết quả ra bảng
+            runScript();
+        }
+
+        function autoGenerateParser(rawData) {
+            if (!rawData) return "";
+            
+            // 1. Giải mã URL nếu dữ liệu bị encoded
+            var decodedData = rawData;
+            if (rawData.includes('%5E') || rawData.includes('%7C') || rawData.includes('%0A') || rawData.includes('%0D')) {
+                try { decodedData = decodeURIComponent(rawData); } catch(e) {}
+            }
+            
+            // 2. Chia dòng và làm sạch
+            var lines = decodedData.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length === 0) return "// Chuỗi dữ liệu rỗng.";
+            
+            // --- TH1: Dạng ASTM / HL7 (Các dòng phân cách bằng | và ^) ---
+            var isASTM = lines.some(line => {
+                var start = line.split('|')[0].trim();
+                return ['H', 'P', 'O', 'R', 'L', 'Q', 'S'].indexOf(start) !== -1 || line.includes('|');
+            });
+            
+            if (isASTM) {
+                var sampleLineO = lines.find(l => l.startsWith('O|') || l.split('|')[0] === 'O');
+                var sampleLineR = lines.find(l => l.startsWith('R|') || l.split('|')[0] === 'R');
+                
+                var barcodeIndex = 3;
+                var barcodeSubIndex = 2;
+                var testCodeIndex = 2;
+                var testCodeSubIndex = 4;
+                var resultIndex = 3;
+                
+                if (sampleLineO) {
+                    var parts = sampleLineO.split('|');
+                    for (var idx = 0; idx < parts.length; idx++) {
+                        if (parts[idx] && parts[idx].includes('^')) {
+                            var subs = parts[idx].split('^');
+                            for (var sIdx = 0; sIdx < subs.length; sIdx++) {
+                                var val = subs[sIdx].trim();
+                                if (val && !isNaN(val) && parseInt(val) > 0) {
+                                    barcodeIndex = idx;
+                                    barcodeSubIndex = sIdx;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if (sampleLineR) {
+                    var parts = sampleLineR.split('|');
+                    if (parts[2] && parts[2].includes('^')) {
+                        var subs = parts[2].split('^');
+                        for (var sIdx = 0; sIdx < subs.length; sIdx++) {
+                            if (subs[sIdx].trim() && isNaN(subs[sIdx].trim())) {
+                                testCodeIndex = 2;
+                                testCodeSubIndex = sIdx;
+                            }
+                        }
+                    }
+                }
+                
+                return `var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
+(function (data, userdata) {
+    var dsketqua = [];
+    var arr = data.replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n').split('\\n');
+    var STT = "";
+    
+    for (var i = 0; i < arr.length; i++) {
+        var line = arr[i].trim();
+        if (!line) continue;
+        
+        var arr1 = line.split('|');
+        var recordType = arr1[0].trim();
+        
+        // 1. Lấy Barcode từ dòng O (Order)
+        if (recordType.indexOf('O') !== -1) {
+            if (arr1[${barcodeIndex}]) {
+                var arr2 = arr1[${barcodeIndex}].split('^');
+                if (arr2[${barcodeSubIndex}]) {
+                    var barcodeVal = arr2[${barcodeSubIndex}].trim();
+                    STT = parseInt(barcodeVal, 10).toString();
+                }
+            }
+        }
+        
+        // 2. Lấy kết quả từ dòng R (Result)
+        if (recordType.indexOf('R') !== -1) {
+            var Obketquamay = {};
+            Obketquamay.stt = STT;
+            
+            // Lấy mã xét nghiệm
+            if (arr1[${testCodeIndex}]) {
+                var arr2 = arr1[${testCodeIndex}].split('^');
+                if (arr2[${testCodeSubIndex}]) {
+                    Obketquamay.ma_xn_may = arr2[${testCodeSubIndex}].trim();
+                }
+            }
+            
+            // Lấy kết quả
+            Obketquamay.ketqua = arr1[${resultIndex}] ? arr1[${resultIndex}].trim() : "";
+            dsketqua.push(Obketquamay);
+        }
+    }
+    return dsketqua;
+})(JSHANDLER_CRLN_DATA_DECODED, JSHANDLER_CRLN_USERDATA_DECODED);`;
+            }
+            
+            // --- TH2: Dạng dấu phẩy Comma Separated (CSV) ---
+            var isCSV = lines.some(l => l.includes(','));
+            if (isCSV) {
+                var parts = lines[0].split(',');
+                var barcodeIndex = 0;
+                for (var idx = 0; idx < parts.length; idx++) {
+                    var val = parts[idx].trim().replace(/[\u0000-\u001F]/g, "");
+                    if (val && !isNaN(val) && parseInt(val) > 0) {
+                        barcodeIndex = idx;
+                        break;
+                    }
+                }
+                
+                var resultMappings = [];
+                for (var idx = 0; idx < parts.length; idx++) {
+                    if (idx === barcodeIndex) continue;
+                    var val = parts[idx].trim().replace(/[^\d.-]/g, "");
+                    if (val && !isNaN(val) && val.length > 0) {
+                        resultMappings.push("        [\"CHISO_" + idx + "\", " + idx + "]");
+                    }
+                }
+                if (resultMappings.length === 0) {
+                    resultMappings.push("        [\"CHISO_1\", 1]");
+                }
+                
+                return `var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
+(function (data, userdata) {
+    var dsketqua = [];
+    
+    // Xóa các kí tự điều khiển đầu cuối
+    data = data.replace(/[\\u0000-\\u001F]/g, "");
+    var arr = data.split(",");
+    
+    var stt = "";
+    if (arr[${barcodeIndex}]) {
+        stt = parseInt(arr[${barcodeIndex}].trim(), 10).toString();
+    }
+    
+    // Bản đồ index cột -> Mã xét nghiệm LIS tương ứng
+    var map = [
+${resultMappings.join(',\n')}
+    ];
+    
+    for (var i = 0; i < map.length; i++) {
+        var code = map[i][0];
+        var colIndex = map[i][1];
+        var rawVal = arr[colIndex];
+        if (!rawVal) continue;
+        
+        var val = rawVal.replace(/\\*/g, "").replace(/\\s+/g, " ").trim();
+        val = val.replace(/^[01]+\\s*/, "");
+        
+        dsketqua.push({
+            stt: stt,
+            ma_xn_may: code,
+            ketqua: val
+        });
+    }
+    
+    return dsketqua;
+})(JSHANDLER_CRLN_DATA_DECODED, JSHANDLER_CRLN_USERDATA_DECODED);`;
+            }
+            
+            // --- TH3: Dạng phiếu in (Ticket / Print Report) ---
+            var ticketParams = ["Na", "K", "Cl", "Ca", "pH", "Li", "TCO2", "GLU", "PRO", "WBC", "RBC", "HGB", "PLT"];
+            var foundParams = [];
+            
+            ticketParams.forEach(function(p) {
+                var re = new RegExp("\\b" + p + "\\b\\s*[=:]\\s*[-+]?[0-9.]+", "i");
+                if (re.test(decodedData)) {
+                    foundParams.push(p);
+                }
+            });
+            
+            if (foundParams.length >= 2) {
+                var targetLines = foundParams.map(function(p) {
+                    return "        { code: \"" + p + "\", regex: /\\b" + p + "\\b\\s*[=:]\\s*([0-9.]+)/i }";
+                }).join(',\n');
+                
+                return `var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
+(function (data, userdata) {
+    var dsketqua = [];
+    
+    // Giải mã và chuẩn hóa xuống dòng
+    var rawText = data.replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n');
+    
+    // 1. Tìm Barcode / Số thứ tự mẫu
+    var STT = "";
+    var barcodePatterns = [
+        /(?:Sample\\s+No\\.|SampleNo|S\\.No\\.)\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
+        /Barcode\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
+        /SID\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
+        /ID\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
+        /No\\.?\\s*([0-9]+)/i,
+        /Sample\\s*[=:]\\s*([0-9]+)/i
+    ];
+    
+    for (var i = 0; i < barcodePatterns.length; i++) {
+        var m = rawText.match(barcodePatterns[i]);
+        if (m && m[1]) {
+            var val = m[1].trim();
+            if (val && !/^(serum|plasma|urine|blood|fluid|control|qc)$/i.test(val)) {
+                STT = val;
+                if (!isNaN(val)) {
+                    STT = parseInt(val, 10).toString();
+                }
+                break;
+            }
+        }
+    }
+    console.log("Tìm thấy Barcode (STT):", STT);
+    
+    // 2. Tìm các kết quả bằng biểu thức chính quy (Regex)
+    var targets = [
+${targetLines}
+    ];
+    
+    for (var i = 0; i < targets.length; i++) {
+        var m = rawText.match(targets[i].regex);
+        if (m && m[1]) {
+            dsketqua.push({
+                stt: STT,
+                ma_xn_may: targets[i].code,
+                ketqua: m[1].trim()
+            });
+        }
+    }
+    return dsketqua;
+})(JSHANDLER_CRLN_DATA_DECODED, JSHANDLER_CRLN_USERDATA_DECODED);`;
+            }
+            
+            // --- TH4: Dạng chuỗi giá trị đơn theo dòng (Line Sequence) ---
+            var isLineSequence = false;
+            var numericLinesCount = 0;
+            for (var idx = 0; idx < lines.length; idx++) {
+                var line = lines[idx].trim();
+                var isVal = /^([-+]?[0-9.]+|--\.--)\s*(H|L)?$/i.test(line);
+                if (isVal) {
+                    numericLinesCount++;
+                }
+            }
+            
+            if (numericLinesCount >= 10) {
+                var originalLines = decodedData.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+                
+                var barcodeLineIdx = -1;
+                for (var idx = 0; idx < Math.min(originalLines.length, 5); idx++) {
+                    var line = originalLines[idx].trim();
+                    if (line && !isNaN(line) && line.length >= 6) {
+                        barcodeLineIdx = idx;
+                        break;
+                    }
+                }
+                
+                var resultStartLineIdx = 0;
+                for (var idx = 0; idx < Math.min(originalLines.length, 10); idx++) {
+                    var line = originalLines[idx].trim();
+                    if (/(\d+[\-\/]\d+[\-\/]\d+)|(\d+[h:]\d+)/i.test(line)) {
+                        resultStartLineIdx = idx + 1;
+                        break;
+                    }
+                }
+                
+                var mappings = [];
+                for (var idx = resultStartLineIdx; idx < originalLines.length; idx++) {
+                    if (idx === barcodeLineIdx) continue;
+                    var line = originalLines[idx].trim();
+                    var isVal = /^[-+]?[0-9.]+\s*(H|L)?$/i.test(line);
+                    var isDash = /^--\.--\s*(H|L)?$/i.test(line);
+                    if (isVal || isDash) {
+                        mappings.push("        { line: " + idx + ", code: \"CHISO_" + idx + "\" }");
+                    }
+                }
+                
+                return `var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
+(function (data, userdata) {
+    var dsketqua = [];
+    var arr = data.replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n').split('\\n');
+    
+    var STT = "";
+    for (var i = 0; i < Math.min(arr.length, 5); i++) {
+        var line = arr[i].trim();
+        if (line && !isNaN(line) && line.length >= 6) {
+            STT = parseInt(line, 10).toString();
+            break;
+        }
+    }
+    console.log("Tìm thấy Barcode (STT):", STT);
+    
+    var mappings = [
+${mappings.join(',\n')}
+    ];
+    
+    for (var j = 0; j < mappings.length; j++) {
+        var idx = mappings[j].line;
+        if (arr[idx]) {
+            var val = arr[idx].trim();
+            if (!val || val.indexOf('--') !== -1) continue;
+            
+            var numMatch = val.match(/^([-+]?[0-9.]+)/);
+            if (numMatch && numMatch[1]) {
+                dsketqua.push({
+                    stt: STT,
+                    ma_xn_may: mappings[j].code,
+                    ketqua: parseFloat(numMatch[1]).toString()
+                });
+            }
+        }
+    }
+    return dsketqua;
+})(JSHANDLER_CRLN_DATA_DECODED, JSHANDLER_CRLN_USERDATA_DECODED);`;
+            }
+            
+            // --- TH5: Tách theo cột khoảng trắng (Ví dụ dòng máy khí máu/điện giải) ---
+            var isSpaceSeparated = lines.some(l => l.split(/\s+/).length >= 4);
+            if (isSpaceSeparated) {
+                var parts = lines[0].split(/\s+/);
+                var barcodeIndex = 1;
+                for (var idx = 0; idx < parts.length; idx++) {
+                    var val = parts[idx].trim();
+                    if (val && val.length >= 6 && !isNaN(val)) {
+                        barcodeIndex = idx;
+                        break;
+                    }
+                }
+                
+                var resultMappings = [];
+                for (var idx = 0; idx < parts.length; idx++) {
+                    if (idx === barcodeIndex || idx === 0) continue;
+                    var val = parts[idx].trim();
+                    if (val && !isNaN(val) && val.includes('.')) {
+                        resultMappings.push("            { code: \"CHISO_" + idx + "\", col: " + idx + " }");
+                    }
+                }
+                
+                if (resultMappings.length === 0) {
+                    for (var idx = barcodeIndex + 1; idx < parts.length; idx++) {
+                        resultMappings.push("            { code: \"CHISO_" + idx + "\", col: " + idx + " }");
+                    }
+                }
+                
+                return `var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
+(function (data, userdata) {
+    var dsketqua = [];
+    var arr = data.replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n').split('\\n');
+    
+    for (var i = 0; i < arr.length; i++) {
+        var line = arr[i].trim();
+        if (!line) continue;
+        
+        // Tách các cột theo khoảng trắng
+        var cols = line.split(/\\s+/);
+        if (cols.length <= ${barcodeIndex}) continue;
+        
+        // Lấy Barcode
+        var barcode = parseInt(cols[${barcodeIndex}].trim(), 10).toString();
+        
+        // Bản đồ cột -> Mã chỉ số kết quả
+        // (Vui lòng thay đổi mã chỉ số CHISO_X thành K, Na, Cl, pH... phù hợp với máy của bạn)
+        var results = [
+${resultMappings.join(',\n')}
+        ];
+        
+        for (var j = 0; j < results.length; j++) {
+            var colIndex = results[j].col;
+            if (cols[colIndex]) {
+                var Obketquamay = {};
+                Obketquamay.stt = barcode;
+                Obketquamay.ma_xn_may = results[j].code;
+                Obketquamay.ketqua = cols[colIndex].trim();
+                dsketqua.push(Obketquamay);
+            }
+        }
+    }
+    return dsketqua;
+})(JSHANDLER_CRLN_DATA_DECODED, JSHANDLER_CRLN_USERDATA_DECODED);`;
+            }
+            
+            // --- MẶC ĐỊNH KHÔNG RÕ DẠNG ---
+            return `var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
+(function (data, userdata) {
+    var dsketqua = [];
+    
+    // Chưa tự động xác định được định dạng. Vui lòng tự viết code bóc tách.
+    console.log("Dữ liệu thô:", data);
+    
+    return dsketqua;
+})(JSHANDLER_CRLN_DATA_DECODED, JSHANDLER_CRLN_USERDATA_DECODED);`;
+        }
+
+        function toggleCheatSheet() {
+            var content = document.getElementById("cheatSheetContent");
+            var icon = document.getElementById("cheatSheetToggleIcon");
+            if (content.style.display === "none") {
+                content.style.display = "block";
+                icon.innerText = "▲";
+            } else {
+                content.style.display = "none";
+                icon.innerText = "▼";
+            }
+        }
+    </script>
+</body>
+</html>
