@@ -1905,7 +1905,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M74",
+    id: "M76",
     group: "",
     round: 32,
     date: "30/06/2026",
@@ -1930,7 +1930,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M75",
+    id: "M74",
     group: "",
     round: 32,
     date: "30/06/2026",
@@ -1955,7 +1955,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M76",
+    id: "M75",
     group: "",
     round: 32,
     date: "30/06/2026",
@@ -1980,7 +1980,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M77",
+    id: "M78",
     group: "",
     round: 32,
     date: "01/07/2026",
@@ -2005,7 +2005,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M78",
+    id: "M77",
     group: "",
     round: 32,
     date: "01/07/2026",
@@ -2080,7 +2080,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M81",
+    id: "M82",
     group: "",
     round: 32,
     date: "02/07/2026",
@@ -2105,7 +2105,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M82",
+    id: "M81",
     group: "",
     round: 32,
     date: "02/07/2026",
@@ -2130,7 +2130,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M83",
+    id: "M84",
     group: "",
     round: 32,
     date: "03/07/2026",
@@ -2155,7 +2155,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M84",
+    id: "M83",
     group: "",
     round: 32,
     date: "03/07/2026",
@@ -2287,7 +2287,7 @@ const OFFICIAL_MATCHES_RAW = [
     timestamp: 1783184400000,
     time: "00:00",
     team1Id: "CAN",
-    team2Id: "RD32",
+    team2Id: "MAR",
     score1: null,
     score2: null,
     yc1: 0,
@@ -2505,7 +2505,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M98",
+    id: "M99",
     group: "",
     round: 8,
     date: "11/07/2026",
@@ -2530,7 +2530,7 @@ const OFFICIAL_MATCHES_RAW = [
     matchTime: ""
   },
   {
-    id: "M99",
+    id: "M98",
     group: "",
     round: 8,
     date: "12/07/2026",

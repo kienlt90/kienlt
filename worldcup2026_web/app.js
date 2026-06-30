@@ -646,9 +646,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isSimulationActive || m.status === "Chưa đấu") {
         let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-        if (m.id === "M89") { t1 = getWinnerByMatchId("M74", "Thắng Trận 74"); t2 = getWinnerByMatchId("M77", "Thắng Trận 77"); }
-        else if (m.id === "M90") { t1 = getWinnerByMatchId("M73", "Thắng Trận 73"); t2 = getWinnerByMatchId("M75", "Thắng Trận 75"); }
-        else if (m.id === "M91") { t1 = getWinnerByMatchId("M76", "Thắng Trận 76"); t2 = getWinnerByMatchId("M78", "Thắng Trận 78"); }
+        if (m.id === "M89") { t1 = getWinnerByMatchId("M73", "Thắng Trận 73"); t2 = getWinnerByMatchId("M75", "Thắng Trận 75"); }
+        else if (m.id === "M90") { t1 = getWinnerByMatchId("M74", "Thắng Trận 74"); t2 = getWinnerByMatchId("M78", "Thắng Trận 78"); }
+        else if (m.id === "M91") { t1 = getWinnerByMatchId("M76", "Thắng Trận 76"); t2 = getWinnerByMatchId("M77", "Thắng Trận 77"); }
         else if (m.id === "M92") { t1 = getWinnerByMatchId("M79", "Thắng Trận 79"); t2 = getWinnerByMatchId("M80", "Thắng Trận 80"); }
         else if (m.id === "M93") { t1 = getWinnerByMatchId("M83", "Thắng Trận 83"); t2 = getWinnerByMatchId("M84", "Thắng Trận 84"); }
         else if (m.id === "M94") { t1 = getWinnerByMatchId("M81", "Thắng Trận 81"); t2 = getWinnerByMatchId("M82", "Thắng Trận 82"); }
@@ -673,8 +673,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         if (m.id === "M97") { t1 = getWinnerByMatchId("M89", "Thắng Trận 89"); t2 = getWinnerByMatchId("M90", "Thắng Trận 90"); }
-        else if (m.id === "M98") { t1 = getWinnerByMatchId("M93", "Thắng Trận 93"); t2 = getWinnerByMatchId("M94", "Thắng Trận 94"); }
-        else if (m.id === "M99") { t1 = getWinnerByMatchId("M91", "Thắng Trận 91"); t2 = getWinnerByMatchId("M92", "Thắng Trận 92"); }
+        else if (m.id === "M98") { t1 = getWinnerByMatchId("M91", "Thắng Trận 91"); t2 = getWinnerByMatchId("M92", "Thắng Trận 92"); }
+        else if (m.id === "M99") { t1 = getWinnerByMatchId("M93", "Thắng Trận 93"); t2 = getWinnerByMatchId("M94", "Thắng Trận 94"); }
         else if (m.id === "M100") { t1 = getWinnerByMatchId("M95", "Thắng Trận 95"); t2 = getWinnerByMatchId("M96", "Thắng Trận 96"); }
 
         m.team1 = t1.name;
@@ -694,8 +694,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isSimulationActive || m.status === "Chưa đấu") {
         let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-        if (m.id === "M101") { t1 = getWinnerByMatchId("M97", "Thắng Trận 97"); t2 = getWinnerByMatchId("M98", "Thắng Trận 98"); }
-        else if (m.id === "M102") { t1 = getWinnerByMatchId("M99", "Thắng Trận 99"); t2 = getWinnerByMatchId("M100", "Thắng Trận 100"); }
+        if (m.id === "M101") { t1 = getWinnerByMatchId("M97", "Thắng Trận 97"); t2 = getWinnerByMatchId("M99", "Thắng Trận 99"); }
+        else if (m.id === "M102") { t1 = getWinnerByMatchId("M98", "Thắng Trận 98"); t2 = getWinnerByMatchId("M100", "Thắng Trận 100"); }
 
         m.team1 = t1.name;
         m.team1Id = t1.id;
@@ -1698,13 +1698,13 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
 
-    const leftR32Ids = ["M74", "M77", "M73", "M75", "M83", "M84", "M81", "M82"];
+    const leftR32Ids = ["M73", "M75", "M74", "M78", "M83", "M84", "M81", "M82"];
     const leftR16Ids = ["M89", "M90", "M93", "M94"];
-    const leftQFIds = ["M97", "M98"];
+    const leftQFIds = ["M97", "M99"];
 
-    const rightR32Ids = ["M76", "M78", "M79", "M80", "M86", "M88", "M85", "M87"];
+    const rightR32Ids = ["M76", "M77", "M79", "M80", "M86", "M88", "M85", "M87"];
     const rightR16Ids = ["M91", "M92", "M95", "M96"];
-    const rightQFIds = ["M99", "M100"];
+    const rightQFIds = ["M98", "M100"];
 
     const leftR32Col = createSymmetricBracketColumn("Vòng 32 (Trái)", leftR32Ids.map(id => getBracketMatchData(id)));
     const leftR16Col = createSymmetricBracketColumn("Vòng 16 (Trái)", leftR16Ids.map(id => getBracketMatchData(id)));

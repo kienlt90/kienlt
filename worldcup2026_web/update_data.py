@@ -127,6 +127,52 @@ def parse_date_time(date_str):
         print(f"Error parsing date {date_str}: {ex}")
     return 0, "", ""
 
+EVENT_ID_MAP = {
+    # Vòng 32 Đội
+    "760486": ("M73", 32), # RSA vs CAN
+    "760489": ("M74", 32), # GER vs PAR
+    "760488": ("M75", 32), # NED vs MAR
+    "760487": ("M76", 32), # BRA vs JPN
+    "760492": ("M77", 32), # FRA vs SWE
+    "760490": ("M78", 32), # CIV vs NOR
+    "760491": ("M79", 32), # MEX vs ECU
+    "760495": ("M80", 32), # ENG vs COD
+    "760494": ("M81", 32), # USA vs BIH
+    "760493": ("M82", 32), # BEL vs SEN
+    "760496": ("M83", 32), # POR vs CRO
+    "760497": ("M84", 32), # ESP vs AUT
+    "760498": ("M85", 32), # SUI vs ALG
+    "760499": ("M86", 32), # AUS vs EGY
+    "760500": ("M87", 32), # ARG vs CPV
+    "760501": ("M88", 32), # COL vs GHA
+    
+    # Vòng 16 Đội
+    "760502": ("M89", 16), # Winner M73 vs Winner M75
+    "760503": ("M90", 16), # Winner M74 vs Winner M78
+    "760504": ("M91", 16), # Winner M76 vs Winner M77
+    "760505": ("M92", 16), # Winner M79 vs Winner M80
+    "760506": ("M93", 16), # Winner M83 vs Winner M84
+    "760507": ("M94", 16), # Winner M81 vs Winner M82
+    "760509": ("M95", 16), # Winner M86 vs Winner M88
+    "760508": ("M96", 16), # Winner M85 vs Winner M87
+    
+    # Tứ Kết (Vòng 8 Đội)
+    "760510": ("M97", 8),  # Winner M89 vs Winner M90
+    "760512": ("M98", 8),  # Winner M91 vs Winner M92 (Đổi chéo để tuyến tính!)
+    "760511": ("M99", 8),  # Winner M93 vs Winner M94 (Đổi chéo để tuyến tính!)
+    "760513": ("M100", 8), # Winner M95 vs Winner M96
+    
+    # Bán Kết
+    "760514": ("M101", 4), # Winner M97 vs Winner M99
+    "760515": ("M102", 4), # Winner M98 vs Winner M100
+    
+    # Tranh Hạng Ba
+    "760516": ("M103", 2),
+    
+    # Chung Kết
+    "760517": ("M104", 1)
+}
+
 wc_matches = []
 team_appearances = {}
 match_id = 1
@@ -144,27 +190,23 @@ for e in events:
     t1_name = c1.get('team', {}).get('displayName')
     t2_name = c2.get('team', {}).get('displayName')
     
-    # Calculate round
-    team_appearances[t1_id] = team_appearances.get(t1_id, 0) + 1
-    team_appearances[t2_id] = team_appearances.get(t2_id, 0) + 1
-    
-    if match_id <= 72:
-        round_val = max(team_appearances[t1_id], team_appearances[t2_id])
-    elif match_id <= 88:
-        round_val = 32
-    elif match_id <= 96:
-        round_val = 16
-    elif match_id <= 100:
-        round_val = 8
-    elif match_id <= 102:
-        round_val = 4
-    elif match_id == 103:
-        round_val = 2
+    event_id = str(e.get('id'))
+    is_knockout = False
+    if event_id in EVENT_ID_MAP:
+        m_id_str, round_val = EVENT_ID_MAP[event_id]
+        is_knockout = True
     else:
-        round_val = 1
+        m_id_str = f"M{str(match_id).zfill(2)}"
+        if match_id <= 72:
+            team_appearances[t1_id] = team_appearances.get(t1_id, 0) + 1
+            team_appearances[t2_id] = team_appearances.get(t2_id, 0) + 1
+            round_val = max(team_appearances[t1_id], team_appearances[t2_id])
+        else:
+            round_val = 32
+        is_knockout = match_id > 72
         
     group = ""
-    if match_id <= 72:
+    if not is_knockout:
         note = comp.get('altGameNote', '')
         g_match = re.search(r'Group ([A-L])', note)
         if g_match:
@@ -212,11 +254,11 @@ for e in events:
                 else: scorers2.append(s_obj)
                     
         if score1 > 0 or score2 > 0:
-            print(f"Fetching assists for Match {match_id}: {t1_id} vs {t2_id} ({e.get('id')})...")
+            print(f"Fetching assists for Match {m_id_str}: {t1_id} vs {t2_id} ({e.get('id')})...")
             assists1, assists2 = fetch_assists(e.get('id'), scorers1, scorers2, t1_name, t2_name)
             
         # Parse Penalty
-        if score1 == score2 and match_id > 72:
+        if score1 == score2 and is_knockout:
             s_score1 = c1.get('shootoutScore')
             s_score2 = c2.get('shootoutScore')
             if s_score1 is not None and s_score2 is not None:
@@ -231,7 +273,7 @@ for e in events:
                 penaltyWinner = 2
 
     m_obj = {
-        "id": f"M{str(match_id).zfill(2)}",
+        "id": m_id_str,
         "group": group,
         "round": round_val,
         "date": date_formatted,
