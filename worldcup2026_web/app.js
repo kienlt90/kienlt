@@ -9,6 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let activePlayerStats = {}; // Thống kê tất cả cầu thủ thực tế ghi bàn/kiến tạo
   let isFirstLoad = true;
   let currentBracketView = localStorage.getItem("wc2026_bracket_view") || "symmetric";
+  let isSimulationActive = localStorage.getItem("wc2026_sim_active") === "true";
+
+  function activateSimulation() {
+    if (!isSimulationActive) {
+      isSimulationActive = true;
+      localStorage.setItem("wc2026_sim_active", "true");
+    }
+  }
 
   // Helper lấy thông tin cầu thủ theo chỉ số mục tiêu
   function getPlayerFromTeam(teamName, idx) {
@@ -123,16 +131,17 @@ document.addEventListener("DOMContentLoaded", () => {
   function getWinnerByMatchId(matchId, placeholderText) {
     const match = matches.find(m => m.id === matchId);
     if (match) {
-      if (match.status === "Kết thúc" && match.score1 !== null && match.score2 !== null) {
-        if (match.winnerId) {
-          const isT1 = match.winnerId === match.team1Id;
-          return { id: match.winnerId, name: isT1 ? match.team1 : match.team2, flagCode: isT1 ? match.team1FlagCode : match.team2FlagCode, flag: isT1 ? match.team1Flag : match.team2Flag, isReal: true };
-        }
+      if (match.score1 !== null && match.score2 !== null) {
         if (match.score1 > match.score2) {
           return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
         } else if (match.score1 < match.score2) {
           return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
         } else {
+          if (match.penaltyWinner === 1) {
+            return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
+          } else if (match.penaltyWinner === 2) {
+            return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
+          }
           return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
         }
       }
@@ -143,17 +152,17 @@ document.addEventListener("DOMContentLoaded", () => {
   function getLoserByMatchId(matchId, placeholderText) {
     const match = matches.find(m => m.id === matchId);
     if (match) {
-      if (match.status === "Kết thúc" && match.score1 !== null && match.score2 !== null) {
-        if (match.winnerId) {
-          const isT1 = match.winnerId === match.team1Id;
-          const loserId = isT1 ? match.team2Id : match.team1Id;
-          return { id: loserId, name: isT1 ? match.team2 : match.team1, flagCode: isT1 ? match.team2FlagCode : match.team1FlagCode, flag: isT1 ? match.team2Flag : match.team1Flag, isReal: true };
-        }
+      if (match.score1 !== null && match.score2 !== null) {
         if (match.score1 > match.score2) {
           return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
         } else if (match.score1 < match.score2) {
           return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
         } else {
+          if (match.penaltyWinner === 1) {
+            return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
+          } else if (match.penaltyWinner === 2) {
+            return { id: match.team1Id, name: match.team1, flagCode: match.team1FlagCode, flag: match.team1Flag, isReal: true };
+          }
           return { id: match.team2Id, name: match.team2, flagCode: match.team2FlagCode, flag: match.team2Flag, isReal: true };
         }
       }
@@ -200,17 +209,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (savedMatches) {
       try {
         const parsed = JSON.parse(savedMatches);
-        // Tự động đồng bộ các trận đấu đã kết thúc hoặc đang đá từ DEFAULT_MATCHES để tránh lệch kết quả chính thức
+        // Tự động đồng bộ các trận đấu đã kết thúc từ DEFAULT_MATCHES để tránh lệch kết quả chính thức
         matches = DEFAULT_MATCHES.map(defaultMatch => {
           const savedMatch = parsed.find(m => m.id === defaultMatch.id);
           if (savedMatch) {
-            // Luôn đồng bộ ngày, giờ, timestamp chính thức từ file data.js để cập nhật lịch thi đấu mới nhất
-            savedMatch.date = defaultMatch.date;
-            savedMatch.time = defaultMatch.time;
-            savedMatch.timestamp = defaultMatch.timestamp;
-
-            // Nếu trận đấu trong mặc định đã Kết thúc hoặc Đang đá, bắt buộc lấy từ mặc định
-            if (defaultMatch.status === "Kết thúc" || defaultMatch.status === "Đang đá") {
+            // Nếu trận đấu trong mã nguồn mặc định đã Kết thúc, bắt buộc lấy từ mặc định
+            if (defaultMatch.status === "Kết thúc") {
               return defaultMatch;
             }
             return savedMatch;
@@ -374,6 +378,8 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.addEventListener("click", () => {
         if (confirm("Bạn có chắc chắn muốn khôi phục lại toàn bộ dữ liệu mẫu ban đầu của World Cup 2026?")) {
           localStorage.removeItem("wc2026_matches");
+          localStorage.removeItem("wc2026_sim_active");
+          isSimulationActive = false;
           matches = [...DEFAULT_MATCHES];
           recalculateAll();
           alert("Đã khôi phục dữ liệu mẫu thành công!");
@@ -602,126 +608,138 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resolve Round of 32 matches (M73 to M88)
     const r32MatchesList = matches.filter(m => m.id >= "M73" && m.id <= "M88");
     r32MatchesList.forEach(m => {
-      let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-      let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+      if (isSimulationActive || m.status === "Chưa đấu") {
+        let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+        let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
 
-      if (m.id === "M73") { t1 = getTeamOrPlaceholder("A", 1, "Nhì Bảng A"); t2 = getTeamOrPlaceholder("B", 1, "Nhì Bảng B"); }
-      else if (m.id === "M74") { t1 = getTeamOrPlaceholder("E", 0, "Nhất Bảng E"); t2 = getAssignedThirdOrPlaceholder("M74", "A/B/C/D/F", assignedThirds); }
-      else if (m.id === "M75") { t1 = getTeamOrPlaceholder("F", 0, "Nhất Bảng F"); t2 = getTeamOrPlaceholder("C", 1, "Nhì Bảng C"); }
-      else if (m.id === "M76") { t1 = getTeamOrPlaceholder("C", 0, "Nhất Bảng C"); t2 = getTeamOrPlaceholder("F", 1, "Nhì Bảng F"); }
-      else if (m.id === "M77") { t1 = getTeamOrPlaceholder("I", 0, "Nhất Bảng I"); t2 = getAssignedThirdOrPlaceholder("M77", "C/D/F/G/H", assignedThirds); }
-      else if (m.id === "M78") { t1 = getTeamOrPlaceholder("E", 1, "Nhì Bảng E"); t2 = getTeamOrPlaceholder("I", 1, "Nhì Bảng I"); }
-      else if (m.id === "M79") { t1 = getTeamOrPlaceholder("A", 0, "Nhất Bảng A"); t2 = getAssignedThirdOrPlaceholder("M79", "C/E/F/H/I", assignedThirds); }
-      else if (m.id === "M80") { t1 = getTeamOrPlaceholder("L", 0, "Nhất Bảng L"); t2 = getAssignedThirdOrPlaceholder("M80", "E/H/I/J/K", assignedThirds); }
-      else if (m.id === "M81") { t1 = getTeamOrPlaceholder("D", 0, "Nhất Bảng D"); t2 = getAssignedThirdOrPlaceholder("M81", "B/E/F/I/J", assignedThirds); }
-      else if (m.id === "M82") { t1 = getTeamOrPlaceholder("G", 0, "Nhất Bảng G"); t2 = getAssignedThirdOrPlaceholder("M82", "A/E/H/I/J", assignedThirds); }
-      else if (m.id === "M83") { t1 = getTeamOrPlaceholder("K", 1, "Nhì Bảng K"); t2 = getTeamOrPlaceholder("L", 1, "Nhì Bảng L"); }
-      else if (m.id === "M84") { t1 = getTeamOrPlaceholder("H", 0, "Nhất Bảng H"); t2 = getTeamOrPlaceholder("J", 1, "Nhì Bảng J"); }
-      else if (m.id === "M85") { t1 = getTeamOrPlaceholder("B", 0, "Nhất Bảng B"); t2 = getAssignedThirdOrPlaceholder("M85", "E/F/G/I/J", assignedThirds); }
-      else if (m.id === "M86") { t1 = getTeamOrPlaceholder("J", 0, "Nhất Bảng J"); t2 = getTeamOrPlaceholder("H", 1, "Nhì Bảng H"); }
-      else if (m.id === "M87") { t1 = getTeamOrPlaceholder("K", 0, "Nhất Bảng K"); t2 = getAssignedThirdOrPlaceholder("M87", "D/E/I/J/L", assignedThirds); }
-      else if (m.id === "M88") { t1 = getTeamOrPlaceholder("D", 1, "Nhì Bảng D"); t2 = getTeamOrPlaceholder("G", 1, "Nhì Bảng G"); }
+        if (m.id === "M73") { t1 = getTeamOrPlaceholder("A", 1, "Nhì Bảng A"); t2 = getTeamOrPlaceholder("B", 1, "Nhì Bảng B"); }
+        else if (m.id === "M74") { t1 = getTeamOrPlaceholder("E", 0, "Nhất Bảng E"); t2 = getAssignedThirdOrPlaceholder("M74", "A/B/C/D/F", assignedThirds); }
+        else if (m.id === "M75") { t1 = getTeamOrPlaceholder("F", 0, "Nhất Bảng F"); t2 = getTeamOrPlaceholder("C", 1, "Nhì Bảng C"); }
+        else if (m.id === "M76") { t1 = getTeamOrPlaceholder("C", 0, "Nhất Bảng C"); t2 = getTeamOrPlaceholder("F", 1, "Nhì Bảng F"); }
+        else if (m.id === "M77") { t1 = getTeamOrPlaceholder("I", 0, "Nhất Bảng I"); t2 = getAssignedThirdOrPlaceholder("M77", "C/D/F/G/H", assignedThirds); }
+        else if (m.id === "M78") { t1 = getTeamOrPlaceholder("E", 1, "Nhì Bảng E"); t2 = getTeamOrPlaceholder("I", 1, "Nhì Bảng I"); }
+        else if (m.id === "M79") { t1 = getTeamOrPlaceholder("A", 0, "Nhất Bảng A"); t2 = getAssignedThirdOrPlaceholder("M79", "C/E/F/H/I", assignedThirds); }
+        else if (m.id === "M80") { t1 = getTeamOrPlaceholder("L", 0, "Nhất Bảng L"); t2 = getAssignedThirdOrPlaceholder("M80", "E/H/I/J/K", assignedThirds); }
+        else if (m.id === "M81") { t1 = getTeamOrPlaceholder("D", 0, "Nhất Bảng D"); t2 = getAssignedThirdOrPlaceholder("M81", "B/E/F/I/J", assignedThirds); }
+        else if (m.id === "M82") { t1 = getTeamOrPlaceholder("G", 0, "Nhất Bảng G"); t2 = getAssignedThirdOrPlaceholder("M82", "A/E/H/I/J", assignedThirds); }
+        else if (m.id === "M83") { t1 = getTeamOrPlaceholder("K", 1, "Nhì Bảng K"); t2 = getTeamOrPlaceholder("L", 1, "Nhì Bảng L"); }
+        else if (m.id === "M84") { t1 = getTeamOrPlaceholder("H", 0, "Nhất Bảng H"); t2 = getTeamOrPlaceholder("J", 1, "Nhì Bảng J"); }
+        else if (m.id === "M85") { t1 = getTeamOrPlaceholder("B", 0, "Nhất Bảng B"); t2 = getAssignedThirdOrPlaceholder("M85", "E/F/G/I/J", assignedThirds); }
+        else if (m.id === "M86") { t1 = getTeamOrPlaceholder("J", 0, "Nhất Bảng J"); t2 = getTeamOrPlaceholder("H", 1, "Nhì Bảng H"); }
+        else if (m.id === "M87") { t1 = getTeamOrPlaceholder("K", 0, "Nhất Bảng K"); t2 = getAssignedThirdOrPlaceholder("M87", "D/E/I/J/L", assignedThirds); }
+        else if (m.id === "M88") { t1 = getTeamOrPlaceholder("D", 1, "Nhì Bảng D"); t2 = getTeamOrPlaceholder("G", 1, "Nhì Bảng G"); }
 
-      m.team1 = t1.name;
-      m.team1Id = t1.id;
-      m.team1FlagCode = t1.flagCode;
-      m.team1Flag = t1.flag;
-      m.team2 = t2.name;
-      m.team2Id = t2.id;
-      m.team2FlagCode = t2.flagCode;
-      m.team2Flag = t2.flag;
+        m.team1 = t1.name;
+        m.team1Id = t1.id;
+        m.team1FlagCode = t1.flagCode;
+        m.team1Flag = t1.flag;
+        m.team2 = t2.name;
+        m.team2Id = t2.id;
+        m.team2FlagCode = t2.flagCode;
+        m.team2Flag = t2.flag;
+      }
     });
 
     // Resolve Round of 16 matches (M89 to M96)
     const r16MatchesList = matches.filter(m => m.id >= "M89" && m.id <= "M96");
     r16MatchesList.forEach(m => {
-      let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-      let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-      if (m.id === "M89") { t1 = getWinnerByMatchId("M74", "Thắng Trận 74"); t2 = getWinnerByMatchId("M77", "Thắng Trận 77"); }
-      else if (m.id === "M90") { t1 = getWinnerByMatchId("M73", "Thắng Trận 73"); t2 = getWinnerByMatchId("M75", "Thắng Trận 75"); }
-      else if (m.id === "M91") { t1 = getWinnerByMatchId("M76", "Thắng Trận 76"); t2 = getWinnerByMatchId("M78", "Thắng Trận 78"); }
-      else if (m.id === "M92") { t1 = getWinnerByMatchId("M79", "Thắng Trận 79"); t2 = getWinnerByMatchId("M80", "Thắng Trận 80"); }
-      else if (m.id === "M93") { t1 = getWinnerByMatchId("M83", "Thắng Trận 83"); t2 = getWinnerByMatchId("M84", "Thắng Trận 84"); }
-      else if (m.id === "M94") { t1 = getWinnerByMatchId("M81", "Thắng Trận 81"); t2 = getWinnerByMatchId("M82", "Thắng Trận 82"); }
-      else if (m.id === "M95") { t1 = getWinnerByMatchId("M86", "Thắng Trận 86"); t2 = getWinnerByMatchId("M88", "Thắng Trận 88"); }
-      else if (m.id === "M96") { t1 = getWinnerByMatchId("M85", "Thắng Trận 85"); t2 = getWinnerByMatchId("M87", "Thắng Trận 87"); }
+      if (isSimulationActive || m.status === "Chưa đấu") {
+        let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+        let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+        if (m.id === "M89") { t1 = getWinnerByMatchId("M74", "Thắng Trận 74"); t2 = getWinnerByMatchId("M77", "Thắng Trận 77"); }
+        else if (m.id === "M90") { t1 = getWinnerByMatchId("M73", "Thắng Trận 73"); t2 = getWinnerByMatchId("M75", "Thắng Trận 75"); }
+        else if (m.id === "M91") { t1 = getWinnerByMatchId("M76", "Thắng Trận 76"); t2 = getWinnerByMatchId("M78", "Thắng Trận 78"); }
+        else if (m.id === "M92") { t1 = getWinnerByMatchId("M79", "Thắng Trận 79"); t2 = getWinnerByMatchId("M80", "Thắng Trận 80"); }
+        else if (m.id === "M93") { t1 = getWinnerByMatchId("M83", "Thắng Trận 83"); t2 = getWinnerByMatchId("M84", "Thắng Trận 84"); }
+        else if (m.id === "M94") { t1 = getWinnerByMatchId("M81", "Thắng Trận 81"); t2 = getWinnerByMatchId("M82", "Thắng Trận 82"); }
+        else if (m.id === "M95") { t1 = getWinnerByMatchId("M86", "Thắng Trận 86"); t2 = getWinnerByMatchId("M88", "Thắng Trận 88"); }
+        else if (m.id === "M96") { t1 = getWinnerByMatchId("M85", "Thắng Trận 85"); t2 = getWinnerByMatchId("M87", "Thắng Trận 87"); }
 
-      m.team1 = t1.name;
-      m.team1Id = t1.id;
-      m.team1FlagCode = t1.flagCode;
-      m.team1Flag = t1.flag;
-      m.team2 = t2.name;
-      m.team2Id = t2.id;
-      m.team2FlagCode = t2.flagCode;
-      m.team2Flag = t2.flag;
+        m.team1 = t1.name;
+        m.team1Id = t1.id;
+        m.team1FlagCode = t1.flagCode;
+        m.team1Flag = t1.flag;
+        m.team2 = t2.name;
+        m.team2Id = t2.id;
+        m.team2FlagCode = t2.flagCode;
+        m.team2Flag = t2.flag;
+      }
     });
 
     // Resolve Quarter-finals matches (M97 to M100)
     const qfMatchesList = matches.filter(m => m.id >= "M97" && m.id <= "M100");
     qfMatchesList.forEach(m => {
-      let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-      let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-      if (m.id === "M97") { t1 = getWinnerByMatchId("M89", "Thắng Trận 89"); t2 = getWinnerByMatchId("M90", "Thắng Trận 90"); }
-      else if (m.id === "M98") { t1 = getWinnerByMatchId("M93", "Thắng Trận 93"); t2 = getWinnerByMatchId("M94", "Thắng Trận 94"); }
-      else if (m.id === "M99") { t1 = getWinnerByMatchId("M91", "Thắng Trận 91"); t2 = getWinnerByMatchId("M92", "Thắng Trận 92"); }
-      else if (m.id === "M100") { t1 = getWinnerByMatchId("M95", "Thắng Trận 95"); t2 = getWinnerByMatchId("M96", "Thắng Trận 96"); }
+      if (isSimulationActive || m.status === "Chưa đấu") {
+        let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+        let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+        if (m.id === "M97") { t1 = getWinnerByMatchId("M89", "Thắng Trận 89"); t2 = getWinnerByMatchId("M90", "Thắng Trận 90"); }
+        else if (m.id === "M98") { t1 = getWinnerByMatchId("M93", "Thắng Trận 93"); t2 = getWinnerByMatchId("M94", "Thắng Trận 94"); }
+        else if (m.id === "M99") { t1 = getWinnerByMatchId("M91", "Thắng Trận 91"); t2 = getWinnerByMatchId("M92", "Thắng Trận 92"); }
+        else if (m.id === "M100") { t1 = getWinnerByMatchId("M95", "Thắng Trận 95"); t2 = getWinnerByMatchId("M96", "Thắng Trận 96"); }
 
-      m.team1 = t1.name;
-      m.team1Id = t1.id;
-      m.team1FlagCode = t1.flagCode;
-      m.team1Flag = t1.flag;
-      m.team2 = t2.name;
-      m.team2Id = t2.id;
-      m.team2FlagCode = t2.flagCode;
-      m.team2Flag = t2.flag;
+        m.team1 = t1.name;
+        m.team1Id = t1.id;
+        m.team1FlagCode = t1.flagCode;
+        m.team1Flag = t1.flag;
+        m.team2 = t2.name;
+        m.team2Id = t2.id;
+        m.team2FlagCode = t2.flagCode;
+        m.team2Flag = t2.flag;
+      }
     });
 
     // Resolve Semi-finals matches (M101 to M102)
     const sfMatchesList = matches.filter(m => m.id >= "M101" && m.id <= "M102");
     sfMatchesList.forEach(m => {
-      let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-      let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
-      if (m.id === "M101") { t1 = getWinnerByMatchId("M97", "Thắng Trận 97"); t2 = getWinnerByMatchId("M98", "Thắng Trận 98"); }
-      else if (m.id === "M102") { t1 = getWinnerByMatchId("M99", "Thắng Trận 99"); t2 = getWinnerByMatchId("M100", "Thắng Trận 100"); }
+      if (isSimulationActive || m.status === "Chưa đấu") {
+        let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+        let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
+        if (m.id === "M101") { t1 = getWinnerByMatchId("M97", "Thắng Trận 97"); t2 = getWinnerByMatchId("M98", "Thắng Trận 98"); }
+        else if (m.id === "M102") { t1 = getWinnerByMatchId("M99", "Thắng Trận 99"); t2 = getWinnerByMatchId("M100", "Thắng Trận 100"); }
 
-      m.team1 = t1.name;
-      m.team1Id = t1.id;
-      m.team1FlagCode = t1.flagCode;
-      m.team1Flag = t1.flag;
-      m.team2 = t2.name;
-      m.team2Id = t2.id;
-      m.team2FlagCode = t2.flagCode;
-      m.team2Flag = t2.flag;
+        m.team1 = t1.name;
+        m.team1Id = t1.id;
+        m.team1FlagCode = t1.flagCode;
+        m.team1Flag = t1.flag;
+        m.team2 = t2.name;
+        m.team2Id = t2.id;
+        m.team2FlagCode = t2.flagCode;
+        m.team2Flag = t2.flag;
+      }
     });
 
     // Resolve Third place match (M103)
     const m103 = matches.find(m => m.id === "M103");
     if (m103) {
-      const t1 = getLoserByMatchId("M101", "Thua BK 1");
-      const t2 = getLoserByMatchId("M102", "Thua BK 2");
-      m103.team1 = t1.name;
-      m103.team1Id = t1.id;
-      m103.team1FlagCode = t1.flagCode;
-      m103.team1Flag = t1.flag;
-      m103.team2 = t2.name;
-      m103.team2Id = t2.id;
-      m103.team2FlagCode = t2.flagCode;
-      m103.team2Flag = t2.flag;
+      if (isSimulationActive || m103.status === "Chưa đấu") {
+        const t1 = getLoserByMatchId("M101", "Thua BK 1");
+        const t2 = getLoserByMatchId("M102", "Thua BK 2");
+        m103.team1 = t1.name;
+        m103.team1Id = t1.id;
+        m103.team1FlagCode = t1.flagCode;
+        m103.team1Flag = t1.flag;
+        m103.team2 = t2.name;
+        m103.team2Id = t2.id;
+        m103.team2FlagCode = t2.flagCode;
+        m103.team2Flag = t2.flag;
+      }
     }
 
     // Resolve Final match (M104)
     const m104 = matches.find(m => m.id === "M104");
     if (m104) {
-      const t1 = getWinnerByMatchId("M101", "Thắng BK 1");
-      const t2 = getWinnerByMatchId("M102", "Thắng BK 2");
-      m104.team1 = t1.name;
-      m104.team1Id = t1.id;
-      m104.team1FlagCode = t1.flagCode;
-      m104.team1Flag = t1.flag;
-      m104.team2 = t2.name;
-      m104.team2Id = t2.id;
-      m104.team2FlagCode = t2.flagCode;
-      m104.team2Flag = t2.flag;
+      if (isSimulationActive || m104.status === "Chưa đấu") {
+        const t1 = getWinnerByMatchId("M101", "Thắng BK 1");
+        const t2 = getWinnerByMatchId("M102", "Thắng BK 2");
+        m104.team1 = t1.name;
+        m104.team1Id = t1.id;
+        m104.team1FlagCode = t1.flagCode;
+        m104.team1Flag = t1.flag;
+        m104.team2 = t2.name;
+        m104.team2Id = t2.id;
+        m104.team2FlagCode = t2.flagCode;
+        m104.team2Flag = t2.flag;
+      }
     }
 
     // Lưu lại lịch đấu vào localStorage
@@ -1137,8 +1155,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${flag1Html}
                 <span>${match.team1 || "Chưa xác định"}</span>
               </div>
-              <div class="score-display-value">
-                ${match.score1 !== null ? match.score1 : '-'}
+              <div class="score-display-value" style="display: flex; align-items: center; gap: 4px;">
+                <span>${match.score1 !== null ? match.score1 : '-'}</span>
+                ${match.shootoutScore1 !== null && match.shootoutScore1 !== undefined ? `<span style="font-size: 13px; color: var(--primary); font-weight: 700; margin-left: 2px;">(${match.shootoutScore1})</span>` : ''}
               </div>
             </div>
             
@@ -1150,8 +1169,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${flag2Html}
                 <span>${match.team2 || "Chưa xác định"}</span>
               </div>
-              <div class="score-display-value">
-                ${match.score2 !== null ? match.score2 : '-'}
+              <div class="score-display-value" style="display: flex; align-items: center; gap: 4px;">
+                <span>${match.score2 !== null ? match.score2 : '-'}</span>
+                ${match.shootoutScore2 !== null && match.shootoutScore2 !== undefined ? `<span style="font-size: 13px; color: var(--primary); font-weight: 700; margin-left: 2px;">(${match.shootoutScore2})</span>` : ''}
               </div>
             </div>
           </div>
@@ -1348,6 +1368,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const match = matches.find(m => m.id === matchId);
         
         if (match) {
+          activateSimulation();
           const isTeam1 = input.classList.contains("score-team-1");
           const parsedVal = val === "" ? null : Math.max(0, parseInt(val) || 0);
           
@@ -1373,6 +1394,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const match = matches.find(m => m.id === matchId);
         if (match) {
+          activateSimulation();
           const scoreKey = teamNum === "1" ? "score1" : "score2";
           let curScore = match[scoreKey];
           
@@ -1405,6 +1427,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const match = matches.find(m => m.id === matchId);
         if (match) {
+          activateSimulation();
           let curCards = match[cardKey] || 0;
           curCards = isInc ? curCards + 1 : Math.max(0, curCards - 1);
           
@@ -1552,8 +1575,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const r16Matches = matches.filter(m => m.id >= "M89" && m.id <= "M96").map(m => ({
       id: m.id,
       name: `Trận ${m.id.substring(1)}`,
-      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1 },
-      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2 },
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1, shootoutScore: m.shootoutScore1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2, shootoutScore: m.shootoutScore2 },
       date: m.date,
       time: m.time
     }));
@@ -1562,8 +1585,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const qfMatches = matches.filter(m => m.id >= "M97" && m.id <= "M100").map(m => ({
       id: m.id,
       name: `Trận ${m.id.substring(1)} (TK)`,
-      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1 },
-      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2 },
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1, shootoutScore: m.shootoutScore1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2, shootoutScore: m.shootoutScore2 },
       date: m.date,
       time: m.time
     }));
@@ -1572,8 +1595,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const sfMatches = matches.filter(m => m.id >= "M101" && m.id <= "M102").map(m => ({
       id: m.id,
       name: `Trận ${m.id.substring(1)} (BK)`,
-      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1 },
-      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2 },
+      t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1, shootoutScore: m.shootoutScore1 },
+      t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2, shootoutScore: m.shootoutScore2 },
       date: m.date,
       time: m.time
     }));
@@ -1583,8 +1606,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const finalMatch = {
       id: "M104",
       name: "Chung Kết",
-      t1: { name: finalMatchRaw ? finalMatchRaw.team1 : "", flagCode: finalMatchRaw ? finalMatchRaw.team1FlagCode : "", isReal: !!(finalMatchRaw && finalMatchRaw.team1FlagCode), score: finalMatchRaw ? finalMatchRaw.score1 : null },
-      t2: { name: finalMatchRaw ? finalMatchRaw.team2 : "", flagCode: finalMatchRaw ? finalMatchRaw.team2FlagCode : "", isReal: !!(finalMatchRaw && finalMatchRaw.team2FlagCode), score: finalMatchRaw ? finalMatchRaw.score2 : null },
+      t1: { name: finalMatchRaw ? finalMatchRaw.team1 : "", flagCode: finalMatchRaw ? finalMatchRaw.team1FlagCode : "", isReal: !!(finalMatchRaw && finalMatchRaw.team1FlagCode), score: finalMatchRaw ? finalMatchRaw.score1 : null, shootoutScore: finalMatchRaw ? finalMatchRaw.shootoutScore1 : null },
+      t2: { name: finalMatchRaw ? finalMatchRaw.team2 : "", flagCode: finalMatchRaw ? finalMatchRaw.team2FlagCode : "", isReal: !!(finalMatchRaw && finalMatchRaw.team2FlagCode), score: finalMatchRaw ? finalMatchRaw.score2 : null, shootoutScore: finalMatchRaw ? finalMatchRaw.shootoutScore2 : null },
       date: finalMatchRaw ? finalMatchRaw.date : "",
       time: finalMatchRaw ? finalMatchRaw.time : ""
     };
@@ -1668,8 +1691,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return {
         id: m.id,
         name: customName || `Trận ${m.id.substring(1)}`,
-        t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1 },
-        t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2 },
+        t1: { name: m.team1, flagCode: m.team1FlagCode, isReal: !!m.team1FlagCode, score: m.score1, shootoutScore: m.shootoutScore1 },
+        t2: { name: m.team2, flagCode: m.team2FlagCode, isReal: !!m.team2FlagCode, score: m.score2, shootoutScore: m.shootoutScore2 },
         date: m.date,
         time: m.time
       };
@@ -1814,14 +1837,24 @@ document.addEventListener("DOMContentLoaded", () => {
             ${match.t1.isReal ? `<img src="https://flagcdn.com/w40/${match.t1.flagCode}.png" class="team-flag-img" alt="${match.t1.name}">` : `<span>🏳️</span>`}
             <span>${match.t1.name}</span>
           </div>
-          ${match.t1.score !== null ? `<span class="bracket-team-score">${match.t1.score}</span>` : ''}
+          ${match.t1.score !== null ? `
+            <span class="bracket-team-score" style="display: flex; align-items: center; gap: 2px;">
+              <span>${match.t1.score}</span>
+              ${match.t1.shootoutScore !== null && match.t1.shootoutScore !== undefined ? `<span style="font-size: 10px; color: var(--primary); font-weight: 700; margin-left: 2px;">(${match.t1.shootoutScore})</span>` : ''}
+            </span>
+          ` : ''}
         </div>
         <div class="bracket-team-row ${match.t2.isReal ? 'winner' : 'loser'}">
           <div class="bracket-team-name">
             ${match.t2.isReal ? `<img src="https://flagcdn.com/w40/${match.t2.flagCode}.png" class="team-flag-img" alt="${match.t2.name}">` : `<span>🏳️</span>`}
             <span>${match.t2.name}</span>
           </div>
-          ${match.t2.score !== null ? `<span class="bracket-team-score">${match.t2.score}</span>` : ''}
+          ${match.t2.score !== null ? `
+            <span class="bracket-team-score" style="display: flex; align-items: center; gap: 2px;">
+              <span>${match.t2.score}</span>
+              ${match.t2.shootoutScore !== null && match.t2.shootoutScore !== undefined ? `<span style="font-size: 10px; color: var(--primary); font-weight: 700; margin-left: 2px;">(${match.t2.shootoutScore})</span>` : ''}
+            </span>
+          ` : ''}
         </div>
       `;
       col.appendChild(matchEl);
@@ -1856,14 +1889,24 @@ document.addEventListener("DOMContentLoaded", () => {
             ${match.t1.isReal ? `<img src="https://flagcdn.com/w40/${match.t1.flagCode}.png" class="team-flag-img" alt="${match.t1.name}">` : `<span>🏳️</span>`}
             <span>${match.t1.name}</span>
           </div>
-          ${match.t1.score !== null ? `<span class="bracket-team-score">${match.t1.score}</span>` : ''}
+          ${match.t1.score !== null ? `
+            <span class="bracket-team-score" style="display: flex; align-items: center; gap: 2px;">
+              <span>${match.t1.score}</span>
+              ${match.t1.shootoutScore !== null && match.t1.shootoutScore !== undefined ? `<span style="font-size: 10px; color: var(--primary); font-weight: 700; margin-left: 2px;">(${match.t1.shootoutScore})</span>` : ''}
+            </span>
+          ` : ''}
         </div>
         <div class="bracket-team-row ${match.t2.isReal ? 'winner' : 'loser'}">
           <div class="bracket-team-name">
             ${match.t2.isReal ? `<img src="https://flagcdn.com/w40/${match.t2.flagCode}.png" class="team-flag-img" alt="${match.t2.name}">` : `<span>🏳️</span>`}
             <span>${match.t2.name}</span>
           </div>
-          ${match.t2.score !== null ? `<span class="bracket-team-score">${match.t2.score}</span>` : ''}
+          ${match.t2.score !== null ? `
+            <span class="bracket-team-score" style="display: flex; align-items: center; gap: 2px;">
+              <span>${match.t2.score}</span>
+              ${match.t2.shootoutScore !== null && match.t2.shootoutScore !== undefined ? `<span style="font-size: 10px; color: var(--primary); font-weight: 700; margin-left: 2px;">(${match.t2.shootoutScore})</span>` : ''}
+            </span>
+          ` : ''}
         </div>
       `;
       col.appendChild(matchEl);
@@ -1874,6 +1917,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- MÔ PHỎNG TỈ SỐ VÀ THẺ PHẠT NGẪU NHIÊN ---
   function simulateRandomScores(allMatches = true) {
+    activateSimulation();
     const groupFilter = document.getElementById("filter-group-select").value;
     const roundFilter = document.getElementById("filter-round-select").value;
     const statusFilter = document.getElementById("filter-status-select").value;
@@ -2012,13 +2056,29 @@ document.addEventListener("DOMContentLoaded", () => {
               matchedMatch.status = espnState === "post" ? "Kết thúc" : "Đang đá";
               matchedMatch.matchTime = event.status.type.shortDetail || (event.status.displayClock ? event.status.displayClock + "'" : "");
 
-              let winnerId = null;
-              if (homeCompetitor.winner === true) {
-                winnerId = homeAbbr;
-              } else if (awayCompetitor.winner === true) {
-                winnerId = awayAbbr;
+              // Khởi tạo penalty mặc định
+              matchedMatch.penaltyWinner = null;
+              matchedMatch.shootoutScore1 = null;
+              matchedMatch.shootoutScore2 = null;
+
+              // Parse penalty nếu hòa ở vòng knockout
+              if (matchedMatch.round > 3 && matchedMatch.score1 === matchedMatch.score2) {
+                const homeWinner = homeCompetitor.winner;
+                const awayWinner = awayCompetitor.winner;
+                const homeShootout = homeCompetitor.shootoutScore;
+                const awayShootout = awayCompetitor.shootoutScore;
+
+                if (homeShootout !== undefined && awayShootout !== undefined) {
+                  matchedMatch.shootoutScore1 = isHomeTeam1 ? parseInt(homeShootout) : parseInt(awayShootout);
+                  matchedMatch.shootoutScore2 = isHomeTeam1 ? parseInt(awayShootout) : parseInt(homeShootout);
+                }
+
+                if (homeWinner === true) {
+                  matchedMatch.penaltyWinner = isHomeTeam1 ? 1 : 2;
+                } else if (awayWinner === true) {
+                  matchedMatch.penaltyWinner = isHomeTeam1 ? 2 : 1;
+                }
               }
-              matchedMatch.winnerId = winnerId;
 
               // Trích xuất thẻ phạt và cầu thủ ghi bàn từ chi tiết trận đấu của ESPN
               let yc1 = 0, rc1 = 0, yc2 = 0, rc2 = 0;
@@ -2143,4 +2203,7 @@ function updateThemeIcon(theme) {
   const savedTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
   updateThemeIcon(savedTheme);
   init();
+
+  // Expose helper for testing purposes
+  window.simulateRandomScores = simulateRandomScores;
 });

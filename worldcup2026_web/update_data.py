@@ -4,16 +4,15 @@ import re
 import sys
 import calendar
 from datetime import datetime, timezone
+import os
 
 # Set encoding to UTF-8
 sys.stdout.reconfigure(encoding='utf-8')
 
-import os
-
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_js_path = os.path.join(script_dir, "data.js")
 
-# 1. Read existing data.js
+# 1. Read existing data.js to get header and footer
 try:
     with open(data_js_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
@@ -57,10 +56,9 @@ except Exception as e:
     sys.exit(1)
 
 events = data.get('events', [])
-# Limit to first 104 matches of tournament
 events = events[:104]
 
-# Helpers to fetch assists from summary
+# Helper to fetch assists from summary
 def fetch_assists(event_id, scorers1, scorers2, t1_name, t2_name):
     assists1 = []
     assists2 = []
@@ -90,7 +88,6 @@ def fetch_assists(event_id, scorers1, scorers2, t1_name, t2_name):
                 play = c.get('play', {})
                 participants = play.get('participants', [])
                 if len(participants) >= 2:
-                    # Scorer is participants[0], assister is participants[1]
                     scorer_name = participants[0].get('athlete', {}).get('displayName')
                     assister = participants[1].get('athlete', {}).get('displayName')
                     play_team = play.get('team', {}).get('displayName', '')
@@ -111,47 +108,8 @@ def fetch_assists(event_id, scorers1, scorers2, t1_name, t2_name):
         print(f"  Warning: Could not fetch assists for event {event_id}: {ex}")
     return assists1, assists2
 
-wc_matches = []
-team_appearances = {}
-match_id = 1
-
-for e in events:
-    comp = e.get('competitions', [{}])[0]
-    competitors = comp.get('competitors', [])
-    if len(competitors) < 2:
-        continue
-    
-    c1 = competitors[0]
-    c2 = competitors[1]
-    
-    t1_id = c1.get('team', {}).get('abbreviation')
-    t2_id = c2.get('team', {}).get('abbreviation')
-    t1_name = c1.get('team', {}).get('displayName')
-    t2_name = c2.get('team', {}).get('displayName')
-    
-    # Round logic
-    if match_id <= 72:
-        team_appearances[t1_id] = team_appearances.get(t1_id, 0) + 1
-        team_appearances[t2_id] = team_appearances.get(t2_id, 0) + 1
-        round_val = max(team_appearances[t1_id], team_appearances[t2_id])
-    else:
-        if match_id <= 88: round_val = 32
-        elif match_id <= 96: round_val = 16
-        elif match_id <= 100: round_val = 8
-        elif match_id <= 102: round_val = 4
-        elif match_id == 103: round_val = 2
-        else: round_val = 1
-        
-    # Group from altGameNote (Only for group stage)
-    group = ""
-    if match_id <= 72:
-        note = comp.get('altGameNote', '')
-        g_match = re.search(r'Group ([A-L])', note)
-        if g_match:
-            group = g_match.group(1)
-        
-    # Date/Time conversion to Vietnam Time (GMT+7)
-    date_str = e.get('date', '')
+# Parse date helper
+def parse_date_time(date_str):
     try:
         dt_match = re.search(r'(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})', date_str)
         if dt_match:
@@ -164,27 +122,65 @@ for e in events:
             vn_dt = datetime.fromtimestamp(local_ts, timezone.utc)
             date_formatted = vn_dt.strftime("%d/%m/%Y")
             time_formatted = vn_dt.strftime("%H:%M")
-        else:
-            timestamp = 0
-            date_formatted = ""
-            time_formatted = ""
+            return timestamp, date_formatted, time_formatted
     except Exception as ex:
         print(f"Error parsing date {date_str}: {ex}")
-        timestamp = 0
-        date_formatted = ""
-        time_formatted = ""
+    return 0, "", ""
+
+wc_matches = []
+team_appearances = {}
+match_id = 1
+
+for e in events:
+    comp = e.get('competitions', [{}])[0]
+    competitors = comp.get('competitors', [])
+    if len(competitors) < 2:
+        continue
+    c1 = competitors[0]
+    c2 = competitors[1]
+    
+    t1_id = c1.get('team', {}).get('abbreviation')
+    t2_id = c2.get('team', {}).get('abbreviation')
+    t1_name = c1.get('team', {}).get('displayName')
+    t2_name = c2.get('team', {}).get('displayName')
+    
+    # Calculate round
+    team_appearances[t1_id] = team_appearances.get(t1_id, 0) + 1
+    team_appearances[t2_id] = team_appearances.get(t2_id, 0) + 1
+    
+    if match_id <= 72:
+        round_val = max(team_appearances[t1_id], team_appearances[t2_id])
+    elif match_id <= 88:
+        round_val = 32
+    elif match_id <= 96:
+        round_val = 16
+    elif match_id <= 100:
+        round_val = 8
+    elif match_id <= 102:
+        round_val = 4
+    elif match_id == 103:
+        round_val = 2
+    else:
+        round_val = 1
+        
+    group = ""
+    if match_id <= 72:
+        note = comp.get('altGameNote', '')
+        g_match = re.search(r'Group ([A-L])', note)
+        if g_match:
+            group = g_match.group(1)
+        
+    timestamp, date_formatted, time_formatted = parse_date_time(e.get('date', ''))
 
     score1 = "null"
     score2 = "null"
-    yc1 = 0
-    rc1 = 0
-    yc2 = 0
-    rc2 = 0
+    yc1, rc1, yc2, rc2 = 0, 0, 0, 0
     status = "Chưa đấu"
-    scorers1 = []
-    scorers2 = []
-    assists1 = []
-    assists2 = []
+    scorers1, scorers2 = [], []
+    assists1, assists2 = [], []
+    penaltyWinner = "null"
+    shootoutScore1 = "null"
+    shootoutScore2 = "null"
     
     state = e.get('status', {}).get('type', {}).get('state', '')
     if state in ("post", "in"):
@@ -198,38 +194,41 @@ for e in events:
             
         t1_uid = c1.get('team', {}).get('id')
         t2_uid = c2.get('team', {}).get('id')
-        
-        # Extract cards and scorers from details
         details = comp.get('details', [])
         for d in details:
-            # Cards
             if d.get('yellowCard') is True:
-                if str(d.get('team', {}).get('id')) == str(t1_uid):
-                    yc1 += 1
-                elif str(d.get('team', {}).get('id')) == str(t2_uid):
-                    yc2 += 1
+                if str(d.get('team', {}).get('id')) == str(t1_uid): yc1 += 1
+                elif str(d.get('team', {}).get('id')) == str(t2_uid): yc2 += 1
             if d.get('redCard') is True:
-                if str(d.get('team', {}).get('id')) == str(t1_uid):
-                    rc1 += 1
-                elif str(d.get('team', {}).get('id')) == str(t2_uid):
-                    rc2 += 1
-            # Scorers
+                if str(d.get('team', {}).get('id')) == str(t1_uid): rc1 += 1
+                elif str(d.get('team', {}).get('id')) == str(t2_uid): rc2 += 1
             if d.get('scoringPlay') is True or d.get('type', {}).get('text') == 'Goal' or d.get('type', {}).get('id') == '70':
                 athletes = d.get('athletesInvolved', [])
                 p_name = athletes[0].get('displayName') if athletes else "Unknown"
                 clock = d.get('clock', {}).get('displayValue', '')
-                if d.get('ownGoal') is True:
-                    p_name = f"{p_name} (OG)"
+                if d.get('ownGoal') is True: p_name = f"{p_name} (OG)"
                 s_obj = {"name": p_name, "min": clock}
-                if str(d.get('team', {}).get('id')) == str(t1_uid):
-                    scorers1.append(s_obj)
-                else:
-                    scorers2.append(s_obj)
+                if str(d.get('team', {}).get('id')) == str(t1_uid): scorers1.append(s_obj)
+                else: scorers2.append(s_obj)
                     
-        # Fetch assists from summary API
         if score1 > 0 or score2 > 0:
             print(f"Fetching assists for Match {match_id}: {t1_id} vs {t2_id} ({e.get('id')})...")
             assists1, assists2 = fetch_assists(e.get('id'), scorers1, scorers2, t1_name, t2_name)
+            
+        # Parse Penalty
+        if score1 == score2 and match_id > 72:
+            s_score1 = c1.get('shootoutScore')
+            s_score2 = c2.get('shootoutScore')
+            if s_score1 is not None and s_score2 is not None:
+                shootoutScore1 = int(s_score1)
+                shootoutScore2 = int(s_score2)
+            
+            w1 = c1.get('winner')
+            w2 = c2.get('winner')
+            if w1 is True:
+                penaltyWinner = 1
+            elif w2 is True:
+                penaltyWinner = 2
 
     m_obj = {
         "id": f"M{str(match_id).zfill(2)}",
@@ -250,26 +249,26 @@ for e in events:
         "scorers1": scorers1,
         "scorers2": scorers2,
         "assists1": assists1,
-        "assists2": assists2
+        "assists2": assists2,
+        "penaltyWinner": penaltyWinner,
+        "shootoutScore1": shootoutScore1,
+        "shootoutScore2": shootoutScore2
     }
     wc_matches.append(m_obj)
     match_id += 1
 
 # Write to data.js
-# Formulate string representation
 sb = []
 sb.append("// Dữ liệu lịch thi đấu chính thức vòng bảng World Cup 2026 từ ESPN API (72 trận đấu)")
 sb.append("const OFFICIAL_MATCHES_RAW = [")
 
 for m in wc_matches:
-    # scorers formatting
     s1_items = [f'{{ name: "{s["name"]}", min: "{s["min"]}" }}' for s in m["scorers1"]]
     s1_str = "[" + ", ".join(s1_items) + "]"
     
     s2_items = [f'{{ name: "{s["name"]}", min: "{s["min"]}" }}' for s in m["scorers2"]]
     s2_str = "[" + ", ".join(s2_items) + "]"
     
-    # assists formatting
     a1_items = [f'"{a}"' for a in m["assists1"]]
     a1_str = "[" + ", ".join(a1_items) + "]"
     
@@ -296,6 +295,9 @@ for m in wc_matches:
     sb.append(f'    scorers2: {s2_str},')
     sb.append(f'    assists1: {a1_str},')
     sb.append(f'    assists2: {a2_str},')
+    sb.append(f'    penaltyWinner: {m["penaltyWinner"]},')
+    sb.append(f'    shootoutScore1: {m["shootoutScore1"]},')
+    sb.append(f'    shootoutScore2: {m["shootoutScore2"]},')
     sb.append('    matchTime: ""')
     sb.append("  },")
 
@@ -352,4 +354,3 @@ if os.path.exists(index_path):
         print(f"Successfully updated cache-busting version in index.html to {current_date_str}")
     except Exception as e:
         print(f"Error updating index.html cache-busting version: {e}")
-

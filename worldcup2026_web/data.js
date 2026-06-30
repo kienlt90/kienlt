@@ -76,6 +76,7 @@ const WORLD_CUP_DATA = {
   }
 };
 
+
 // Dữ liệu lịch thi đấu chính thức vòng bảng World Cup 2026 từ ESPN API (72 trận đấu)
 const OFFICIAL_MATCHES_RAW = [
   {
@@ -98,7 +99,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Érik Lira", "Roberto Alvarado"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -121,7 +124,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ladislav Krejcí", min: "59'" }],
     assists1: ["Lee Kang-In", "Hwang In-Beom"],
     assists2: ["Vladimír Coufal"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -144,7 +149,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Jovo Lukic", min: "21'" }],
     assists1: ["Promise David"],
     assists2: ["Sead Kolasinac"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -167,7 +174,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Maurício", min: "73'" }],
     assists1: ["Christian Pulisic", "Malik Tillman", "Alex Freeman"],
     assists2: ["Julio Enciso"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -190,7 +199,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Breel Embolo", min: "17'" }],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -213,7 +224,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ismael Saibari", min: "21'" }],
     assists1: ["Bruno Guimarães"],
     assists2: ["Brahim Díaz"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -236,7 +249,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "John McGinn", min: "28'" }],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -259,7 +274,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Paul Okon-Engstler"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -282,7 +299,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Livano Comenencia", min: "21'" }],
     assists1: ["Florian Wirtz", "Nathaniel Brown", "Joshua Kimmich", "Deniz Undav", "Joshua Kimmich", "Deniz Undav"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -305,7 +324,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Keito Nakamura", min: "57'" }, { name: "Daichi Kamada", min: "89'" }],
     assists1: ["Ryan Gravenberch", "Ryan Gravenberch"],
     assists2: ["Takefusa Kubo", "Koki Ogawa"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -328,7 +349,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Wilfried Singo"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -351,7 +374,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Omar Rekik", min: "43'" }],
     assists1: ["Viktor Gyökeres", "Alexander Isak", "Alexander Isak", "Lucas Bergvall"],
     assists2: ["Hannibal Mejbri"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -374,7 +399,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -397,7 +424,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Emam Ashour", min: "20'" }],
     assists1: [],
     assists2: ["Mohamed Salah"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -420,7 +449,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Maxi Araújo", min: "80'" }],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -443,7 +474,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Elijah Just", min: "7'" }, { name: "Elijah Just", min: "54'" }],
     assists1: ["Ramin Rezaeian"],
     assists2: ["Chris Wood", "Chris Wood"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -466,7 +499,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ibrahim Mbaye", min: "90'+5'" }],
     assists1: ["Michael Olise", "Adrien Rabiot"],
     assists2: ["Iliman Ndiaye"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -489,7 +524,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Erling Haaland", min: "29'" }, { name: "Erling Haaland", min: "43'" }, { name: "Leo Østigard", min: "76'" }, { name: "Aymen Hussein (OG)", min: "90'+6'" }],
     assists1: ["Amir Al-Ammari"],
     assists2: ["David Møller Wolfe", "Martin Ødegaard"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -512,7 +549,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Rodrigo De Paul", "Nico González"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -535,7 +574,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ali Olwan", min: "50'" }],
     assists1: ["Xaver Schlager"],
     assists2: ["Noor Al-Rawabdeh"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -558,7 +599,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Yoane Wissa", min: "45'+5'" }],
     assists1: ["Pedro Neto"],
     assists2: ["Arthur Masuaku"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -581,7 +624,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Martin Baturina", min: "36'" }, { name: "Petar Musa", min: "45'+5'" }],
     assists1: ["Declan Rice", "Elliot Anderson", "Bukayo Saka"],
     assists2: ["Petar Sucic", "Ivan Perisic"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -604,7 +649,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Brandon Thomas-Asante"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -627,7 +674,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Daniel Muñoz", min: "40'" }, { name: "Luis Díaz", min: "65'" }, { name: "Jáminton Campaz", min: "90'+9'" }],
     assists1: [],
     assists2: ["Luis Díaz", "Gustavo Puerta", "Cucho Hernández"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -650,7 +699,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Teboho Mokoena", min: "83'" }],
     assists1: ["Alexandr Sojka"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -673,7 +724,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ermin Mahmic", min: "90'+3'" }],
     assists1: ["Breel Embolo", "Rubén Vargas"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -696,7 +749,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Nathan Saliba"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -719,7 +774,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -742,7 +799,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -765,7 +824,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ismael Saibari", min: "2'" }],
     assists1: [],
     assists2: ["Brahim Díaz"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -788,7 +849,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Vinícius Júnior", "Lucas Paquetá"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -811,7 +874,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Matías Galarza", min: "2'" }],
     assists1: [],
     assists2: ["Julio Enciso"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -834,7 +899,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Anthony Elanga", min: "59'" }],
     assists1: ["Cody Gakpo", "Denzel Dumfries", "Denzel Dumfries", "Crysencio Summerville", "Memphis Depay"],
     assists2: ["Alexander Isak"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -857,7 +924,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Franck Kessié", min: "30'" }],
     assists1: ["Nadiem Amiri", "Felix Nmecha"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -880,7 +949,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -903,7 +974,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Daichi Kamada", min: "4'" }, { name: "Ayase Ueda", min: "31'" }, { name: "Junya Ito", min: "69'" }, { name: "Ayase Ueda", min: "83'" }],
     assists1: [],
     assists2: ["Keito Nakamura", "Kou Itakura", "Ayase Ueda", "Kaishu Sano"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -926,7 +999,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Mikel Oyarzabal", "Aymeric Laporte", "Dani Olmo"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -949,7 +1024,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -972,7 +1049,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Kevin Pina", min: "21'" }, { name: "Hélio Varela", min: "61'" }],
     assists1: ["Maxi Araújo"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -995,7 +1074,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Mostafa Zico", min: "58'" }, { name: "Mohamed Salah", min: "67'" }, { name: "Trézéguet", min: "82'" }],
     assists1: ["Tim Payne"],
     assists2: ["Mohamed Hany", "Mostafa Zico", "Mohamed Salah"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1018,7 +1099,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Facundo Medina"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1041,7 +1124,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Michael Olise", "Ousmane Dembélé", "Michael Olise"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1064,7 +1149,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ismaïla Sarr", min: "53'" }, { name: "Ismaïla Sarr", min: "90'+3'" }],
     assists1: ["Martin Ødegaard", "Patrick Berg"],
     assists2: ["Sadio Mané", "Nicolas Jackson"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1087,7 +1174,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Nadhir Benbouali", min: "69'" }, { name: "Amine Gouiri", min: "82'" }],
     assists1: ["Mousa Al-Tamari"],
     assists2: ["Riyad Mahrez"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1110,7 +1199,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["João Cancelo", "Bruno Fernandes"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1133,7 +1224,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1156,7 +1249,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ante Budimir", min: "54'" }],
     assists1: [],
     assists2: ["Josip Stanisic"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1179,7 +1274,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Juan Fernando Quintero"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1202,7 +1299,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Hassan Al-Haydos", min: "42'" }],
     assists1: ["Ivan Basic", "Dennis Hadzikadunic"],
     assists2: ["Edmílson Junior"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1225,7 +1324,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Promise David", min: "76'" }],
     assists1: ["Johan Manzambi", "Breel Embolo"],
     assists2: ["Nathan Saliba"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1248,7 +1349,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Yassine Bounou (OG)", min: "10'" }, { name: "Wilson Isidor", min: "43'" }],
     assists1: ["Achraf Hakimi", "Chadi Riad", "Soufiane Rahimi"],
     assists2: ["Jean-Kévin Duverne"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1271,7 +1374,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Vinícius Júnior", min: "7'" }, { name: "Vinícius Júnior", min: "45'+3'" }, { name: "Matheus Cunha", min: "60'" }],
     assists1: [],
     assists2: ["Rayan", "Bruno Guimarães", "Bruno Guimarães"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1294,7 +1399,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Mateo Chávez", min: "55'" }, { name: "Julián Quiñones", min: "61'" }, { name: "Álvaro Fidalgo", min: "90'+4'" }],
     assists1: [],
     assists2: ["Luis Romo", "Jorge Sánchez", "Roberto Alvarado"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1317,7 +1424,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Tshepang Moremi"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1340,7 +1449,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Nicolas Pépé", min: "7'" }, { name: "Nicolas Pépé", min: "64'" }],
     assists1: [],
     assists2: ["Yan Diomande", "Ibrahim Sangaré"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1363,7 +1474,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Leroy Sané", min: "2'" }],
     assists1: ["Pedro Vite", "Kevin Rodríguez"],
     assists2: ["Florian Wirtz"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1386,7 +1499,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Anthony Elanga", min: "62'" }],
     assists1: ["Ritsu Doan"],
     assists2: ["Viktor Gyökeres"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1409,7 +1524,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ellyes Skhiri (OG)", min: "3'" }, { name: "Brian Brobbey", min: "7'" }, { name: "Jan Paul van Hecke", min: "62'" }],
     assists1: ["Hannibal Mejbri"],
     assists2: ["Virgil van Dijk", "Tijjani Reijnders"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1432,7 +1549,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1455,7 +1574,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Auston Trusty", min: "3'" }, { name: "Sebastian Berhalter", min: "49'" }],
     assists1: ["Baris Alper Yilmaz", "Orkun Kökçü"],
     assists2: ["Sebastian Berhalter"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1478,7 +1599,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ousmane Dembélé", min: "7'" }, { name: "Ousmane Dembélé", min: "20'" }, { name: "Ousmane Dembélé", min: "32'" }, { name: "Désiré Doué", min: "90'+4'" }],
     assists1: ["Andreas Schjelderup"],
     assists2: ["Kylian Mbappé", "Kylian Mbappé", "Aurélien Tchouaméni", "Bradley Barcola"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1501,7 +1624,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: ["Abdoulaye Seck", "Lamine Camara", "Ismaïla Sarr", "Iliman Ndiaye", "Pape Gueye"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1524,7 +1649,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1547,7 +1674,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Álex Baena", min: "42'" }],
     assists1: [],
     assists2: ["Marcos Llorente"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1570,7 +1699,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Ramin Rezaeian", min: "14'" }],
     assists1: ["Trézéguet"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1593,7 +1724,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Leandro Trossard", min: "28'" }, { name: "Leandro Trossard", min: "50'" }, { name: "Kevin De Bruyne", min: "66'" }, { name: "Romelu Lukaku", min: "86'" }, { name: "Alexis Saelemaekers", min: "90'+4'" }],
     assists1: [],
     assists2: ["Hans Vanaken", "Nicolas Raskin", "Romelu Lukaku"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1616,7 +1749,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Derrick Luckassen", min: "73'" }],
     assists1: ["Mateo Kovacic", "Luka Modric"],
     assists2: ["Ernest Nuamah"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1639,7 +1774,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Jude Bellingham", min: "62'" }, { name: "Harry Kane", min: "67'" }],
     assists1: [],
     assists2: ["Bukayo Saka", "Jude Bellingham"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1662,7 +1799,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1685,7 +1824,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Eldor Shomurodov", min: "10'" }],
     assists1: ["Meschack Elia"],
     assists2: ["Akmal Mozgovoy"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1708,7 +1849,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Marko Arnautovic", min: "28'" }, { name: "Marcel Sabitzer", min: "55'" }, { name: "Sasa Kalajdzic", min: "90'+6'" }],
     assists1: ["Houssem Aouar", "Houssem Aouar"],
     assists2: ["David Alaba", "Konrad Laimer", "Michael Gregoritsch"],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1731,7 +1874,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Giovani Lo Celso", min: "19'" }, { name: "Lautaro Martínez", min: "31'" }, { name: "Lionel Messi", min: "80'" }],
     assists1: ["Ehsan Haddad"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1754,7 +1899,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [{ name: "Stephen Eustáquio", min: "90'+2'" }],
     assists1: [],
     assists2: [],
-    winnerId: "CAN",
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1762,22 +1909,24 @@ const OFFICIAL_MATCHES_RAW = [
     group: "",
     round: 32,
     date: "30/06/2026",
-    timestamp: 1782765000000,
-    time: "03:30",
-    team1Id: "GER",
-    team2Id: "SWE",
-    score1: null,
-    score2: null,
-    yc1: 0,
+    timestamp: 1782752400000,
+    time: "00:00",
+    team1Id: "BRA",
+    team2Id: "JPN",
+    score1: 2,
+    score2: 1,
+    yc1: 2,
     rc1: 0,
-    yc2: 0,
+    yc2: 3,
     rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
-    assists1: [],
+    status: "Kết thúc",
+    scorers1: [{ name: "Casemiro", min: "56'" }, { name: "Gabriel Martinelli", min: "90'+5'" }],
+    scorers2: [{ name: "Kaishu Sano", min: "29'" }],
+    assists1: ["Gabriel Magalhães", "Bruno Guimarães"],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1785,22 +1934,24 @@ const OFFICIAL_MATCHES_RAW = [
     group: "",
     round: 32,
     date: "30/06/2026",
-    timestamp: 1782781200000,
-    time: "08:00",
-    team1Id: "NED",
-    team2Id: "MAR",
-    score1: null,
-    score2: null,
-    yc1: 0,
+    timestamp: 1782765000000,
+    time: "03:30",
+    team1Id: "GER",
+    team2Id: "PAR",
+    score1: 1,
+    score2: 1,
+    yc1: 3,
     rc1: 0,
-    yc2: 0,
+    yc2: 3,
     rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
-    assists1: [],
-    assists2: [],
-    winnerId: null,
+    status: "Kết thúc",
+    scorers1: [{ name: "Kai Havertz", min: "54'" }, { name: "Joshua Kimmich", min: "120'" }, { name: "Jamal Musiala", min: "120'" }, { name: "Nadiem Amiri", min: "120'" }],
+    scorers2: [{ name: "Julio Enciso", min: "42'" }, { name: "Maurício", min: "120'" }, { name: "Gustavo Gómez", min: "120'" }, { name: "Matías Galarza", min: "120'" }, { name: "José Canale", min: "120'" }],
+    assists1: ["Florian Wirtz"],
+    assists2: ["Matías Galarza"],
+    penaltyWinner: 2,
+    shootoutScore1: 3,
+    shootoutScore2: 4,
     matchTime: ""
   },
   {
@@ -1808,49 +1959,28 @@ const OFFICIAL_MATCHES_RAW = [
     group: "",
     round: 32,
     date: "30/06/2026",
-    timestamp: 1782752400000,
-    time: "00:00",
-    team1Id: "BRA",
-    team2Id: "JPN",
-    score1: 0,
-    score2: 0,
-    yc1: 1,
+    timestamp: 1782781200000,
+    time: "08:00",
+    team1Id: "NED",
+    team2Id: "MAR",
+    score1: 1,
+    score2: 1,
+    yc1: 0,
     rc1: 0,
     yc2: 1,
     rc2: 0,
-    status: "Đang đá",
-    scorers1: [],
-    scorers2: [{ name: "Kaishu Sano", min: "29'" }],
-    assists1: [],
-    assists2: [],
-    winnerId: null,
+    status: "Kết thúc",
+    scorers1: [{ name: "Cody Gakpo", min: "72'" }, { name: "Teun Koopmeiners", min: "120'" }, { name: "Wout Weghorst", min: "120'" }],
+    scorers2: [{ name: "Issa Diop", min: "90'+1'" }, { name: "Soufiane Rahimi", min: "120'" }, { name: "Chemsdine Talbi", min: "120'" }, { name: "Ismael Saibari", min: "120'" }],
+    assists1: ["Crysencio Summerville"],
+    assists2: ["Chemsdine Talbi"],
+    penaltyWinner: 2,
+    shootoutScore1: 2,
+    shootoutScore2: 3,
     matchTime: ""
   },
   {
     id: "M77",
-    group: "",
-    round: 32,
-    date: "01/07/2026",
-    timestamp: 1782853200000,
-    time: "04:00",
-    team1Id: "FRA",
-    team2Id: "PAR",
-    score1: null,
-    score2: null,
-    yc1: 0,
-    rc1: 0,
-    yc2: 0,
-    rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
-    assists1: [],
-    assists2: [],
-    winnerId: null,
-    matchTime: ""
-  },
-  {
-    id: "M78",
     group: "",
     round: 32,
     date: "01/07/2026",
@@ -1869,7 +1999,34 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
+    matchTime: ""
+  },
+  {
+    id: "M78",
+    group: "",
+    round: 32,
+    date: "01/07/2026",
+    timestamp: 1782853200000,
+    time: "04:00",
+    team1Id: "FRA",
+    team2Id: "SWE",
+    score1: null,
+    score2: null,
+    yc1: 0,
+    rc1: 0,
+    yc2: 0,
+    rc2: 0,
+    status: "Chưa đấu",
+    scorers1: [],
+    scorers2: [],
+    assists1: [],
+    assists2: [],
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1892,7 +2049,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -1915,11 +2074,38 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
     id: "M81",
+    group: "",
+    round: 32,
+    date: "02/07/2026",
+    timestamp: 1782936000000,
+    time: "03:00",
+    team1Id: "BEL",
+    team2Id: "SEN",
+    score1: null,
+    score2: null,
+    yc1: 0,
+    rc1: 0,
+    yc2: 0,
+    rc2: 0,
+    status: "Chưa đấu",
+    scorers1: [],
+    scorers2: [],
+    assists1: [],
+    assists2: [],
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
+    matchTime: ""
+  },
+  {
+    id: "M82",
     group: "",
     round: 32,
     date: "02/07/2026",
@@ -1938,57 +2124,13 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
-    matchTime: ""
-  },
-  {
-    id: "M82",
-    group: "",
-    round: 32,
-    date: "02/07/2026",
-    timestamp: 1782936000000,
-    time: "03:00",
-    team1Id: "BEL",
-    team2Id: "ALG",
-    score1: null,
-    score2: null,
-    yc1: 0,
-    rc1: 0,
-    yc2: 0,
-    rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
-    assists1: [],
-    assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
     id: "M83",
-    group: "",
-    round: 32,
-    date: "03/07/2026",
-    timestamp: 1783033200000,
-    time: "06:00",
-    team1Id: "POR",
-    team2Id: "CRO",
-    score1: null,
-    score2: null,
-    yc1: 0,
-    rc1: 0,
-    yc2: 0,
-    rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
-    assists1: [],
-    assists2: [],
-    winnerId: null,
-    matchTime: ""
-  },
-  {
-    id: "M84",
     group: "",
     round: 32,
     date: "03/07/2026",
@@ -2007,7 +2149,34 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
+    matchTime: ""
+  },
+  {
+    id: "M84",
+    group: "",
+    round: 32,
+    date: "03/07/2026",
+    timestamp: 1783033200000,
+    time: "06:00",
+    team1Id: "POR",
+    team2Id: "CRO",
+    score1: null,
+    score2: null,
+    yc1: 0,
+    rc1: 0,
+    yc2: 0,
+    rc2: 0,
+    status: "Chưa đấu",
+    scorers1: [],
+    scorers2: [],
+    assists1: [],
+    assists2: [],
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2018,7 +2187,7 @@ const OFFICIAL_MATCHES_RAW = [
     timestamp: 1783047600000,
     time: "10:00",
     team1Id: "SUI",
-    team2Id: "SEN",
+    team2Id: "ALG",
     score1: null,
     score2: null,
     yc1: 0,
@@ -2030,57 +2199,13 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
     id: "M86",
-    group: "",
-    round: 32,
-    date: "04/07/2026",
-    timestamp: 1783116000000,
-    time: "05:00",
-    team1Id: "ARG",
-    team2Id: "CPV",
-    score1: null,
-    score2: null,
-    yc1: 0,
-    rc1: 0,
-    yc2: 0,
-    rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
-    assists1: [],
-    assists2: [],
-    winnerId: null,
-    matchTime: ""
-  },
-  {
-    id: "M87",
-    group: "",
-    round: 32,
-    date: "04/07/2026",
-    timestamp: 1783128600000,
-    time: "08:30",
-    team1Id: "COL",
-    team2Id: "GHA",
-    score1: null,
-    score2: null,
-    yc1: 0,
-    rc1: 0,
-    yc2: 0,
-    rc2: 0,
-    status: "Chưa đấu",
-    scorers1: [],
-    scorers2: [],
-    assists1: [],
-    assists2: [],
-    winnerId: null,
-    matchTime: ""
-  },
-  {
-    id: "M88",
     group: "",
     round: 32,
     date: "04/07/2026",
@@ -2099,7 +2224,59 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
+    matchTime: ""
+  },
+  {
+    id: "M87",
+    group: "",
+    round: 32,
+    date: "04/07/2026",
+    timestamp: 1783116000000,
+    time: "05:00",
+    team1Id: "ARG",
+    team2Id: "CPV",
+    score1: null,
+    score2: null,
+    yc1: 0,
+    rc1: 0,
+    yc2: 0,
+    rc2: 0,
+    status: "Chưa đấu",
+    scorers1: [],
+    scorers2: [],
+    assists1: [],
+    assists2: [],
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
+    matchTime: ""
+  },
+  {
+    id: "M88",
+    group: "",
+    round: 32,
+    date: "04/07/2026",
+    timestamp: 1783128600000,
+    time: "08:30",
+    team1Id: "COL",
+    team2Id: "GHA",
+    score1: null,
+    score2: null,
+    yc1: 0,
+    rc1: 0,
+    yc2: 0,
+    rc2: 0,
+    status: "Chưa đấu",
+    scorers1: [],
+    scorers2: [],
+    assists1: [],
+    assists2: [],
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2122,7 +2299,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2130,9 +2309,9 @@ const OFFICIAL_MATCHES_RAW = [
     group: "",
     round: 16,
     date: "05/07/2026",
-    timestamp: 1783184400000,
-    time: "00:00",
-    team1Id: "CAN",
+    timestamp: 1783198800000,
+    time: "04:00",
+    team1Id: "PAR",
     team2Id: "RD32",
     score1: null,
     score2: null,
@@ -2145,7 +2324,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2155,7 +2336,7 @@ const OFFICIAL_MATCHES_RAW = [
     date: "06/07/2026",
     timestamp: 1783281600000,
     time: "03:00",
-    team1Id: "RD32",
+    team1Id: "BRA",
     team2Id: "RD32",
     score1: null,
     score2: null,
@@ -2168,7 +2349,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2191,7 +2374,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2214,7 +2399,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2237,7 +2424,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2260,7 +2449,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2283,7 +2474,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2306,7 +2499,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2329,7 +2524,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2352,7 +2549,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2375,7 +2574,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2398,7 +2599,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2421,7 +2624,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2444,7 +2649,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
   {
@@ -2467,7 +2674,9 @@ const OFFICIAL_MATCHES_RAW = [
     scorers2: [],
     assists1: [],
     assists2: [],
-    winnerId: null,
+    penaltyWinner: null,
+    shootoutScore1: null,
+    shootoutScore2: null,
     matchTime: ""
   },
 ];
