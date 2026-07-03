@@ -665,8 +665,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let t1 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         let t2 = { name: "", flagCode: "", flag: "🏳️", isReal: false };
         if (m.id === "M89") { t1 = getWinnerByMatchId("M73", "Thắng Trận 73"); t2 = getWinnerByMatchId("M75", "Thắng Trận 75"); }
-        else if (m.id === "M90") { t1 = getWinnerByMatchId("M74", "Thắng Trận 74"); t2 = getWinnerByMatchId("M78", "Thắng Trận 78"); }
-        else if (m.id === "M91") { t1 = getWinnerByMatchId("M76", "Thắng Trận 76"); t2 = getWinnerByMatchId("M77", "Thắng Trận 77"); }
+        else if (m.id === "M90") { t1 = getWinnerByMatchId("M74", "Thắng Trận 74"); t2 = getWinnerByMatchId("M77", "Thắng Trận 77"); }
+        else if (m.id === "M91") { t1 = getWinnerByMatchId("M76", "Thắng Trận 76"); t2 = getWinnerByMatchId("M78", "Thắng Trận 78"); }
         else if (m.id === "M92") { t1 = getWinnerByMatchId("M79", "Thắng Trận 79"); t2 = getWinnerByMatchId("M80", "Thắng Trận 80"); }
         else if (m.id === "M93") { t1 = getWinnerByMatchId("M83", "Thắng Trận 83"); t2 = getWinnerByMatchId("M84", "Thắng Trận 84"); }
         else if (m.id === "M94") { t1 = getWinnerByMatchId("M81", "Thắng Trận 81"); t2 = getWinnerByMatchId("M82", "Thắng Trận 82"); }
@@ -1720,11 +1720,11 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
 
-    const leftR32Ids = ["M73", "M75", "M74", "M78", "M83", "M84", "M81", "M82"];
+    const leftR32Ids = ["M73", "M75", "M74", "M77", "M83", "M84", "M81", "M82"];
     const leftR16Ids = ["M89", "M90", "M93", "M94"];
     const leftQFIds = ["M97", "M99"];
 
-    const rightR32Ids = ["M76", "M77", "M79", "M80", "M86", "M88", "M85", "M87"];
+    const rightR32Ids = ["M76", "M78", "M79", "M80", "M86", "M88", "M85", "M87"];
     const rightR16Ids = ["M91", "M92", "M95", "M96"];
     const rightQFIds = ["M98", "M100"];
 
