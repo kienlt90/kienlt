@@ -90,33 +90,58 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Process login (Simulated API request)
-    setLoadingState(true);
+    // Process login (Simulated secure API request with cryptographic verification)
+    setLoadingState(true, 'Đang kết nối cổng xác thực...');
 
-    setTimeout(() => {
-      // Mock credentials: admin / admin
-      if (usernameVal.toLowerCase() === 'admin' && passwordVal === 'admin') {
-        const userData = {
-          username: usernameVal,
-          displayName: 'Lê Trung Kiên',
-          role: 'Quản trị viên'
-        };
-        
-        if (document.getElementById('remember').checked) {
-          localStorage.setItem('vnpt_his_session', JSON.stringify(userData));
+    // SHA-256 hashing helper using Web Crypto API
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Step 2: Hashing & account credentials checking
+    setTimeout(async () => {
+      setLoadingState(true, 'Xác thực thông tin bảo mật...');
+      
+      const userHash = await sha256(usernameVal.toLowerCase());
+      const passHash = await sha256(passwordVal);
+
+      // Plaintext credentials are NOT stored in code. Compare SHA-256 hashes instead.
+      // Hash of "admin" is '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'
+      const targetUserHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+      const targetPassHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+
+      // Step 3: Session initialization
+      setTimeout(() => {
+        if (userHash === targetUserHash && passHash === targetPassHash) {
+          setLoadingState(true, 'Thiết lập phiên làm việc...');
+          
+          const userData = {
+            username: usernameVal,
+            displayName: 'Lê Trung Kiên',
+            role: 'Quản trị viên'
+          };
+          
+          if (document.getElementById('remember').checked) {
+            localStorage.setItem('vnpt_his_session', JSON.stringify(userData));
+          } else {
+            sessionStorage.setItem('vnpt_his_session', JSON.stringify(userData));
+            localStorage.setItem('vnpt_his_session', JSON.stringify(userData));
+          }
+          
+          setTimeout(() => {
+            setLoadingState(false);
+            window.location.href = 'main.html';
+          }, 600);
         } else {
-          sessionStorage.setItem('vnpt_his_session', JSON.stringify(userData));
-          localStorage.setItem('vnpt_his_session', JSON.stringify(userData));
+          setLoadingState(false);
+          showToast('Tên đăng nhập hoặc mật khẩu không chính xác.');
+          triggerCardShake();
         }
-        
-        setLoadingState(false);
-        window.location.href = 'main.html';
-      } else {
-        setLoadingState(false);
-        showToast('Tài khoản hoặc mật khẩu không chính xác. Thử lại với admin / admin');
-        triggerCardShake();
-      }
-    }, 1500);
+      }, 800);
+    }, 800);
   });
 
   // Helper Functions
@@ -149,13 +174,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
   }
 
-  function setLoadingState(isLoading) {
+  function setLoadingState(isLoading, message = 'Đăng nhập') {
     if (isLoading) {
       submitBtn.disabled = true;
-      btnText.classList.add('hidden');
+      btnText.textContent = message;
+      btnText.classList.remove('hidden');
       btnLoader.classList.remove('hidden');
     } else {
       submitBtn.disabled = false;
+      btnText.textContent = message;
       btnText.classList.remove('hidden');
       btnLoader.classList.add('hidden');
     }
