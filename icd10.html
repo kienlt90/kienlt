@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="description" content="Tra cứu ICD-10 2026 TT06/QĐ1849, PL1-PL5 và thuốc/hóa chất PL3." />
+  <title>Tra cứu ICD-10 2026 - KIENLT90 Portal</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="icd10.css">
+  
+  <style>
+    /* Custom Override to fit into KIENLT90 branding & styles */
+    body {
+      background: #0b0f19 !important; /* Unified Portal Dark Theme */
+      color: #f3f4f6 !important;
+      font-family: 'Inter', var(--font-primary) !important;
+    }
+    
+    .icd-page {
+      background: transparent !important;
+      padding: 2rem 1.5rem !important;
+    }
+    
+    .pro-hero {
+      background: radial-gradient(circle at 15% 0,rgba(14,165,233,0.15),transparent 32%),
+                  radial-gradient(circle at 90% 5%,rgba(37,99,235,0.12),transparent 26%),
+                  hsla(215, 30%, 12%, 0.45) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.25) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 6, 20, 0.45) !important;
+      backdrop-filter: blur(12px) !important;
+      margin-bottom: 2rem !important;
+    }
+    
+    .hero-stats div {
+      background: hsla(215, 30%, 8%, 0.6) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.2) !important;
+      color: #f3f4f6 !important;
+      box-shadow: none !important;
+    }
+    
+    .hero-stats b {
+      color: #06b6d4 !important;
+    }
+    
+    .hero-stats span {
+      color: #9ca3af !important;
+    }
+    
+    .icd-tabs button {
+      background: hsla(215, 30%, 12%, 0.45) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.25) !important;
+      color: #9ca3af !important;
+      box-shadow: none !important;
+    }
+    
+    .icd-tabs button.active {
+      background: #2563eb !important;
+      border-color: #2563eb !important;
+      color: #fff !important;
+    }
+    
+    .icd-search-panel {
+      background: hsla(215, 30%, 10%, 0.8) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.25) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 6, 20, 0.45) !important;
+    }
+    
+    .icd-search {
+      background: hsla(215, 20%, 8%, 0.6) !important;
+      border: 1.5px solid hsla(215, 40%, 35%, 0.25) !important;
+    }
+    
+    .icd-search input {
+      color: #f3f4f6 !important;
+    }
+    
+    .icd-search input::placeholder {
+      color: #6b7280 !important;
+    }
+    
+    .main-mode {
+      background: hsla(215, 30%, 12%, 0.45) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.2) !important;
+    }
+    
+    .main-mode span {
+      color: #f3f4f6 !important;
+    }
+    
+    .main-mode.on {
+      background: rgba(16, 185, 129, 0.08) !important;
+      border-color: rgba(16, 185, 129, 0.3) !important;
+    }
+    
+    .main-mode.on span {
+      color: #10b981 !important;
+    }
+    
+    .quick-filter-chips button, .icd-filter-chips button, .guide-topic-chips button {
+      background: hsla(215, 30%, 12%, 0.4) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.2) !important;
+      color: #9ca3af !important;
+      box-shadow: none !important;
+    }
+    
+    .quick-filter-chips button.on, .icd-filter-chips button.on, .guide-topic-chips button.active {
+      color: #fff !important;
+    }
+    
+    .icd-card {
+      background: hsla(215, 30%, 12%, 0.45) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.25) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 6, 20, 0.45) !important;
+    }
+    
+    .icd-card h3 {
+      color: #f3f4f6 !important;
+    }
+    
+    .icd-card.is-cancelled {
+      border-color: rgba(239, 68, 68, 0.35) !important;
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.06), transparent) !important;
+    }
+    
+    .icd-code {
+      color: #2563eb !important;
+      background: rgba(37, 99, 235, 0.12) !important;
+      border: 1px solid rgba(37, 99, 235, 0.25) !important;
+    }
+    
+    .copy, .icd-card-actions .copy {
+      background: hsla(215, 30%, 8%, 0.6) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.25) !important;
+      color: #3b82f6 !important;
+    }
+    
+    .copy:hover, .icd-card-actions .copy:hover {
+      background: rgba(59, 130, 246, 0.12) !important;
+      border-color: rgba(59, 130, 246, 0.4) !important;
+    }
+    
+    .copy.ok, .icd-card-actions .copy.ok {
+      background: rgba(16, 185, 129, 0.12) !important;
+      color: #10b981 !important;
+      border-color: rgba(16, 185, 129, 0.3) !important;
+    }
+    
+    .icd-note, .icd-children {
+      background: hsla(215, 30%, 8%, 0.4) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.2) !important;
+    }
+    
+    .icd-note div {
+      color: #d1d5db !important;
+    }
+    
+    .icd-child-list button {
+      background: hsla(215, 30%, 10%, 0.5) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.15) !important;
+    }
+    
+    .icd-child-list button:hover {
+      background: rgba(37, 99, 235, 0.08) !important;
+      border-color: rgba(37, 99, 235, 0.3) !important;
+    }
+    
+    .icd-child-list code {
+      color: #60a5fa !important;
+    }
+    
+    .icd-child-list span {
+      color: #9ca3af !important;
+    }
+    
+    .icd-disclaimer {
+      border: 1px solid rgba(245, 158, 11, 0.3) !important;
+      background: rgba(245, 158, 11, 0.08) !important;
+      color: #f59e0b !important;
+    }
+    
+    .drug-code-row {
+      background: hsla(215, 30%, 8%, 0.4) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.15) !important;
+    }
+    
+    .drug-code-row span {
+      color: #d1d5db !important;
+    }
+    
+    .drug-code-row code {
+      color: #60a5fa !important;
+      background: rgba(37, 99, 235, 0.12) !important;
+    }
+    
+    .guide-content {
+      background: hsla(215, 30%, 8%, 0.4) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.15) !important;
+      color: #d1d5db !important;
+    }
+    
+    .top-nav {
+      background: hsla(215, 30%, 10%, 0.8) !important;
+      border-bottom: 1px solid hsla(215, 40%, 35%, 0.25) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+    
+    .top-nav button {
+      background: hsla(215, 30%, 12%, 0.45) !important;
+      border: 1px solid hsla(215, 40%, 35%, 0.25) !important;
+      color: #9ca3af !important;
+    }
+    
+    .top-nav button.active {
+      background: #2563eb !important;
+      border-color: #2563eb !important;
+      color: #fff !important;
+    }
+    
+    .top-nav .brand {
+      background: #2563eb !important;
+      color: #fff !important;
+    }
+    
+    .top-nav button:hover {
+      border-color: #2563eb !important;
+      color: #fff !important;
+    }
+    
+    /* Header nav layout adjustments */
+    .top-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .top-nav-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+    
+    /* Back button positioning */
+    .back-portal-btn {
+      background: transparent !important;
+      border: 1.5px solid var(--color-surface-border) !important;
+      color: var(--color-text-secondary) !important;
+      padding: 0.5rem 1.1rem !important;
+      border-radius: 10px !important;
+      cursor: pointer;
+      font-size: 0.85rem !important;
+      font-weight: 500 !important;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    
+    .back-portal-btn:hover {
+      background: hsla(0, 0%, 100%, 0.08) !important;
+      color: var(--color-text-primary) !important;
+      border-color: var(--color-text-secondary) !important;
+    }
+  </style>
+</head>
+<body class="portal-body">
+  <!-- Top Bar -->
+  <nav class="top-nav">
+    <div class="top-nav-logo">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width: 38px; height: 38px;">
+        <defs>
+          <linearGradient id="nav-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#06b6d4" />
+            <stop offset="100%" stop-color="#3b82f6" />
+          </linearGradient>
+        </defs>
+        <path d="M 100 15 L 173.6 57.5 L 173.6 142.5 L 100 185 L 26.4 142.5 L 26.4 57.5 Z" fill="none" stroke="url(#nav-grad)" stroke-width="8" opacity="0.4" />
+        <path d="M 100 90 A 22 22 0 1 0 56 90 A 22 22 0 0 0 100 90 L 100 120 C 100 135, 88 145, 70 145" fill="none" stroke="url(#nav-grad)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M 154 102.5 A 22 30 0 1 1 110 102.5 A 22 30 0 1 1 154 102.5" fill="none" stroke="#f3f4f6" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: 1.3rem; margin: 0; color: #f3f4f6;">KIENLT90 Portal</h2>
+    </div>
+    
+    <!-- Custom tabs navigation injected by React -->
+    <div id="nav-tabs-container" style="display: flex; align-items: center;"></div>
+    
+    <a href="main.html" class="back-portal-btn">➔ Cổng thông tin</a>
+  </nav>
+
+  <!-- Root Div for React Mounting -->
+  <div id="root">
+    <div class="loading">
+      <div class="fast-spinner"></div>
+      <p style="margin-top: 15px;">Đang tải danh mục dữ liệu ICD-10...</p>
+    </div>
+  </div>
+
+  <!-- React Bundle Script (Load index.js as module directly) -->
+  <script type="module" src="data/icd10_index.js"></script>
+</body>
+</html>

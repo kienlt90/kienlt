@@ -143,6 +143,9 @@
             <button class="dock-item" id="dock-item-9" onclick="selectPortalModule(9)">
               <span>🔬</span> Bộ dịch JS Máy xét nghiệm (LIS)
             </button>
+            <button class="dock-item" id="dock-item-10" onclick="selectPortalModule(10)">
+              <span>📘</span> Tra cứu ICD-10 2026
+            </button>
           </div>
 
           <!-- Interactive Detail Card -->
@@ -290,10 +293,21 @@
         statusText: 'Đang hoạt động',
         actionText: 'Vào công cụ ➔',
         action: function() { window.open('LIS-Parser-Tool.html', '_blank'); }
+      },
+      {
+        id: 10,
+        icon: '📘',
+        shortTitle: 'Tra cứu ICD-10 2026',
+        title: 'Tra cứu danh mục mã hóa bệnh tật ICD-10',
+        desc: 'Công cụ tra cứu nhanh danh mục mã hóa bệnh tật lâm sàng ICD-10 năm 2026 ban hành kèm theo Thông tư 06/2026/TT-BYT và Quyết định 1849/QĐ-BYT. Tích hợp tra cứu danh mục thuốc, hóa chất Phụ lục 3 và phân tích chẩn đoán Y học cổ truyền.',
+        status: 'active',
+        statusText: 'Đang hoạt động',
+        actionText: 'Tra cứu danh mục ➔',
+        action: function() { window.open('icd10.html', '_blank'); }
       }
     ];
 
-    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 2, 3, 4, 5, 6, 7, 8, 9]');
+    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]');
     let activeModuleId = 1;
 
     function getSortedModules() {
