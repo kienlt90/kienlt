@@ -946,11 +946,12 @@ ${resultMappings.join(',\n')}
     // 1. Tìm Barcode / Số thứ tự mẫu
     var STT = "";
     var barcodePatterns = [
-        /\\bSD\\b\\s*\\(\\d+\\)\\s*\\(?([a-zA-Z0-9_-]+)\\)?/i,
-        /(?:Sample\\s+No\\.|SampleNo|S\\.No\\.)\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
+        /\\bID\\b\\s*\\(\\s*([a-zA-Z0-9_-]+)\\s*\\)/i,
+        /\\bID\\b\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
         /Barcode\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
         /SID\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
-        /ID\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
+        /\\bSD\\b\\s*\\(\\d+\\)\\s*\\(?([a-zA-Z0-9_-]+)\\)?/i,
+        /(?:Sample\\s+No\\.|SampleNo|S\\.No\\.)\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
         /No\\.?\\s*([0-9]+)/i,
         /Sample\\s*[=:]\\s*([0-9]+)/i
     ];
