@@ -920,11 +920,11 @@ ${resultMappings.join(',\n')}
             }
             
             // --- TH3: Dạng phiếu in (Ticket / Print Report) ---
-            var ticketParams = ["Na", "K", "Cl", "Ca", "pH", "Li", "TCO2", "GLU", "PRO", "WBC", "RBC", "HGB", "PLT"];
+            var ticketParams = ["Na", "K", "Cl", "Ca", "pH", "Li", "TCO2", "GLU", "PRO", "WBC", "RBC", "HGB", "PLT", "BLD", "BIL", "URO", "KET", "NIT", "LEU", "S\\.G", "SG"];
             var foundParams = [];
             
             ticketParams.forEach(function(p) {
-                var re = new RegExp("\\b" + p + "\\b\\s*[=:]\\s*[-+]?[0-9.]+", "i");
+                var re = new RegExp("\\b" + p + "\\b\\s*([=:]|\\s)\\s*([-\\w+./]+|\\+/\\-)", "i");
                 if (re.test(decodedData)) {
                     foundParams.push(p);
                 }
@@ -932,7 +932,8 @@ ${resultMappings.join(',\n')}
             
             if (foundParams.length >= 2) {
                 var targetLines = foundParams.map(function(p) {
-                    return "        { code: \"" + p + "\", regex: /\\b" + p + "\\b\\s*[=:]\\s*([0-9.]+)/i }";
+                    var cleanKey = p.replace("\\", "");
+                    return "        { code: \"" + cleanKey + "\", regex: /\\b" + p + "\\b\\s*[=:]?\\s*(.+)/i }";
                 }).join(',\n');
                 
                 return `var JSHANDLER_CRLN_USERDATA_DECODED = decodeURIComponent('');
@@ -945,6 +946,7 @@ ${resultMappings.join(',\n')}
     // 1. Tìm Barcode / Số thứ tự mẫu
     var STT = "";
     var barcodePatterns = [
+        /\\bSD\\b\\s*\\(\\d+\\)\\s*\\(?([a-zA-Z0-9_-]+)\\)?/i,
         /(?:Sample\\s+No\\.|SampleNo|S\\.No\\.)\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
         /Barcode\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
         /SID\\s*[.:#\\s]*\\s*([a-zA-Z0-9_-]+)/i,
@@ -976,10 +978,14 @@ ${targetLines}
     for (var i = 0; i < targets.length; i++) {
         var m = rawText.match(targets[i].regex);
         if (m && m[1]) {
+            var val = m[1].trim();
+            // Lọc bỏ dấu sao và gộp các khoảng trắng liên tiếp
+            val = val.replace(/\\*/g, "").replace(/\\s+/g, " ").trim();
+            
             dsketqua.push({
                 stt: STT,
                 ma_xn_may: targets[i].code,
-                ketqua: m[1].trim()
+                ketqua: val
             });
         }
     }
