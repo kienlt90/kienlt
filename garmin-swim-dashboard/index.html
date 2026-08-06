@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Garmin Swim Analytics - Personal Dashboard</title>
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- ApexCharts CDN for stunning data visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  
+  <!-- PapaParse CDN for robust CSV parsing in the browser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  
+  <!-- Lucide Icons for clean, modern SVG icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header Section -->
+    <header>
+      <div class="logo-section">
+        <div class="logo-icon">
+          <!-- Swim goggles icon using inline SVG -->
+          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12a5 5 0 0 0 5 5h1a5 5 0 0 0 5-5 5 5 0 0 0 5 5h1a5 5 0 0 0 5-5"></path>
+            <path d="M10 12h4"></path>
+            <path d="M7 12V10a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>SWIM COACH ANALYTICS</h1>
+          <p>Garmin Connect Personal Dashboard & AI Evaluation</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button id="load-demo-btn" class="btn btn-primary">
+          <i data-lucide="sparkles"></i> Load Demo Data
+        </button>
+        <button id="reset-btn" class="btn btn-secondary" style="display: none;">
+          <i data-lucide="rotate-ccw"></i> Reset
+        </button>
+      </div>
+    </header>
+
+    <!-- Drag & Drop Uploader -->
+    <section class="uploader-container animate-fade-in">
+      <div id="dropzone" class="dropzone">
+        <div class="dropzone-icon">
+          <i data-lucide="upload-cloud"></i>
+        </div>
+        <div class="dropzone-text">
+          <h3>Kéo & thả file CSV xuất từ Garmin của bạn vào đây</h3>
+          <p>Hoặc nhấp vào đây để chọn file từ máy tính (Ví dụ: <code>Activities.csv</code>)</p>
+        </div>
+        <input type="file" id="file-input" accept=".csv">
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="card empty-state animate-fade-in">
+      <div class="empty-state-icon">
+        <i data-lucide="bar-chart-3"></i>
+      </div>
+      <div class="empty-state-text">
+        <h2>Chưa có dữ liệu phân tích</h2>
+        <p>Vui lòng kéo thả file CSV xuất từ Garmin của bạn lên khung phía trên, hoặc nhấn nút <strong>"Load Demo Data"</strong> ở góc phải để trải nghiệm giao diện phân tích bơi lội chuyên sâu ngay lập tức.</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Content Area -->
+    <div id="dashboard-content" style="display: none;">
+      
+      <!-- Loader Overlay -->
+      <div id="loader" class="dashboard-loader">
+        <div class="spinner"></div>
+        <p>Đang xử lý dữ liệu Garmin...</p>
+      </div>
+
+      <!-- Stats Cards Row (Hero Stats) -->
+      <section class="stats-grid animate-fade-in">
+        <!-- Card 1: Total Distance -->
+        <div class="card stat-card total-dist">
+          <div class="stat-header">
+            <span class="stat-title">Tổng quãng đường</span>
+            <div class="stat-icon"><i data-lucide="milestone"></i></div>
+          </div>
+          <div>
+            <span id="stat-distance" class="stat-value">0</span>
+            <span class="stat-unit">km</span>
+          </div>
+          <span class="stat-subtitle">Toàn bộ thời gian hoạt động</span>
+        </div>
+
+        <!-- Card 2: Total Time -->
+        <div class="card stat-card total-time">
+          <div class="stat-header">
+            <span class="stat-title">Tổng thời gian</span>
+            <div class="stat-icon"><i data-lucide="timer"></i></div>
+          </div>
+          <div>
+            <span id="stat-time" class="stat-value">0</span>
+            <span class="stat-unit">giờ</span>
+          </div>
+          <span id="stat-time-detail" class="stat-subtitle">0h 0m 0s</span>
+        </div>
+
+        <!-- Card 3: Avg SWOLF -->
+        <div class="card stat-card avg-swolf">
+          <div class="stat-header">
+            <span class="stat-title">SWOLF trung bình</span>
+            <div class="stat-icon"><i data-lucide="award"></i></div>
+          </div>
+          <div>
+            <span id="stat-swolf" class="stat-value">0</span>
+          </div>
+          <span id="stat-swolf-rating" class="stat-subtitle">Hiệu suất quạt tay</span>
+        </div>
+
+        <!-- Card 4: Avg Pace -->
+        <div class="card stat-card avg-pace">
+          <div class="stat-header">
+            <span class="stat-title">Pace trung bình</span>
+            <div class="stat-icon"><i data-lucide="zap"></i></div>
+          </div>
+          <div>
+            <span id="stat-pace" class="stat-value">0</span>
+            <span class="stat-unit">/100m</span>
+          </div>
+          <span id="stat-pace-speed" class="stat-subtitle">Tốc độ trung bình</span>
+        </div>
+
+        <!-- Card 5: Total Sessions -->
+        <div class="card stat-card total-sessions">
+          <div class="stat-header">
+            <span class="stat-title">Số buổi bơi</span>
+            <div class="stat-icon"><i data-lucide="calendar"></i></div>
+          </div>
+          <div>
+            <span id="stat-sessions" class="stat-value">0</span>
+            <span class="stat-unit">buổi</span>
+          </div>
+          <span id="stat-sessions-range" class="stat-subtitle">Từ ngày ... đến ...</span>
+        </div>
+      </section>
+
+      <!-- Advanced Swimming Metrics Row (Month-over-Month & Swimming-specific) -->
+      <section class="stats-grid animate-fade-in" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <!-- Card A1: Month-over-Month Progress -->
+        <div class="card stat-card" style="--accent-color: var(--success);">
+          <div class="stat-header">
+            <span class="stat-title">Tiến trình bơi lội (30 ngày gần đây vs 30 ngày trước)</span>
+            <div class="stat-icon"><i data-lucide="trending-up"></i></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 5px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <div id="mom-pace" class="stat-value" style="font-size: 18px; margin-bottom: 2px;">--</div>
+              <div class="stat-subtitle" style="font-size: 10px;">Thay đổi Pace</div>
+            </div>
+            <div>
+              <div id="mom-swolf" class="stat-value" style="font-size: 18px; margin-bottom: 2px;">--</div>
+              <div class="stat-subtitle" style="font-size: 10px;">Thay đổi SWOLF</div>
+            </div>
+            <div>
+              <div id="mom-dist" class="stat-value" style="font-size: 18px; margin-bottom: 2px;">--</div>
+              <div class="stat-subtitle" style="font-size: 10px;">Thay đổi Thể tích bơi</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card A2: Avg DPS (Distance Per Stroke) -->
+        <div class="card stat-card" style="--accent-color: var(--primary);">
+          <div class="stat-header">
+            <span class="stat-title">Khoảng cách mỗi sải (DPS TB)</span>
+            <div class="stat-icon"><i data-lucide="waves"></i></div>
+          </div>
+          <div>
+            <span id="stat-dps" class="stat-value">0</span>
+            <span class="stat-unit">mét / sải</span>
+          </div>
+          <span id="stat-dps-subtitle" class="stat-subtitle">Quãng đường cơ thể đi được sau 1 lần quạt tay</span>
+        </div>
+
+        <!-- Card A3: Cardiovascular Efficiency (CPEI) -->
+        <div class="card stat-card" style="--accent-color: #ff9f43;">
+          <div class="stat-header">
+            <span class="stat-title">Hiệu suất Tim mạch (CPEI)</span>
+            <div class="stat-icon"><i data-lucide="heart-handshake"></i></div>
+          </div>
+          <div>
+            <span id="stat-cpei" class="stat-value">0</span>
+            <span class="stat-unit">m / nhịp tim</span>
+          </div>
+          <span id="stat-cpei-subtitle" class="stat-subtitle">Mỗi một nhịp tim giúp bạn bơi xa được bao nhiêu</span>
+        </div>
+      </section>
+
+      <!-- Main Visualizations Grid -->
+      <section class="dashboard-grid animate-fade-in">
+        
+        <!-- Left Side: Interactive Charts -->
+        <div class="chart-column" style="display: flex; flex-direction: column; gap: 25px;">
+          
+          <!-- Chart 1: Swimming Volume (Meters per activity) -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="bar-chart-big"></i> Biểu đồ Quãng đường qua các buổi bơi
+              </h3>
+            </div>
+            <div class="chart-wrapper">
+              <div id="volume-chart"></div>
+            </div>
+          </div>
+
+          <!-- Chart 2: Pace & SWOLF Progression -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="trending-up"></i> Xu hướng Tốc độ (Pace) & Chỉ số SWOLF
+              </h3>
+            </div>
+            <div class="chart-wrapper">
+              <div id="pace-swolf-chart"></div>
+            </div>
+          </div>
+
+          <!-- Chart 3: DPS vs Stroke Rate Correlation -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="activity"></i> Tần số Quạt tay (Stroke Rate) vs Khoảng cách mỗi sải (DPS)
+              </h3>
+            </div>
+            <div class="chart-wrapper">
+              <div id="dps-rate-chart"></div>
+            </div>
+          </div>
+
+          <!-- Chart 4: Efficiency Threshold (Pace vs SWOLF correlation) -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="git-commit"></i> Tương quan Tốc độ & Chỉ số SWOLF (Ngưỡng vỡ kỹ thuật)
+              </h3>
+            </div>
+            <div class="chart-wrapper">
+              <div id="pace-swolf-corr-chart"></div>
+            </div>
+          </div>
+
+          <!-- Chart 5: Heart Rate Zones & Aerobic Effect -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="heart"></i> Biến thiên Nhịp tim (Avg vs Max) & Hiệu quả Tập luyện
+              </h3>
+            </div>
+            <div class="chart-wrapper">
+              <div id="heart-rate-chart"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side: Personal Records & Breakdown -->
+        <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 25px;">
+          
+          <!-- Personal Records -->
+          <div class="card">
+            <div class="chart-header">
+              <h3 class="chart-title" style="color: var(--accent);">
+                <i data-lucide="trophy"></i> Kỷ lục Cá nhân (PR)
+              </h3>
+            </div>
+            <div class="records-list">
+              <!-- PR 1: Longest Swim -->
+              <div class="record-item">
+                <div class="record-info">
+                  <div class="record-medal"><i data-lucide="award"></i></div>
+                  <div>
+                    <div class="record-label">Quãng đường lớn nhất</div>
+                    <div id="pr-dist-date" class="record-date">--/--/----</div>
+                  </div>
+                </div>
+                <div class="record-value-container">
+                  <div id="pr-dist" class="record-value">0 m</div>
+                </div>
+              </div>
+
+              <!-- PR 2: Best Pace -->
+              <div class="record-item">
+                <div class="record-info">
+                  <div class="record-medal" style="background: rgba(0, 242, 254, 0.1); color: var(--primary);"><i data-lucide="zap"></i></div>
+                  <div>
+                    <div class="record-label">Pace tốt nhất (100m)</div>
+                    <div id="pr-pace-date" class="record-date">--/--/----</div>
+                  </div>
+                </div>
+                <div class="record-value-container">
+                  <div id="pr-pace" class="record-value">0:00</div>
+                </div>
+              </div>
+
+              <!-- PR 3: Best SWOLF -->
+              <div class="record-item">
+                <div class="record-info">
+                  <div class="record-medal" style="background: rgba(0, 255, 135, 0.1); color: var(--success);"><i data-lucide="shield-check"></i></div>
+                  <div>
+                    <div class="record-label">SWOLF tốt nhất (Hiệu quả nhất)</div>
+                    <div id="pr-swolf-date" class="record-date">--/--/----</div>
+                  </div>
+                </div>
+                <div class="record-value-container">
+                  <div id="pr-swolf" class="record-value">0</div>
+                </div>
+              </div>
+
+              <!-- PR 4: Max Time Swim -->
+              <div class="record-item">
+                <div class="record-info">
+                  <div class="record-medal" style="background: rgba(127, 0, 255, 0.1); color: var(--secondary);"><i data-lucide="timer"></i></div>
+                  <div>
+                    <div class="record-label">Thời gian bơi lâu nhất</div>
+                    <div id="pr-time-date" class="record-date">--/--/----</div>
+                  </div>
+                </div>
+                <div class="record-value-container">
+                  <div id="pr-time" class="record-value">00:00</div>
+                </div>
+              </div>
+
+              <!-- PR 5: Max Calories -->
+              <div class="record-item">
+                <div class="record-info">
+                  <div class="record-medal" style="background: rgba(255, 159, 67, 0.1); color: #ff9f43;"><i data-lucide="flame"></i></div>
+                  <div>
+                    <div class="record-label">Tiêu thụ Calo nhiều nhất</div>
+                    <div id="pr-cal-date" class="record-date">--/--/----</div>
+                  </div>
+                </div>
+                <div class="record-value-container">
+                  <div id="pr-cal" class="record-value">0 kcal</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Swim Style / Activity Type Distribution -->
+          <div class="card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="pie-chart"></i> Phân loại Địa điểm Bơi
+              </h3>
+            </div>
+            <div class="chart-wrapper" style="min-height: 250px; display: flex; align-items: center; justify-content: center;">
+              <div id="location-chart"></div>
+            </div>
+          </div>
+          
+          <!-- Fun stats / Training Advice Card -->
+          <div class="card" style="background: linear-gradient(135deg, rgba(0, 242, 254, 0.05), rgba(127, 0, 255, 0.05)); border-color: rgba(0, 242, 254, 0.15);">
+            <div class="chart-header">
+              <h3 class="chart-title" style="color: var(--primary);">
+                <i data-lucide="message-square"></i> Đánh giá Kỹ thuật & Huấn luyện
+              </h3>
+            </div>
+            <p id="advice-text" style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+              Dữ liệu của bạn chưa đủ để phân tích lời khuyên. Hãy tải tệp dữ liệu lên để nhận phản hồi từ AI huấn luyện bơi của bạn.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- Detailed Activities History Table -->
+      <section class="card table-section animate-fade-in">
+        <div class="chart-header" style="margin-bottom: 10px;">
+          <h3 class="chart-title">
+            <i data-lucide="list"></i> Nhật ký Bơi lội Chi tiết
+          </h3>
+        </div>
+        
+        <div class="table-controls">
+          <div class="search-wrapper">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm theo tiêu đề...">
+          </div>
+          <div style="font-size: 13px; color: var(--text-muted);" id="row-count">
+            Hiển thị 0 hoạt động
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table id="swim-table">
+            <thead>
+              <tr>
+                <th id="th-date">Ngày <i data-lucide="arrow-down-narrow-wide" style="display:inline; width:14px; height:14px;"></i></th>
+                <th id="th-title">Tiêu đề</th>
+                <th id="th-dist">Quãng đường (m)</th>
+                <th id="th-time">Thời gian</th>
+                <th id="th-pace">Pace TB</th>
+                <th id="th-swolf">SWOLF TB</th>
+                <th id="th-hr">Nhịp tim TB</th>
+                <th id="th-strokes">Quạt tay TB (t/phút)</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Dynamic rows filled by app.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <span id="page-info">Trang 1 / 1</span>
+          <div class="pagination-buttons">
+            <button id="prev-page-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" disabled>
+              <i data-lucide="chevron-left"></i> Trước
+            </button>
+            <button id="next-page-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" disabled>
+              Sau <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- Main JavaScript Controller -->
+  <script src="app.js"></script>
+</body>
+</html>
