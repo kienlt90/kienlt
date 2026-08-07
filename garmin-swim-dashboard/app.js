@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- State Variables ---
   let rawActivities = [];
   let processedSwims = [];
+  let savedFitSessions = [];
   let currentSort = { column: 'date', direction: 'desc' };
   let currentPage = 1;
   const rowsPerPage = 10;
@@ -45,6 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const detailSessionContent = document.getElementById("detail-session-content");
   const backToDashboardBtn = document.getElementById("back-to-dashboard-btn");
   const loadDemoFitBtn = document.getElementById("load-demo-fit-btn");
+  const fitHistoryContainer = document.getElementById("fit-history-container");
+  const fitHistoryList = document.getElementById("fit-history-list");
 
   const STROKE_TYPES_VN = {
     0: 'Bơi Sải (Freestyle)',
@@ -78,6 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem('garmin_swim_data');
     }
   }
+
+  // --- Load saved FIT sessions on start ---
+  loadSavedFitSessions();
 
   // --- Uploader Drag & Drop Events ---
   dropzone.addEventListener("click", () => fileInput.click());
@@ -157,6 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.style.display = "none";
     fileInput.value = "";
     searchInput.value = "";
+    renderFitHistory(); // Update history list visibility
   });
 
   // --- Back to Dashboard Click ---
@@ -167,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       emptyState.style.display = "flex";
     }
+    renderFitHistory(); // Update history list visibility
   });
 
   // --- Search Input Listener ---
@@ -451,11 +459,148 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       processFitData(fitData);
+      saveFitSession(fitData); // Save real uploaded FIT session!
     } catch (err) {
       showLoader(false);
       console.error("Fit file parsing error", err);
       alert("Lỗi khi giải mã tệp FIT: " + err.message);
     }
+  }
+
+  // ==========================================================================
+  // FIT FILE HISTORY STORAGE & ACTIONS
+  // ==========================================================================
+
+  function loadSavedFitSessions() {
+    const cached = localStorage.getItem('garmin_fit_sessions');
+    if (cached) {
+      try {
+        savedFitSessions = JSON.parse(cached);
+      } catch (e) {
+        console.error("Failed to parse saved FIT sessions", e);
+        localStorage.removeItem('garmin_fit_sessions');
+      }
+    }
+    renderFitHistory();
+  }
+
+  function saveFitSession(fitData) {
+    const sessionRecord = fitData.records.find(r => r.type === 'session');
+    if (!sessionRecord) return;
+    const session = sessionRecord.data || {};
+
+    const activeLengths = fitData.records
+      .filter(r => r.type === 'length' && r.data && r.data.length_type === 'active')
+      .map(r => r.data);
+
+    let poolLength = 25;
+    if (session.pool_length) {
+      poolLength = session.pool_length > 500 ? Math.round(session.pool_length / 100) : session.pool_length;
+    }
+
+    const totalDist = activeLengths.length * poolLength;
+    const rawTotalTime = session.total_timer_time || session.total_elapsed_time || 0;
+    const totalTimeSec = rawTotalTime > 100000 ? Math.round(rawTotalTime / 1000) : rawTotalTime;
+
+    let dateStr = "Chưa rõ ngày";
+    let dateIso = new Date().toISOString();
+    if (session.start_time) {
+      const d = new Date(session.start_time);
+      dateStr = d.toLocaleDateString('vi-VN') + " " + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      dateIso = d.toISOString();
+    }
+
+    const id = session.start_time || new Date().toISOString();
+    
+    // Check duplicate
+    if (savedFitSessions.some(s => s.id === id)) {
+      console.log("FIT session already saved, skipping save.");
+      return;
+    }
+
+    const newSaved = {
+      id,
+      title: `Buổi bơi ${totalDist}m - Bể ${poolLength}m`,
+      subtitle: `${dateStr}`,
+      date: dateIso,
+      distance: totalDist,
+      timeStr: formatDuration(totalTimeSec),
+      fitData
+    };
+
+    savedFitSessions.push(newSaved);
+    savedFitSessions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    try {
+      localStorage.setItem('garmin_fit_sessions', JSON.stringify(savedFitSessions));
+    } catch (e) {
+      console.warn("localStorage quota exceeded for FIT sessions", e);
+    }
+
+    renderFitHistory();
+  }
+
+  function deleteFitSession(id, event) {
+    if (event) event.stopPropagation();
+    if (!confirm("Bạn có chắc chắn muốn xóa buổi bơi chi tiết này khỏi lịch sử lưu trữ?")) return;
+
+    savedFitSessions = savedFitSessions.filter(s => s.id !== id);
+    try {
+      localStorage.setItem('garmin_fit_sessions', JSON.stringify(savedFitSessions));
+    } catch (e) {
+      console.warn(e);
+    }
+    renderFitHistory();
+  }
+
+  function renderFitHistory() {
+    if (savedFitSessions.length === 0) {
+      fitHistoryContainer.style.display = "none";
+      return;
+    }
+
+    if (detailSessionContent.style.display === "block") {
+      fitHistoryContainer.style.display = "none";
+      return;
+    }
+
+    fitHistoryContainer.style.display = "block";
+    fitHistoryList.innerHTML = "";
+
+    savedFitSessions.forEach(session => {
+      const item = document.createElement("div");
+      item.className = "fit-history-item animate-fade-in";
+      item.innerHTML = `
+        <div class="fit-item-details">
+          <div class="fit-item-title">${session.title}</div>
+          <div class="fit-item-meta">
+            <span style="display:inline-flex; align-items:center; gap:4px; margin-right:8px;">
+              <i data-lucide="calendar" style="width:11px; height:11px;"></i> ${session.subtitle}
+            </span>
+            <span style="display:inline-flex; align-items:center; gap:4px;">
+              <i data-lucide="clock" style="width:11px; height:11px;"></i> ${session.timeStr}
+            </span>
+          </div>
+        </div>
+        <div class="fit-item-actions">
+          <button class="btn-delete-fit" title="Xóa buổi bơi này">
+            <i data-lucide="trash-2" style="width:14px; height:14px;"></i>
+          </button>
+        </div>
+      `;
+
+      item.addEventListener("click", () => {
+        processFitData(session.fitData);
+        fitHistoryContainer.style.display = "none";
+      });
+
+      const deleteBtn = item.querySelector(".btn-delete-fit");
+      deleteBtn.addEventListener("click", (e) => deleteFitSession(session.id, e));
+
+      fitHistoryList.appendChild(item);
+    });
+
+    lucide.createIcons();
   }
 
   function processFitData(fitData) {
