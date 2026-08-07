@@ -598,7 +598,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // Populate Lengths Table
     const tableBodyEl = document.getElementById("lengths-table-body");
     tableBodyEl.innerHTML = "";
+
+    // Calculate metrics for smart comments
+    const durations = fitData.lengths.map(l => l.duration);
+    const strokes = fitData.lengths.map(l => l.strokes);
+    const swolfs = fitData.lengths.map(l => l.swolf);
+
+    const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+    const avgStrokes = strokes.reduce((a, b) => a + b, 0) / strokes.length;
+    
+    const minDuration = Math.min(...durations);
+    const minSwolf = Math.min(...swolfs);
+
     fitData.lengths.forEach(len => {
+      // Determine note badge
+      let noteHtml = `<span style="color: var(--text-muted); font-size: 12px;">✅ Ổn định</span>`;
+      
+      if (len.duration === minDuration) {
+        noteHtml = `<span style="background: rgba(0, 242, 254, 0.15); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold;">⚡ Tốc độ tốt nhất</span>`;
+      } else if (len.swolf === minSwolf) {
+        noteHtml = `<span style="background: rgba(0, 255, 87, 0.15); color: #00ff57; border: 1px solid rgba(0, 255, 87, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold;">🎯 Hiệu suất cao nhất</span>`;
+      } else if (len.strokes > avgStrokes + 2) {
+        noteHtml = `<span style="background: rgba(255, 0, 127, 0.15); color: #ff007f; border: 1px solid rgba(255, 0, 127, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px;">⚠️ Tăng sải (Mỏi cơ)</span>`;
+      } else if (len.duration > avgDuration + 4) {
+        noteHtml = `<span style="background: rgba(255, 159, 67, 0.15); color: #ff9f43; border: 1px solid rgba(255, 159, 67, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px;">🐢 Hồi phục / Thả lỏng</span>`;
+      }
+
       const row = document.createElement("tr");
       row.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
       row.innerHTML = `
@@ -608,6 +633,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <td style="padding: 12px; color: var(--text-muted);">${len.paceStr}</td>
         <td style="padding: 12px; color: var(--text-muted);">${len.strokes} sải</td>
         <td style="padding: 12px; font-weight: bold;" class="${getSwolfClass(len.swolf)}">${len.swolf}</td>
+        <td style="padding: 12px;">${noteHtml}</td>
       `;
       tableBodyEl.appendChild(row);
     });
