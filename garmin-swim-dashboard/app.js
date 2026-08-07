@@ -467,8 +467,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const session = sessionRecord.data || {};
 
+    let poolLength = 25;
+    if (session.pool_length) {
+      poolLength = session.pool_length > 500 ? Math.round(session.pool_length / 100) : session.pool_length;
+    }
+
     // Extract active lengths
-    const activeLengths = fitData.records
+    let activeLengths = fitData.records
       .filter(r => r.type === 'length' && r.data && r.data.length_type === 'active')
       .map(r => r.data);
 
@@ -477,18 +482,35 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Determine total distance, times, and calculations
-    const totalDist = session.total_distance || 0;
-    
-    const rawTotalTime = session.total_timer_time || session.total_elapsed_time || 0;
-    const totalTimeSec = rawTotalTime > 100000 ? Math.round(rawTotalTime / 1000) : rawTotalTime;
+    // Filter out glitches: strokes < 10 OR duration < 15 seconds
+    const beforeCount = activeLengths.length;
+    activeLengths = activeLengths.filter(len => {
+      const rawDur = len.total_elapsed_time || len.total_timer_time || 0;
+      const duration = rawDur > 1000 ? rawDur / 1000 : rawDur;
+      const strokes = len.total_strokes || 0;
+      return strokes >= 10 && duration >= 15;
+    });
 
-    const totalStrokes = session.total_cycles || 0; // total cycles is typical for Garmin swim strokes
-
-    let poolLength = 25;
-    if (session.pool_length) {
-      poolLength = session.pool_length > 500 ? Math.round(session.pool_length / 100) : session.pool_length;
+    const removedCount = beforeCount - activeLengths.length;
+    if (removedCount > 0) {
+      console.log(`Smart Clean: Removed ${removedCount} glitched lengths (stroke count < 10 or duration < 15s).`);
     }
+
+    if (activeLengths.length === 0) {
+      alert("Không tìm thấy chiều bơi hợp lệ nào sau khi loại bỏ các dữ liệu lỗi (yêu cầu >= 10 sải tay và >= 15 giây mỗi chiều).");
+      return;
+    }
+
+    // Recalculate distance and times based on cleaned active lengths
+    const totalDist = activeLengths.length * poolLength;
+    
+    // Sum of durations of cleaned lengths
+    const totalTimeSec = activeLengths.reduce((sum, len) => {
+      const rawDur = len.total_elapsed_time || len.total_timer_time || 0;
+      return sum + (rawDur > 1000 ? rawDur / 1000 : rawDur);
+    }, 0);
+
+    const totalStrokes = activeLengths.reduce((sum, len) => sum + (len.total_strokes || 0), 0);
 
     const avgPaceSec = (totalDist > 0 && totalTimeSec > 0) ? Math.round((totalTimeSec / totalDist) * 100) : 0;
     
@@ -531,13 +553,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderDetailSession({
       title: `Phân tích Buổi bơi chi tiết - Bể bơi ${poolLength}m`,
-      subtitle: `Địa điểm: Bể bơi trong nhà | Ngày bơi: ${dateStr} | Chiều dài bể: ${poolLength}m`,
+      subtitle: `Địa điểm: Bể bơi trong nhà | Ngày bơi: ${dateStr} | Chiều dài bể: ${poolLength}m` + (removedCount > 0 ? ` | Đã lọc bỏ ${removedCount} chiều bơi lỗi` : ""),
       distance: totalDist,
       timeSec: totalTimeSec,
       timeStr: formatDuration(totalTimeSec),
-      avgSwolf: session.avg_swolf || calculatedAvgSwolf,
+      avgSwolf: calculatedAvgSwolf,
       avgPaceStr: paceSecToPaceString(avgPaceSec),
-      totalStrokes: totalStrokes || processedLengths.reduce((a, b) => a + b.strokes, 0),
+      totalStrokes: totalStrokes,
       lengths: processedLengths
     });
   }
