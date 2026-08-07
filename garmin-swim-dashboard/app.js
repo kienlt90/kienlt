@@ -969,9 +969,9 @@ document.addEventListener("DOMContentLoaded", () => {
       pacingAdvice = "⚠️ <strong>Phân phối lực: Không đều.</strong> Tốc độ bơi có sự chênh lệch lớn giữa các chiều bơi (độ lệch chuẩn lên tới <strong>" + stdDev.toFixed(1) + "s</strong>). Thường bạn đã xuất phát quá nhanh ở các chiều đầu và bị đuối sức ở các chiều cuối. Lời khuyên: Hãy bơi thả lỏng hơn ở 3 chiều đầu tiên.";
     }
 
-    const strokes = fitData.lengths.map(l => l.strokes).filter(s => s > 0);
-    const minStrokes = Math.min(...strokes);
-    const maxStrokes = Math.max(...strokes);
+    const validStrokes = strokes.filter(s => s > 0);
+    const minStrokes = Math.min(...validStrokes);
+    const maxStrokes = Math.max(...validStrokes);
     const strokeDiff = maxStrokes - minStrokes;
     
     let strokeAdvice = "";
