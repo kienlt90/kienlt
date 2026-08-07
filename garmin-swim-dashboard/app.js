@@ -21,7 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     heartRate: null,
     location: null,
     dpsRate: null,
-    paceSwolfCorr: null
+    paceSwolfCorr: null,
+    lengthPace: null,
+    lengthStroke: null,
+    detailStrokeType: null
   };
 
   // --- DOM Elements ---
@@ -38,6 +41,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const pageInfo = document.getElementById("page-info");
   const tableBody = document.getElementById("table-body");
   const rowCount = document.getElementById("row-count");
+
+  const detailSessionContent = document.getElementById("detail-session-content");
+  const backToDashboardBtn = document.getElementById("back-to-dashboard-btn");
+  const loadDemoFitBtn = document.getElementById("load-demo-fit-btn");
+
+  const STROKE_TYPES_VN = {
+    0: 'Bơi Sải (Freestyle)',
+    'freestyle': 'Bơi Sải (Freestyle)',
+    'crawl': 'Bơi Sải (Freestyle)',
+    1: 'Bơi Ếch (Breaststroke)',
+    'breaststroke': 'Bơi Ếch (Breaststroke)',
+    2: 'Bơi Ngửa (Backstroke)',
+    'backstroke': 'Bơi Ngửa (Backstroke)',
+    3: 'Bơi Bướm (Butterfly)',
+    'butterfly': 'Bơi Bướm (Butterfly)',
+    4: 'Bài tập (Drill)',
+    'drill': 'Bài tập (Drill)',
+    5: 'Hỗn hợp (Mixed)',
+    'mixed': 'Hỗn hợp (Mixed)'
+  };
 
   // --- Check if there is cached data ---
   const cachedData = localStorage.getItem('garmin_swim_data');
@@ -107,6 +130,21 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
+  // --- Load Demo FIT Data Click ---
+  loadDemoFitBtn.addEventListener("click", () => {
+    showLoader(true);
+    setTimeout(() => {
+      showLoader(false);
+      try {
+        const mockData = getMockFitJson();
+        processFitData(mockData);
+      } catch (err) {
+        console.error("Error loading mock FIT data", err);
+        alert("Lỗi khi tải dữ liệu bơi mẫu: " + err.message);
+      }
+    }, 500);
+  });
+
   // --- Reset Click ---
   resetBtn.addEventListener("click", () => {
     rawActivities = [];
@@ -115,9 +153,20 @@ document.addEventListener("DOMContentLoaded", () => {
     destroyCharts();
     emptyState.style.display = "flex";
     dashboardContent.style.display = "none";
+    detailSessionContent.style.display = "none";
     resetBtn.style.display = "none";
     fileInput.value = "";
     searchInput.value = "";
+  });
+
+  // --- Back to Dashboard Click ---
+  backToDashboardBtn.addEventListener("click", () => {
+    detailSessionContent.style.display = "none";
+    if (processedSwims && processedSwims.length > 0) {
+      dashboardContent.style.display = "block";
+    } else {
+      emptyState.style.display = "flex";
+    }
   });
 
   // --- Search Input Listener ---
@@ -179,16 +228,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function handleFile(file) {
-    if (!file.name.endsWith(".csv")) {
-      alert("Vui lòng tải lên một tệp định dạng .csv");
-      return;
+    const fileName = file.name.toLowerCase();
+    if (fileName.endsWith(".csv")) {
+      showLoader(true);
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        parseCSV(e.target.result);
+      };
+      reader.readAsText(file);
+    } else if (fileName.endsWith(".fit")) {
+      showLoader(true);
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        parseFitFile(e.target.result);
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      alert("Vui lòng tải lên tệp định dạng .CSV (Lịch sử bơi) hoặc .FIT (Chi tiết buổi bơi).");
     }
-    showLoader(true);
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      parseCSV(e.target.result);
-    };
-    reader.readAsText(file);
   }
 
   function parseCSV(csvText) {
@@ -364,6 +421,383 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTable();
     generateTechnicalAdvice();
     
+    // Refresh Icons inside generated DOM
+    lucide.createIcons();
+  }
+
+  // ==========================================================================
+  // FIT FILE PARSING & DETAILS RENDERING
+  // ==========================================================================
+
+  function parseFitFile(arrayBuffer) {
+    if (typeof FitParser === 'undefined') {
+      showLoader(false);
+      alert("Lỗi: Thư viện FitParser chưa được tải. Vui lòng kiểm tra lại kết nối mạng.");
+      return;
+    }
+
+    const fitParser = new FitParser({
+      force: true,
+      lengthUnit: 'm'
+    });
+
+    fitParser.parse(arrayBuffer, (error, data) => {
+      showLoader(false);
+      if (error) {
+        console.error("Fit file parsing error", error);
+        alert("Lỗi khi đọc file FIT: " + error);
+        return;
+      }
+      
+      try {
+        processFitData(data);
+      } catch (err) {
+        console.error("Error processing FIT JSON data", err);
+        alert("Có lỗi khi xử lý dữ liệu chi tiết của tệp FIT: " + err.message);
+      }
+    });
+  }
+
+  function processFitData(fitJson) {
+    // Find Session summary
+    const session = fitJson.sessions && fitJson.sessions[0] ? fitJson.sessions[0] : {};
+    
+    // Extract metadata
+    const totalDist = session.total_distance || 0;
+    const totalTimeSec = session.total_elapsed_time || session.total_timer_time || 0;
+    const avgSwolf = session.avg_swolf || 0;
+    const avgPaceSec = (totalDist > 0 && totalTimeSec > 0) ? Math.round((totalTimeSec / totalDist) * 100) : 0;
+    const totalStrokes = session.total_strokes || 0;
+    
+    let dateStr = "Chưa rõ ngày";
+    if (session.start_time) {
+      const d = new Date(session.start_time);
+      dateStr = d.toLocaleDateString('vi-VN') + " " + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Extract length records
+    const rawLengths = findLengthsInFit(fitJson);
+
+    if (rawLengths.length === 0) {
+      alert("Tệp tin FIT này không chứa dữ liệu bơi hồ chi tiết từng chiều (Lengths). Có thể đây là buổi bơi ngoài trời (Open Water) chỉ có định vị GPS.");
+      return;
+    }
+
+    // Calculate pool size
+    const poolLength = (totalDist > 0 && rawLengths.length > 0) ? Math.round(totalDist / rawLengths.length) : 25;
+
+    // Process lengths
+    const processedLengths = rawLengths.map((len, idx) => {
+      const duration = len.total_elapsed_time || len.total_timer_time || 0;
+      const strokes = len.total_strokes || 0;
+      
+      // Calculate SWOLF: time in seconds + strokes
+      const swolf = len.swolf_score || Math.round(duration + strokes);
+      
+      // Map stroke type
+      const rawStroke = len.swim_stroke;
+      const strokeTypeVN = STROKE_TYPES_VN[rawStroke] || rawStroke || "Không rõ";
+
+      // Calculate Pace/100m equivalent for this length: (duration / poolLength) * 100
+      const paceSec100m = poolLength > 0 ? Math.round((duration / poolLength) * 100) : 0;
+      const paceStr = paceSecToPaceString(paceSec100m);
+
+      return {
+        number: idx + 1,
+        strokeType: strokeTypeVN,
+        duration,
+        strokes,
+        swolf,
+        paceSec100m,
+        paceStr
+      };
+    });
+
+    renderDetailSession({
+      title: `Phân tích Buổi bơi chi tiết - Bể bơi ${poolLength}m`,
+      subtitle: `Địa điểm: Bể bơi trong nhà | Ngày bơi: ${dateStr} | Chiều dài bể: ${poolLength}m`,
+      distance: totalDist,
+      timeSec: totalTimeSec,
+      timeStr: formatDuration(totalTimeSec),
+      avgSwolf: avgSwolf || Math.round(processedLengths.reduce((a, b) => a + b.swolf, 0) / processedLengths.length),
+      avgPaceStr: paceSecToPaceString(avgPaceSec),
+      totalStrokes: totalStrokes || processedLengths.reduce((a, b) => a + b.strokes, 0),
+      lengths: processedLengths
+    });
+  }
+
+  function findLengthsInFit(obj) {
+    if (!obj) return [];
+    if (Array.isArray(obj)) {
+      if (obj.length > 0 && obj[0] && (obj[0].swim_stroke !== undefined || obj[0].total_strokes !== undefined)) {
+        return obj;
+      }
+      for (let i = 0; i < obj.length; i++) {
+        const res = findLengthsInFit(obj[i]);
+        if (res && res.length > 0) return res;
+      }
+    } else if (typeof obj === 'object') {
+      if (obj.lengths && Array.isArray(obj.lengths)) {
+        return obj.lengths;
+      }
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const res = findLengthsInFit(obj[key]);
+          if (res && res.length > 0) return res;
+        }
+      }
+    }
+    return [];
+  }
+
+  // Format seconds to hh:mm:ss
+  function formatDuration(totalSec) {
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = Math.round(totalSec % 60);
+    return h > 0 ? `${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}` : `${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+
+  function getSwolfClass(swolf) {
+    if (swolf < 35) return "swolf-excellent";
+    if (swolf <= 42) return "swolf-good";
+    if (swolf <= 50) return "swolf-average";
+    return "swolf-poor";
+  }
+
+  function renderDetailSession(fitData) {
+    // Toggle view
+    emptyState.style.display = "none";
+    dashboardContent.style.display = "none";
+    detailSessionContent.style.display = "block";
+    resetBtn.style.display = "inline-flex";
+
+    // Populate Cards
+    document.getElementById("detail-session-title").innerText = fitData.title;
+    document.getElementById("detail-session-subtitle").innerText = fitData.subtitle;
+    document.getElementById("detail-dist").innerText = Number(fitData.distance).toLocaleString('vi-VN');
+    document.getElementById("detail-time").innerText = fitData.timeStr;
+    document.getElementById("detail-swolf").innerText = fitData.avgSwolf;
+    document.getElementById("detail-pace").innerText = fitData.avgPaceStr;
+    document.getElementById("detail-strokes").innerText = fitData.totalStrokes;
+
+    // Populate Lengths Table
+    const tableBodyEl = document.getElementById("lengths-table-body");
+    tableBodyEl.innerHTML = "";
+    fitData.lengths.forEach(len => {
+      const row = document.createElement("tr");
+      row.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+      row.innerHTML = `
+        <td style="padding: 12px; color: var(--text-main);">Chiều thứ ${len.number}</td>
+        <td style="padding: 12px; color: var(--text-muted);">${len.strokeType}</td>
+        <td style="padding: 12px; color: var(--text-muted);">${len.duration.toFixed(1)}s</td>
+        <td style="padding: 12px; color: var(--text-muted);">${len.paceStr}</td>
+        <td style="padding: 12px; color: var(--text-muted);">${len.strokes} sải</td>
+        <td style="padding: 12px; font-weight: bold;" class="${getSwolfClass(len.swolf)}">${len.swolf}</td>
+      `;
+      tableBodyEl.appendChild(row);
+    });
+
+    // --- Render Detail Charts ---
+    const lengthNumbers = fitData.lengths.map(l => l.number);
+    const lengthDurations = fitData.lengths.map(l => l.duration);
+    const lengthSwolfs = fitData.lengths.map(l => l.swolf);
+    const lengthStrokes = fitData.lengths.map(l => l.strokes);
+
+    // 1. Pace vs SWOLF Chart
+    const paceOptions = {
+      series: [
+        {
+          name: 'Thời gian bơi (giây)',
+          type: 'column',
+          data: lengthDurations
+        },
+        {
+          name: 'Điểm số SWOLF',
+          type: 'line',
+          data: lengthSwolfs
+        }
+      ],
+      chart: {
+        height: '100%',
+        type: 'line',
+        background: 'transparent',
+        toolbar: { show: false },
+        foreColor: '#9ca3af'
+      },
+      colors: ['#00f2fe', '#ff007f'],
+      stroke: {
+        width: [0, 3],
+        curve: 'smooth'
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 2,
+          columnWidth: '50%'
+        }
+      },
+      grid: {
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        strokeDashArray: 4
+      },
+      xaxis: {
+        categories: lengthNumbers,
+        title: { text: 'Lượt bơi (Chiều hồ bơi)', style: { color: '#9ca3af' } }
+      },
+      yaxis: [
+        {
+          title: { text: 'Thời gian (giây)', style: { color: '#9ca3af' } }
+        },
+        {
+          opposite: true,
+          title: { text: 'SWOLF', style: { color: '#9ca3af' } }
+        }
+      ],
+      tooltip: {
+        theme: 'dark',
+        shared: true,
+        intersect: false
+      }
+    };
+
+    if (charts.lengthPace) {
+      charts.lengthPace.destroy();
+    }
+    charts.lengthPace = new ApexCharts(document.querySelector("#length-pace-chart"), paceOptions);
+    charts.lengthPace.render();
+
+    // 2. Stroke Count Chart
+    const strokeOptions = {
+      series: [{
+        name: 'Số sải tay',
+        data: lengthStrokes
+      }],
+      chart: {
+        height: '100%',
+        type: 'area',
+        background: 'transparent',
+        toolbar: { show: false },
+        foreColor: '#9ca3af'
+      },
+      colors: ['#7f00ff'],
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.3,
+          opacityTo: 0.05,
+          stops: [0, 90, 100]
+        }
+      },
+      stroke: {
+        width: 3,
+        curve: 'smooth'
+      },
+      grid: {
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        strokeDashArray: 4
+      },
+      xaxis: {
+        categories: lengthNumbers,
+        title: { text: 'Lượt bơi (Chiều hồ bơi)', style: { color: '#9ca3af' } }
+      },
+      yaxis: {
+        title: { text: 'Số sải tay (strokes)', style: { color: '#9ca3af' } }
+      },
+      tooltip: {
+        theme: 'dark'
+      }
+    };
+
+    if (charts.lengthStroke) {
+      charts.lengthStroke.destroy();
+    }
+    charts.lengthStroke = new ApexCharts(document.querySelector("#length-stroke-chart"), strokeOptions);
+    charts.lengthStroke.render();
+
+    // 3. Stroke Type Donut Chart
+    const strokeCounts = {};
+    fitData.lengths.forEach(l => {
+      strokeCounts[l.strokeType] = (strokeCounts[l.strokeType] || 0) + 1;
+    });
+
+    const donutLabels = Object.keys(strokeCounts);
+    const donutSeries = Object.values(strokeCounts);
+
+    const donutOptions = {
+      series: donutSeries,
+      labels: donutLabels,
+      chart: {
+        type: 'donut',
+        height: '100%',
+        background: 'transparent',
+        foreColor: '#9ca3af'
+      },
+      colors: ['#00f2fe', '#7f00ff', '#ff007f', '#00ff87', '#ff9f43'],
+      stroke: { show: false },
+      dataLabels: { enabled: false },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '70%',
+            labels: {
+              show: true,
+              name: { show: true, fontSize: '12px' },
+              value: { show: true, fontSize: '18px', fontWeight: 800, color: '#f3f4f6' },
+              total: {
+                show: true,
+                label: 'Tổng lượt',
+                formatter: function (w) {
+                  return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                }
+              }
+            }
+          }
+        }
+      },
+      legend: {
+        position: 'bottom',
+        fontSize: '11px',
+        labels: { colors: '#9ca3af' }
+      },
+      tooltip: { theme: 'dark' }
+    };
+
+    if (charts.detailStrokeType) {
+      charts.detailStrokeType.destroy();
+    }
+    charts.detailStrokeType = new ApexCharts(document.querySelector("#detail-stroke-type-chart"), donutOptions);
+    charts.detailStrokeType.render();
+
+    // --- AI Length Coach Advice ---
+    const times = fitData.lengths.map(l => l.duration).filter(t => t > 0);
+    const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
+    const variance = times.reduce((a, b) => a + Math.pow(b - avgTime, 2), 0) / times.length;
+    const stdDev = Math.sqrt(variance);
+
+    let pacingAdvice = "";
+    if (stdDev < 1.5) {
+      pacingAdvice = "🎯 <strong>Phân phối lực: Tuyệt vời!</strong> Tốc độ giữa các chiều bơi của bạn cực kỳ đều đặn (độ lệch chuẩn chỉ <strong>" + stdDev.toFixed(1) + "s</strong>). Bạn đang kiểm soát nhịp độ bơi rất tốt và phân bổ thể lực khoa học.";
+    } else if (stdDev < 3.0) {
+      pacingAdvice = "👍 <strong>Phân phối lực: Ổn định.</strong> Tốc độ bơi duy trì tương đối tốt (độ lệch chuẩn <strong>" + stdDev.toFixed(1) + "s</strong>). Bạn có sự kiểm soát thể lực tốt, thích hợp cho các bài bơi sức bền dài.";
+    } else {
+      pacingAdvice = "⚠️ <strong>Phân phối lực: Không đều.</strong> Tốc độ bơi có sự chênh lệch lớn giữa các chiều bơi (độ lệch chuẩn lên tới <strong>" + stdDev.toFixed(1) + "s</strong>). Thường bạn đã xuất phát quá nhanh ở các chiều đầu và bị đuối sức ở các chiều cuối. Lời khuyên: Hãy bơi thả lỏng hơn ở 3 chiều đầu tiên.";
+    }
+
+    const strokes = fitData.lengths.map(l => l.strokes).filter(s => s > 0);
+    const minStrokes = Math.min(...strokes);
+    const maxStrokes = Math.max(...strokes);
+    const strokeDiff = maxStrokes - minStrokes;
+    
+    let strokeAdvice = "";
+    if (strokeDiff <= 2) {
+      strokeAdvice = "<br><br>🌊 <strong>Hiệu quả sải tay: Cao!</strong> Số lần quạt tay mỗi chiều bể bơi dao động rất ít. Lực đẩy nước và chiều dài sải tay của bạn được duy trì cực tốt kể cả khi mệt mỏi.";
+    } else {
+      strokeAdvice = "<br><br>⚠️ <strong>Trượt nước khi mệt:</strong> Số lần quạt tay dao động từ <strong>" + minStrokes + "</strong> đến <strong>" + maxStrokes + "</strong> sải/chiều (lệch <strong>" + strokeDiff + "</strong> sải). Khi mệt, bạn có xu hướng quạt tay nhanh hơn nhưng lực đẩy kém đi. Hãy cố gắng giữ sải tay dài ở cuối buổi bơi.";
+    }
+
+    document.getElementById("detail-advice-text").innerHTML = pacingAdvice + strokeAdvice;
+
     // Refresh Icons inside generated DOM
     lucide.createIcons();
   }
@@ -1390,6 +1824,47 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     // Create new Lucide icons inside table headers
     lucide.createIcons();
+  }
+
+  function getMockFitJson() {
+    const start = new Date(Date.now() - 24 * 3600 * 1000);
+    const sessions = [{
+      total_distance: 1500,
+      total_elapsed_time: 2110,
+      total_timer_time: 2110,
+      avg_swolf: 38,
+      total_strokes: 930,
+      start_time: start.toISOString()
+    }];
+    
+    // Generate 60 lengths of 25m
+    const lengths = [];
+    const strokeTypes = [0, 0, 0, 0, 1, 1, 0, 0]; // 0: freestyle, 1: breaststroke
+    
+    for (let i = 0; i < 60; i++) {
+      const baseTime = 19 + Math.floor(i / 15) * 1.5; // slow down gradually
+      const randomTime = Math.random() * 2 - 1; // +/- 1s fluctuation
+      const duration = parseFloat((baseTime + randomTime).toFixed(1));
+      
+      const strokes = 14 + (i % 3 === 0 ? 1 : 0) + (i > 40 ? 1 : 0);
+      const strokeType = i < 10 ? 0 : strokeTypes[i % strokeTypes.length];
+      
+      lengths.push({
+        total_elapsed_time: duration,
+        total_timer_time: duration,
+        total_strokes: strokes,
+        swim_stroke: strokeType,
+        swolf_score: Math.round(duration + strokes)
+      });
+    }
+
+    return {
+      sessions,
+      activity: {
+        sessions
+      },
+      lengths
+    };
   }
 
   // ==========================================================================

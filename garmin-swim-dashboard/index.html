@@ -14,6 +14,15 @@
   <!-- PapaParse CDN for robust CSV parsing in the browser -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   
+  <!-- Polyfill for Node.js Buffer in Browser (needed for fit-file-parser) -->
+  <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
+  <script>
+    window.Buffer = window.Buffer || buffer.Buffer;
+  </script>
+  
+  <!-- Fit File Parser CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/fit-file-parser@latest/dist/fit-file-parser.min.js"></script>
+  
   <!-- Lucide Icons for clean, modern SVG icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -40,7 +49,10 @@
       
       <div class="header-actions">
         <button id="load-demo-btn" class="btn btn-primary">
-          <i data-lucide="sparkles"></i> Load Demo Data
+          <i data-lucide="sparkles"></i> Xem Lịch sử Mẫu (CSV)
+        </button>
+        <button id="load-demo-fit-btn" class="btn btn-primary" style="background: linear-gradient(135deg, var(--secondary), #a200ff); color: #fff; box-shadow: 0 4px 15px rgba(127, 0, 255, 0.3);">
+          <i data-lucide="activity"></i> Xem Buổi bơi Mẫu (FIT)
         </button>
         <button id="reset-btn" class="btn btn-secondary" style="display: none;">
           <i data-lucide="rotate-ccw"></i> Reset
@@ -55,10 +67,10 @@
           <i data-lucide="upload-cloud"></i>
         </div>
         <div class="dropzone-text">
-          <h3>Kéo & thả file CSV xuất từ Garmin của bạn vào đây</h3>
-          <p>Hoặc nhấp vào đây để chọn file từ máy tính (Ví dụ: <code>Activities.csv</code>)</p>
+          <h3>Kéo & thả file CSV hoặc tệp .FIT Garmin vào đây</h3>
+          <p>Hoặc nhấp vào đây để chọn file từ máy tính (Ví dụ: <code>Activities.csv</code> hoặc <code>activity.fit</code>)</p>
         </div>
-        <input type="file" id="file-input" accept=".csv">
+        <input type="file" id="file-input" accept=".csv,.fit">
       </div>
     </section>
 
@@ -430,6 +442,145 @@
         </div>
       </section>
 
+    </div>
+
+    <!-- Detailed Session View (Hidden by default, shown when a FIT file is uploaded) -->
+    <div id="detail-session-content" style="display: none; margin-top: 20px;">
+      <div style="margin-bottom: 20px;">
+        <button id="back-to-dashboard-btn" class="btn btn-secondary">
+          <i data-lucide="arrow-left" style="display:inline-block; width:16px; height:16px; vertical-align:middle; margin-right:5px;"></i> Quay lại Dashboard chính
+        </button>
+      </div>
+
+      <!-- Header Title -->
+      <div class="card animate-fade-in" style="margin-bottom: 25px; background: linear-gradient(135deg, rgba(0, 242, 254, 0.08), rgba(127, 0, 255, 0.08)); border-color: rgba(0, 242, 254, 0.2); padding: 20px; border-radius: 12px; backdrop-filter: blur(12px);">
+        <h2 id="detail-session-title" style="font-family: var(--font-display); font-size: 24px; font-weight: 700; margin-bottom: 5px; color: #f3f4f6;">
+          Chi tiết buổi bơi
+        </h2>
+        <p id="detail-session-subtitle" style="font-size: 13px; color: var(--text-muted); margin: 0;">
+          Bể bơi 25m | Ngày bơi: --/--/---- | Thời gian: --:--
+        </p>
+      </div>
+
+      <!-- Detail Session Stats -->
+      <section class="stats-grid animate-fade-in" style="margin-bottom: 25px;">
+        <div class="card stat-card" style="border-left: 4px solid var(--primary); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; min-height: 120px;">
+          <div class="stat-header" style="display:flex; justify-content:space-between; align-items:center; color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 700;">
+            <span class="stat-title">Quãng đường</span>
+            <div class="stat-icon" style="color: var(--primary);"><i data-lucide="milestone"></i></div>
+          </div>
+          <div style="margin-top:10px;"><span id="detail-dist" class="stat-value" style="font-size: 32px; font-weight: 800; font-family: var(--font-display); color: #f3f4f6;">0</span><span class="stat-unit" style="font-size: 14px; margin-left: 5px; color: var(--text-muted);">m</span></div>
+        </div>
+        <div class="card stat-card" style="border-left: 4px solid var(--secondary); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; min-height: 120px;">
+          <div class="stat-header" style="display:flex; justify-content:space-between; align-items:center; color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 700;">
+            <span class="stat-title">Thời gian bơi</span>
+            <div class="stat-icon" style="color: var(--secondary);"><i data-lucide="timer"></i></div>
+          </div>
+          <div style="margin-top:10px;"><span id="detail-time" class="stat-value" style="font-size: 32px; font-weight: 800; font-family: var(--font-display); color: #f3f4f6;">00:00</span></div>
+        </div>
+        <div class="card stat-card" style="border-left: 4px solid var(--success); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; min-height: 120px;">
+          <div class="stat-header" style="display:flex; justify-content:space-between; align-items:center; color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 700;">
+            <span class="stat-title">SWOLF TB</span>
+            <div class="stat-icon" style="color: var(--success);"><i data-lucide="award"></i></div>
+          </div>
+          <div style="margin-top:10px;"><span id="detail-swolf" class="stat-value" style="font-size: 32px; font-weight: 800; font-family: var(--font-display); color: #f3f4f6;">0</span></div>
+        </div>
+        <div class="card stat-card" style="border-left: 4px solid #ff9f43; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; min-height: 120px;">
+          <div class="stat-header" style="display:flex; justify-content:space-between; align-items:center; color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 700;">
+            <span class="stat-title">Pace TB</span>
+            <div class="stat-icon" style="color: #ff9f43;"><i data-lucide="zap"></i></div>
+          </div>
+          <div style="margin-top:10px;"><span id="detail-pace" class="stat-value" style="font-size: 32px; font-weight: 800; font-family: var(--font-display); color: #f3f4f6;">0:00</span><span class="stat-unit" style="font-size: 12px; margin-left: 5px; color: var(--text-muted);">/100m</span></div>
+        </div>
+        <div class="card stat-card" style="border-left: 4px solid var(--accent); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; min-height: 120px;">
+          <div class="stat-header" style="display:flex; justify-content:space-between; align-items:center; color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 700;">
+            <span class="stat-title">Tổng sải tay</span>
+            <div class="stat-icon" style="color: var(--accent);"><i data-lucide="waves"></i></div>
+          </div>
+          <div style="margin-top:10px;"><span id="detail-strokes" class="stat-value" style="font-size: 32px; font-weight: 800; font-family: var(--font-display); color: #f3f4f6;">0</span><span class="stat-unit" style="font-size: 14px; margin-left: 5px; color: var(--text-muted);">lần</span></div>
+        </div>
+      </section>
+
+      <!-- Detail Grid (Charts) -->
+      <section class="dashboard-grid animate-fade-in" style="margin-bottom: 30px;">
+        <div class="chart-column" style="display: flex; flex-direction: column; gap: 25px;">
+          <!-- Length-by-Length Analysis Chart -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="trending-up"></i> Tốc độ (Pace) & Hiệu quả (SWOLF) từng chiều 25m
+              </h3>
+            </div>
+            <div class="chart-wrapper" style="height: 320px; position: relative;">
+              <div id="length-pace-chart" style="height: 100%;"></div>
+            </div>
+          </div>
+          
+          <!-- Length-by-Length Stroke Count Chart -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="activity"></i> Số sải tay quạt nước mỗi chiều hồ bơi
+              </h3>
+            </div>
+            <div class="chart-wrapper" style="height: 320px; position: relative;">
+              <div id="length-stroke-chart" style="height: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 25px;">
+          <!-- Stroke Type Distribution -->
+          <div class="card">
+            <div class="chart-header">
+              <h3 class="chart-title">
+                <i data-lucide="pie-chart"></i> Tỷ lệ Kiểu Bơi
+              </h3>
+            </div>
+            <div class="chart-wrapper" style="height: 250px; display: flex; align-items: center; justify-content: center;">
+              <div id="detail-stroke-type-chart" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- Coach Advice on this Session -->
+          <div class="card" style="background: linear-gradient(135deg, rgba(0, 242, 254, 0.05), rgba(127, 0, 255, 0.05)); border-color: rgba(0, 242, 254, 0.15); padding: 20px; border-radius: 12px;">
+            <div class="chart-header" style="margin-bottom: 15px;">
+              <h3 class="chart-title" style="color: var(--primary); display:flex; align-items:center; gap:8px;">
+                <i data-lucide="message-square"></i> Đánh giá buổi bơi
+              </h3>
+            </div>
+            <p id="detail-advice-text" style="font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin: 0;">
+              Phân tích kỹ thuật của buổi bơi này...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Length-by-length Log Table -->
+      <section class="card table-section animate-fade-in" style="margin-bottom: 40px;">
+        <div class="chart-header" style="margin-bottom: 15px;">
+          <h3 class="chart-title">
+            <i data-lucide="list"></i> Nhật ký từng chiều bể (Chiều dài 25m)
+          </h3>
+        </div>
+        <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
+          <table id="lengths-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <th style="padding: 12px; text-align: left;">Chiều thứ</th>
+                <th style="padding: 12px; text-align: left;">Kiểu bơi</th>
+                <th style="padding: 12px; text-align: left;">Thời gian</th>
+                <th style="padding: 12px; text-align: left;">Pace quy đổi (/100m)</th>
+                <th style="padding: 12px; text-align: left;">Số sải tay</th>
+                <th style="padding: 12px; text-align: left;">Chỉ số SWOLF</th>
+              </tr>
+            </thead>
+            <tbody id="lengths-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
 
   </div>
