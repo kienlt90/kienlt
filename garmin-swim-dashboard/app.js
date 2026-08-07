@@ -430,44 +430,67 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================================================
 
   function parseFitFile(arrayBuffer) {
-    if (typeof FitParser === 'undefined') {
+    if (typeof fitDecoder === 'undefined') {
       showLoader(false);
-      alert("Lỗi: Thư viện FitParser chưa được tải. Vui lòng kiểm tra lại kết nối mạng.");
+      alert("Lỗi: Thư viện fitDecoder chưa được tải. Vui lòng kiểm tra lại kết nối mạng.");
       return;
     }
 
-    const fitParser = new FitParser({
-      force: true,
-      lengthUnit: 'm'
-    });
-
-    fitParser.parse(arrayBuffer, (error, data) => {
+    try {
+      // 1. Convert ArrayBuffer to raw JSON
+      const jsonRaw = fitDecoder.fit2json(arrayBuffer);
+      
+      // 2. Parse raw JSON into readable records
+      const fitData = fitDecoder.parseRecords(jsonRaw);
+      
       showLoader(false);
-      if (error) {
-        console.error("Fit file parsing error", error);
-        alert("Lỗi khi đọc file FIT: " + error);
+      
+      if (!fitData || !fitData.records || fitData.records.length === 0) {
+        alert("Lỗi: Không tìm thấy bản ghi nào trong tệp FIT.");
         return;
       }
       
-      try {
-        processFitData(data);
-      } catch (err) {
-        console.error("Error processing FIT JSON data", err);
-        alert("Có lỗi khi xử lý dữ liệu chi tiết của tệp FIT: " + err.message);
-      }
-    });
+      processFitData(fitData);
+    } catch (err) {
+      showLoader(false);
+      console.error("Fit file parsing error", err);
+      alert("Lỗi khi giải mã tệp FIT: " + err.message);
+    }
   }
 
-  function processFitData(fitJson) {
-    // Find Session summary
-    const session = fitJson.sessions && fitJson.sessions[0] ? fitJson.sessions[0] : {};
-    
-    // Extract metadata
+  function processFitData(fitData) {
+    // Extract session record
+    const sessionRecord = fitData.records.find(r => r.type === 'session');
+    if (!sessionRecord) {
+      alert("Tệp tin FIT không chứa thông tin tổng hợp của buổi bơi (Session summary).");
+      return;
+    }
+    const session = sessionRecord.data || {};
+
+    // Extract active lengths
+    const activeLengths = fitData.records
+      .filter(r => r.type === 'length' && r.data && r.data.length_type === 'active')
+      .map(r => r.data);
+
+    if (activeLengths.length === 0) {
+      alert("Tệp tin FIT này không chứa dữ liệu bơi hồ chi tiết từng chiều (Lengths). Có thể đây là buổi bơi ngoài trời (Open Water) hoặc bài tập bơi tự do.");
+      return;
+    }
+
+    // Determine total distance, times, and calculations
     const totalDist = session.total_distance || 0;
-    const totalTimeSec = session.total_elapsed_time || session.total_timer_time || 0;
-    const avgSwolf = session.avg_swolf || 0;
+    
+    const rawTotalTime = session.total_timer_time || session.total_elapsed_time || 0;
+    const totalTimeSec = rawTotalTime > 100000 ? Math.round(rawTotalTime / 1000) : rawTotalTime;
+
+    const totalStrokes = session.total_cycles || 0; // total cycles is typical for Garmin swim strokes
+
+    let poolLength = 25;
+    if (session.pool_length) {
+      poolLength = session.pool_length > 500 ? Math.round(session.pool_length / 100) : session.pool_length;
+    }
+
     const avgPaceSec = (totalDist > 0 && totalTimeSec > 0) ? Math.round((totalTimeSec / totalDist) * 100) : 0;
-    const totalStrokes = session.total_strokes || 0;
     
     let dateStr = "Chưa rõ ngày";
     if (session.start_time) {
@@ -475,20 +498,11 @@ document.addEventListener("DOMContentLoaded", () => {
       dateStr = d.toLocaleDateString('vi-VN') + " " + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     }
 
-    // Extract length records
-    const rawLengths = findLengthsInFit(fitJson);
-
-    if (rawLengths.length === 0) {
-      alert("Tệp tin FIT này không chứa dữ liệu bơi hồ chi tiết từng chiều (Lengths). Có thể đây là buổi bơi ngoài trời (Open Water) chỉ có định vị GPS.");
-      return;
-    }
-
-    // Calculate pool size
-    const poolLength = (totalDist > 0 && rawLengths.length > 0) ? Math.round(totalDist / rawLengths.length) : 25;
-
     // Process lengths
-    const processedLengths = rawLengths.map((len, idx) => {
-      const duration = len.total_elapsed_time || len.total_timer_time || 0;
+    const processedLengths = activeLengths.map((len, idx) => {
+      const rawDur = len.total_elapsed_time || len.total_timer_time || 0;
+      const duration = rawDur > 1000 ? rawDur / 1000 : rawDur;
+
       const strokes = len.total_strokes || 0;
       
       // Calculate SWOLF: time in seconds + strokes
@@ -513,41 +527,19 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     });
 
+    const calculatedAvgSwolf = Math.round(processedLengths.reduce((a, b) => a + b.swolf, 0) / processedLengths.length);
+
     renderDetailSession({
       title: `Phân tích Buổi bơi chi tiết - Bể bơi ${poolLength}m`,
       subtitle: `Địa điểm: Bể bơi trong nhà | Ngày bơi: ${dateStr} | Chiều dài bể: ${poolLength}m`,
       distance: totalDist,
       timeSec: totalTimeSec,
       timeStr: formatDuration(totalTimeSec),
-      avgSwolf: avgSwolf || Math.round(processedLengths.reduce((a, b) => a + b.swolf, 0) / processedLengths.length),
+      avgSwolf: session.avg_swolf || calculatedAvgSwolf,
       avgPaceStr: paceSecToPaceString(avgPaceSec),
       totalStrokes: totalStrokes || processedLengths.reduce((a, b) => a + b.strokes, 0),
       lengths: processedLengths
     });
-  }
-
-  function findLengthsInFit(obj) {
-    if (!obj) return [];
-    if (Array.isArray(obj)) {
-      if (obj.length > 0 && obj[0] && (obj[0].swim_stroke !== undefined || obj[0].total_strokes !== undefined)) {
-        return obj;
-      }
-      for (let i = 0; i < obj.length; i++) {
-        const res = findLengthsInFit(obj[i]);
-        if (res && res.length > 0) return res;
-      }
-    } else if (typeof obj === 'object') {
-      if (obj.lengths && Array.isArray(obj.lengths)) {
-        return obj.lengths;
-      }
-      for (let key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          const res = findLengthsInFit(obj[key]);
-          if (res && res.length > 0) return res;
-        }
-      }
-    }
-    return [];
   }
 
   // Format seconds to hh:mm:ss
@@ -1828,42 +1820,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getMockFitJson() {
     const start = new Date(Date.now() - 24 * 3600 * 1000);
-    const sessions = [{
-      total_distance: 1500,
-      total_elapsed_time: 2110,
-      total_timer_time: 2110,
-      avg_swolf: 38,
-      total_strokes: 930,
-      start_time: start.toISOString()
-    }];
+    const sessionRecord = {
+      type: 'session',
+      data: {
+        total_distance: 1500,
+        total_timer_time: 2110000,
+        total_elapsed_time: 2110000,
+        avg_swolf: 38,
+        total_cycles: 930,
+        pool_length: 2500,
+        start_time: start.toISOString()
+      }
+    };
+    
+    const records = [sessionRecord];
+    const strokeTypes = ['freestyle', 'freestyle', 'freestyle', 'freestyle', 'breaststroke', 'breaststroke', 'freestyle', 'freestyle'];
     
     // Generate 60 lengths of 25m
-    const lengths = [];
-    const strokeTypes = [0, 0, 0, 0, 1, 1, 0, 0]; // 0: freestyle, 1: breaststroke
-    
     for (let i = 0; i < 60; i++) {
-      const baseTime = 19 + Math.floor(i / 15) * 1.5; // slow down gradually
-      const randomTime = Math.random() * 2 - 1; // +/- 1s fluctuation
+      const baseTime = 19 + Math.floor(i / 15) * 1.5;
+      const randomTime = Math.random() * 2 - 1;
       const duration = parseFloat((baseTime + randomTime).toFixed(1));
       
       const strokes = 14 + (i % 3 === 0 ? 1 : 0) + (i > 40 ? 1 : 0);
-      const strokeType = i < 10 ? 0 : strokeTypes[i % strokeTypes.length];
+      const strokeType = i < 10 ? 'freestyle' : strokeTypes[i % strokeTypes.length];
       
-      lengths.push({
-        total_elapsed_time: duration,
-        total_timer_time: duration,
-        total_strokes: strokes,
-        swim_stroke: strokeType,
-        swolf_score: Math.round(duration + strokes)
+      records.push({
+        type: 'length',
+        data: {
+          total_elapsed_time: duration * 1000,
+          total_timer_time: duration * 1000,
+          total_strokes: strokes,
+          swim_stroke: strokeType,
+          length_type: 'active',
+          swolf_score: Math.round(duration + strokes)
+        }
       });
     }
 
     return {
-      sessions,
-      activity: {
-        sessions
-      },
-      lengths
+      records
     };
   }
 

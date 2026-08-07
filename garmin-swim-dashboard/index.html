@@ -14,14 +14,8 @@
   <!-- PapaParse CDN for robust CSV parsing in the browser -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   
-  <!-- Polyfill for Node.js Buffer in Browser (needed for fit-file-parser) -->
-  <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
-  <script>
-    window.Buffer = window.Buffer || buffer.Buffer;
-  </script>
-  
-  <!-- Fit File Parser CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/fit-file-parser@latest/dist/fit-file-parser.min.js"></script>
+  <!-- fit-decoder CDN for parsing binary Garmin FIT files directly in browser -->
+  <script src="https://cdn.jsdelivr.net/npm/fit-decoder/dist/index.js"></script>
   
   <!-- Lucide Icons for clean, modern SVG icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
