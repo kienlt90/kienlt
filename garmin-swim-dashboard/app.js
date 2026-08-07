@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let rawActivities = [];
   let processedSwims = [];
   let savedFitSessions = [];
+  let selectedFitIds = [];
   let currentSort = { column: 'date', direction: 'desc' };
   let currentPage = 1;
   const rowsPerPage = 10;
@@ -25,7 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
     paceSwolfCorr: null,
     lengthPace: null,
     lengthStroke: null,
-    detailStrokeType: null
+    detailStrokeType: null,
+    comparisonPace: null,
+    comparisonSwolf: null
   };
 
   // --- DOM Elements ---
@@ -48,6 +51,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadDemoFitBtn = document.getElementById("load-demo-fit-btn");
   const fitHistoryContainer = document.getElementById("fit-history-container");
   const fitHistoryList = document.getElementById("fit-history-list");
+
+  const comparisonViewContent = document.getElementById("comparison-view-content");
+  const backFromComparisonBtn = document.getElementById("back-from-comparison-btn");
+  const compareFitBtn = document.getElementById("compare-fit-btn");
+  const compareCountEl = document.getElementById("compare-count");
+  const comparisonCardsGrid = document.getElementById("comparison-cards-grid");
+  const comparisonAdviceText = document.getElementById("comparison-advice-text");
 
   const STROKE_TYPES_VN = {
     0: 'Bơi Sải (Freestyle)',
@@ -175,6 +185,37 @@ document.addEventListener("DOMContentLoaded", () => {
       emptyState.style.display = "flex";
     }
     renderFitHistory(); // Update history list visibility
+  });
+
+  // --- Back from Comparison Click ---
+  backFromComparisonBtn.addEventListener("click", () => {
+    comparisonViewContent.style.display = "none";
+    if (processedSwims && processedSwims.length > 0) {
+      dashboardContent.style.display = "block";
+    } else {
+      emptyState.style.display = "flex";
+    }
+    renderFitHistory();
+  });
+
+  // --- Compare Click ---
+  compareFitBtn.addEventListener("click", () => {
+    if (selectedFitIds.length < 2) {
+      alert("Vui lòng chọn ít nhất 2 buổi bơi để so sánh.");
+      return;
+    }
+    
+    // Find the saved sessions that are selected
+    const sessionsToCompare = savedFitSessions.filter(s => selectedFitIds.includes(s.id));
+    
+    // Open Comparison View
+    emptyState.style.display = "none";
+    dashboardContent.style.display = "none";
+    detailSessionContent.style.display = "none";
+    fitHistoryContainer.style.display = "none";
+    comparisonViewContent.style.display = "block";
+    
+    renderComparison(sessionsToCompare);
   });
 
   // --- Search Input Listener ---
@@ -545,12 +586,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!confirm("Bạn có chắc chắn muốn xóa buổi bơi chi tiết này khỏi lịch sử lưu trữ?")) return;
 
     savedFitSessions = savedFitSessions.filter(s => s.id !== id);
+    selectedFitIds = selectedFitIds.filter(x => x !== id); // Remove from selection
     try {
       localStorage.setItem('garmin_fit_sessions', JSON.stringify(savedFitSessions));
     } catch (e) {
       console.warn(e);
     }
     renderFitHistory();
+    updateCompareButtonState();
+  }
+
+  function updateCompareButtonState() {
+    if (selectedFitIds.length > 0) {
+      compareFitBtn.style.display = "inline-flex";
+      compareCountEl.innerText = selectedFitIds.length;
+    } else {
+      compareFitBtn.style.display = "none";
+    }
   }
 
   function renderFitHistory() {
@@ -559,7 +611,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (detailSessionContent.style.display === "block") {
+    if (detailSessionContent.style.display === "block" || comparisonViewContent.style.display === "block") {
       fitHistoryContainer.style.display = "none";
       return;
     }
@@ -570,16 +622,22 @@ document.addEventListener("DOMContentLoaded", () => {
     savedFitSessions.forEach(session => {
       const item = document.createElement("div");
       item.className = "fit-history-item animate-fade-in";
+      
+      const isChecked = selectedFitIds.includes(session.id);
+      
       item.innerHTML = `
-        <div class="fit-item-details">
-          <div class="fit-item-title">${session.title}</div>
-          <div class="fit-item-meta">
-            <span style="display:inline-flex; align-items:center; gap:4px; margin-right:8px;">
-              <i data-lucide="calendar" style="width:11px; height:11px;"></i> ${session.subtitle}
-            </span>
-            <span style="display:inline-flex; align-items:center; gap:4px;">
-              <i data-lucide="clock" style="width:11px; height:11px;"></i> ${session.timeStr}
-            </span>
+        <div style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+          <input type="checkbox" class="fit-select-checkbox" data-id="${session.id}" ${isChecked ? 'checked' : ''} style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--secondary);">
+          <div class="fit-item-details" style="flex-grow: 1;">
+            <div class="fit-item-title">${session.title}</div>
+            <div class="fit-item-meta">
+              <span style="display:inline-flex; align-items:center; gap:4px; margin-right:8px;">
+                <i data-lucide="calendar" style="width:11px; height:11px;"></i> ${session.subtitle}
+              </span>
+              <span style="display:inline-flex; align-items:center; gap:4px;">
+                <i data-lucide="clock" style="width:11px; height:11px;"></i> ${session.timeStr}
+              </span>
+            </div>
           </div>
         </div>
         <div class="fit-item-actions">
@@ -589,9 +647,22 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
 
-      item.addEventListener("click", () => {
+      const detailsArea = item.querySelector(".fit-item-details");
+      detailsArea.addEventListener("click", () => {
         processFitData(session.fitData);
         fitHistoryContainer.style.display = "none";
+      });
+
+      const checkbox = item.querySelector(".fit-select-checkbox");
+      checkbox.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          if (!selectedFitIds.includes(session.id)) {
+            selectedFitIds.push(session.id);
+          }
+        } else {
+          selectedFitIds = selectedFitIds.filter(id => id !== session.id);
+        }
+        updateCompareButtonState();
       });
 
       const deleteBtn = item.querySelector(".btn-delete-fit");
@@ -600,6 +671,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fitHistoryList.appendChild(item);
     });
 
+    updateCompareButtonState();
     lucide.createIcons();
   }
 
@@ -2071,5 +2143,307 @@ Lap Swimming,2026-07-18 07:15:00,false,Saturday Speed Set,"1,600",530,00:36:50,1
 Lap Swimming,2026-07-15 19:00:00,false,Wednesday Night Swim,"1,200",380,00:29:15,131,146,2.1,0.68,0.88,"2:26","2:02",26,32,1.21,41,36,395,29.0,29.0,29.0,,,,,,,,00:28:10,00:31:30
 Lap Swimming,2026-07-12 08:30:00,false,Long Slow Distance 3000m,"3,000",990,01:10:10,133,150,3.1,0.71,0.85,"2:20","2:05",27,31,1.24,39,34,970,27.0,27.0,27.0,,,,,,,,01:08:00,01:12:00
 Lap Swimming,2026-07-09 07:00:00,false,Quick 1000m Swim,"1,000",310,00:22:40,132,148,2.0,0.74,0.90,"2:16","1:55",28,34,1.26,37,32,310,28.0,28.0,28.0,,,,,,,,00:21:50,00:24:10`;
+  }
+
+  // ==========================================================================
+  // FIT SESSION COMPARISON VIEW RENDERING
+  // ==========================================================================
+  function renderComparison(sessions) {
+    comparisonCardsGrid.innerHTML = "";
+    
+    const colors = ['#00f2fe', '#7f00ff', '#ff007f', '#00ff87', '#ff9f43'];
+
+    // 1. Populate side-by-side cards
+    sessions.forEach((s, idx) => {
+      const color = colors[idx % colors.length];
+      
+      const activeLengths = s.fitData.records
+        .filter(r => r.type === 'length' && r.data && r.data.length_type === 'active')
+        .map(r => r.data);
+
+      let poolLength = 25;
+      const sessionRecord = s.fitData.records.find(r => r.type === 'session');
+      if (sessionRecord && sessionRecord.data && sessionRecord.data.pool_length) {
+        const pl = sessionRecord.data.pool_length;
+        poolLength = pl > 500 ? Math.round(pl / 100) : pl;
+      }
+
+      const durations = activeLengths.map(l => {
+        const rawDur = l.total_elapsed_time || l.total_timer_time || 0;
+        return rawDur > 1000 ? rawDur / 1000 : rawDur;
+      });
+      const strokes = activeLengths.map(l => l.total_strokes || 0);
+      const swolfs = activeLengths.map(l => {
+        const rawDur = l.total_elapsed_time || l.total_timer_time || 0;
+        const dur = rawDur > 1000 ? rawDur / 1000 : rawDur;
+        return l.swolf_score || Math.round(dur + (l.total_strokes || 0));
+      });
+
+      const avgDur = durations.length > 0 ? (durations.reduce((a, b) => a + b, 0) / durations.length) : 0;
+      const avgStrokes = strokes.length > 0 ? Math.round(strokes.reduce((a, b) => a + b, 0) / strokes.length) : 0;
+      const avgSwolf = swolfs.length > 0 ? Math.round(swolfs.reduce((a, b) => a + b, 0) / swolfs.length) : 0;
+
+      const totalDist = activeLengths.length * poolLength;
+      const totalTimeSec = durations.reduce((a, b) => a + b, 0);
+
+      const avgPaceSec = totalDist > 0 ? Math.round((totalTimeSec / totalDist) * 100) : 0;
+      const avgPaceStr = paceSecToPaceString(avgPaceSec);
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.borderLeft = `4px solid ${color}`;
+      card.innerHTML = `
+        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
+          Buổi bơi #${idx + 1}
+        </div>
+        <div style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 12px; display:flex; align-items:center; gap:6px;">
+          <i data-lucide="calendar" style="width:14px; height:14px; color: ${color};"></i> ${s.subtitle}
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; font-size: 13px;">
+          <div>
+            <span style="color:var(--text-muted); font-size:11px; display:block;">Quãng đường</span>
+            <strong style="font-size:15px; color:var(--text-main);">${totalDist}m</strong>
+          </div>
+          <div>
+            <span style="color:var(--text-muted); font-size:11px; display:block;">Thời gian</span>
+            <strong style="font-size:15px; color:var(--text-main);">${s.timeStr}</strong>
+          </div>
+          <div>
+            <span style="color:var(--text-muted); font-size:11px; display:block;">Pace TB (/100m)</span>
+            <strong style="font-size:15px; color:var(--primary);">${avgPaceStr}</strong>
+          </div>
+          <div>
+            <span style="color:var(--text-muted); font-size:11px; display:block;">SWOLF Trung bình</span>
+            <strong style="font-size:15px;" class="${getSwolfClass(avgSwolf)}">${avgSwolf}</strong>
+          </div>
+          <div>
+            <span style="color:var(--text-muted); font-size:11px; display:block;">Sải tay TB/chiều</span>
+            <strong style="font-size:14px; color:var(--text-main);">${avgStrokes} sải</strong>
+          </div>
+          <div>
+            <span style="color:var(--text-muted); font-size:11px; display:block;">Cỡ bể bơi</span>
+            <strong style="font-size:14px; color:var(--text-main);">${poolLength}m</strong>
+          </div>
+        </div>
+      `;
+      comparisonCardsGrid.appendChild(card);
+    });
+
+    const maxLengths = Math.max(...sessions.map(s => {
+      const activeLengths = s.fitData.records.filter(r => r.type === 'length' && r.data && r.data.length_type === 'active');
+      return activeLengths.length;
+    }));
+
+    const categories = Array.from({ length: maxLengths }, (_, i) => `Chiều ${i + 1}`);
+
+    const paceSeries = sessions.map((s, idx) => {
+      const activeLengths = s.fitData.records
+        .filter(r => r.type === 'length' && r.data && r.data.length_type === 'active')
+        .map(r => r.data);
+
+      let poolLength = 25;
+      const sessionRecord = s.fitData.records.find(r => r.type === 'session');
+      if (sessionRecord && sessionRecord.data && sessionRecord.data.pool_length) {
+        const pl = sessionRecord.data.pool_length;
+        poolLength = pl > 500 ? Math.round(pl / 100) : pl;
+      }
+
+      const data = activeLengths.map(len => {
+        const rawDur = len.total_elapsed_time || len.total_timer_time || 0;
+        const duration = rawDur > 1000 ? rawDur / 1000 : rawDur;
+        return poolLength > 0 ? Math.round((duration / poolLength) * 100) : 0;
+      });
+
+      return {
+        name: s.subtitle.split(" ")[0],
+        data: data
+      };
+    });
+
+    const swolfSeries = sessions.map((s, idx) => {
+      const activeLengths = s.fitData.records
+        .filter(r => r.type === 'length' && r.data && r.data.length_type === 'active')
+        .map(r => r.data);
+
+      const data = activeLengths.map(len => {
+        const rawDur = len.total_elapsed_time || len.total_timer_time || 0;
+        const duration = rawDur > 1000 ? rawDur / 1000 : rawDur;
+        return len.swolf_score || Math.round(duration + (len.total_strokes || 0));
+      });
+
+      return {
+        name: s.subtitle.split(" ")[0],
+        data: data
+      };
+    });
+
+    const paceOptions = {
+      series: paceSeries,
+      chart: {
+        height: '100%',
+        type: 'line',
+        background: 'transparent',
+        toolbar: { show: false },
+        foreColor: '#9ca3af'
+      },
+      colors: colors.slice(0, sessions.length),
+      stroke: {
+        width: 3,
+        curve: 'smooth'
+      },
+      grid: {
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        strokeDashArray: 4
+      },
+      xaxis: {
+        categories: categories,
+        title: { text: 'Chiều hồ bơi', style: { color: '#9ca3af' } }
+      },
+      yaxis: {
+        title: { text: 'Pace (giây/100m)', style: { color: '#9ca3af' } },
+        labels: {
+          formatter: function (val) {
+            return paceSecToPaceString(val);
+          }
+        }
+      },
+      tooltip: {
+        theme: 'dark',
+        shared: true,
+        intersect: false
+      }
+    };
+
+    if (charts.comparisonPace) {
+      charts.comparisonPace.destroy();
+    }
+    charts.comparisonPace = new ApexCharts(document.querySelector("#comparison-pace-chart"), paceOptions);
+    charts.comparisonPace.render();
+
+    const swolfOptions = {
+      series: swolfSeries,
+      chart: {
+        height: '100%',
+        type: 'line',
+        background: 'transparent',
+        toolbar: { show: false },
+        foreColor: '#9ca3af'
+      },
+      colors: colors.slice(0, sessions.length),
+      stroke: {
+        width: 3,
+        curve: 'smooth'
+      },
+      grid: {
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        strokeDashArray: 4
+      },
+      xaxis: {
+        categories: categories,
+        title: { text: 'Chiều hồ bơi', style: { color: '#9ca3af' } }
+      },
+      yaxis: {
+        title: { text: 'Điểm số SWOLF', style: { color: '#9ca3af' } }
+      },
+      tooltip: {
+        theme: 'dark',
+        shared: true,
+        intersect: false
+      }
+    };
+
+    if (charts.comparisonSwolf) {
+      charts.comparisonSwolf.destroy();
+    }
+    charts.comparisonSwolf = new ApexCharts(document.querySelector("#comparison-swolf-chart"), swolfOptions);
+    charts.comparisonSwolf.render();
+
+    generateComparisonAdvice(sessions);
+    lucide.createIcons();
+  }
+
+  function generateComparisonAdvice(sessions) {
+    let adviceHtml = "";
+
+    const stats = sessions.map((s, idx) => {
+      const activeLengths = s.fitData.records
+        .filter(r => r.type === 'length' && r.data && r.data.length_type === 'active')
+        .map(r => r.data);
+
+      const durations = activeLengths.map(l => {
+        const rawDur = l.total_elapsed_time || l.total_timer_time || 0;
+        return rawDur > 1000 ? rawDur / 1000 : rawDur;
+      });
+      const strokes = activeLengths.map(l => l.total_strokes || 0);
+      const swolfs = activeLengths.map(l => {
+        const rawDur = l.total_elapsed_time || l.total_timer_time || 0;
+        const dur = rawDur > 1000 ? rawDur / 1000 : rawDur;
+        return l.swolf_score || Math.round(dur + (l.total_strokes || 0));
+      });
+
+      const avgDur = durations.reduce((a, b) => a + b, 0) / durations.length;
+      const avgStrokes = strokes.reduce((a, b) => a + b, 0) / strokes.length;
+      const avgSwolf = swolfs.reduce((a, b) => a + b, 0) / swolfs.length;
+      const totalTimeSec = durations.reduce((a, b) => a + b, 0);
+      
+      let poolLength = 25;
+      const sessionRecord = s.fitData.records.find(r => r.type === 'session');
+      if (sessionRecord && sessionRecord.data && sessionRecord.data.pool_length) {
+        const pl = sessionRecord.data.pool_length;
+        poolLength = pl > 500 ? Math.round(pl / 100) : pl;
+      }
+      const totalDist = activeLengths.length * poolLength;
+
+      const avgPaceSec = totalDist > 0 ? Math.round((totalTimeSec / totalDist) * 100) : 0;
+
+      return {
+        index: idx + 1,
+        dateStr: s.subtitle.split(" ")[0],
+        distance: totalDist,
+        paceSec: avgPaceSec,
+        paceStr: paceSecToPaceString(avgPaceSec),
+        strokes: avgStrokes,
+        swolf: avgSwolf
+      };
+    });
+
+    const bestSwolfSession = [...stats].sort((a, b) => a.swolf - b.swolf)[0];
+    const bestPaceSession = [...stats].sort((a, b) => a.paceSec - b.paceSec)[0];
+    
+    adviceHtml += `📈 <strong>Kết quả so sánh tổng quát giữa ${sessions.length} buổi bơi:</strong><br><br>`;
+    
+    adviceHtml += `🎯 <strong>Buổi bơi hiệu quả nhất (SWOLF thấp nhất):</strong><br>`;
+    adviceHtml += `Buổi ngày <strong>${bestSwolfSession.dateStr}</strong> với chỉ số SWOLF trung bình chỉ <strong>${Math.round(bestSwolfSession.swolf)}</strong>. Ở buổi này, kỹ thuật trượt nước của bạn là tối ưu nhất, giúp tiết kiệm lực quạt tay tốt nhất.<br><br>`;
+    
+    adviceHtml += `⚡ <strong>Buổi bơi nhanh nhất (Pace tốt nhất):</strong><br>`;
+    adviceHtml += `Buổi ngày <strong>${bestPaceSession.dateStr}</strong> với Pace trung bình <strong>${bestPaceSession.paceStr}/100m</strong>. Bạn đã duy trì được tần suất sải tay cao và nhịp độ ổn định suốt quãng đường bơi.<br><br>`;
+
+    const sortedByDate = [...stats].sort((a, b) => new Date(a.dateStr.split('/').reverse().join('-')) - new Date(b.dateStr.split('/').reverse().join('-')));
+    
+    if (sortedByDate.length >= 2) {
+      const first = sortedByDate[0];
+      const last = sortedByDate[sortedByDate.length - 1];
+      const swolfDiff = last.swolf - first.swolf;
+      const paceDiff = last.paceSec - first.paceSec;
+
+      adviceHtml += `🌊 <strong>Xu hướng kỹ thuật:</strong><br>`;
+      if (swolfDiff < -1) {
+        adviceHtml += `Sự cải thiện rõ rệt! Điểm SWOLF của bạn đã giảm <strong>${Math.abs(Math.round(swolfDiff))} điểm</strong> từ ngày ${first.dateStr} đến ngày ${last.dateStr}. Bạn đang bơi lướt nước tốt hơn và ít mất sức hơn.<br>`;
+      } else if (swolfDiff > 1) {
+        adviceHtml += `Hiệu quả quạt tay có dấu hiệu giảm nhẹ (SWOLF tăng <strong>${Math.round(swolfDiff)} điểm</strong>). Bạn đang phải quạt tay nhiều lần hơn để giữ nguyên tốc độ, hãy tập trung vào pha trượt nước sau mỗi nhịp quạt.<br>`;
+      } else {
+        adviceHtml += `Hiệu quả sải tay (SWOLF) được duy trì rất ổn định qua các buổi bơi gần đây.<br>`;
+      }
+
+      if (paceDiff < -2) {
+        adviceHtml += `Tốc độ bơi trung bình đã cải thiện <strong>${Math.abs(Math.round(paceDiff))} giây/100m</strong>. Sức bền của bạn đang tiến bộ tốt!`;
+      } else if (paceDiff > 2) {
+        adviceHtml += `Tốc độ bơi trung bình giảm nhẹ <strong>${Math.round(paceDiff)} giây/100m</strong>. Có thể bạn đang tập trung nhiều hơn vào độ thả lỏng hoặc buổi bơi sau có cự ly dài hơn khiến thể lực giảm dần.`;
+      } else {
+        adviceHtml += `Tốc độ bơi được kiểm soát tốt và duy trì đều đặn.`;
+      }
+    }
+
+    comparisonAdviceText.innerHTML = adviceHtml;
   }
 });
