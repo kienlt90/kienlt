@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đấu Trường Toán Tư Duy & Vòng Quay May Mắn - KIENLT90</title>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          },
+          animation: {
+            'bounce-slow': 'bounce 2s infinite',
+            'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .wheel-pointer {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 32px solid #ef4444;
+      z-index: 30;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-100 via-sky-50 to-indigo-50 text-slate-800 antialiased min-h-full flex flex-col selection:bg-sky-200 selection:text-sky-900">
+
+  <!-- Main Responsive Container -->
+  <div class="w-full max-w-5xl mx-auto min-h-screen flex flex-col px-3 sm:px-6 py-4 sm:py-6">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-6">
+      <div class="flex items-center space-x-3">
+        <a href="main.html" class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-orange-500/20 text-lg hover:scale-105 transition" title="Về Portal">
+          🧮
+        </a>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xs font-bold tracking-wider text-amber-600 uppercase">Đấu Trường Toán Học</h1>
+            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold">Toán Tư Duy Logic</span>
+          </div>
+          <p class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">Thử Thách 10 Bài Toán & Vòng Quay May Mắn</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button onclick="switchTab('arena')" id="nav-arena" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-700 text-white shadow-sm flex items-center space-x-1.5 transition">
+          <i data-lucide="gamepad-2" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Làm bài</span>
+        </button>
+        <button onclick="switchTab('wheel')" id="nav-wheel" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+          <span>Vòng quay</span>
+          <span id="spin-badge" class="hidden px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-extrabold animate-pulse">1</span>
+        </button>
+        <button onclick="switchTab('teacher')" id="nav-teacher" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
+          <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
+          <span>Cô giáo duyệt</span>
+          <span id="pending-badge" class="hidden px-1.5 py-0.2 bg-indigo-600 text-white rounded-full text-[9px] font-extrabold">0</span>
+        </button>
+        <button onclick="switchTab('rewards')" id="nav-rewards" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition" title="Cài đặt quà">
+          <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT SECTIONS -->
+
+    <!-- ============================================== -->
+    <!-- 1. ARENA: CHỌN LỚP & LÀM 10 BÀI TOÁN TƯ DUY -->
+    <!-- ============================================== -->
+    <section id="view-arena" class="space-y-6">
+
+      <!-- Level Selection (Grade 2 vs Grade 5) -->
+      <div id="level-selection" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Grade 2 Card -->
+        <div onclick="startQuiz(2)" class="group bg-gradient-to-br from-white to-amber-50/70 p-6 rounded-3xl border-2 border-amber-200/80 shadow-md hover:border-amber-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
+          <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-amber-200/40 rounded-full blur-2xl pointer-events-none"></div>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-amber-100 text-amber-800 font-extrabold text-xs rounded-full border border-amber-300">
+                🌱 Dành cho Học sinh Lớp 2
+              </span>
+              <span class="text-3xl">🧩</span>
+            </div>
+            <h2 class="text-xl font-extrabold text-slate-900 group-hover:text-amber-600 transition">
+              Toán Tư Duy - Khám Phá Logic Nhí
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+              10 bài toán suy luận vui nhộn: Quy luật dãy số & màu sắc, cân thăng bằng con vật, đếm hình học thông minh, logic thời gian và bài toán cưa gỗ.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-amber-100 flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500">
+              <i data-lucide="clock" class="w-4 h-4 text-amber-500"></i>
+              <span>10 câu hỏi</span>
+              <span>•</span>
+              <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
+              <span>Thưởng 1 lượt quay</span>
+            </div>
+            <button class="px-4 py-2 bg-amber-500 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-amber-600 flex items-center space-x-1.5 transition">
+              <span>Bắt đầu</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Grade 5 Card -->
+        <div onclick="startQuiz(5)" class="group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
+          <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-sky-200/40 rounded-full blur-2xl pointer-events-none"></div>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-sky-100 text-sky-800 font-extrabold text-xs rounded-full border border-sky-300">
+                🚀 Dành cho Học sinh Lớp 5
+              </span>
+              <span class="text-3xl">🏆</span>
+            </div>
+            <h2 class="text-xl font-extrabold text-slate-900 group-hover:text-sky-600 transition">
+              Toán Tư Duy - Chinh Phục Đỉnh Cao
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+              10 bài toán logic nâng cao: Dãy Fibonacci mở rộng, toán bắt tay tổ hợp, bài toán trồng cây 2 đầu, vận tốc đuổi bắt, giả thiết tạm và suy luận logic kẻ nói dối.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-sky-100 flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500">
+              <i data-lucide="clock" class="w-4 h-4 text-sky-500"></i>
+              <span>10 câu hỏi</span>
+              <span>•</span>
+              <i data-lucide="award" class="w-4 h-4 text-sky-500"></i>
+              <span>Thưởng 1 lượt quay</span>
+            </div>
+            <button class="px-4 py-2 bg-sky-600 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-sky-700 flex items-center space-x-1.5 transition">
+              <span>Bắt đầu</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz Interface (Initially Hidden) -->
+      <div id="quiz-box" class="hidden space-y-5">
+        
+        <!-- Header Info & Progress Bar -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <span id="quiz-badge" class="px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-800">Lớp 2</span>
+            <div>
+              <div class="text-xs font-bold text-slate-400">Học sinh làm bài:</div>
+              <div class="text-sm font-extrabold text-slate-800" id="quiz-student-name">Bé Học Sinh Giỏi</div>
+            </div>
+          </div>
+
+          <!-- Progress and Timer -->
+          <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-4">
+            <div class="flex items-center space-x-1.5 text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">
+              <i data-lucide="timer" class="w-4 h-4 text-sky-600"></i>
+              <span id="quiz-timer">00:00</span>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-bold text-slate-500">Tiến trình: </span>
+              <span class="text-sm font-extrabold text-sky-700" id="quiz-progress-text">Câu 1/10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar Line -->
+        <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+          <div id="quiz-progress-bar" class="bg-gradient-to-r from-sky-500 to-amber-500 h-full rounded-full transition-all duration-300" style="width: 10%"></div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+          <div class="flex items-start space-x-3">
+            <span class="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 font-extrabold text-sm flex items-center justify-center shrink-0" id="question-number">
+              1
+            </span>
+            <div class="flex-1">
+              <h3 class="text-base sm:text-lg font-bold text-slate-900 leading-snug" id="question-title">
+                Đang tải câu hỏi...
+              </h3>
+              <div id="question-visual" class="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-center text-center text-sm font-semibold text-slate-700 hidden">
+                <!-- Visual graphic if any -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Answers Options Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="options-container">
+            <!-- Dynamically generated options -->
+          </div>
+
+          <!-- Question Controls -->
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <button onclick="prevQuestion()" id="btn-prev" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 flex items-center space-x-1.5 transition disabled:opacity-40" disabled>
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Câu trước</span>
+            </button>
+
+            <button onclick="nextQuestion()" id="btn-next" class="px-6 py-2.5 rounded-xl bg-sky-600 text-white font-bold text-xs hover:bg-sky-700 shadow-md flex items-center space-x-1.5 transition">
+              <span id="btn-next-text">Câu tiếp theo</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quiz Finished / Auto-Graded Summary -->
+      <div id="quiz-result-box" class="hidden bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-lg space-y-6 text-center max-w-xl mx-auto">
+        <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+          🎉
+        </div>
+        
+        <div>
+          <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold" id="res-grade-badge">Lớp 2</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-2">Hoàn Thành Bài Thi!</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Hệ thống đã tự động chấm điểm bài làm của bạn.</p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
+          <div>
+            <div class="text-xs text-slate-400 font-semibold">Điểm số</div>
+            <div class="text-2xl font-black text-emerald-600 mt-0.5" id="res-score">10/10</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-400 font-semibold">Thời gian</div>
+            <div class="text-2xl font-black text-sky-700 mt-0.5" id="res-time">02:45</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-400 font-semibold">Thưởng</div>
+            <div class="text-2xl font-black text-amber-500 mt-0.5">+1 Quay</div>
+          </div>
+        </div>
+
+        <!-- Teacher Status Box -->
+        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-left space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-indigo-900 flex items-center space-x-1.5">
+              <i data-lucide="clock" class="w-4 h-4 text-indigo-600"></i>
+              <span>Trạng thái: Chờ cô giáo kiểm tra & duyệt lời phê</span>
+            </span>
+            <span class="px-2 py-0.5 bg-indigo-200/70 text-indigo-800 text-[10px] font-bold rounded-md">Pending</span>
+          </div>
+          <p class="text-xs text-indigo-700 leading-relaxed">
+            Bài làm đã được gửi vào danh sách chờ duyệt của cô giáo/phụ huynh. Bạn có thể sang mục <b>"Vòng quay"</b> để quay thưởng ngay!
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          <button onclick="goToSpinWheel()" class="py-3 px-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-sm rounded-xl shadow-lg hover:from-amber-600 hover:to-orange-600 flex items-center justify-center space-x-2 transition">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+            <span>Quay Thưởng May Mắn ➔</span>
+          </button>
+          <button onclick="resetAndBackToArena()" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition">
+            Làm bài thi khác
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 2. LUCKY WHEEL: VÒNG QUAY MAY MẮN RANDOM -->
+    <!-- ============================================== -->
+    <section id="view-wheel" class="hidden space-y-6">
+      
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md text-center max-w-xl mx-auto space-y-6">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">
+            <span>🎡 Vòng Quay Phần Thưởng</span>
+          </div>
+          <h2 class="text-2xl font-black text-slate-900 mt-2">Vòng Quay May Mắn</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Hoàn thành 10 bài toán tư duy để nhận lượt quay quà tặng!</p>
+        </div>
+
+        <!-- Spin Balance -->
+        <div class="inline-flex items-center space-x-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
+          <span class="text-xs font-bold text-amber-800">Lượt quay khả dụng:</span>
+          <span class="text-lg font-black text-amber-600" id="user-spin-count">1</span>
+        </div>
+
+        <!-- Canvas Lucky Wheel Container -->
+        <div class="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto flex items-center justify-center">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheel-canvas" width="360" height="360" class="w-full h-full rounded-full shadow-xl border-4 border-amber-400"></canvas>
+          <button onclick="spinTheWheel()" id="btn-spin" class="absolute w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-white font-black text-xs sm:text-sm shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition border-4 border-white cursor-pointer z-20">
+            QUAY!
+          </button>
+        </div>
+
+        <!-- Won Reward Popup Notice -->
+        <div id="reward-result-alert" class="hidden bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-4 rounded-2xl shadow-lg space-y-1 animate-bounce-slow">
+          <div class="text-xs font-bold uppercase tracking-wider text-emerald-100">Chúc mừng bạn đã trúng:</div>
+          <div class="text-xl font-black" id="won-reward-name">10 Viên Kẹo Ngọt Ngào</div>
+        </div>
+
+        <div class="flex justify-center space-x-3 pt-2">
+          <button onclick="switchTab('rewards')" class="text-xs font-bold text-slate-500 hover:text-sky-700 flex items-center space-x-1">
+            <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+            <span>Tùy chỉnh danh mục quà tặng</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 3. TEACHER REVIEW: DUYỆT BÀI & LỜI PHÊ CÔ GIÁO -->
+    <!-- ============================================== -->
+    <section id="view-teacher" class="hidden space-y-6">
+      
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+            <i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i>
+            <span>Góc Cô Giáo & Phụ Huynh Phê Duyệt</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">Kiểm tra kết quả bài làm, điều chỉnh điểm và nhập Lời phê / Ghi chú cho học sinh.</p>
+        </div>
+        <button onclick="clearAllSubmissions()" class="text-xs text-rose-600 hover:text-rose-800 font-bold flex items-center space-x-1">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          <span>Xóa lịch sử</span>
+        </button>
+      </div>
+
+      <!-- Submissions List -->
+      <div id="teacher-submissions-container" class="space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 4. REWARDS CATALOG: BIÊN SOẠN QUÀ THƯỞNG -->
+    <!-- ============================================== -->
+    <section id="view-rewards" class="hidden space-y-6">
+      
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="gift" class="w-5 h-5 text-emerald-600"></i>
+              <span>Danh Mục Quà Tặng Vòng Quay</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Tự do biên soạn và thêm bớt các phần thưởng cho vòng quay may mắn.</p>
+          </div>
+          <button onclick="resetDefaultRewards()" class="text-xs font-bold text-sky-600 hover:text-sky-800">
+            Khôi phục mặc định
+          </button>
+        </div>
+
+        <!-- Add Reward Form -->
+        <div class="flex flex-col sm:flex-row gap-2.5">
+          <input type="text" id="new-reward-input" placeholder="Nhập tên phần thưởng mới (ví dụ: 1 Cây Kem, 1 Giờ Chơi Game...)" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-sky-500">
+          <button onclick="addRewardItem()" class="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs sm:text-sm rounded-xl hover:bg-emerald-700 flex items-center justify-center space-x-1.5 transition">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Thêm quà</span>
+          </button>
+        </div>
+
+        <!-- Rewards List Table -->
+        <div class="border border-slate-200 rounded-2xl overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase font-bold text-[10px]">
+              <tr>
+                <th class="p-3">#</th>
+                <th class="p-3">Tên phần thưởng</th>
+                <th class="p-3 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="rewards-table-body" class="divide-y divide-slate-100">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- Review Modal (Detailed Inspection for Teacher) -->
+  <div id="review-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="p-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
+            👩‍🏫
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900" id="modal-student-title">Chi Tiết Bài Làm</h3>
+            <p class="text-xs text-slate-500" id="modal-submit-time">Nộp bài lúc 15:30:00</p>
+          </div>
+        </div>
+        <button onclick="closeReviewModal()" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300 flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Question list & Teacher notes form) -->
+      <div class="p-5 overflow-y-auto space-y-5 custom-scrollbar flex-1">
+        
+        <!-- Score & Status Editor -->
+        <div class="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-indigo-900">Điểm số phê duyệt:</label>
+            <div class="flex items-center space-x-2">
+              <input type="number" id="modal-edit-score" min="0" max="10" class="w-16 px-2.5 py-1 text-center font-black text-indigo-800 bg-white rounded-lg border border-indigo-200 text-sm">
+              <span class="text-xs font-bold text-indigo-900">/ 10 Điểm</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-indigo-900 block mb-1">Lời phê & Ghi chú của cô giáo / phụ huynh:</label>
+            <textarea id="modal-teacher-notes" rows="3" placeholder="Nhập nhận xét (Ví dụ: Con làm rất tốt phần tư duy dãy số, cần cẩn thận hơn ở bài toán đếm hình...)" class="w-full p-3 bg-white rounded-xl border border-indigo-200 text-xs text-slate-800 focus:outline-none focus:border-indigo-500"></textarea>
+          </div>
+        </div>
+
+        <!-- Detailed Questions Inspection -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Chi tiết từng câu hỏi & Đáp án</h4>
+          <div id="modal-questions-list" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <button onclick="closeReviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200 transition">
+          Đóng lại
+        </button>
+        <button onclick="saveTeacherApproval()" class="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 shadow-md flex items-center space-x-1.5 transition">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Lưu Phê Duyệt & Ghi Chú</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    // ==========================================
+    // 1. DATA: 10 LOGIC QUESTIONS GRADE 2 & 5
+    // ==========================================
+    const questionsGrade2 = [
+      {
+        id: 1,
+        title: "Tìm số thích hợp điền vào dấu hỏi chấm (?) trong dãy số quy luật: 2, 5, 8, 11, (?)",
+        options: ["13", "14", "15", "16"],
+        correct: 1, // index 1 = "14"
+        explain: "Quy luật: Mỗi số sau bằng số liền trước cộng thêm 3 (2+3=5, 5+3=8, 8+3=11, 11+3=14)."
+      },
+      {
+        id: 2,
+        title: "Biết 1 con Chó nặng bằng 2 con Mèo. 1 con Mèo nặng bằng 3 con Chuột. Hỏi 1 con Chó nặng bằng mấy con Chuột?",
+        options: ["4 con", "5 con", "6 con", "7 con"],
+        correct: 2, // index 2 = "6 con"
+        explain: "1 Chó = 2 Mèo = 2 x 3 = 6 con Chuột."
+      },
+      {
+        id: 3,
+        title: "Quy luật màu sắc: 🔴 Đỏ, 🔵 Xanh dương, 🟢 Xanh lá, 🔴 Đỏ, 🔵 Xanh dương, (?)",
+        options: ["🔴 Đỏ", "🔵 Xanh dương", "🟢 Xanh lá", "🟡 Vàng"],
+        correct: 2, // "🟢 Xanh lá"
+        explain: "Dãy màu lặp lại theo chu kỳ 3 màu: Đỏ -> Xanh dương -> Xanh lá."
+      },
+      {
+        id: 4,
+        title: "Năm nay Bo 7 tuổi, anh Bi hơn Bo 3 tuổi. Hỏi sau 5 năm nữa, anh Bi hơn Bo bao nhiêu tuổi?",
+        options: ["3 tuổi", "5 tuổi", "8 tuổi", "15 tuổi"],
+        correct: 0, // "3 tuổi"
+        explain: "Hiệu số tuổi giữa hai anh em không bao giờ thay đổi theo thời gian, luôn là 3 tuổi."
+      },
+      {
+        id: 5,
+        title: "Có một hàng dọc gồm 9 bạn học sinh. Bạn Nam đứng ở vị trí chính giữa. Hỏi Nam đứng thứ mấy từ đầu hàng?",
+        options: ["Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"],
+        correct: 1, // "Thứ 5"
+        explain: "Có 9 bạn, trước Nam có 4 bạn và sau Nam có 4 bạn. Vậy Nam đứng ở vị trí thứ 5."
+      },
+      {
+        id: 6,
+        title: "An có 12 cái kẹo, Bình có 6 cái kẹo. Hỏi An phải cho Bình mấy cái kẹo để số kẹo hai bạn bằng nhau?",
+        options: ["2 cái", "3 cái", "4 cái", "6 cái"],
+        correct: 1, // "3 cái"
+        explain: "Tổng số kẹo là 12 + 6 = 18 cái. Mỗi bạn có 18 : 2 = 9 cái. An cần cho Bình: 12 - 9 = 3 cái."
+      },
+      {
+        id: 7,
+        title: "Có 3 chiếc hộp Đỏ, Xanh, Vàng. Quả bóng không nằm ở hộp Đỏ, cũng không nằm ở hộp Vàng. Hỏi quả bóng ở hộp nào?",
+        options: ["Hộp Đỏ", "Hộp Xanh", "Hộp Vàng", "Không có hộp nào"],
+        correct: 1, // "Hộp Xanh"
+        explain: "Loại trừ hộp Đỏ và hộp Vàng, quả bóng chắc chắn nằm ở hộp Xanh."
+      },
+      {
+        id: 8,
+        title: "Một khúc gỗ cần cưa thành 4 đoạn ngắn. Mỗi lần cưa mất 2 phút. Hỏi cần tất cả bao nhiêu phút?",
+        options: ["4 phút", "6 phút", "8 phút", "10 phút"],
+        correct: 1, // "6 phút"
+        explain: "Cắt thành 4 đoạn chỉ cần 3 nhát cưa. Thời gian là 3 x 2 = 6 phút."
+      },
+      {
+        id: 9,
+        title: "Lúc 3 giờ đúng, kim giờ và kim phút của đồng hồ tạo thành góc gì?",
+        options: ["Góc nhọn", "Góc vuông", "Góc tù", "Góc bẹt"],
+        correct: 1, // "Góc vuông"
+        explain: "Lúc 3 giờ đúng, kim phút chỉ số 12 và kim giờ chỉ số 3 tạo thành góc vuông (90 độ)."
+      },
+      {
+        id: 10,
+        title: "Hình chữ nhật có 4 góc vuông. Nếu cắt bỏ đi 1 góc thì hình còn lại có bao nhiêu góc?",
+        options: ["3 góc", "4 góc", "5 góc", "6 góc"],
+        correct: 2, // "5 góc"
+        explain: "Khi cắt vát 1 góc của hình chữ nhật thì tại vết cắt sẽ sinh ra 2 góc mới, tổng số góc trở thành 5 góc (ngũ giác)."
+      }
+    ];
+
+    const questionsGrade5 = [
+      {
+        id: 1,
+        title: "Tìm số tiếp theo trong dãy Fibonacci mở rộng: 1, 3, 4, 7, 11, 18, (?)",
+        options: ["25", "27", "29", "31"],
+        correct: 2, // "29"
+        explain: "Quy luật: Mỗi số kể từ số thứ 3 bằng tổng hai số liền trước: 11 + 18 = 29."
+      },
+      {
+        id: 2,
+        title: "Trong một phòng họp có 6 bạn học sinh giỏi toán, mỗi bạn đều bắt tay với tất cả các bạn còn lại 1 lần. Hỏi có tất cả bao nhiêu cái bắt tay?",
+        options: ["12 cái", "15 cái", "30 cái", "36 cái"],
+        correct: 1, // "15 cái"
+        explain: "Số cái bắt tay = (6 x 5) / 2 = 15 cái."
+      },
+      {
+        id: 3,
+        title: "Một con đường thẳng dài 100m, người ta trồng cây ở cả 2 bên đường, khoảng cách giữa 2 cây liên tiếp là 10m và cả 2 đầu đường đều có cây. Hỏi trồng tất cả bao nhiêu cây?",
+        options: ["10 cây", "11 cây", "20 cây", "22 cây"],
+        correct: 3, // "22 cây"
+        explain: "Một bên đường trồng: (100 : 10) + 1 = 11 cây. Cả hai bên đường trồng: 11 x 2 = 22 cây."
+      },
+      {
+        id: 4,
+        title: "Chó đuổi theo Thỏ cách nó 30m. Mỗi bước Chó nhảy 3m, mỗi bước Thỏ nhảy 2m cùng nhịp. Hỏi sau bao nhiêu bước nhảy thì Chó bắt được Thỏ?",
+        options: ["15 bước", "20 bước", "30 bước", "60 bước"],
+        correct: 2, // "30 bước"
+        explain: "Mỗi bước Chó rút ngắn khoảng cách so với Thỏ là: 3 - 2 = 1m. Số bước cần là: 30 : 1 = 30 bước."
+      },
+      {
+        id: 5,
+        title: "Tìm số có hai chữ số, biết rằng nếu viết thêm chữ số 0 vào giữa hai chữ số đó ta được số mới gấp 9 lần số ban đầu?",
+        options: ["15", "25", "35", "45"],
+        correct: 3, // "45"
+        explain: "Thử với 45: viết thêm 0 thành 405. Ta có 405 : 45 = 9 (thỏa mãn)."
+      },
+      {
+        id: 6,
+        title: "Người thứ nhất làm xong công việc trong 4 giờ, người thứ hai làm xong trong 6 giờ. Hỏi nếu cả hai cùng làm thì sau bao lâu xong công việc?",
+        options: ["2 giờ", "2 giờ 24 phút", "2 giờ 30 phút", "5 giờ"],
+        correct: 1, // "2 giờ 24 phút"
+        explain: "1 giờ cả 2 làm: 1/4 + 1/6 = 5/12 công việc. Thời gian: 1 : (5/12) = 2.4 giờ = 2 giờ 24 phút."
+      },
+      {
+        id: 7,
+        title: "Gieo một con xúc xắc chuẩn 6 mặt đồng chất. Xác suất xuất hiện mặt có số chấm là số nguyên tố (2, 3, 5) là bao nhiêu?",
+        options: ["1/6", "1/3", "1/2", "2/3"],
+        correct: 2, // "1/2"
+        explain: "Các mặt là số nguyên tố có 3 mặt (2, 3, 5). Xác suất = 3/6 = 1/2 (50%)."
+      },
+      {
+        id: 8,
+        title: "Vừa gà vừa chó có tất cả 36 con, đếm được 100 cái chân. Hỏi có bao nhiêu con chó?",
+        options: ["12 con", "14 con", "22 con", "24 con"],
+        correct: 1, // "14 con"
+        explain: "Giả sử tất cả 36 con đều là gà: có 36 x 2 = 72 chân. Số chân thiếu: 100 - 72 = 28 chân. Số chó = 28 : (4 - 2) = 14 con."
+      },
+      {
+        id: 9,
+        title: "Có 3 bạn A, B, C. A nói: 'B nói dối'. B nói: 'C nói dối'. C nói: 'Cả A và B đều nói dối'. Hỏi ai là người nói thật?",
+        options: ["Bạn A", "Bạn B", "Bạn C", "Không có ai"],
+        correct: 1, // "Bạn B"
+        explain: "Nếu B nói thật -> A nói dối và C nói dối. Khi C nói dối thì phát biểu 'A và B đều nói dối' là sai (khớp vì B nói thật). Vậy B là người nói thật."
+      },
+      {
+        id: 10,
+        title: "Cho hình vuông có cạnh 10cm. Nối trung điểm 4 cạnh tạo thành hình vuông thứ hai. Hỏi diện tích hình vuông thứ hai bằng bao nhiêu cm²?",
+        options: ["25 cm²", "40 cm²", "50 cm²", "75 cm²"],
+        correct: 2, // "50 cm²"
+        explain: "Hình vuông thứ hai có diện tích bằng một nửa diện tích hình vuông ban đầu: (10 x 10) : 2 = 50 cm²."
+      }
+    ];
+
+    // ==========================================
+    // 2. STATE MANAGEMENT
+    // ==========================================
+    let currentGrade = 2;
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = {};
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    
+    // Rewards list
+    const defaultRewards = [
+      "🍬 10 Viên Kẹo",
+      "✏️ 1 Cây Bút Chì Màu",
+      "🎮 30 Phút Chơi Game",
+      "🍦 1 Cây Kem Ngon",
+      "📚 1 Cuốn Truyện Tranh",
+      "🎡 +1 Lượt Quay Thưởng",
+      "🌟 Huy Hiệu Toán Học",
+      "🎡 +2 Lượt Quay Thưởng"
+    ];
+    let rewardItems = JSON.parse(localStorage.getItem('kienlt_math_rewards')) || defaultRewards;
+
+    // Submissions
+    let submissions = JSON.parse(localStorage.getItem('kienlt_math_submissions')) || [];
+    let spinCount = parseInt(localStorage.getItem('kienlt_math_spins') || '1', 10);
+
+    // ==========================================
+    // 3. SOUND SYNTHESIZER (Web Audio API)
+    // ==========================================
+    function playTone(freq, type, duration) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function soundCorrect() { playTone(587.33, 'sine', 0.2); setTimeout(() => playTone(880, 'sine', 0.3), 150); }
+    function soundWin() { playTone(523.25, 'triangle', 0.15); setTimeout(() => playTone(659.25, 'triangle', 0.15), 150); setTimeout(() => playTone(783.99, 'triangle', 0.4), 300); }
+
+    // ==========================================
+    // 4. QUIZ LOGIC
+    // ==========================================
+    function startQuiz(grade) {
+      currentGrade = grade;
+      currentQuestions = grade === 2 ? questionsGrade2 : questionsGrade5;
+      currentQuestionIndex = 0;
+      userAnswers = {};
+      secondsElapsed = 0;
+
+      // Update UI elements
+      document.getElementById('level-selection').classList.add('hidden');
+      document.getElementById('quiz-box').classList.remove('hidden');
+      document.getElementById('quiz-result-box').classList.add('hidden');
+
+      const badge = document.getElementById('quiz-badge');
+      badge.textContent = `Lớp ${grade} - Toán Tư Duy`;
+      badge.className = grade === 2 ? 'px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-800' : 'px-3 py-1 rounded-xl text-xs font-extrabold bg-sky-100 text-sky-800';
+
+      // Start timer
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+        const secs = String(secondsElapsed % 60).padStart(2, '0');
+        document.getElementById('quiz-timer').textContent = `${mins}:${secs}`;
+      }, 1000);
+
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      const q = currentQuestions[currentQuestionIndex];
+      document.getElementById('question-number').textContent = currentQuestionIndex + 1;
+      document.getElementById('question-title').textContent = q.title;
+      document.getElementById('quiz-progress-text').textContent = `Câu ${currentQuestionIndex + 1}/10`;
+      document.getElementById('quiz-progress-bar').style.width = `${((currentQuestionIndex + 1) / 10) * 100}%`;
+
+      document.getElementById('btn-prev').disabled = currentQuestionIndex === 0;
+      document.getElementById('btn-next-text').textContent = currentQuestionIndex === 9 ? 'Nộp bài & Chấm điểm ➔' : 'Câu tiếp theo';
+
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const isSelected = userAnswers[currentQuestionIndex] === idx;
+        const btn = document.createElement('button');
+        btn.className = `p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm flex items-center space-x-3 transition active:scale-98 ${
+          isSelected ? 'border-sky-600 bg-sky-50 text-sky-900 shadow-sm ring-2 ring-sky-400' : 'border-slate-200 bg-slate-50/50 hover:bg-slate-100 text-slate-800'
+        }`;
+        btn.onclick = () => selectOption(idx);
+        btn.innerHTML = `
+          <span class="w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs ${isSelected ? 'bg-sky-600 text-white' : 'bg-white text-slate-600 border border-slate-200'}">
+            ${String.fromCharCode(65 + idx)}
+          </span>
+          <span class="flex-1">${opt}</span>
+        `;
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(idx) {
+      userAnswers[currentQuestionIndex] = idx;
+      playTone(440, 'sine', 0.1);
+      renderCurrentQuestion();
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderCurrentQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (userAnswers[currentQuestionIndex] === undefined) {
+        alert('Em vui lòng chọn đáp án trước khi qua câu tiếp theo nhé!');
+        return;
+      }
+
+      if (currentQuestionIndex < 9) {
+        currentQuestionIndex++;
+        renderCurrentQuestion();
+      } else {
+        finishAndAutoGrade();
+      }
+    }
+
+    function finishAndAutoGrade() {
+      clearInterval(timerInterval);
+
+      // Calculate score
+      let correctCount = 0;
+      currentQuestions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) {
+          correctCount++;
+        }
+      });
+
+      // Award 1 spin
+      spinCount += 1;
+      localStorage.setItem('kienlt_math_spins', spinCount);
+      updateSpinBadge();
+
+      // Create Submission Record for Teacher Review
+      const newSubmission = {
+        id: Date.now(),
+        studentName: 'Học sinh KIENLT90',
+        grade: currentGrade,
+        score: correctCount,
+        timeSpent: document.getElementById('quiz-timer').textContent,
+        createdAt: new Date().toLocaleString('vi-VN'),
+        status: 'pending', // 'pending' | 'approved'
+        teacherNotes: '',
+        userAnswers: userAnswers,
+        questions: currentQuestions
+      };
+
+      submissions.unshift(newSubmission);
+      localStorage.setItem('kienlt_math_submissions', JSON.stringify(submissions));
+      updatePendingBadge();
+
+      // Show Result View
+      document.getElementById('quiz-box').classList.add('hidden');
+      document.getElementById('quiz-result-box').classList.remove('hidden');
+
+      document.getElementById('res-grade-badge').textContent = `Lớp ${currentGrade} - Toán Logic`;
+      document.getElementById('res-score').textContent = `${correctCount}/10`;
+      document.getElementById('res-time').textContent = newSubmission.timeSpent;
+
+      soundWin();
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+
+    function resetAndBackToArena() {
+      document.getElementById('quiz-result-box').classList.add('hidden');
+      document.getElementById('quiz-box').classList.add('hidden');
+      document.getElementById('level-selection').classList.remove('hidden');
+    }
+
+    function goToSpinWheel() {
+      switchTab('wheel');
+    }
+
+    // ==========================================
+    // 5. LUCKY WHEEL ENGINE (Canvas 360)
+    // ==========================================
+    let isSpinning = false;
+    let currentWheelAngle = 0;
+
+    function drawWheel() {
+      const canvas = document.getElementById('wheel-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const numSegments = rewardItems.length;
+      const arcSize = (2 * Math.PI) / numSegments;
+      const radius = canvas.width / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const colors = ['#38bdf8', '#fbbf24', '#34d399', '#f472b6', '#a78bfa', '#fb923c', '#4ade80', '#f87171'];
+
+      for (let i = 0; i < numSegments; i++) {
+        const angle = currentWheelAngle + i * arcSize;
+        ctx.beginPath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius - 8, angle, angle + arcSize);
+        ctx.lineTo(radius, radius);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Draw text
+        ctx.save();
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 13px "Plus Jakarta Sans", sans-serif';
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(rewardItems[i], radius - 20, 5);
+        ctx.restore();
+      }
+    }
+
+    function spinTheWheel() {
+      if (isSpinning) return;
+      if (spinCount <= 0) {
+        alert('Bạn đã hết lượt quay! Hãy hoàn thành bài thi toán 10 câu để nhận thêm lượt quay nhé.');
+        return;
+      }
+
+      isSpinning = true;
+      spinCount--;
+      localStorage.setItem('kienlt_math_spins', spinCount);
+      updateSpinBadge();
+
+      document.getElementById('reward-result-alert').classList.add('hidden');
+
+      const numSegments = rewardItems.length;
+      const arcSize = (2 * Math.PI) / numSegments;
+      const winningIndex = Math.floor(Math.random() * numSegments);
+
+      // Target angle to land pointer at winning index (top pointer at 270 deg / 1.5 PI)
+      const extraRounds = 5 + Math.floor(Math.random() * 3);
+      const targetAngle = (extraRounds * 2 * Math.PI) + (1.5 * Math.PI - (winningIndex * arcSize + arcSize / 2));
+      
+      const startAngle = currentWheelAngle;
+      const duration = 4000;
+      const startTime = performance.now();
+
+      function animateWheel(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Ease out cubic
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        currentWheelAngle = startAngle + (targetAngle - startAngle) * easeOut;
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animateWheel);
+        } else {
+          isSpinning = false;
+          currentWheelAngle = currentWheelAngle % (2 * Math.PI);
+          const wonPrize = rewardItems[winningIndex];
+          
+          document.getElementById('won-reward-name').textContent = wonPrize;
+          document.getElementById('reward-result-alert').classList.remove('hidden');
+          soundWin();
+          confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
+        }
+      }
+
+      requestAnimationFrame(animateWheel);
+    }
+
+    function updateSpinBadge() {
+      const badge = document.getElementById('spin-badge');
+      const countEl = document.getElementById('user-spin-count');
+      if (countEl) countEl.textContent = spinCount;
+      if (badge) {
+        if (spinCount > 0) {
+          badge.textContent = spinCount;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+    }
+
+    // ==========================================
+    // 6. TEACHER REVIEW & APPROVAL
+    // ==========================================
+    function updatePendingBadge() {
+      const badge = document.getElementById('pending-badge');
+      const pendingCount = submissions.filter(s => s.status === 'pending').length;
+      if (badge) {
+        if (pendingCount > 0) {
+          badge.textContent = pendingCount;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+    }
+
+    function renderTeacherSubmissions() {
+      const container = document.getElementById('teacher-submissions-container');
+      if (!container) return;
+
+      if (submissions.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-2">
+            <div class="text-3xl">📭</div>
+            <h3 class="font-bold text-slate-700">Chưa có bài nộp nào</h3>
+            <p class="text-xs text-slate-400">Các bài làm 10 câu của học sinh sẽ xuất hiện tại đây để cô giáo duyệt và ghi nhận xét.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = submissions.map(sub => `
+        <div class="bg-white p-5 rounded-2xl border ${sub.status === 'approved' ? 'border-emerald-200' : 'border-indigo-200'} shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${sub.grade === 2 ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-sky-800'}">
+                Lớp ${sub.grade}
+              </span>
+              <h4 class="text-sm font-bold text-slate-900">${sub.studentName}</h4>
+              <span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${sub.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                ${sub.status === 'approved' ? '✓ Đã Phê Duyệt' : '⏳ Chờ Duyệt'}
+              </span>
+            </div>
+            <div class="text-xs text-slate-500 flex items-center space-x-3 pt-0.5">
+              <span>Điểm số: <b class="text-slate-800">${sub.score}/10</b></span>
+              <span>•</span>
+              <span>Thời gian: ${sub.timeSpent}</span>
+              <span>•</span>
+              <span>Ngày nộp: ${sub.createdAt}</span>
+            </div>
+            ${sub.teacherNotes ? `
+              <div class="mt-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 text-slate-700">
+                <span class="font-bold text-indigo-700">💬 Lời phê cô giáo:</span> ${sub.teacherNotes}
+              </div>
+            ` : ''}
+          </div>
+
+          <button onclick="openReviewModal(${sub.id})" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl font-bold text-xs flex items-center space-x-1.5 transition shrink-0">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span>${sub.status === 'approved' ? 'Xem lại & Sửa' : 'Kiểm tra & Phê duyệt'}</span>
+          </button>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    let activeReviewSubmissionId = null;
+
+    function openReviewModal(subId) {
+      activeReviewSubmissionId = subId;
+      const sub = submissions.find(s => s.id === subId);
+      if (!sub) return;
+
+      document.getElementById('modal-student-title').textContent = `${sub.studentName} - Toán Lớp ${sub.grade}`;
+      document.getElementById('modal-submit-time').textContent = `Nộp lúc: ${sub.createdAt} (Thời gian làm: ${sub.timeSpent})`;
+      document.getElementById('modal-edit-score').value = sub.score;
+      document.getElementById('modal-teacher-notes').value = sub.teacherNotes || '';
+
+      const qList = document.getElementById('modal-questions-list');
+      qList.innerHTML = sub.questions.map((q, idx) => {
+        const userChoice = sub.userAnswers[idx];
+        const isCorrect = userChoice === q.correct;
+        return `
+          <div class="p-3.5 rounded-2xl border ${isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'} space-y-1.5 text-xs">
+            <div class="flex items-start justify-between font-bold">
+              <span class="text-slate-900">Câu ${idx + 1}: ${q.title}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] ${isCorrect ? 'bg-emerald-200 text-emerald-800' : 'bg-rose-200 text-rose-800'}">
+                ${isCorrect ? 'ĐÚNG' : 'SAI'}
+              </span>
+            </div>
+            <div class="text-slate-600">
+              <span>Học sinh chọn: <b>${userChoice !== undefined ? q.options[userChoice] : 'Chưa chọn'}</b></span> |
+              <span>Đáp án đúng: <b class="text-emerald-700">${q.options[q.correct]}</b></span>
+            </div>
+            <div class="text-slate-500 italic text-[11px] pt-1 border-t border-slate-200/40">
+              💡 Giải thích: ${q.explain}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('review-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeReviewModal() {
+      document.getElementById('review-modal').classList.add('hidden');
+    }
+
+    function saveTeacherApproval() {
+      const sub = submissions.find(s => s.id === activeReviewSubmissionId);
+      if (!sub) return;
+
+      sub.score = parseInt(document.getElementById('modal-edit-score').value, 10) || 0;
+      sub.teacherNotes = document.getElementById('modal-teacher-notes').value.trim();
+      sub.status = 'approved';
+
+      localStorage.setItem('kienlt_math_submissions', JSON.stringify(submissions));
+      updatePendingBadge();
+      renderTeacherSubmissions();
+      closeReviewModal();
+      alert('Đã lưu phê duyệt và ghi chú của cô giáo thành công!');
+    }
+
+    function clearAllSubmissions() {
+      if (confirm('Bạn có chắc muốn xóa toàn bộ lịch sử bài làm?')) {
+        submissions = [];
+        localStorage.removeItem('kienlt_math_submissions');
+        updatePendingBadge();
+        renderTeacherSubmissions();
+      }
+    }
+
+    // ==========================================
+    // 7. REWARDS CATALOG MANAGEMENT
+    // ==========================================
+    function renderRewardsTable() {
+      const tbody = document.getElementById('rewards-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = rewardItems.map((item, idx) => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-3 font-mono text-slate-400 font-bold">${idx + 1}</td>
+          <td class="p-3 font-semibold text-slate-800">${item}</td>
+          <td class="p-3 text-right">
+            <button onclick="removeRewardItem(${idx})" class="text-rose-500 hover:text-rose-700 p-1 rounded hover:bg-rose-50 transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function addRewardItem() {
+      const input = document.getElementById('new-reward-input');
+      const val = input.value.trim();
+      if (!val) return;
+
+      rewardItems.push(val);
+      localStorage.setItem('kienlt_math_rewards', JSON.stringify(rewardItems));
+      input.value = '';
+      renderRewardsTable();
+      drawWheel();
+    }
+
+    function removeRewardItem(index) {
+      if (rewardItems.length <= 2) {
+        alert('Vòng quay cần tối thiểu 2 phần thưởng!');
+        return;
+      }
+      rewardItems.splice(index, 1);
+      localStorage.setItem('kienlt_math_rewards', JSON.stringify(rewardItems));
+      renderRewardsTable();
+      drawWheel();
+    }
+
+    function resetDefaultRewards() {
+      if (confirm('Khôi phục danh mục quà tặng về mặc định ban đầu?')) {
+        rewardItems = [...defaultRewards];
+        localStorage.setItem('kienlt_math_rewards', JSON.stringify(rewardItems));
+        renderRewardsTable();
+        drawWheel();
+      }
+    }
+
+    // ==========================================
+    // 8. TAB NAVIGATION SWITCHER
+    // ==========================================
+    function switchTab(tab) {
+      ['arena', 'wheel', 'teacher', 'rewards'].forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const nav = document.getElementById(`nav-${t}`);
+        if (view) view.classList.add('hidden');
+        if (nav) {
+          nav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative';
+        }
+      });
+
+      const activeView = document.getElementById(`view-${tab}`);
+      const activeNav = document.getElementById(`nav-${tab}`);
+      if (activeView) activeView.classList.remove('hidden');
+      if (activeNav) {
+        activeNav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-700 text-white shadow-sm flex items-center space-x-1.5 transition relative';
+      }
+
+      if (tab === 'wheel') {
+        setTimeout(drawWheel, 50);
+      } else if (tab === 'teacher') {
+        renderTeacherSubmissions();
+      } else if (tab === 'rewards') {
+        renderRewardsTable();
+      }
+
+      lucide.createIcons();
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      updateSpinBadge();
+      updatePendingBadge();
+      drawWheel();
+    });
+  </script>
+</body>
+</html>
