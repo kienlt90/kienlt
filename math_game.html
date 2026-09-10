@@ -309,7 +309,7 @@
             <span class="text-xs font-extrabold text-indigo-900">Bài làm đã gửi về hệ thống</span>
           </div>
           <p class="text-xs text-indigo-700 leading-relaxed">
-            Kết quả đã được ghi nhận. Phụ huynh/Cô giáo sẽ kiểm tra và nhận xét sau. Bạn được tặng <b>+1 lượt quay thưởng</b> may mắn!
+            Kết quả đã được ghi nhận. Phụ huynh/Cô giáo sẽ kiểm tra và nhận xét sau. Bạn được cộng <b>+1 lượt quay thưởng</b> may mắn!
           </p>
         </div>
 
@@ -331,24 +331,55 @@
     <!-- ============================================== -->
     <section id="view-wheel" class="hidden space-y-6">
       
+      <!-- ADMIN-ONLY: BẢNG QUẢN LÝ & RESET LƯỢT QUAY THEO TỪNG BÉ -->
+      <div id="admin-spin-dashboard" class="hidden bg-white p-5 sm:p-6 rounded-3xl border border-amber-200 shadow-md space-y-4 max-w-3xl mx-auto text-left">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xl">
+              🎡
+            </div>
+            <div>
+              <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Quản Lý Lượt Quay Từng Bé</h3>
+              <p class="text-xs text-slate-500">Xem và nạp/reset lượt quay độc lập cho từng tài khoản học sinh</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="bulkAddSpins(1)" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition flex items-center space-x-1" title="Cộng thêm 1 lượt cho tất cả các bé">
+              <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+              <span>+1 Tất cả bé</span>
+            </button>
+            <button onclick="bulkResetSpins(1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center space-x-1" title="Đặt lại tất cả bé về 1 lượt">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span>Reset tất cả = 1</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kids List with Individual Controls -->
+        <div id="admin-kids-spin-list" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- MAIN WHEEL CARD -->
       <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md text-center max-w-xl mx-auto space-y-6">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div class="text-left">
             <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">
               <span>🎡 Vòng Quay May Mắn</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">Quay Thưởng Học Giỏi</h2>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1" id="wheel-card-title">Quay Thưởng Học Giỏi</h2>
           </div>
           <!-- Reset Wheel Button (Admin Only) -->
-          <button id="btn-reset-spins" onclick="resetWheelSpins()" class="hidden px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition" title="Đặt lại lượt quay (Chỉ Admin)">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-            <span>Reset lượt quay</span>
+          <button id="btn-reset-spins" onclick="openAdminSpinManager()" class="hidden px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition" title="Đặt lại lượt quay (Chỉ Admin)">
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+            <span>Quản lý lượt quay bé</span>
           </button>
         </div>
 
         <!-- Spin Balance -->
         <div class="inline-flex items-center space-x-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
-          <span class="text-xs font-bold text-amber-800">Lượt quay khả dụng:</span>
+          <span class="text-xs font-bold text-amber-800" id="wheel-balance-label">Lượt quay khả dụng:</span>
           <span class="text-lg font-black text-amber-600" id="user-spin-count">1</span>
         </div>
 
@@ -1730,7 +1761,7 @@ const mathBankGrade5 = [
   <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
     // ==========================================
-    // 1. STATE & AUTHENTICATION ROLE DETECTION
+    // 1. STATE & PER-KID SPIN ACCOUNTS
     // ==========================================
     let currentGrade = 2;
     let currentQuestions = [];
@@ -1748,6 +1779,48 @@ const mathBankGrade5 = [
       }
     } catch(e) {}
 
+    // Default Kids accounts (THÓC - Lớp 2, Gấu - Lớp 5)
+    const defaultKids = [
+      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
+    ];
+
+    function getAllKids() {
+      try {
+        const stored = localStorage.getItem('kienlt_kid_accounts');
+        if (stored) return JSON.parse(stored);
+      } catch(e) {}
+      return defaultKids;
+    }
+
+    // Per-Kid Spin Storage
+    function getKidSpinsMap() {
+      try {
+        const stored = localStorage.getItem('kienlt_kid_spins_map');
+        if (stored) return JSON.parse(stored);
+      } catch(e) {}
+      return { 'kid_thoc': 1, 'kid_gau': 1 };
+    }
+
+    function saveKidSpinsMap(map) {
+      try {
+        localStorage.setItem('kienlt_kid_spins_map', JSON.stringify(map));
+      } catch(e) {}
+    }
+
+    function getKidSpins(kidId) {
+      const map = getKidSpinsMap();
+      return map[kidId] !== undefined ? map[kidId] : 1;
+    }
+
+    function setKidSpins(kidId, count) {
+      const map = getKidSpinsMap();
+      map[kidId] = Math.max(0, parseInt(count, 10) || 0);
+      saveKidSpinsMap(map);
+      updateSpinUI();
+      renderAdminKidsSpinList();
+    }
+
     // Rewards list
     const defaultRewards = [
       "🍬 10 Viên Kẹo",
@@ -1763,7 +1836,6 @@ const mathBankGrade5 = [
 
     // Submissions
     let submissions = JSON.parse(localStorage.getItem('kienlt_math_submissions')) || [];
-    let spinCount = parseInt(localStorage.getItem('kienlt_math_spins') || '1', 10);
 
     // ==========================================
     // SMART RANDOMIZER: Pick 10 questions without repeating in 3 consecutive runs
@@ -1945,12 +2017,16 @@ const mathBankGrade5 = [
         }
       });
 
-      // Award 1 spin
-      spinCount += 1;
-      try {
-        localStorage.setItem('kienlt_math_spins', spinCount);
-      } catch(e) {}
-      updateSpinBadge();
+      // Award +1 spin to the active kid's account
+      if (currentKid) {
+        const current = getKidSpins(currentKid.id);
+        setKidSpins(currentKid.id, current + 1);
+      } else {
+        // If testing in admin mode, award to default grade kid
+        const targetKidId = currentGrade === 2 ? 'kid_thoc' : 'kid_gau';
+        const current = getKidSpins(targetKidId);
+        setKidSpins(targetKidId, current + 1);
+      }
 
       const sName = currentKid ? currentKid.name : (currentGrade === 2 ? 'THÓC' : 'Gấu');
 
@@ -1997,7 +2073,7 @@ const mathBankGrade5 = [
     }
 
     // ==========================================
-    // 4. LUCKY WHEEL ENGINE & RESET FUNCTION (ADMIN ONLY)
+    // 4. LUCKY WHEEL ENGINE & PER-KID CONTROLS
     // ==========================================
     let isSpinning = false;
     let currentWheelAngle = 0;
@@ -2044,18 +2120,17 @@ const mathBankGrade5 = [
 
     function spinTheWheel() {
       if (isSpinning) return;
-      if (spinCount <= 0) {
-        alert('Bạn đã hết lượt quay! Hãy hoàn thành bài thi toán 10 câu để nhận thêm lượt quay nhé.');
-        return;
+
+      if (currentKid) {
+        const available = getKidSpins(currentKid.id);
+        if (available <= 0) {
+          alert(`Bé ${currentKid.name} đã hết lượt quay! Hãy hoàn thành bài thi 10 câu để nhận thêm lượt nhé.`);
+          return;
+        }
+        setKidSpins(currentKid.id, available - 1);
       }
 
       isSpinning = true;
-      spinCount--;
-      try {
-        localStorage.setItem('kienlt_math_spins', spinCount);
-      } catch(e) {}
-      updateSpinBadge();
-
       document.getElementById('reward-result-alert').classList.add('hidden');
 
       const numSegments = rewardItems.length;
@@ -2094,39 +2169,116 @@ const mathBankGrade5 = [
       requestAnimationFrame(animateWheel);
     }
 
-    function resetWheelSpins() {
-      if (currentKid) {
-        alert('Bạn không có quyền quản trị! Chỉ tài khoản Phụ huynh/Admin mới được đặt lại lượt quay.');
-        return;
+    // Admin Spin Management Functions
+    function openAdminSpinManager() {
+      const dash = document.getElementById('admin-spin-dashboard');
+      if (dash) {
+        dash.scrollIntoView({ behavior: 'smooth' });
       }
-      const choice = prompt("Chọn hành động Reset vòng quay:\n1 - Đặt lại số lượt quay về 1\n2 - Đặt lại số lượt quay về 0\n3 - Thêm +5 lượt quay thưởng cho bé", "1");
-      if (choice === "1") {
-        spinCount = 1;
-      } else if (choice === "2") {
-        spinCount = 0;
-      } else if (choice === "3") {
-        spinCount += 5;
-      } else {
-        return;
-      }
-      try {
-        localStorage.setItem('kienlt_math_spins', spinCount);
-      } catch(e) {}
-      updateSpinBadge();
-      alert(`Đã cập nhật số lượt quay thành công: ${spinCount} lượt!`);
     }
 
-    function updateSpinBadge() {
+    function renderAdminKidsSpinList() {
+      const container = document.getElementById('admin-kids-spin-list');
+      if (!container) return;
+
+      const kids = getAllKids();
+      container.innerHTML = kids.map(k => {
+        const spins = getKidSpins(k.id);
+        const isG2 = k.grade === 2;
+        return `
+          <div class="bg-slate-50/80 p-4 rounded-2xl border ${isG2 ? 'border-amber-200' : 'border-sky-200'} flex flex-col justify-between space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <span class="text-2xl">${isG2 ? '🌱' : '🚀'}</span>
+                <div>
+                  <h4 class="font-extrabold text-sm text-slate-900">${k.name}</h4>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isG2 ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-sky-800'}">
+                    Lớp ${k.grade}
+                  </span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-400 font-bold block uppercase">Lượt quay</span>
+                <span class="text-xl font-black text-amber-600">${spins}</span>
+              </div>
+            </div>
+
+            <!-- Quick Action Buttons for This Kid -->
+            <div class="grid grid-cols-5 gap-1.5 pt-2 border-t border-slate-200/60 text-xs">
+              <button onclick="setKidSpins('${k.id}', 1)" class="p-1.5 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-lg border border-slate-200 transition text-[11px]" title="Đặt về 1 lượt">
+                = 1
+              </button>
+              <button onclick="setKidSpins('${k.id}', 0)" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-lg border border-rose-200 transition text-[11px]" title="Đặt về 0 lượt">
+                = 0
+              </button>
+              <button onclick="setKidSpins('${k.id}', ${spins + 1})" class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-lg border border-emerald-200 transition text-[11px]" title="Thêm +1 lượt">
+                +1
+              </button>
+              <button onclick="setKidSpins('${k.id}', ${spins + 5})" class="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold rounded-lg border border-amber-200 transition text-[11px]" title="Thêm +5 lượt">
+                +5
+              </button>
+              <button onclick="promptSetKidSpins('${k.id}', '${k.name}', ${spins})" class="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-lg border border-indigo-200 transition text-[11px]" title="Nhập số tùy chỉnh">
+                ✏️
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function promptSetKidSpins(kidId, kidName, currentSpins) {
+      const val = prompt(`Nhập số lượt quay mới cho bé ${kidName}:`, currentSpins);
+      if (val !== null && val.trim() !== '') {
+        const num = parseInt(val, 10);
+        if (!isNaN(num) && num >= 0) {
+          setKidSpins(kidId, num);
+          alert(`Đã đặt lượt quay của bé ${kidName} thành ${num} lượt!`);
+        }
+      }
+    }
+
+    function bulkAddSpins(amount) {
+      const kids = getAllKids();
+      kids.forEach(k => {
+        const current = getKidSpins(k.id);
+        setKidSpins(k.id, current + amount);
+      });
+      alert(`Đã cộng thêm +${amount} lượt quay cho tất cả các bé!`);
+    }
+
+    function bulkResetSpins(amount) {
+      if (confirm(`Đặt lại số lượt quay của TẤT CẢ CÁC BÉ về ${amount} lượt?`)) {
+        const kids = getAllKids();
+        kids.forEach(k => {
+          setKidSpins(k.id, amount);
+        });
+        alert(`Đã đặt lại tất cả các bé về ${amount} lượt quay thành công!`);
+      }
+    }
+
+    function updateSpinUI() {
       const badge = document.getElementById('spin-badge');
       const countEl = document.getElementById('user-spin-count');
-      if (countEl) countEl.textContent = spinCount;
-      if (badge) {
-        if (spinCount > 0) {
-          badge.textContent = spinCount;
-          badge.classList.remove('hidden');
-        } else {
-          badge.classList.add('hidden');
+      const labelEl = document.getElementById('wheel-balance-label');
+
+      if (currentKid) {
+        const spins = getKidSpins(currentKid.id);
+        if (countEl) countEl.textContent = spins;
+        if (labelEl) labelEl.textContent = `Lượt quay của bé ${currentKid.name}:`;
+        if (badge) {
+          if (spins > 0) {
+            badge.textContent = spins;
+            badge.classList.remove('hidden');
+          } else {
+            badge.classList.add('hidden');
+          }
         }
+      } else {
+        if (countEl) countEl.textContent = 'Demo';
+        if (labelEl) labelEl.textContent = 'Chế độ quay thử nghiệm:';
+        if (badge) badge.classList.add('hidden');
       }
     }
 
@@ -2393,6 +2545,9 @@ const mathBankGrade5 = [
 
       if (tab === 'wheel') {
         setTimeout(drawWheel, 50);
+        if (!currentKid) {
+          renderAdminKidsSpinList();
+        }
       } else if (tab === 'teacher' && !currentKid) {
         renderTeacherSubmissions();
       } else if (tab === 'rewards' && !currentKid) {
@@ -2407,8 +2562,8 @@ const mathBankGrade5 = [
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      updateSpinBadge();
       updatePendingBadge();
+      updateSpinUI();
       drawWheel();
 
       if (currentKid) {
@@ -2443,17 +2598,17 @@ const mathBankGrade5 = [
         }
 
         // ẨN TOÀN BỘ CHỨC NĂNG QUẢN TRỊ ĐỐI VỚI BÉ:
-        // 1. Ẩn nút Reset lượt quay trên Vòng quay
+        const adminDash = document.getElementById('admin-spin-dashboard');
+        if (adminDash) adminDash.classList.add('hidden');
+
         const btnResetSpins = document.getElementById('btn-reset-spins');
         if (btnResetSpins) btnResetSpins.classList.add('hidden');
 
-        // 2. Ẩn tab & liên kết Tùy chỉnh danh mục quà tặng
         const navRewards = document.getElementById('nav-rewards');
         if (navRewards) navRewards.classList.add('hidden');
         const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
         if (wheelSettings) wheelSettings.classList.add('hidden');
 
-        // 3. Ẩn hoàn toàn tab Phê duyệt của Giáo viên
         const navTeacher = document.getElementById('nav-teacher');
         if (navTeacher) navTeacher.classList.add('hidden');
 
@@ -2478,19 +2633,24 @@ const mathBankGrade5 = [
           cardG5.className = 'group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
         }
 
-        // HIỂN THỊ ĐẦY ĐỦ CÁC QUYỀN QUẢN TRỊ:
-        // 1. Nút Reset lượt quay
+        // HIỂN THỊ ĐẦY ĐỦ CÁC QUYỀN VÀ BẢNG QUẢN LÝ LƯỢT QUAY TỪNG BÉ:
+        const adminDash = document.getElementById('admin-spin-dashboard');
+        if (adminDash) {
+          adminDash.classList.remove('hidden');
+          renderAdminKidsSpinList();
+        }
+
         const btnResetSpins = document.getElementById('btn-reset-spins');
         if (btnResetSpins) btnResetSpins.classList.remove('hidden');
 
-        // 2. Tab & liên kết Tùy chỉnh danh mục quà tặng
         const navRewards = document.getElementById('nav-rewards');
         if (navRewards) navRewards.classList.remove('hidden');
         const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
-        if (wheelSettings) wheelSettings.classList.remove('hidden');
-        if (wheelSettings) wheelSettings.classList.add('flex');
+        if (wheelSettings) {
+          wheelSettings.classList.remove('hidden');
+          wheelSettings.classList.add('flex');
+        }
 
-        // 3. Tab Phê duyệt của Giáo viên
         const navTeacher = document.getElementById('nav-teacher');
         if (navTeacher) navTeacher.classList.remove('hidden');
       }
