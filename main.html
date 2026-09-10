@@ -1,15 +1,52 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cổng thông tin - Hệ thống KIENLT90</title>
-  <!-- Google Fonts: Be Vietnam Pro -->
+  <title>KIENLT90 Portal - Cổng thông tin Y tế số</title>
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
   <script>
     // Auth Check: Redirect to index.html if no session exists
     if (!localStorage.getItem('vnpt_his_session')) {
@@ -17,469 +54,353 @@
     }
   </script>
 </head>
-<body class="portal-body">
-  <script>
-    // Theme Initializer to prevent flash of light
-    (function() {
-      const theme = localStorage.getItem('vnpt_his_theme') || 'dark';
-      if (theme === 'light') {
-        document.body.classList.add('light-theme');
-      }
-    })();
-  </script>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-full flex justify-center selection:bg-sky-100 selection:text-sky-800">
 
-  <!-- Floating animated background blobs -->
-  <div class="bg-glow-container">
-    <div class="glow-blob blob-1"></div>
-    <div class="glow-blob blob-2"></div>
-    <div class="glow-blob blob-3"></div>
-  </div>
+  <!-- Mobile App Frame Container -->
+  <div class="w-full max-w-md bg-white min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
 
-  <!-- Main Container -->
-  <main class="portal-container" id="app-container">
-    
-    <!-- DASHBOARD PORTAL VIEW -->
-    <section id="dashboard-view" class="dashboard-section">
-      
-      <!-- Portal Header -->
-      <header class="dash-header glass-card">
-        <div class="dash-brand">
-          <svg class="vnpt-logo-mini" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="logo-grad-mini" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#06b6d4" />
-                <stop offset="100%" stop-color="#3b82f6" />
-              </linearGradient>
-            </defs>
-            <!-- Outer Hexagon -->
-            <path d="M 100 15 L 173.6 57.5 L 173.6 142.5 L 100 185 L 26.4 142.5 L 26.4 57.5 Z" fill="none" stroke="url(#logo-grad-mini)" stroke-width="6" opacity="0.4" />
-            <!-- Stylized "9" -->
-            <path d="M 100 90 A 22 22 0 1 0 56 90 A 22 22 0 0 0 100 90 L 100 120 C 100 135, 88 145, 70 145" fill="none" stroke="url(#logo-grad-mini)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
-            <!-- Stylized "0" -->
-            <path d="M 154 102.5 A 22 30 0 1 1 110 102.5 A 22 30 0 1 1 154 102.5" fill="none" stroke="var(--color-text-primary)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: 1.4rem;">KIENLT90 Portal</h2>
+    <!-- Top Header -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center text-white font-bold shadow-md shadow-sky-500/20 text-xs tracking-tight">
+          K90
         </div>
-        <div class="user-profile">
-          <div class="user-avatar">AD</div>
-          <div class="user-info">
-            <span class="user-name" id="user-display-name">Lê Trung Kiên</span>
-            <span class="user-role">Quản trị viên</span>
+        <div>
+          <h1 class="text-xs font-semibold tracking-wider text-slate-400 uppercase">KIENLT90 Portal</h1>
+          <p class="text-sm font-bold text-slate-800 leading-tight">Quản trị Hệ thống</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors relative" title="Thông báo" onclick="alert('Không có thông báo mới.')">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
+        </button>
+        <button onclick="handleLogout()" class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Đăng xuất">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 px-4 py-5 space-y-5 pb-24 overflow-y-auto custom-scrollbar">
+
+      <!-- Admin Profile Card -->
+      <section class="bg-gradient-to-br from-slate-50 to-sky-50/50 p-4 rounded-2xl border border-sky-100 shadow-sm relative overflow-hidden">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="relative">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-700 to-sky-500 p-0.5 shadow-sm">
+                <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center font-bold text-sky-800 text-base" id="user-avatar-text">
+                  TK
+                </div>
+              </div>
+              <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 bg-sky-100 text-sky-700 rounded-full text-[11px] font-bold">Quản trị viên (AD)</span>
+                <span class="text-xs text-slate-400 font-mono">#KIEN90</span>
+              </div>
+              <h2 class="text-base font-bold text-slate-900 mt-0.5" id="user-display-name">Lê Trung Kiên</h2>
+            </div>
           </div>
-          <!-- Theme Toggle Button -->
-          <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Đổi giao diện">
-            <span id="theme-icon">☀️</span>
+
+          <div class="flex flex-col items-end text-[11px] font-medium text-slate-500">
+            <span class="inline-flex items-center text-emerald-600 font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
+              Active
+            </span>
+            <span class="text-slate-400 mt-0.5">v1.0 • Máy chủ an toàn</span>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-500 mt-3 border-t border-slate-200/60 pt-2.5">
+          Cổng thông tin hệ thống trung tâm KIENLT90. Quản lý mô-đun công việc và tiện ích y tế số chuyên sâu.
+        </p>
+      </section>
+
+      <!-- Quick Metrics Grid -->
+      <section class="grid grid-cols-3 gap-2.5">
+        <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
+          <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Tiến độ KS</p>
+          <div class="mt-1 flex items-baseline justify-center space-x-1">
+            <span class="text-lg font-extrabold text-slate-800">84%</span>
+            <span class="text-[10px] font-bold text-emerald-600">+12%</span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-0.5">28/32 Tiêu chí</p>
+        </div>
+
+        <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
+          <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Lỗi XML 130</p>
+          <div class="mt-1 flex items-baseline justify-center space-x-1">
+            <span class="text-lg font-extrabold text-emerald-600">0</span>
+          </div>
+          <p class="text-[10px] text-emerald-600 font-medium mt-0.5">Chuẩn hoá 100%</p>
+        </div>
+
+        <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
+          <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">LIS Driver</p>
+          <div class="mt-1 flex items-baseline justify-center space-x-1">
+            <span class="text-lg font-extrabold text-sky-700">18/18</span>
+          </div>
+          <p class="text-[10px] text-sky-600 font-medium mt-0.5">Sẵn sàng kết nối</p>
+        </div>
+      </section>
+
+      <!-- Featured Survey Banner (Card Trọng Tâm) -->
+      <section class="bg-gradient-to-br from-sky-800 via-sky-700 to-sky-900 text-white p-4 rounded-2xl shadow-lg shadow-sky-900/15 relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/5 rounded-full blur-xl pointer-events-none"></div>
+
+        <div class="flex items-center justify-between mb-2">
+          <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-xs font-semibold">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>Đang hoạt động</span>
+          </span>
+          <span class="text-[11px] text-sky-200/90 font-medium">Kỳ Q1/2026</span>
+        </div>
+
+        <h3 class="text-base font-bold text-white leading-snug">
+          Khảo sát RIS/PACS – LIS – EMR Bệnh Viện
+        </h3>
+        <p class="text-xs text-sky-100/80 mt-1 line-clamp-2 leading-relaxed">
+          Biểu mẫu khảo sát thực trạng số hóa Bệnh viện / Trung tâm Y tế. Quản lý bản thảo JSON, cấu hình API kiểm thử, xuất báo cáo PDF và file Excel ký đóng dấu.
+        </p>
+
+        <!-- Progress Bar -->
+        <div class="mt-3.5 bg-sky-950/40 p-2.5 rounded-xl border border-white/10">
+          <div class="flex justify-between text-[11px] font-semibold mb-1.5">
+            <span class="text-sky-200">BV Đa khoa Tuyến Tỉnh</span>
+            <span class="text-emerald-300 font-bold">28/32 Tiêu chí (84%)</span>
+          </div>
+          <div class="w-full bg-black/30 rounded-full h-2 overflow-hidden flex">
+            <div class="bg-emerald-400 h-full rounded-full transition-all duration-500" style="width: 84%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-sky-200/70 mt-1.5">
+            <span>RIS/PACS: Đạt</span>
+            <span>LIS: Hoàn tất</span>
+            <span>EMR: Nghiệm thu</span>
+          </div>
+        </div>
+
+        <!-- Action CTA Buttons -->
+        <div class="mt-4 grid grid-cols-2 gap-2">
+          <a href="survey.html" target="_blank" class="bg-white text-sky-800 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center space-x-1.5 hover:bg-sky-50 shadow-sm transition active:scale-95">
+            <span>Vào khảo sát</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </a>
+          <button onclick="alert('Đang trích xuất file PDF & Excel báo cáo khảo sát...')" class="bg-white/10 border border-white/20 text-white font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center space-x-1.5 hover:bg-white/20 transition active:scale-95">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Xuất PDF/Excel</span>
           </button>
-          <button id="logout-btn" class="btn-secondary" onclick="logout()">Đăng xuất</button>
         </div>
-      </header>
+      </section>
 
-      <!-- Welcome Banner -->
-      <div class="dash-content" style="margin-top: 1.8rem;">
-        <div class="welcome-banner glass-card" style="margin-bottom: 2rem;">
-          <div class="welcome-text">
-            <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; font-family: var(--font-heading);">
-              Chào mừng quay trở lại, <span id="welcome-user" style="color: var(--color-accent);">Lê Trung Kiên</span>!
-            </h1>
-            <p style="color: var(--color-text-secondary); font-size: 0.95rem; max-width: 650px; line-height: 1.5;">
-              Cổng thông tin hệ thống trung tâm KIENLT90. Bạn có thể truy cập các mô-đun công việc và tiện ích quản lý bên dưới.
-            </p>
+      <!-- Module Categories Header & View Switcher -->
+      <section class="pt-1" id="modulesSection">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
+              <i data-lucide="layout-grid" class="w-4 h-4 text-sky-700"></i>
+              <span>Danh mục chức năng y tế</span>
+            </h3>
+            <p class="text-[11px] text-slate-500">Bộ công cụ vận hành & chuẩn hóa dữ liệu</p>
           </div>
-          <div class="welcome-stats">
-            <div class="stat-box">
-              <span class="stat-number" style="color: var(--color-primary);">Active</span>
-              <span class="stat-label">Trạng thái phiên</span>
-            </div>
-            <div class="stat-box">
-              <span class="stat-number" style="color: var(--color-accent);">v1.0</span>
-              <span class="stat-label">Phiên bản hệ thống</span>
-            </div>
+
+          <!-- View Mode Toggle Buttons -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <button id="btnListView" onclick="setViewMode('list')" class="p-1 rounded text-sky-700 bg-white shadow-xs transition" title="Dạng danh sách">
+              <i data-lucide="align-justify" class="w-3.5 h-3.5"></i>
+            </button>
+            <button id="btnGridView" onclick="setViewMode('grid')" class="p-1 rounded text-slate-500 hover:text-slate-800 transition" title="Dạng ô vuông (Grid)">
+              <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+            </button>
           </div>
         </div>
 
-        <!-- Features Header with View Mode Toggler -->
-        <div class="features-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
-          <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 600; border-left: 4px solid var(--color-primary); padding-left: 0.75rem; margin: 0;">
-            Danh mục chức năng
-          </h2>
-          <div class="view-mode-toggler">
-            <button class="view-mode-btn active" id="btn-view-dock" onclick="setViewMode('dock')">
-              <span>↔️</span> Menu ngang
-            </button>
-            <button class="view-mode-btn" id="btn-view-list" onclick="setViewMode('list')">
-              <span>🔲</span> Dạng ô vuông
-            </button>
-          </div>
-        </div>
-        
-        <!-- Dock/Horizontal Menu View Container -->
-        <div id="dock-view-container">
-          <!-- Horizontal Dock Menu -->
-          <div class="portal-menu-dock" id="portal-menu-dock">
-            <button class="dock-item active-dock-item" id="dock-item-1" onclick="selectPortalModule(1)">
-              <span>📋</span> Khảo sát RIS/PACS-LIS-EMR
-            </button>
-            <button class="dock-item" id="dock-item-3" onclick="selectPortalModule(3)">
-              <span>📈</span> Báo cáo số liệu
-            </button>
-            <button class="dock-item" id="dock-item-4" onclick="selectPortalModule(4)">
-              <span>🔍</span> Phân tích XML BHYT QĐ 130
-            </button>
-            <button class="dock-item" id="dock-item-9" onclick="selectPortalModule(9)">
-              <span>🔬</span> Bộ dịch JS Máy xét nghiệm (LIS)
-            </button>
-            <button class="dock-item" id="dock-item-10" onclick="selectPortalModule(10)">
-              <span>📘</span> Tra cứu ICD-10 2026
-            </button>
-          </div>
+        <!-- Modules Container (List / Grid dynamic) -->
+        <div id="modulesContainer" class="space-y-2.5">
 
-          <!-- Interactive Detail Card -->
-          <div class="portal-detail-card" id="portal-detail-card">
-            <div class="detail-header">
-              <div class="detail-icon" id="detail-icon">📋</div>
-              <div class="detail-title">
-                <h3 id="detail-title">Khảo sát RIS/PACS - LIS - EMR Bệnh Viện</h3>
-                <div class="detail-status status-active" id="detail-status">Đang hoạt động</div>
+          <!-- Item 1: RIS/PACS -->
+          <div onclick="window.open('survey.html', '_blank')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100">
+                <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <h4 class="text-xs font-bold text-slate-800">Khảo sát RIS/PACS - LIS - EMR</h4>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-rose-50 text-rose-600 rounded border border-rose-200">HOT</span>
+                </div>
+                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Khảo sát số hoá y tế & đánh giá mức độ triển khai</p>
               </div>
             </div>
-            <p class="detail-desc" id="detail-desc">
-              Biểu mẫu khảo sát thực trạng số hóa Bệnh viện / Trung tâm Y tế. Quản lý bản thảo JSON, cấu hình API kiểm thử, xuất báo cáo bản in PDF và file Excel ký đóng dấu.
-            </p>
-            <div class="detail-actions">
-              <button class="btn-detail-action active-action" id="detail-action-btn" onclick="window.open('survey.html', '_blank')">
-                Vào biểu mẫu khảo sát ➔
-              </button>
-            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
           </div>
+
+          <!-- Item 2: XML BHYT -->
+          <div onclick="window.open('xml_analyzer.html', '_blank')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-100">
+                <i data-lucide="file-code" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <h4 class="text-xs font-bold text-slate-800">Phân tích XML BHYT QĐ 130</h4>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">Chuẩn hóa</span>
+                </div>
+                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Kiểm tra giám định dữ liệu BHYT, cảnh báo lỗi logic</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
+          </div>
+
+          <!-- Item 3: LIS Parser -->
+          <div onclick="window.open('LIS-Parser-Tool.html', '_blank')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-100">
+                <i data-lucide="microscope" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <h4 class="text-xs font-bold text-slate-800">Bộ dịch JS Máy xét nghiệm (LIS)</h4>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-indigo-50 text-indigo-700 rounded border border-indigo-200">HL7 / ASTM</span>
+                </div>
+                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Trình thông dịch driver kết nối Sysmex, Roche, Beckman</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
+          </div>
+
+          <!-- Item 4: ICD-10 -->
+          <div onclick="window.open('icd10.html', '_blank')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 border border-blue-100">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <h4 class="text-xs font-bold text-slate-800">Tra cứu ICD-10 2026</h4>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-amber-50 text-amber-700 rounded border border-amber-200">Mới</span>
+                </div>
+                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Từ điển mã bệnh học quốc tế tra cứu AI Vector</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
+          </div>
+
+          <!-- Item 5: Security / BYT -->
+          <div onclick="alert('Phân hệ Hạ tầng kiểm thử & Mã hóa BYT đang được đồng bộ theo tiêu chuẩn ATTT Cấp độ 3.')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <h4 class="text-xs font-bold text-slate-800">Hạ tầng kiểm thử & Mã hóa BYT</h4>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded">Cấp độ 3</span>
+                </div>
+                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Giao thức an toàn thông tin & mã hóa bảo mật chuẩn y tế</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
+          </div>
+
         </div>
+      </section>
 
-        <!-- Vertical List View Container (Hidden by default) -->
-        <div id="list-view-container" class="hidden" style="display: flex; flex-direction: column; gap: 1.2rem; margin-bottom: 2rem;">
-          <!-- Content will be rendered dynamically by JS -->
+      <!-- Footer Info -->
+      <footer class="text-center pt-2 pb-1 space-y-1 text-slate-400 text-[11px]">
+        <p>Phiên bản v1.0 • ISO/IEC 27001 • Máy chủ nội bộ</p>
+        <p class="font-medium text-slate-500">Bản quyền thuộc về <span class="text-sky-700 font-bold">Lê Trung Kiên</span> • KIENLT90 Portal</p>
+      </footer>
+
+    </main>
+
+    <!-- Fixed Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 flex items-center justify-around z-40 shadow-lg">
+      <a href="javascript:void(0)" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-sky-700 font-bold group">
+        <div class="w-9 h-6 flex items-center justify-center rounded-lg bg-sky-50 text-sky-700">
+          <i data-lucide="home" class="w-4 h-4"></i>
         </div>
+        <span class="text-[10px] mt-0.5">Trang chủ</span>
+      </a>
 
-      </div>
-      
-    </section>
+      <a href="survey.html" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-slate-700 font-medium group transition">
+        <div class="w-9 h-6 flex items-center justify-center rounded-lg group-hover:bg-slate-50">
+          <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+        </div>
+        <span class="text-[10px] mt-0.5">Khảo sát</span>
+      </a>
 
-  </main>
+      <a href="javascript:void(0)" onclick="document.getElementById('modulesSection').scrollIntoView({behavior: 'smooth'})" class="flex flex-col items-center text-slate-400 hover:text-slate-700 font-medium group transition">
+        <div class="w-9 h-6 flex items-center justify-center rounded-lg group-hover:bg-slate-50">
+          <i data-lucide="wrench" class="w-4 h-4"></i>
+        </div>
+        <span class="text-[10px] mt-0.5">Công cụ</span>
+      </a>
+
+      <a href="javascript:void(0)" onclick="handleLogout()" class="flex flex-col items-center text-slate-400 hover:text-rose-600 font-medium group transition">
+        <div class="w-9 h-6 flex items-center justify-center rounded-lg group-hover:bg-rose-50">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+        </div>
+        <span class="text-[10px] mt-0.5">Đăng xuất</span>
+      </a>
+    </nav>
+
+  </div>
 
   <script>
+    // Initialize icons
+    lucide.createIcons();
+
     // Set user info from localStorage
-    const session = JSON.parse(localStorage.getItem('vnpt_his_session') || '{}');
-    if (session.displayName) {
-      document.getElementById('welcome-user').textContent = session.displayName;
-      document.getElementById('user-display-name').textContent = session.displayName;
-    }
-
-    // Logout function
-    function logout() {
-      localStorage.removeItem('vnpt_his_session');
-      window.location.href = 'index.html';
-    }
-
-    // Portal modules data definition
-    const portalModules = [
-      {
-        id: 1,
-        icon: '📋',
-        shortTitle: 'Khảo sát RIS/PACS-LIS-EMR',
-        title: 'Khảo sát RIS/PACS - LIS - EMR Bệnh Viện',
-        desc: 'Biểu mẫu khảo sát thực trạng số hóa Bệnh viện / Trung tâm Y tế. Quản lý bản thảo JSON, cấu hình API kiểm thử, xuất báo cáo bản in PDF và file Excel ký đóng dấu.',
-        status: 'active',
-        statusText: 'Đang hoạt động',
-        actionText: 'Vào biểu mẫu khảo sát ➔',
-        action: function() { window.open('survey.html', '_blank'); }
-      },
-      {
-        id: 3,
-        icon: '📈',
-        shortTitle: 'Báo cáo số liệu',
-        title: 'Thống kê & Báo cáo số liệu số hóa',
-        desc: 'Tổng hợp số liệu hoạt động khám chữa bệnh của các bệnh viện đã điền khảo sát. Vẽ biểu đồ trực quan hóa tỷ lệ triển khai bệnh án điện tử EMR.',
-        status: 'inactive',
-        statusText: 'Chưa kích hoạt (Chờ phát triển)',
-        actionText: 'Chưa kích hoạt',
-        action: null
-      },
-      {
-        id: 4,
-        icon: '🔍',
-        shortTitle: 'Phân tích XML BHYT QĐ 130',
-        title: 'Phân tích & Sửa lỗi XML BHYT QĐ 130',
-        desc: 'Trình kéo thả phân tích lỗi dữ liệu XML BHYT đầu ra theo Quyết định 130/4750/3176. Tự động kiểm lỗi thẻ, mã dịch vụ, định dạng ngày tháng và hỗ trợ sửa lỗi tự động.',
-        status: 'active',
-        statusText: 'Đang hoạt động',
-        actionText: 'Vào kiểm lỗi XML ➔',
-        action: function() { window.open('xml_analyzer.html', '_blank'); }
-      },
-      {
-        id: 9,
-        icon: '🔬',
-        shortTitle: 'Bộ dịch JS Máy xét nghiệm (LIS)',
-        title: 'LIS Machine JS Parser Developer Tool',
-        desc: 'Trình sinh code JS tự động từ chuỗi dữ liệu thô (Raw Data) của máy xét nghiệm, tích hợp môi trường lập trình và chạy thử (Test Live) kết quả bóc tách ngay trên trình duyệt.',
-        status: 'active',
-        statusText: 'Đang hoạt động',
-        actionText: 'Vào công cụ ➔',
-        action: function() { window.open('LIS-Parser-Tool.html', '_blank'); }
-      },
-      {
-        id: 10,
-        icon: '📘',
-        shortTitle: 'Tra cứu ICD-10 2026',
-        title: 'Tra cứu danh mục mã hóa bệnh tật ICD-10',
-        desc: 'Công cụ tra cứu nhanh danh mục mã hóa bệnh tật lâm sàng ICD-10 năm 2026 ban hành kèm theo Thông tư 06/2026/TT-BYT và Quyết định 1849/QĐ-BYT. Tích hợp tra cứu danh mục thuốc, hóa chất Phụ lục 3 và phân tích chẩn đoán Y học cổ truyền.',
-        status: 'active',
-        statusText: 'Đang hoạt động',
-        actionText: 'Tra cứu danh mục ➔',
-        action: function() { window.open('icd10.html', '_blank'); }
-      }
-    ];
-
-    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 3, 4, 9, 10]');
-    let activeModuleId = 1;
-
-    function getSortedModules() {
-      const currentIds = portalModules.map(m => m.id);
-      moduleOrder = moduleOrder.filter(id => currentIds.includes(id));
-      currentIds.forEach(id => {
-        if (!moduleOrder.includes(id)) {
-          moduleOrder.push(id);
+    try {
+      const session = JSON.parse(localStorage.getItem('vnpt_his_session') || '{}');
+      if (session.displayName) {
+        document.getElementById('user-display-name').textContent = session.displayName;
+        const initials = session.displayName.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase();
+        if (initials) {
+          document.getElementById('user-avatar-text').textContent = initials;
         }
-      });
-      localStorage.setItem('vnpt_his_module_order', JSON.stringify(moduleOrder));
-      return [...portalModules].sort((a, b) => moduleOrder.indexOf(a.id) - moduleOrder.indexOf(b.id));
-    }
-
-    // Render horizontal dock items dynamically
-    function renderDockMenu() {
-      const dock = document.getElementById('portal-menu-dock');
-      if (!dock) return;
-      
-      const sorted = getSortedModules();
-      dock.innerHTML = sorted.map(mod => `
-        <button class="dock-item ${mod.id === activeModuleId ? 'active-dock-item' : ''}" 
-                id="dock-item-${mod.id}" 
-                onclick="selectPortalModule(${mod.id})"
-                draggable="true"
-                data-id="${mod.id}">
-          <span>${mod.icon}</span> ${mod.shortTitle}
-        </button>
-      `).join('');
-      
-      setupDragAndDrop(dock, 'dock');
-    }
-
-    // Select module handler
-    function selectPortalModule(moduleId) {
-      activeModuleId = moduleId;
-      document.querySelectorAll('.dock-item').forEach(item => {
-        item.classList.remove('active-dock-item');
-      });
-      const activeBtn = document.getElementById(`dock-item-${moduleId}`);
-      if (activeBtn) activeBtn.classList.add('active-dock-item');
-
-      const mod = portalModules.find(m => m.id === moduleId);
-      if (!mod) return;
-
-      // Update contents
-      document.getElementById('detail-icon').textContent = mod.icon;
-      document.getElementById('detail-title').textContent = mod.title;
-      
-      const statusEl = document.getElementById('detail-status');
-      statusEl.textContent = mod.statusText;
-      if (mod.status === 'active') {
-        statusEl.className = 'detail-status status-active';
-      } else {
-        statusEl.className = 'detail-status status-inactive';
       }
-
-      document.getElementById('detail-desc').textContent = mod.desc;
-
-      const actionBtn = document.getElementById('detail-action-btn');
-      actionBtn.textContent = mod.actionText;
-      
-      if (mod.status === 'active') {
-        actionBtn.className = 'btn-detail-action active-action';
-        actionBtn.onclick = mod.action;
-        actionBtn.removeAttribute('disabled');
-      } else {
-        actionBtn.className = 'btn-detail-action inactive-action';
-        actionBtn.onclick = null;
-        actionBtn.setAttribute('disabled', 'true');
-      }
+    } catch (e) {
+      console.error(e);
     }
 
-    // Render list view items dynamically
-    function renderListView() {
-      const container = document.getElementById('list-view-container');
-      if (!container) return;
-      
-      const sorted = getSortedModules();
-      container.innerHTML = sorted.map(mod => `
-        <div class="portal-list-item glass-card" draggable="true" data-id="${mod.id}">
-          <div class="list-item-icon">${mod.icon}</div>
-          <div class="list-item-content">
-            <div class="list-item-title-row">
-              <span class="list-item-title">${mod.title}</span>
-              <span class="detail-status ${mod.status === 'active' ? 'status-active' : 'status-inactive'}">
-                ${mod.statusText}
-              </span>
-            </div>
-            <p class="list-item-desc">${mod.desc}</p>
-          </div>
-          <div class="list-item-action">
-            <button class="btn-list-action ${mod.status === 'active' ? 'active-action' : 'inactive-action'}"
-                    ${mod.status === 'active' ? `onclick="runModuleAction(${mod.id})"` : 'disabled'}>
-              ${mod.status === 'active' ? 'Vào biểu mẫu ➔' : 'Chưa kích hoạt'}
-            </button>
-          </div>
-        </div>
-      `).join('');
-      
-      setupDragAndDrop(container, 'list');
-    }
-
-    // Run module action
-    function runModuleAction(moduleId) {
-      const mod = portalModules.find(m => m.id === moduleId);
-      if (mod && mod.action) {
-        mod.action();
-      }
-    }
-
-    // Set view mode (dock vs list)
+    // Toggle list vs grid view for module functions
     function setViewMode(mode) {
-      const btnDock = document.getElementById('btn-view-dock');
-      const btnList = document.getElementById('btn-view-list');
-      const dockContainer = document.getElementById('dock-view-container');
-      const listContainer = document.getElementById('list-view-container');
-      
-      localStorage.setItem('vnpt_his_portal_view_mode', mode);
-      
-      if (mode === 'list') {
-        btnDock.classList.remove('active');
-        btnList.classList.add('active');
-        dockContainer.classList.add('hidden');
-        listContainer.classList.remove('hidden');
-        renderListView();
+      const container = document.getElementById('modulesContainer');
+      const btnList = document.getElementById('btnListView');
+      const btnGrid = document.getElementById('btnGridView');
+
+      if (mode === 'grid') {
+        container.className = 'grid grid-cols-2 gap-2.5';
+        btnGrid.className = 'p-1 rounded text-sky-700 bg-white shadow-xs transition';
+        btnList.className = 'p-1 rounded text-slate-500 hover:text-slate-800 transition';
+        
+        document.querySelectorAll('.module-item').forEach(item => {
+          item.classList.add('flex-col', 'items-start', 'text-left');
+          item.classList.remove('items-center');
+        });
       } else {
-        btnDock.classList.add('active');
-        btnList.classList.remove('active');
-        dockContainer.classList.remove('hidden');
-        listContainer.classList.add('hidden');
-        renderDockMenu();
+        container.className = 'space-y-2.5';
+        btnList.className = 'p-1 rounded text-sky-700 bg-white shadow-xs transition';
+        btnGrid.className = 'p-1 rounded text-slate-500 hover:text-slate-800 transition';
+
+        document.querySelectorAll('.module-item').forEach(item => {
+          item.classList.remove('flex-col', 'items-start', 'text-left');
+          item.classList.add('items-center');
+        });
       }
     }
 
-    // Setup HTML5 Drag and Drop event listeners
-    function setupDragAndDrop(container, type) {
-      const items = container.querySelectorAll(type === 'dock' ? '.dock-item' : '.portal-list-item');
-      
-      items.forEach(item => {
-        item.addEventListener('dragstart', (e) => {
-          item.classList.add('dragging');
-          e.dataTransfer.effectAllowed = 'move';
-          e.dataTransfer.setData('text/plain', item.getAttribute('data-id'));
-        });
-        
-        item.addEventListener('dragend', () => {
-          item.classList.remove('dragging');
-          items.forEach(i => i.classList.remove('drag-over'));
-        });
-        
-        item.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          const draggingItem = container.querySelector('.dragging');
-          if (!draggingItem || draggingItem === item) return;
-          
-          item.classList.add('drag-over');
-          
-          const rect = item.getBoundingClientRect();
-          if (type === 'dock') {
-            const next = (e.clientX - rect.left) > (rect.width / 2);
-            if (next) {
-              item.after(draggingItem);
-            } else {
-              item.before(draggingItem);
-            }
-          } else {
-            const next = (e.clientY - rect.top) > (rect.height / 2);
-            if (next) {
-              item.after(draggingItem);
-            } else {
-              item.before(draggingItem);
-            }
-          }
-        });
-        
-        item.addEventListener('dragleave', () => {
-          item.classList.remove('drag-over');
-        });
-        
-        item.addEventListener('drop', (e) => {
-          e.preventDefault();
-          item.classList.remove('drag-over');
-          
-          const newOrder = Array.from(container.querySelectorAll(type === 'dock' ? '.dock-item' : '.portal-list-item'))
-            .map(i => parseInt(i.getAttribute('data-id'), 10));
-          
-          moduleOrder = newOrder;
-          localStorage.setItem('vnpt_his_module_order', JSON.stringify(moduleOrder));
-          
-          renderDockMenu();
-          renderListView();
-        });
-      });
-    }
-
-    // Theme toggler and icon updater
-    function updateThemeUI(theme) {
-      const icon = document.getElementById('theme-icon');
-      if (icon) {
-        icon.textContent = theme === 'light' ? '🌙' : '☀️';
+    function handleLogout() {
+      if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi KIENLT90 Portal?')) {
+        localStorage.removeItem('vnpt_his_session');
+        window.location.href = 'index.html';
       }
     }
-
-    function toggleTheme() {
-      const currentTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      
-      localStorage.setItem('vnpt_his_theme', newTheme);
-      
-      if (newTheme === 'light') {
-        document.body.classList.add('light-theme');
-      } else {
-        document.body.classList.remove('light-theme');
-      }
-      
-      updateThemeUI(newTheme);
-    }
-
-    // Initialize layout & theme settings
-    document.addEventListener('DOMContentLoaded', () => {
-      // Listen to theme changes from other tabs
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'vnpt_his_theme') {
-          const newTheme = e.newValue || 'dark';
-          if (newTheme === 'light') {
-            document.body.classList.add('light-theme');
-          } else {
-            document.body.classList.remove('light-theme');
-          }
-          updateThemeUI(newTheme);
-        }
-      });
-
-      renderDockMenu();
-      
-      const savedMode = localStorage.getItem('vnpt_his_portal_view_mode') || 'dock';
-      setViewMode(savedMode);
-      
-      const savedTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
-      updateThemeUI(savedTheme);
-    });
   </script>
 </body>
 </html>
