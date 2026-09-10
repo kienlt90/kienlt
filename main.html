@@ -119,26 +119,11 @@
             <button class="dock-item active-dock-item" id="dock-item-1" onclick="selectPortalModule(1)">
               <span>📋</span> Khảo sát RIS/PACS-LIS-EMR
             </button>
-            <button class="dock-item" id="dock-item-2" onclick="selectPortalModule(2)">
-              <span>🤖</span> Cấu hình Telegram
-            </button>
             <button class="dock-item" id="dock-item-3" onclick="selectPortalModule(3)">
               <span>📈</span> Báo cáo số liệu
             </button>
             <button class="dock-item" id="dock-item-4" onclick="selectPortalModule(4)">
               <span>🔍</span> Phân tích XML BHYT QĐ 130
-            </button>
-            <button class="dock-item" id="dock-item-5" onclick="selectPortalModule(5)">
-              <span>✍️</span> QUẢN LÝ HỢP ĐỒNG
-            </button>
-            <button class="dock-item" id="dock-item-6" onclick="selectPortalModule(6)">
-              <span>🔏</span> Phân quyền EMR RACI
-            </button>
-            <button class="dock-item" id="dock-item-7" onclick="selectPortalModule(7)">
-              <span>🔌</span> Test API HIS
-            </button>
-            <button class="dock-item" id="dock-item-8" onclick="selectPortalModule(8)">
-              <span>⚽</span> Giải trí World Cup 2026
             </button>
             <button class="dock-item" id="dock-item-9" onclick="selectPortalModule(9)">
               <span>🔬</span> Bộ dịch JS Máy xét nghiệm (LIS)
@@ -207,17 +192,6 @@
         action: function() { window.open('survey.html', '_blank'); }
       },
       {
-        id: 2,
-        icon: '🤖',
-        shortTitle: 'Cấu hình Telegram',
-        title: 'Cấu hình & Tích hợp Telegram Bot',
-        desc: 'Thiết lập liên kết hệ thống cổng thông tin của bạn với Telegram Bot API để tự động gửi dữ liệu khảo sát và các tệp báo cáo trực tiếp về nhóm hoặc kênh chat của bạn.',
-        status: 'inactive',
-        statusText: 'Chưa kích hoạt (Chờ phát triển)',
-        actionText: 'Chưa kích hoạt',
-        action: null
-      },
-      {
         id: 3,
         icon: '📈',
         shortTitle: 'Báo cáo số liệu',
@@ -238,50 +212,6 @@
         statusText: 'Đang hoạt động',
         actionText: 'Vào kiểm lỗi XML ➔',
         action: function() { window.open('xml_analyzer.html', '_blank'); }
-      },
-      {
-        id: 5,
-        icon: '✍️',
-        shortTitle: 'QUẢN LÝ HỢP ĐỒNG',
-        title: 'QUẢN LÝ HỢP ĐỒNG',
-        desc: 'Quản lý hợp đồng cung cấp dịch vụ CNTT y tế (HIS, LIS, PACS, EMR) của các Trung tâm Y tế. Tích hợp giải pháp giả lập ký số VNPT-CA USB Token và SmartCA.',
-        status: 'active',
-        statusText: 'Đang hoạt động',
-        actionText: 'Vào quản lý hợp đồng ➔',
-        action: function() { window.open('contracts.html', '_blank'); }
-      },
-      {
-        id: 6,
-        icon: '🔏',
-        shortTitle: 'Phân quyền EMR RACI',
-        title: 'Phân quyền Ký số EMR (RACI)',
-        desc: 'Thiết lập ma trận phân công trách nhiệm ký số (RACI Matrix) cho các y bác sĩ điều trị và bệnh nhân trên từng loại hồ sơ bệnh án theo quy định Thông tư 32/2023.',
-        status: 'inactive',
-        statusText: 'Chưa kích hoạt (Chờ phát triển)',
-        actionText: 'Chưa kích hoạt',
-        action: null
-      },
-      {
-        id: 7,
-        icon: '🔌',
-        shortTitle: 'Test API HIS',
-        title: 'Trình kiểm tra API Webservice HIS',
-        desc: 'Môi trường test kết nối và API tích hợp giữa các hệ thống (HIS, LIS, RIS/PACS) hoặc liên kết cổng thanh toán ngân hàng. Xem trước cấu trúc JSON trả về.',
-        status: 'inactive',
-        statusText: 'Chưa kích hoạt (Chờ phát triển)',
-        actionText: 'Chưa kích hoạt',
-        action: null
-      },
-      {
-        id: 8,
-        icon: '⚽',
-        shortTitle: 'Giải trí World Cup 2026',
-        title: 'Giải trí - Bảng xếp hạng & Lịch thi đấu World Cup 2026',
-        desc: 'Tiện ích giải trí theo dõi lịch thi đấu, kết quả các bảng đấu, sơ đồ knock-out và cập nhật bảng xếp hạng giải vô địch bóng đá thế giới World Cup 2026.',
-        status: 'inactive',
-        statusText: 'Chưa kích hoạt (Chờ phát triển)',
-        actionText: 'Chưa kích hoạt',
-        action: null
       },
       {
         id: 9,
@@ -307,7 +237,7 @@
       }
     ];
 
-    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]');
+    let moduleOrder = JSON.parse(localStorage.getItem('vnpt_his_module_order') || '[1, 3, 4, 9, 10]');
     let activeModuleId = 1;
 
     function getSortedModules() {
