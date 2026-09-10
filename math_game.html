@@ -100,14 +100,14 @@
           <span>Vòng quay</span>
           <span id="spin-badge" class="hidden px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-extrabold animate-pulse">1</span>
         </button>
-        <!-- Teacher Tab (Visible for Admin, or Student in Read-only mode) -->
-        <button onclick="switchTab('teacher')" id="nav-teacher" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
+        <!-- Teacher Tab (Admin / Teacher Only) -->
+        <button onclick="switchTab('teacher')" id="nav-teacher" class="hidden px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
           <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
           <span id="nav-teacher-text">Cô giáo duyệt</span>
           <span id="pending-badge" class="hidden px-1.5 py-0.2 bg-indigo-600 text-white rounded-full text-[9px] font-extrabold">0</span>
         </button>
-        <!-- Rewards Setting Tab (Admin only) -->
-        <button onclick="switchTab('rewards')" id="nav-rewards" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition" title="Cài đặt quà">
+        <!-- Rewards Setting Tab (Admin Only) -->
+        <button onclick="switchTab('rewards')" id="nav-rewards" class="hidden px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition" title="Cài đặt quà">
           <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
         </button>
         <button onclick="logoutKid()" class="px-2.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="Thoát tài khoản">
@@ -302,17 +302,14 @@
           </div>
         </div>
 
-        <!-- Teacher Status Box -->
-        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-left space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-extrabold text-indigo-900 flex items-center space-x-1.5">
-              <i data-lucide="clock" class="w-4 h-4 text-indigo-600"></i>
-              <span>Trạng thái: Chờ cô giáo kiểm tra & duyệt lời phê</span>
-            </span>
-            <span class="px-2 py-0.5 bg-indigo-200/70 text-indigo-800 text-[10px] font-bold rounded-md">Pending</span>
+        <!-- Status Notice Box -->
+        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-left space-y-1.5">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-indigo-600"></i>
+            <span class="text-xs font-extrabold text-indigo-900">Bài làm đã gửi về hệ thống</span>
           </div>
           <p class="text-xs text-indigo-700 leading-relaxed">
-            Bài làm đã được gửi vào danh sách chờ duyệt của cô giáo/phụ huynh. Bạn có thể sang mục <b>"Vòng quay"</b> để quay thưởng ngay!
+            Kết quả đã được ghi nhận. Phụ huynh/Cô giáo sẽ kiểm tra và nhận xét sau. Bạn được tặng <b>+1 lượt quay thưởng</b> may mắn!
           </p>
         </div>
 
@@ -342,8 +339,8 @@
             </div>
             <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">Quay Thưởng Học Giỏi</h2>
           </div>
-          <!-- Reset Wheel Button -->
-          <button onclick="resetWheelSpins()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition" title="Đặt lại lượt quay">
+          <!-- Reset Wheel Button (Admin Only) -->
+          <button id="btn-reset-spins" onclick="resetWheelSpins()" class="hidden px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition" title="Đặt lại lượt quay (Chỉ Admin)">
             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
             <span>Reset lượt quay</span>
           </button>
@@ -370,10 +367,11 @@
           <div class="text-xl font-black" id="won-reward-name">10 Viên Kẹo Ngọt Ngào</div>
         </div>
 
-        <div class="flex justify-center space-x-3 pt-2" id="wheel-settings-link-wrapper">
+        <!-- Wheel Settings Link (Admin Only) -->
+        <div class="hidden justify-center space-x-3 pt-2" id="wheel-settings-link-wrapper">
           <button onclick="switchTab('rewards')" class="text-xs font-bold text-slate-500 hover:text-sky-700 flex items-center space-x-1">
             <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-            <span>Tùy chỉnh danh mục quà tặng</span>
+            <span>Tùy chỉnh danh mục quà tặng (Admin)</span>
           </button>
         </div>
       </div>
@@ -381,7 +379,7 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- 3. TEACHER REVIEW: DUYỆT BÀI & LỜI PHÊ CÔ GIÁO -->
+    <!-- 3. TEACHER REVIEW: DUYỆT BÀI & LỜI PHÊ CÔ GIÁO (ADMIN ONLY) -->
     <!-- ============================================== -->
     <section id="view-teacher" class="hidden space-y-6">
       
@@ -395,7 +393,7 @@
         </div>
         <button onclick="clearAllSubmissions()" id="btn-clear-submissions" class="text-xs text-rose-600 hover:text-rose-800 font-bold flex items-center space-x-1">
           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-          <span>Xóa lịch sử</span>
+          <span>Xóa lịch sử bài làm</span>
         </button>
       </div>
 
@@ -407,7 +405,7 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- 4. REWARDS CATALOG: BIÊN SOẠN QUÀ THƯỞNG -->
+    <!-- 4. REWARDS CATALOG: BIÊN SOẠN QUÀ THƯỞNG (ADMIN ONLY) -->
     <!-- ============================================== -->
     <section id="view-rewards" class="hidden space-y-6">
       
@@ -1732,7 +1730,7 @@ const mathBankGrade5 = [
   <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
     // ==========================================
-    // 1. STATE & GRADE ISOLATION
+    // 1. STATE & AUTHENTICATION ROLE DETECTION
     // ==========================================
     let currentGrade = 2;
     let currentQuestions = [];
@@ -1741,7 +1739,7 @@ const mathBankGrade5 = [
     let timerInterval = null;
     let secondsElapsed = 0;
     
-    // Check if logged in as student
+    // Check Kid session vs Admin session
     let currentKid = null;
     try {
       const kidSession = localStorage.getItem('kienlt_active_kid_session');
@@ -1999,7 +1997,7 @@ const mathBankGrade5 = [
     }
 
     // ==========================================
-    // 4. LUCKY WHEEL ENGINE & RESET FUNCTION
+    // 4. LUCKY WHEEL ENGINE & RESET FUNCTION (ADMIN ONLY)
     // ==========================================
     let isSpinning = false;
     let currentWheelAngle = 0;
@@ -2097,6 +2095,10 @@ const mathBankGrade5 = [
     }
 
     function resetWheelSpins() {
+      if (currentKid) {
+        alert('Bạn không có quyền quản trị! Chỉ tài khoản Phụ huynh/Admin mới được đặt lại lượt quay.');
+        return;
+      }
       const choice = prompt("Chọn hành động Reset vòng quay:\n1 - Đặt lại số lượt quay về 1\n2 - Đặt lại số lượt quay về 0\n3 - Thêm +5 lượt quay thưởng cho bé", "1");
       if (choice === "1") {
         spinCount = 1;
@@ -2129,7 +2131,7 @@ const mathBankGrade5 = [
     }
 
     // ==========================================
-    // 5. TEACHER REVIEW & APPROVAL
+    // 5. TEACHER REVIEW & APPROVAL (ADMIN ONLY)
     // ==========================================
     function updatePendingBadge() {
       const badge = document.getElementById('pending-badge');
@@ -2145,16 +2147,12 @@ const mathBankGrade5 = [
     }
 
     function renderTeacherSubmissions() {
+      if (currentKid) return; // Prevent kids from rendering submissions
+
       const container = document.getElementById('teacher-submissions-container');
       if (!container) return;
 
-      // Filter for kid if logged in as kid
-      let displaySubmissions = submissions;
-      if (currentKid) {
-        displaySubmissions = submissions.filter(s => s.studentName === currentKid.name || s.grade === currentKid.grade);
-      }
-
-      if (displaySubmissions.length === 0) {
+      if (submissions.length === 0) {
         container.innerHTML = `
           <div class="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-2">
             <div class="text-3xl">📭</div>
@@ -2165,7 +2163,7 @@ const mathBankGrade5 = [
         return;
       }
 
-      container.innerHTML = displaySubmissions.map(sub => `
+      container.innerHTML = submissions.map(sub => `
         <div class="bg-white p-5 rounded-2xl border ${sub.status === 'approved' ? 'border-emerald-200' : 'border-indigo-200'} shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="space-y-1">
             <div class="flex items-center space-x-2">
@@ -2193,7 +2191,7 @@ const mathBankGrade5 = [
 
           <button onclick="openReviewModal(${sub.id})" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl font-bold text-xs flex items-center space-x-1.5 transition shrink-0">
             <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-            <span>${currentKid ? 'Xem chi tiết kết quả' : (sub.status === 'approved' ? 'Xem lại & Sửa' : 'Kiểm tra & Phê duyệt')}</span>
+            <span>${sub.status === 'approved' ? 'Xem lại & Sửa' : 'Kiểm tra & Phê duyệt'}</span>
           </button>
         </div>
       `).join('');
@@ -2204,6 +2202,10 @@ const mathBankGrade5 = [
     let activeReviewSubmissionId = null;
 
     function openReviewModal(subId) {
+      if (currentKid) {
+        alert('Chỉ giáo viên/phụ huynh mới có quyền kiểm tra và phê duyệt bài thi!');
+        return;
+      }
       activeReviewSubmissionId = subId;
       const sub = submissions.find(s => s.id === subId);
       if (!sub) return;
@@ -2212,19 +2214,8 @@ const mathBankGrade5 = [
       document.getElementById('modal-submit-time').textContent = `Nộp lúc: ${sub.createdAt} (Thời gian làm: ${sub.timeSpent})`;
       document.getElementById('modal-edit-score').value = sub.score;
       document.getElementById('modal-teacher-notes').value = sub.teacherNotes || '';
-
-      // If student is viewing, disable editing
-      if (currentKid) {
-        document.getElementById('modal-edit-score').disabled = true;
-        document.getElementById('modal-teacher-notes').disabled = true;
-        const btnSave = document.getElementById('btn-save-approval');
-        if (btnSave) btnSave.classList.add('hidden');
-      } else {
-        document.getElementById('modal-edit-score').disabled = false;
-        document.getElementById('modal-teacher-notes').disabled = false;
-        const btnSave = document.getElementById('btn-save-approval');
-        if (btnSave) btnSave.classList.remove('hidden');
-      }
+      document.getElementById('modal-edit-score').disabled = false;
+      document.getElementById('modal-teacher-notes').disabled = false;
 
       const qList = document.getElementById('modal-questions-list');
       qList.innerHTML = sub.questions.map((q, idx) => {
@@ -2258,6 +2249,10 @@ const mathBankGrade5 = [
     }
 
     function saveTeacherApproval() {
+      if (currentKid) {
+        alert('Chỉ tài khoản admin/giáo viên mới có quyền phê duyệt bài làm!');
+        return;
+      }
       const sub = submissions.find(s => s.id === activeReviewSubmissionId);
       if (!sub) return;
 
@@ -2275,6 +2270,10 @@ const mathBankGrade5 = [
     }
 
     function clearAllSubmissions() {
+      if (currentKid) {
+        alert('Bạn không có quyền xóa dữ liệu bài làm!');
+        return;
+      }
       if (confirm('Bạn có chắc muốn xóa toàn bộ lịch sử bài làm?')) {
         submissions = [];
         try {
@@ -2286,9 +2285,10 @@ const mathBankGrade5 = [
     }
 
     // ==========================================
-    // 6. REWARDS CATALOG MANAGEMENT
+    // 6. REWARDS CATALOG MANAGEMENT (ADMIN ONLY)
     // ==========================================
     function renderRewardsTable() {
+      if (currentKid) return;
       const tbody = document.getElementById('rewards-table-body');
       if (!tbody) return;
 
@@ -2308,6 +2308,10 @@ const mathBankGrade5 = [
     }
 
     function addRewardItem() {
+      if (currentKid) {
+        alert('Chỉ Admin mới có quyền thêm phần thưởng!');
+        return;
+      }
       const input = document.getElementById('new-reward-input');
       const val = input.value.trim();
       if (!val) return;
@@ -2322,6 +2326,10 @@ const mathBankGrade5 = [
     }
 
     function removeRewardItem(index) {
+      if (currentKid) {
+        alert('Chỉ Admin mới có quyền xóa phần thưởng!');
+        return;
+      }
       if (rewardItems.length <= 2) {
         alert('Vòng quay cần tối thiểu 2 phần thưởng!');
         return;
@@ -2335,6 +2343,10 @@ const mathBankGrade5 = [
     }
 
     function resetDefaultRewards() {
+      if (currentKid) {
+        alert('Chỉ Admin mới có quyền khôi phục quà mặc định!');
+        return;
+      }
       if (confirm('Khôi phục danh mục quà tặng về mặc định ban đầu?')) {
         rewardItems = [...defaultRewards];
         try {
@@ -2353,9 +2365,16 @@ const mathBankGrade5 = [
     }
 
     // ==========================================
-    // 7. TAB NAVIGATION SWITCHER
+    // 7. TAB NAVIGATION SWITCHER WITH ACCESS CONTROL
     // ==========================================
     function switchTab(tab) {
+      // Access guard for Kid account
+      if (currentKid && (tab === 'teacher' || tab === 'rewards')) {
+        alert('Chức năng này chỉ dành cho Admin / Giáo viên!');
+        switchTab('arena');
+        return;
+      }
+
       ['arena', 'wheel', 'teacher', 'rewards'].forEach(t => {
         const view = document.getElementById(`view-${t}`);
         const nav = document.getElementById(`nav-${t}`);
@@ -2374,9 +2393,9 @@ const mathBankGrade5 = [
 
       if (tab === 'wheel') {
         setTimeout(drawWheel, 50);
-      } else if (tab === 'teacher') {
+      } else if (tab === 'teacher' && !currentKid) {
         renderTeacherSubmissions();
-      } else if (tab === 'rewards') {
+      } else if (tab === 'rewards' && !currentKid) {
         renderRewardsTable();
       }
 
@@ -2384,7 +2403,7 @@ const mathBankGrade5 = [
     }
 
     // ==========================================
-    // 8. INITIALIZE & GRADE ISOLATION FILTERING
+    // 8. INITIALIZE & ROLE-BASED ACCESS CONTROL
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
@@ -2392,8 +2411,10 @@ const mathBankGrade5 = [
       updatePendingBadge();
       drawWheel();
 
-      // Grade Isolation Logic:
       if (currentKid) {
+        // ==========================================
+        // 👧 CHẾ ĐỘ DÀNH CHO HỌC SINH (BÉ)
+        // ==========================================
         const gNum = parseInt(currentKid.grade, 10);
         document.getElementById('header-badge-title').textContent = `Toán Lớp ${gNum}`;
         document.getElementById('header-student-greeting').textContent = `Chào mừng bé: ${currentKid.name} (Lớp ${gNum})`;
@@ -2401,36 +2422,77 @@ const mathBankGrade5 = [
         document.getElementById('student-welcome-banner').classList.remove('hidden');
         document.getElementById('student-banner-name').textContent = currentKid.name;
         document.getElementById('student-banner-grade').textContent = `Lớp ${gNum}`;
-        document.getElementById('btn-back-portal').classList.add('hidden'); // Kids stay in game
+        document.getElementById('btn-back-portal').classList.add('hidden'); // Bé không quay lại portal y tế
 
-        // Hide the other grade card so kid ONLY sees their grade!
+        // Cách ly khối lớp: Chỉ hiện duy nhất lớp của bé
         const cardG2 = document.getElementById('card-grade-2');
         const cardG5 = document.getElementById('card-grade-5');
-        const levelSel = document.getElementById('level-selection');
 
         if (gNum === 2) {
           if (cardG5) cardG5.classList.add('hidden');
-          if (cardG2) cardG2.className = 'col-span-full group bg-gradient-to-br from-white to-amber-50/70 p-8 rounded-3xl border-2 border-amber-300 shadow-md hover:border-amber-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          if (cardG2) {
+            cardG2.classList.remove('hidden');
+            cardG2.className = 'col-span-full group bg-gradient-to-br from-white to-amber-50/70 p-8 rounded-3xl border-2 border-amber-300 shadow-md hover:border-amber-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          }
         } else if (gNum === 5) {
           if (cardG2) cardG2.classList.add('hidden');
-          if (cardG5) cardG5.className = 'col-span-full group bg-gradient-to-br from-white to-sky-50/70 p-8 rounded-3xl border-2 border-sky-300 shadow-md hover:border-sky-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          if (cardG5) {
+            cardG5.classList.remove('hidden');
+            cardG5.className = 'col-span-full group bg-gradient-to-br from-white to-sky-50/70 p-8 rounded-3xl border-2 border-sky-300 shadow-md hover:border-sky-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          }
         }
 
-        // Student mode: Hide reward settings tab & Clear history button
+        // ẨN TOÀN BỘ CHỨC NĂNG QUẢN TRỊ ĐỐI VỚI BÉ:
+        // 1. Ẩn nút Reset lượt quay trên Vòng quay
+        const btnResetSpins = document.getElementById('btn-reset-spins');
+        if (btnResetSpins) btnResetSpins.classList.add('hidden');
+
+        // 2. Ẩn tab & liên kết Tùy chỉnh danh mục quà tặng
         const navRewards = document.getElementById('nav-rewards');
         if (navRewards) navRewards.classList.add('hidden');
-        
         const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
         if (wheelSettings) wheelSettings.classList.add('hidden');
 
-        const btnClear = document.getElementById('btn-clear-submissions');
-        if (btnClear) btnClear.classList.add('hidden');
+        // 3. Ẩn hoàn toàn tab Phê duyệt của Giáo viên
+        const navTeacher = document.getElementById('nav-teacher');
+        if (navTeacher) navTeacher.classList.add('hidden');
 
-        const teacherNavText = document.getElementById('nav-teacher-text');
-        if (teacherNavText) teacherNavText.textContent = 'Kết quả & Lời phê';
-        
-        const teacherTitle = document.getElementById('teacher-section-title');
-        if (teacherTitle) teacherTitle.textContent = 'Kết Quả & Lời Phê Của Cô Giáo';
+      } else {
+        // ==========================================
+        // 👨‍💼 CHẾ ĐỘ DÀNH CHO ADMIN / GIÁO VIÊN / PHỤ HUYNH
+        // ==========================================
+        document.getElementById('header-badge-title').textContent = `Quản Trị / Giáo Viên`;
+        document.getElementById('header-student-greeting').textContent = `Đấu Trường Toán Học - Góc Phụ Huynh & Giáo Viên`;
+        document.getElementById('student-welcome-banner').classList.add('hidden');
+        document.getElementById('btn-back-portal').classList.remove('hidden');
+
+        // Hiển thị cả 2 khối lớp 2 & lớp 5
+        const cardG2 = document.getElementById('card-grade-2');
+        const cardG5 = document.getElementById('card-grade-5');
+        if (cardG2) {
+          cardG2.classList.remove('hidden');
+          cardG2.className = 'group bg-gradient-to-br from-white to-amber-50/70 p-6 rounded-3xl border-2 border-amber-200/80 shadow-md hover:border-amber-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+        }
+        if (cardG5) {
+          cardG5.classList.remove('hidden');
+          cardG5.className = 'group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+        }
+
+        // HIỂN THỊ ĐẦY ĐỦ CÁC QUYỀN QUẢN TRỊ:
+        // 1. Nút Reset lượt quay
+        const btnResetSpins = document.getElementById('btn-reset-spins');
+        if (btnResetSpins) btnResetSpins.classList.remove('hidden');
+
+        // 2. Tab & liên kết Tùy chỉnh danh mục quà tặng
+        const navRewards = document.getElementById('nav-rewards');
+        if (navRewards) navRewards.classList.remove('hidden');
+        const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
+        if (wheelSettings) wheelSettings.classList.remove('hidden');
+        if (wheelSettings) wheelSettings.classList.add('flex');
+
+        // 3. Tab Phê duyệt của Giáo viên
+        const navTeacher = document.getElementById('nav-teacher');
+        if (navTeacher) navTeacher.classList.remove('hidden');
       }
     });
   </script>
