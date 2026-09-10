@@ -56,269 +56,359 @@
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-full flex justify-center selection:bg-sky-100 selection:text-sky-800">
 
-  <!-- Mobile App Frame Container -->
-  <div class="w-full max-w-md bg-white min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
+  <!-- Responsive Wrapper: Mobile Frame (<md) / Full Desktop Dashboard (>=md) -->
+  <div class="w-full max-w-md md:max-w-6xl lg:max-w-7xl min-h-screen flex flex-col md:px-6 md:py-6 relative transition-all duration-300">
 
-    <!-- Top Header -->
-    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center text-white font-bold shadow-md shadow-sky-500/20 text-xs tracking-tight">
+    <!-- Top Header (Mobile sticky bar & Desktop glass card) -->
+    <header class="sticky top-0 z-30 bg-white/95 md:bg-white backdrop-blur-md md:backdrop-blur-none border-b md:border border-slate-200/80 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between md:rounded-2xl md:shadow-sm md:mb-6">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center text-white font-extrabold shadow-md shadow-sky-500/20 text-sm tracking-tight">
           K90
         </div>
         <div>
-          <h1 class="text-xs font-semibold tracking-wider text-slate-400 uppercase">KIENLT90 Portal</h1>
-          <p class="text-sm font-bold text-slate-800 leading-tight">Quản trị Hệ thống</p>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xs font-bold tracking-wider text-slate-400 uppercase">KIENLT90 Portal</h1>
+            <span class="hidden md:inline-flex px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[10px] font-bold">
+              v1.0 Online
+            </span>
+          </div>
+          <p class="text-sm md:text-base font-extrabold text-slate-800 leading-tight">Cổng Quản trị Y tế số</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-2">
-        <button class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors relative" title="Thông báo" onclick="alert('Không có thông báo mới.')">
+      <!-- Desktop Navigation Menu -->
+      <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 bg-slate-100/80 p-1.5 rounded-xl border border-slate-200">
+        <a href="javascript:void(0)" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-white shadow-xs flex items-center space-x-1.5 transition">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>
+          <span>Trang chủ</span>
+        </a>
+        <a href="survey.html" target="_blank" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center space-x-1.5 transition">
+          <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i>
+          <span>Khảo sát</span>
+        </a>
+        <a href="javascript:void(0)" onclick="document.getElementById('modulesSection').scrollIntoView({behavior: 'smooth'})" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center space-x-1.5 transition">
+          <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
+          <span>Công cụ</span>
+        </a>
+        <a href="javascript:void(0)" onclick="window.open('xml_analyzer.html', '_blank')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center space-x-1.5 transition">
+          <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
+          <span>XML 130</span>
+        </a>
+      </nav>
+
+      <!-- User Actions & Logout -->
+      <div class="flex items-center space-x-2.5">
+        <button class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition relative" title="Thông báo" onclick="alert('Không có thông báo mới.')">
           <i data-lucide="bell" class="w-4 h-4"></i>
           <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
         </button>
-        <button onclick="handleLogout()" class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors" title="Đăng xuất">
+        <button onclick="handleLogout()" class="h-9 md:h-10 px-3 md:px-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center space-x-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition" title="Đăng xuất">
           <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span class="hidden md:inline text-xs font-bold">Đăng xuất</span>
         </button>
       </div>
     </header>
 
-    <!-- Main Content Body -->
-    <main class="flex-1 px-4 py-5 space-y-5 pb-24 overflow-y-auto custom-scrollbar">
+    <!-- Main Content: Mobile Stack / Desktop 2-Column Grid -->
+    <main class="flex-1 bg-white md:bg-transparent px-4 md:px-0 py-5 md:py-0 pb-24 md:pb-6 overflow-y-auto md:overflow-visible custom-scrollbar">
 
-      <!-- Admin Profile Card -->
-      <section class="bg-gradient-to-br from-slate-50 to-sky-50/50 p-4 rounded-2xl border border-sky-100 shadow-sm relative overflow-hidden">
-        <div class="flex items-start justify-between">
-          <div class="flex items-center space-x-3">
-            <div class="relative">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-700 to-sky-500 p-0.5 shadow-sm">
-                <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center font-bold text-sky-800 text-base" id="user-avatar-text">
-                  TK
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-6">
+
+        <!-- LEFT COLUMN (Mobile: Top / Desktop: Sidebar 4 cols) -->
+        <div class="md:col-span-4 lg:col-span-4 space-y-5">
+
+          <!-- Admin Profile Card -->
+          <section class="bg-gradient-to-br from-slate-50 to-sky-50/50 p-4 md:p-5 rounded-2xl border border-sky-100 shadow-sm relative overflow-hidden">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center space-x-3.5">
+                <div class="relative">
+                  <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-tr from-sky-700 to-sky-500 p-0.5 shadow-sm">
+                    <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center font-bold text-sky-800 text-base md:text-lg" id="user-avatar-text">
+                      TK
+                    </div>
+                  </div>
+                  <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <span class="px-2 py-0.5 bg-sky-100 text-sky-700 rounded-full text-[11px] font-bold">Quản trị viên (AD)</span>
+                    <span class="text-xs text-slate-400 font-mono">#KIEN90</span>
+                  </div>
+                  <h2 class="text-base md:text-lg font-bold text-slate-900 mt-0.5" id="user-display-name">Lê Trung Kiên</h2>
                 </div>
               </div>
-              <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
-            </div>
-            <div>
-              <div class="flex items-center space-x-2">
-                <span class="px-2 py-0.5 bg-sky-100 text-sky-700 rounded-full text-[11px] font-bold">Quản trị viên (AD)</span>
-                <span class="text-xs text-slate-400 font-mono">#KIEN90</span>
+
+              <div class="flex flex-col items-end text-[11px] font-medium text-slate-500">
+                <span class="inline-flex items-center text-emerald-600 font-semibold">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
+                  Active
+                </span>
+                <span class="text-slate-400 mt-0.5">Máy chủ an toàn</span>
               </div>
-              <h2 class="text-base font-bold text-slate-900 mt-0.5" id="user-display-name">Lê Trung Kiên</h2>
             </div>
-          </div>
 
-          <div class="flex flex-col items-end text-[11px] font-medium text-slate-500">
-            <span class="inline-flex items-center text-emerald-600 font-semibold">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
-              Active
-            </span>
-            <span class="text-slate-400 mt-0.5">v1.0 • Máy chủ an toàn</span>
-          </div>
+            <p class="text-xs text-slate-500 mt-3.5 border-t border-slate-200/60 pt-3 leading-relaxed">
+              Cổng thông tin hệ thống trung tâm KIENLT90. Quản lý mô-đun công việc và tiện ích y tế số chuyên sâu.
+            </p>
+
+            <div class="mt-3 pt-3 border-t border-slate-200/40 grid grid-cols-2 gap-2 text-center text-xs">
+              <div class="bg-white/80 p-2 rounded-xl border border-sky-100/60">
+                <span class="block text-[10px] text-slate-400 uppercase font-semibold">Quyền hạn</span>
+                <span class="font-bold text-slate-800">Toàn quyền</span>
+              </div>
+              <div class="bg-white/80 p-2 rounded-xl border border-sky-100/60">
+                <span class="block text-[10px] text-slate-400 uppercase font-semibold">Bảo mật</span>
+                <span class="font-bold text-emerald-600">Cấp độ 3</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Quick Metrics Grid -->
+          <section class="grid grid-cols-3 gap-2.5">
+            <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
+              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Tiến độ KS</p>
+              <div class="mt-1 flex items-baseline justify-center space-x-1">
+                <span class="text-lg font-extrabold text-slate-800">84%</span>
+                <span class="text-[10px] font-bold text-emerald-600">+12%</span>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-0.5">28/32 Tiêu chí</p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
+              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Lỗi XML 130</p>
+              <div class="mt-1 flex items-baseline justify-center space-x-1">
+                <span class="text-lg font-extrabold text-emerald-600">0</span>
+              </div>
+              <p class="text-[10px] text-emerald-600 font-medium mt-0.5">Chuẩn hoá 100%</p>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
+              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">LIS Driver</p>
+              <div class="mt-1 flex items-baseline justify-center space-x-1">
+                <span class="text-lg font-extrabold text-sky-700">18/18</span>
+              </div>
+              <p class="text-[10px] text-sky-600 font-medium mt-0.5">Sẵn sàng kết nối</p>
+            </div>
+          </section>
+
+          <!-- Quick Actions / Quick Links for Desktop -->
+          <section class="hidden md:block bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2.5">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center space-x-1.5">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>Truy cập nhanh</span>
+            </h4>
+            <div class="space-y-1.5">
+              <a href="survey.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
+                <span class="flex items-center space-x-2">
+                  <i data-lucide="clipboard-check" class="w-4 h-4 text-teal-600"></i>
+                  <span>Mở Form Khảo sát EMR</span>
+                </span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+              </a>
+              <a href="xml_analyzer.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
+                <span class="flex items-center space-x-2">
+                  <i data-lucide="file-code" class="w-4 h-4 text-sky-600"></i>
+                  <span>Trình kiểm tra XML QĐ 130</span>
+                </span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+              </a>
+              <a href="LIS-Parser-Tool.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
+                <span class="flex items-center space-x-2">
+                  <i data-lucide="microscope" class="w-4 h-4 text-indigo-600"></i>
+                  <span>LIS JS Parser Studio</span>
+                </span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+              </a>
+              <a href="icd10.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
+                <span class="flex items-center space-x-2">
+                  <i data-lucide="book-open" class="w-4 h-4 text-blue-600"></i>
+                  <span>Tra cứu ICD-10 QĐ 1849</span>
+                </span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+              </a>
+            </div>
+          </section>
+
         </div>
 
-        <p class="text-xs text-slate-500 mt-3 border-t border-slate-200/60 pt-2.5">
-          Cổng thông tin hệ thống trung tâm KIENLT90. Quản lý mô-đun công việc và tiện ích y tế số chuyên sâu.
-        </p>
-      </section>
+        <!-- RIGHT COLUMN (Mobile: Bottom / Desktop: Main 8 cols) -->
+        <div class="md:col-span-8 lg:col-span-8 space-y-5">
 
-      <!-- Quick Metrics Grid -->
-      <section class="grid grid-cols-3 gap-2.5">
-        <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
-          <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Tiến độ KS</p>
-          <div class="mt-1 flex items-baseline justify-center space-x-1">
-            <span class="text-lg font-extrabold text-slate-800">84%</span>
-            <span class="text-[10px] font-bold text-emerald-600">+12%</span>
-          </div>
-          <p class="text-[10px] text-slate-400 mt-0.5">28/32 Tiêu chí</p>
-        </div>
+          <!-- Featured Survey Banner (Card Trọng Tâm) -->
+          <section class="bg-gradient-to-br from-sky-800 via-sky-700 to-sky-900 text-white p-4 md:p-6 rounded-2xl shadow-lg shadow-sky-900/15 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
 
-        <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
-          <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Lỗi XML 130</p>
-          <div class="mt-1 flex items-baseline justify-center space-x-1">
-            <span class="text-lg font-extrabold text-emerald-600">0</span>
-          </div>
-          <p class="text-[10px] text-emerald-600 font-medium mt-0.5">Chuẩn hoá 100%</p>
-        </div>
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-xs font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>Đang hoạt động</span>
+              </span>
+              <span class="text-xs text-sky-200/90 font-medium">Kỳ Q1/2026</span>
+            </div>
 
-        <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
-          <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">LIS Driver</p>
-          <div class="mt-1 flex items-baseline justify-center space-x-1">
-            <span class="text-lg font-extrabold text-sky-700">18/18</span>
-          </div>
-          <p class="text-[10px] text-sky-600 font-medium mt-0.5">Sẵn sàng kết nối</p>
-        </div>
-      </section>
-
-      <!-- Featured Survey Banner (Card Trọng Tâm) -->
-      <section class="bg-gradient-to-br from-sky-800 via-sky-700 to-sky-900 text-white p-4 rounded-2xl shadow-lg shadow-sky-900/15 relative overflow-hidden">
-        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/5 rounded-full blur-xl pointer-events-none"></div>
-
-        <div class="flex items-center justify-between mb-2">
-          <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 text-xs font-semibold">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-            <span>Đang hoạt động</span>
-          </span>
-          <span class="text-[11px] text-sky-200/90 font-medium">Kỳ Q1/2026</span>
-        </div>
-
-        <h3 class="text-base font-bold text-white leading-snug">
-          Khảo sát RIS/PACS – LIS – EMR Bệnh Viện
-        </h3>
-        <p class="text-xs text-sky-100/80 mt-1 line-clamp-2 leading-relaxed">
-          Biểu mẫu khảo sát thực trạng số hóa Bệnh viện / Trung tâm Y tế. Quản lý bản thảo JSON, cấu hình API kiểm thử, xuất báo cáo PDF và file Excel ký đóng dấu.
-        </p>
-
-        <!-- Progress Bar -->
-        <div class="mt-3.5 bg-sky-950/40 p-2.5 rounded-xl border border-white/10">
-          <div class="flex justify-between text-[11px] font-semibold mb-1.5">
-            <span class="text-sky-200">BV Đa khoa Tuyến Tỉnh</span>
-            <span class="text-emerald-300 font-bold">28/32 Tiêu chí (84%)</span>
-          </div>
-          <div class="w-full bg-black/30 rounded-full h-2 overflow-hidden flex">
-            <div class="bg-emerald-400 h-full rounded-full transition-all duration-500" style="width: 84%"></div>
-          </div>
-          <div class="flex justify-between text-[10px] text-sky-200/70 mt-1.5">
-            <span>RIS/PACS: Đạt</span>
-            <span>LIS: Hoàn tất</span>
-            <span>EMR: Nghiệm thu</span>
-          </div>
-        </div>
-
-        <!-- Action CTA Buttons -->
-        <div class="mt-4 grid grid-cols-2 gap-2">
-          <a href="survey.html" target="_blank" class="bg-white text-sky-800 font-bold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center space-x-1.5 hover:bg-sky-50 shadow-sm transition active:scale-95">
-            <span>Vào khảo sát</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </a>
-          <button onclick="alert('Đang trích xuất file PDF & Excel báo cáo khảo sát...')" class="bg-white/10 border border-white/20 text-white font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center space-x-1.5 hover:bg-white/20 transition active:scale-95">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            <span>Xuất PDF/Excel</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- Module Categories Header & View Switcher -->
-      <section class="pt-1" id="modulesSection">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
-              <i data-lucide="layout-grid" class="w-4 h-4 text-sky-700"></i>
-              <span>Danh mục chức năng y tế</span>
+            <h3 class="text-base md:text-xl font-bold text-white leading-snug">
+              Khảo sát RIS/PACS – LIS – EMR Bệnh Viện
             </h3>
-            <p class="text-[11px] text-slate-500">Bộ công cụ vận hành & chuẩn hóa dữ liệu</p>
-          </div>
+            <p class="text-xs md:text-sm text-sky-100/80 mt-1.5 leading-relaxed">
+              Biểu mẫu khảo sát thực trạng số hóa Bệnh viện / Trung tâm Y tế. Quản lý bản thảo JSON, cấu hình API kiểm thử, xuất báo cáo PDF và file Excel ký đóng dấu.
+            </p>
 
-          <!-- View Mode Toggle Buttons -->
-          <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
-            <button id="btnListView" onclick="setViewMode('list')" class="p-1 rounded text-sky-700 bg-white shadow-xs transition" title="Dạng danh sách">
-              <i data-lucide="align-justify" class="w-3.5 h-3.5"></i>
-            </button>
-            <button id="btnGridView" onclick="setViewMode('grid')" class="p-1 rounded text-slate-500 hover:text-slate-800 transition" title="Dạng ô vuông (Grid)">
-              <i data-lucide="grid" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
+            <!-- Progress Bar -->
+            <div class="mt-4 bg-sky-950/40 p-3 md:p-3.5 rounded-xl border border-white/10">
+              <div class="flex justify-between text-xs font-semibold mb-2">
+                <span class="text-sky-200">BV Đa khoa Tuyến Tỉnh</span>
+                <span class="text-emerald-300 font-bold">28/32 Tiêu chí (84%)</span>
+              </div>
+              <div class="w-full bg-black/30 rounded-full h-2.5 overflow-hidden flex">
+                <div class="bg-emerald-400 h-full rounded-full transition-all duration-500" style="width: 84%"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-sky-200/70 mt-2">
+                <span>RIS/PACS: Đạt</span>
+                <span>LIS: Hoàn tất</span>
+                <span>EMR: Nghiệm thu</span>
+              </div>
+            </div>
+
+            <!-- Action CTA Buttons -->
+            <div class="mt-4 md:mt-5 grid grid-cols-2 gap-3">
+              <a href="survey.html" target="_blank" class="bg-white text-sky-800 font-bold text-xs md:text-sm py-2.5 md:py-3 px-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-sky-50 shadow-sm transition active:scale-95">
+                <span>Vào khảo sát</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+              <button onclick="alert('Đang trích xuất file PDF & Excel báo cáo khảo sát...')" class="bg-white/10 border border-white/20 text-white font-semibold text-xs md:text-sm py-2.5 md:py-3 px-4 rounded-xl flex items-center justify-center space-x-2 hover:bg-white/20 transition active:scale-95">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span>Xuất PDF/Excel</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Module Categories Header & View Switcher -->
+          <section class="pt-1" id="modulesSection">
+            <div class="flex items-center justify-between mb-3.5">
+              <div>
+                <h3 class="text-sm md:text-base font-bold text-slate-900 flex items-center space-x-2">
+                  <i data-lucide="layout-grid" class="w-4 h-4 text-sky-700"></i>
+                  <span>Danh mục chức năng y tế</span>
+                </h3>
+                <p class="text-xs text-slate-500">Bộ công cụ vận hành & chuẩn hóa dữ liệu</p>
+              </div>
+
+              <!-- View Mode Toggle Buttons -->
+              <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+                <button id="btnListView" onclick="setViewMode('list')" class="p-1.5 rounded text-sky-700 bg-white shadow-xs transition" title="Dạng danh sách">
+                  <i data-lucide="align-justify" class="w-3.5 h-3.5"></i>
+                </button>
+                <button id="btnGridView" onclick="setViewMode('grid')" class="p-1.5 rounded text-slate-500 hover:text-slate-800 transition" title="Dạng ô vuông (Grid)">
+                  <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Modules Container (List / Grid dynamic) -->
+            <div id="modulesContainer" class="space-y-3">
+
+              <!-- Item 1: RIS/PACS -->
+              <div onclick="window.open('survey.html', '_blank')" class="module-item bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100 group-hover:scale-105 transition">
+                    <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Khảo sát RIS/PACS - LIS - EMR</h4>
+                      <span class="text-[9px] font-bold px-1.5 py-0.2 bg-rose-50 text-rose-600 rounded border border-rose-200">HOT</span>
+                    </div>
+                    <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Khảo sát số hoá y tế & đánh giá mức độ triển khai</p>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition"></i>
+              </div>
+
+              <!-- Item 2: XML BHYT -->
+              <div onclick="window.open('xml_analyzer.html', '_blank')" class="module-item bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-100 group-hover:scale-105 transition">
+                    <i data-lucide="file-code" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Phân tích XML BHYT QĐ 130</h4>
+                      <span class="text-[9px] font-bold px-1.5 py-0.2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">Chuẩn hóa</span>
+                    </div>
+                    <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Kiểm tra giám định dữ liệu BHYT, cảnh báo lỗi logic</p>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition"></i>
+              </div>
+
+              <!-- Item 3: LIS Parser -->
+              <div onclick="window.open('LIS-Parser-Tool.html', '_blank')" class="module-item bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-100 group-hover:scale-105 transition">
+                    <i data-lucide="microscope" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Bộ dịch JS Máy xét nghiệm (LIS)</h4>
+                      <span class="text-[9px] font-bold px-1.5 py-0.2 bg-indigo-50 text-indigo-700 rounded border border-indigo-200">HL7 / ASTM</span>
+                    </div>
+                    <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Trình thông dịch driver kết nối Sysmex, Roche, Beckman</p>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition"></i>
+              </div>
+
+              <!-- Item 4: ICD-10 -->
+              <div onclick="window.open('icd10.html', '_blank')" class="module-item bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 border border-blue-100 group-hover:scale-105 transition">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Tra cứu ICD-10 2026</h4>
+                      <span class="text-[9px] font-bold px-1.5 py-0.2 bg-amber-50 text-amber-700 rounded border border-amber-200">Mới</span>
+                    </div>
+                    <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Từ điển mã bệnh học quốc tế tra cứu AI Vector</p>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition"></i>
+              </div>
+
+              <!-- Item 5: Security / BYT -->
+              <div onclick="alert('Phân hệ Hạ tầng kiểm thử & Mã hóa BYT đang được đồng bộ theo tiêu chuẩn ATTT Cấp độ 3.')" class="module-item bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100 group-hover:scale-105 transition">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Hạ tầng kiểm thử & Mã hóa BYT</h4>
+                      <span class="text-[9px] font-bold px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded">Cấp độ 3</span>
+                    </div>
+                    <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Giao thức an toàn thông tin & mã hóa bảo mật chuẩn y tế</p>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition"></i>
+              </div>
+
+            </div>
+          </section>
+
         </div>
 
-        <!-- Modules Container (List / Grid dynamic) -->
-        <div id="modulesContainer" class="space-y-2.5">
-
-          <!-- Item 1: RIS/PACS -->
-          <div onclick="window.open('survey.html', '_blank')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100">
-                <i data-lucide="clipboard-check" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <div class="flex items-center space-x-1.5">
-                  <h4 class="text-xs font-bold text-slate-800">Khảo sát RIS/PACS - LIS - EMR</h4>
-                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-rose-50 text-rose-600 rounded border border-rose-200">HOT</span>
-                </div>
-                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Khảo sát số hoá y tế & đánh giá mức độ triển khai</p>
-              </div>
-            </div>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
-          </div>
-
-          <!-- Item 2: XML BHYT -->
-          <div onclick="window.open('xml_analyzer.html', '_blank')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-100">
-                <i data-lucide="file-code" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <div class="flex items-center space-x-1.5">
-                  <h4 class="text-xs font-bold text-slate-800">Phân tích XML BHYT QĐ 130</h4>
-                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">Chuẩn hóa</span>
-                </div>
-                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Kiểm tra giám định dữ liệu BHYT, cảnh báo lỗi logic</p>
-              </div>
-            </div>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
-          </div>
-
-          <!-- Item 3: LIS Parser -->
-          <div onclick="window.open('LIS-Parser-Tool.html', '_blank')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-100">
-                <i data-lucide="microscope" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <div class="flex items-center space-x-1.5">
-                  <h4 class="text-xs font-bold text-slate-800">Bộ dịch JS Máy xét nghiệm (LIS)</h4>
-                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-indigo-50 text-indigo-700 rounded border border-indigo-200">HL7 / ASTM</span>
-                </div>
-                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Trình thông dịch driver kết nối Sysmex, Roche, Beckman</p>
-              </div>
-            </div>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
-          </div>
-
-          <!-- Item 4: ICD-10 -->
-          <div onclick="window.open('icd10.html', '_blank')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 border border-blue-100">
-                <i data-lucide="book-open" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <div class="flex items-center space-x-1.5">
-                  <h4 class="text-xs font-bold text-slate-800">Tra cứu ICD-10 2026</h4>
-                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-amber-50 text-amber-700 rounded border border-amber-200">Mới</span>
-                </div>
-                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Từ điển mã bệnh học quốc tế tra cứu AI Vector</p>
-              </div>
-            </div>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
-          </div>
-
-          <!-- Item 5: Security / BYT -->
-          <div onclick="alert('Phân hệ Hạ tầng kiểm thử & Mã hóa BYT đang được đồng bộ theo tiêu chuẩn ATTT Cấp độ 3.')" class="module-item bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 transition flex items-center justify-between group cursor-pointer">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
-                <i data-lucide="shield-check" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <div class="flex items-center space-x-1.5">
-                  <h4 class="text-xs font-bold text-slate-800">Hạ tầng kiểm thử & Mã hóa BYT</h4>
-                  <span class="text-[9px] font-bold px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded">Cấp độ 3</span>
-                </div>
-                <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">Giao thức an toàn thông tin & mã hóa bảo mật chuẩn y tế</p>
-              </div>
-            </div>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition"></i>
-          </div>
-
-        </div>
-      </section>
+      </div>
 
       <!-- Footer Info -->
-      <footer class="text-center pt-2 pb-1 space-y-1 text-slate-400 text-[11px]">
-        <p>Phiên bản v1.0 • ISO/IEC 27001 • Máy chủ nội bộ</p>
+      <footer class="text-center pt-6 pb-2 space-y-1 text-slate-400 text-xs">
+        <p>Phiên bản v1.0 • ISO/IEC 27001 • Máy chủ an toàn nội bộ</p>
         <p class="font-medium text-slate-500">Bản quyền thuộc về <span class="text-sky-700 font-bold">Lê Trung Kiên</span> • KIENLT90 Portal</p>
       </footer>
 
     </main>
 
-    <!-- Fixed Bottom Navigation Bar -->
-    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 flex items-center justify-around z-40 shadow-lg">
+    <!-- Fixed Bottom Navigation Bar (Visible on Mobile only: md:hidden) -->
+    <nav class="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 flex items-center justify-around z-40 shadow-lg">
       <a href="javascript:void(0)" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-sky-700 font-bold group">
         <div class="w-9 h-6 flex items-center justify-center rounded-lg bg-sky-50 text-sky-700">
           <i data-lucide="home" class="w-4 h-4"></i>
@@ -375,21 +465,21 @@
       const btnGrid = document.getElementById('btnGridView');
 
       if (mode === 'grid') {
-        container.className = 'grid grid-cols-2 gap-2.5';
-        btnGrid.className = 'p-1 rounded text-sky-700 bg-white shadow-xs transition';
-        btnList.className = 'p-1 rounded text-slate-500 hover:text-slate-800 transition';
+        container.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
+        btnGrid.className = 'p-1.5 rounded text-sky-700 bg-white shadow-xs transition';
+        btnList.className = 'p-1.5 rounded text-slate-500 hover:text-slate-800 transition';
         
         document.querySelectorAll('.module-item').forEach(item => {
-          item.classList.add('flex-col', 'items-start', 'text-left');
+          item.classList.add('flex-col', 'items-start', 'text-left', 'space-y-3');
           item.classList.remove('items-center');
         });
       } else {
-        container.className = 'space-y-2.5';
-        btnList.className = 'p-1 rounded text-sky-700 bg-white shadow-xs transition';
-        btnGrid.className = 'p-1 rounded text-slate-500 hover:text-slate-800 transition';
+        container.className = 'space-y-3';
+        btnList.className = 'p-1.5 rounded text-sky-700 bg-white shadow-xs transition';
+        btnGrid.className = 'p-1.5 rounded text-slate-500 hover:text-slate-800 transition';
 
         document.querySelectorAll('.module-item').forEach(item => {
-          item.classList.remove('flex-col', 'items-start', 'text-left');
+          item.classList.remove('flex-col', 'items-start', 'text-left', 'space-y-3');
           item.classList.add('items-center');
         });
       }
