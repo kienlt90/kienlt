@@ -87,6 +87,26 @@
         </div>
 
         <!-- Form -->
+        <!-- Quick Switcher: Admin vs Kid Login -->
+        <div class="kid-login-toggle" style="display: flex; gap: 8px; margin-bottom: 1.2rem;">
+          <button type="button" id="tab-admin-login" onclick="switchLoginType('admin')" style="flex: 1; padding: 8px 12px; border-radius: 12px; border: 1px solid #38bdf8; background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+            🛡️ Quản trị viên
+          </button>
+          <button type="button" id="tab-kid-login" onclick="switchLoginType('kid')" style="flex: 1; padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #94a3b8; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+            👦 Dành cho Bé
+          </button>
+        </div>
+
+        <!-- Kid Quick Login Section (Hidden by default) -->
+        <div id="kid-quick-section" class="hidden" style="margin-bottom: 1.5rem; text-align: left;">
+          <p style="font-size: 0.75rem; color: #fbbf24; margin-bottom: 0.75rem; font-weight: 600;">
+            ⭐ Chọn tài khoản của bé để vào thẳng Đấu trường Toán:
+          </p>
+          <div id="kids-avatar-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
         <form id="login-form" novalidate>
           
           <!-- Input Group: Username -->

@@ -1,3 +1,73 @@
+
+// ==========================================
+// KID ACCOUNTS & DIRECT MATH ARENA ROUTING
+// ==========================================
+window.switchLoginType = function(type) {
+  const btnAdmin = document.getElementById('tab-admin-login');
+  const btnKid = document.getElementById('tab-kid-login');
+  const kidSection = document.getElementById('kid-quick-section');
+  const loginForm = document.getElementById('login-form');
+
+  if (type === 'kid') {
+    btnKid.style.borderColor = '#fbbf24';
+    btnKid.style.background = 'rgba(251, 191, 36, 0.2)';
+    btnKid.style.color = '#fbbf24';
+
+    btnAdmin.style.borderColor = 'rgba(255,255,255,0.15)';
+    btnAdmin.style.background = 'rgba(255,255,255,0.05)';
+    btnAdmin.style.color = '#94a3b8';
+
+    kidSection.classList.remove('hidden');
+    renderKidsLoginList();
+  } else {
+    btnAdmin.style.borderColor = '#38bdf8';
+    btnAdmin.style.background = 'rgba(56, 189, 248, 0.15)';
+    btnAdmin.style.color = '#38bdf8';
+
+    btnKid.style.borderColor = 'rgba(255,255,255,0.15)';
+    btnKid.style.background = 'rgba(255,255,255,0.05)';
+    btnKid.style.color = '#94a3b8';
+
+    kidSection.classList.add('hidden');
+  }
+};
+
+window.renderKidsLoginList = function() {
+  const container = document.getElementById('kids-avatar-list');
+  if (!container) return;
+
+  const defaultKids = [
+    { id: 'kid_1', name: 'Bé Bắp', grade: 2, username: 'bap2', pin: '1234' },
+    { id: 'kid_2', name: 'Bé Sóc', grade: 5, username: 'soc5', pin: '1234' }
+  ];
+  const kids = JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
+
+  container.innerHTML = kids.map(k => `
+    <button type="button" onclick="loginDirectAsKid('${k.id}')" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 12px; color: #fff; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(251, 191, 36, 0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 1.4rem;">🎓</span>
+        <div style="text-align: left;">
+          <div style="font-weight: 700; font-size: 0.85rem; color: #f8fafc;">${k.name}</div>
+          <div style="font-size: 0.7rem; color: #fbbf24;">Toán Lớp ${k.grade}</div>
+        </div>
+      </div>
+      <span style="font-size: 0.75rem; font-weight: 700; color: #38bdf8;">Vào thi ➔</span>
+    </button>
+  `).join('');
+};
+
+window.loginDirectAsKid = function(kidId) {
+  const defaultKids = [
+    { id: 'kid_1', name: 'Bé Bắp', grade: 2, username: 'bap2', pin: '1234' },
+    { id: 'kid_2', name: 'Bé Sóc', grade: 5, username: 'soc5', pin: '1234' }
+  ];
+  const kids = JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
+  const kid = kids.find(k => k.id === kidId) || kids[0];
+
+  localStorage.setItem('kienlt_active_kid_session', JSON.stringify(kid));
+  window.location.href = 'math_game.html';
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   // Elements
   const loginForm = document.getElementById('login-form');

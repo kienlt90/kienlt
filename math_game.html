@@ -76,15 +76,17 @@
     <!-- Top Navigation Header -->
     <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-6">
       <div class="flex items-center space-x-3">
-        <a href="main.html" class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-orange-500/20 text-lg hover:scale-105 transition" title="Về Portal">
+        <a href="main.html" id="btn-back-portal" class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-orange-500/20 text-lg hover:scale-105 transition" title="Về Portal">
           🧮
         </a>
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="text-xs font-bold tracking-wider text-amber-600 uppercase">Đấu Trường Toán Học</h1>
-            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold">Toán Tư Duy Logic</span>
+            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold">Toán Tư Duy 100 Câu Random</span>
           </div>
-          <p class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">Thử Thách 10 Bài Toán & Vòng Quay May Mắn</p>
+          <p class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight flex items-center space-x-2">
+            <span id="header-student-greeting">Thử Thách 10 Bài Toán & Vòng Quay May Mắn</span>
+          </p>
         </div>
       </div>
 
@@ -107,6 +109,9 @@
         <button onclick="switchTab('rewards')" id="nav-rewards" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition" title="Cài đặt quà">
           <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
         </button>
+        <button onclick="logoutKid()" class="px-2.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="Thoát tài khoản">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+        </button>
       </div>
     </header>
 
@@ -116,6 +121,24 @@
     <!-- 1. ARENA: CHỌN LỚP & LÀM 10 BÀI TOÁN TƯ DUY -->
     <!-- ============================================== -->
     <section id="view-arena" class="space-y-6">
+
+      <!-- Student Banner if logged in as student -->
+      <div id="student-welcome-banner" class="hidden bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white p-4 sm:p-5 rounded-2xl shadow-md flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl">
+            🎓
+          </div>
+          <div>
+            <span class="px-2 py-0.5 bg-black/20 text-amber-100 rounded text-[10px] font-bold">Học sinh đăng nhập</span>
+            <h3 class="text-base sm:text-lg font-black" id="student-banner-name">Bé Học Sinh</h3>
+            <p class="text-xs text-amber-100/90" id="student-banner-desc">Sẵn sàng thử thách toán tư duy hôm nay chưa nào?</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-xs font-bold text-amber-100 block">Lớp đăng ký:</span>
+          <span class="text-base sm:text-lg font-black bg-white text-orange-600 px-3 py-1 rounded-xl shadow-sm inline-block" id="student-banner-grade">Lớp 2</span>
+        </div>
+      </div>
 
       <!-- Level Selection (Grade 2 vs Grade 5) -->
       <div id="level-selection" class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -133,19 +156,19 @@
               Toán Tư Duy - Khám Phá Logic Nhí
             </h2>
             <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-              10 bài toán suy luận vui nhộn: Quy luật dãy số & màu sắc, cân thăng bằng con vật, đếm hình học thông minh, logic thời gian và bài toán cưa gỗ.
+              Ngân hàng <b>50+ bài toán logic</b> (Quy luật dãy số, cân thăng bằng con vật, đếm hình học, bài toán cưa gỗ, đồng hồ, tuổi tác...). Mỗi lần thi rút <b>ngẫu nhiên 10 câu</b> chống lặp trong 3 lượt thi!
             </p>
           </div>
           <div class="mt-6 pt-4 border-t border-amber-100 flex items-center justify-between">
             <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500">
-              <i data-lucide="clock" class="w-4 h-4 text-amber-500"></i>
-              <span>10 câu hỏi</span>
+              <i data-lucide="shuffle" class="w-4 h-4 text-amber-500"></i>
+              <span>10 câu ngẫu nhiên</span>
               <span>•</span>
               <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
-              <span>Thưởng 1 lượt quay</span>
+              <span>+1 Lượt quay</span>
             </div>
             <button class="px-4 py-2 bg-amber-500 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-amber-600 flex items-center space-x-1.5 transition">
-              <span>Bắt đầu</span>
+              <span>Làm bài ngay</span>
               <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -165,19 +188,19 @@
               Toán Tư Duy - Chinh Phục Đỉnh Cao
             </h2>
             <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-              10 bài toán logic nâng cao: Dãy Fibonacci mở rộng, toán bắt tay tổ hợp, bài toán trồng cây 2 đầu, vận tốc đuổi bắt, giả thiết tạm và suy luận logic kẻ nói dối.
+              Ngân hàng <b>50+ bài toán logic nâng cao</b> (Fibonacci mở rộng, toán bắt tay tổ hợp, trồng cây 2 đầu, vận tốc đuổi bắt, giả thiết tạm gà chó, suy luận kẻ nói dối...). Rút <b>ngẫu nhiên 10 câu</b> chống lặp!
             </p>
           </div>
           <div class="mt-6 pt-4 border-t border-sky-100 flex items-center justify-between">
             <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500">
-              <i data-lucide="clock" class="w-4 h-4 text-sky-500"></i>
-              <span>10 câu hỏi</span>
+              <i data-lucide="shuffle" class="w-4 h-4 text-sky-500"></i>
+              <span>10 câu ngẫu nhiên</span>
               <span>•</span>
               <i data-lucide="award" class="w-4 h-4 text-sky-500"></i>
-              <span>Thưởng 1 lượt quay</span>
+              <span>+1 Lượt quay</span>
             </div>
             <button class="px-4 py-2 bg-sky-600 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-sky-700 flex items-center space-x-1.5 transition">
-              <span>Bắt đầu</span>
+              <span>Làm bài ngay</span>
               <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -193,7 +216,7 @@
             <span id="quiz-badge" class="px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-800">Lớp 2</span>
             <div>
               <div class="text-xs font-bold text-slate-400">Học sinh làm bài:</div>
-              <div class="text-sm font-extrabold text-slate-800" id="quiz-student-name">Bé Học Sinh Giỏi</div>
+              <div class="text-sm font-extrabold text-slate-800" id="quiz-student-name">Bé Học Sinh</div>
             </div>
           </div>
 
@@ -225,9 +248,6 @@
               <h3 class="text-base sm:text-lg font-bold text-slate-900 leading-snug" id="question-title">
                 Đang tải câu hỏi...
               </h3>
-              <div id="question-visual" class="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-center text-center text-sm font-semibold text-slate-700 hidden">
-                <!-- Visual graphic if any -->
-              </div>
             </div>
           </div>
 
@@ -299,7 +319,7 @@
             <span>Quay Thưởng May Mắn ➔</span>
           </button>
           <button onclick="resetAndBackToArena()" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition">
-            Làm bài thi khác
+            Làm bài thi khác (Đề ngẫu nhiên mới)
           </button>
         </div>
       </div>
@@ -312,12 +332,18 @@
     <section id="view-wheel" class="hidden space-y-6">
       
       <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md text-center max-w-xl mx-auto space-y-6">
-        <div>
-          <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">
-            <span>🎡 Vòng Quay Phần Thưởng</span>
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="text-left">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">
+              <span>🎡 Vòng Quay May Mắn</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">Quay Thưởng Học Giỏi</h2>
           </div>
-          <h2 class="text-2xl font-black text-slate-900 mt-2">Vòng Quay May Mắn</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Hoàn thành 10 bài toán tư duy để nhận lượt quay quà tặng!</p>
+          <!-- Reset Wheel Button -->
+          <button onclick="resetWheelSpins()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold flex items-center space-x-1 transition" title="Đặt lại lượt quay">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Reset lượt quay</span>
+          </button>
         </div>
 
         <!-- Spin Balance -->
@@ -490,158 +516,10 @@
   </div>
 
   <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script src="math_questions_bank.js"></script>
   <script>
     // ==========================================
-    // 1. DATA: 10 LOGIC QUESTIONS GRADE 2 & 5
-    // ==========================================
-    const questionsGrade2 = [
-      {
-        id: 1,
-        title: "Tìm số thích hợp điền vào dấu hỏi chấm (?) trong dãy số quy luật: 2, 5, 8, 11, (?)",
-        options: ["13", "14", "15", "16"],
-        correct: 1, // index 1 = "14"
-        explain: "Quy luật: Mỗi số sau bằng số liền trước cộng thêm 3 (2+3=5, 5+3=8, 8+3=11, 11+3=14)."
-      },
-      {
-        id: 2,
-        title: "Biết 1 con Chó nặng bằng 2 con Mèo. 1 con Mèo nặng bằng 3 con Chuột. Hỏi 1 con Chó nặng bằng mấy con Chuột?",
-        options: ["4 con", "5 con", "6 con", "7 con"],
-        correct: 2, // index 2 = "6 con"
-        explain: "1 Chó = 2 Mèo = 2 x 3 = 6 con Chuột."
-      },
-      {
-        id: 3,
-        title: "Quy luật màu sắc: 🔴 Đỏ, 🔵 Xanh dương, 🟢 Xanh lá, 🔴 Đỏ, 🔵 Xanh dương, (?)",
-        options: ["🔴 Đỏ", "🔵 Xanh dương", "🟢 Xanh lá", "🟡 Vàng"],
-        correct: 2, // "🟢 Xanh lá"
-        explain: "Dãy màu lặp lại theo chu kỳ 3 màu: Đỏ -> Xanh dương -> Xanh lá."
-      },
-      {
-        id: 4,
-        title: "Năm nay Bo 7 tuổi, anh Bi hơn Bo 3 tuổi. Hỏi sau 5 năm nữa, anh Bi hơn Bo bao nhiêu tuổi?",
-        options: ["3 tuổi", "5 tuổi", "8 tuổi", "15 tuổi"],
-        correct: 0, // "3 tuổi"
-        explain: "Hiệu số tuổi giữa hai anh em không bao giờ thay đổi theo thời gian, luôn là 3 tuổi."
-      },
-      {
-        id: 5,
-        title: "Có một hàng dọc gồm 9 bạn học sinh. Bạn Nam đứng ở vị trí chính giữa. Hỏi Nam đứng thứ mấy từ đầu hàng?",
-        options: ["Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"],
-        correct: 1, // "Thứ 5"
-        explain: "Có 9 bạn, trước Nam có 4 bạn và sau Nam có 4 bạn. Vậy Nam đứng ở vị trí thứ 5."
-      },
-      {
-        id: 6,
-        title: "An có 12 cái kẹo, Bình có 6 cái kẹo. Hỏi An phải cho Bình mấy cái kẹo để số kẹo hai bạn bằng nhau?",
-        options: ["2 cái", "3 cái", "4 cái", "6 cái"],
-        correct: 1, // "3 cái"
-        explain: "Tổng số kẹo là 12 + 6 = 18 cái. Mỗi bạn có 18 : 2 = 9 cái. An cần cho Bình: 12 - 9 = 3 cái."
-      },
-      {
-        id: 7,
-        title: "Có 3 chiếc hộp Đỏ, Xanh, Vàng. Quả bóng không nằm ở hộp Đỏ, cũng không nằm ở hộp Vàng. Hỏi quả bóng ở hộp nào?",
-        options: ["Hộp Đỏ", "Hộp Xanh", "Hộp Vàng", "Không có hộp nào"],
-        correct: 1, // "Hộp Xanh"
-        explain: "Loại trừ hộp Đỏ và hộp Vàng, quả bóng chắc chắn nằm ở hộp Xanh."
-      },
-      {
-        id: 8,
-        title: "Một khúc gỗ cần cưa thành 4 đoạn ngắn. Mỗi lần cưa mất 2 phút. Hỏi cần tất cả bao nhiêu phút?",
-        options: ["4 phút", "6 phút", "8 phút", "10 phút"],
-        correct: 1, // "6 phút"
-        explain: "Cắt thành 4 đoạn chỉ cần 3 nhát cưa. Thời gian là 3 x 2 = 6 phút."
-      },
-      {
-        id: 9,
-        title: "Lúc 3 giờ đúng, kim giờ và kim phút của đồng hồ tạo thành góc gì?",
-        options: ["Góc nhọn", "Góc vuông", "Góc tù", "Góc bẹt"],
-        correct: 1, // "Góc vuông"
-        explain: "Lúc 3 giờ đúng, kim phút chỉ số 12 và kim giờ chỉ số 3 tạo thành góc vuông (90 độ)."
-      },
-      {
-        id: 10,
-        title: "Hình chữ nhật có 4 góc vuông. Nếu cắt bỏ đi 1 góc thì hình còn lại có bao nhiêu góc?",
-        options: ["3 góc", "4 góc", "5 góc", "6 góc"],
-        correct: 2, // "5 góc"
-        explain: "Khi cắt vát 1 góc của hình chữ nhật thì tại vết cắt sẽ sinh ra 2 góc mới, tổng số góc trở thành 5 góc (ngũ giác)."
-      }
-    ];
-
-    const questionsGrade5 = [
-      {
-        id: 1,
-        title: "Tìm số tiếp theo trong dãy Fibonacci mở rộng: 1, 3, 4, 7, 11, 18, (?)",
-        options: ["25", "27", "29", "31"],
-        correct: 2, // "29"
-        explain: "Quy luật: Mỗi số kể từ số thứ 3 bằng tổng hai số liền trước: 11 + 18 = 29."
-      },
-      {
-        id: 2,
-        title: "Trong một phòng họp có 6 bạn học sinh giỏi toán, mỗi bạn đều bắt tay với tất cả các bạn còn lại 1 lần. Hỏi có tất cả bao nhiêu cái bắt tay?",
-        options: ["12 cái", "15 cái", "30 cái", "36 cái"],
-        correct: 1, // "15 cái"
-        explain: "Số cái bắt tay = (6 x 5) / 2 = 15 cái."
-      },
-      {
-        id: 3,
-        title: "Một con đường thẳng dài 100m, người ta trồng cây ở cả 2 bên đường, khoảng cách giữa 2 cây liên tiếp là 10m và cả 2 đầu đường đều có cây. Hỏi trồng tất cả bao nhiêu cây?",
-        options: ["10 cây", "11 cây", "20 cây", "22 cây"],
-        correct: 3, // "22 cây"
-        explain: "Một bên đường trồng: (100 : 10) + 1 = 11 cây. Cả hai bên đường trồng: 11 x 2 = 22 cây."
-      },
-      {
-        id: 4,
-        title: "Chó đuổi theo Thỏ cách nó 30m. Mỗi bước Chó nhảy 3m, mỗi bước Thỏ nhảy 2m cùng nhịp. Hỏi sau bao nhiêu bước nhảy thì Chó bắt được Thỏ?",
-        options: ["15 bước", "20 bước", "30 bước", "60 bước"],
-        correct: 2, // "30 bước"
-        explain: "Mỗi bước Chó rút ngắn khoảng cách so với Thỏ là: 3 - 2 = 1m. Số bước cần là: 30 : 1 = 30 bước."
-      },
-      {
-        id: 5,
-        title: "Tìm số có hai chữ số, biết rằng nếu viết thêm chữ số 0 vào giữa hai chữ số đó ta được số mới gấp 9 lần số ban đầu?",
-        options: ["15", "25", "35", "45"],
-        correct: 3, // "45"
-        explain: "Thử với 45: viết thêm 0 thành 405. Ta có 405 : 45 = 9 (thỏa mãn)."
-      },
-      {
-        id: 6,
-        title: "Người thứ nhất làm xong công việc trong 4 giờ, người thứ hai làm xong trong 6 giờ. Hỏi nếu cả hai cùng làm thì sau bao lâu xong công việc?",
-        options: ["2 giờ", "2 giờ 24 phút", "2 giờ 30 phút", "5 giờ"],
-        correct: 1, // "2 giờ 24 phút"
-        explain: "1 giờ cả 2 làm: 1/4 + 1/6 = 5/12 công việc. Thời gian: 1 : (5/12) = 2.4 giờ = 2 giờ 24 phút."
-      },
-      {
-        id: 7,
-        title: "Gieo một con xúc xắc chuẩn 6 mặt đồng chất. Xác suất xuất hiện mặt có số chấm là số nguyên tố (2, 3, 5) là bao nhiêu?",
-        options: ["1/6", "1/3", "1/2", "2/3"],
-        correct: 2, // "1/2"
-        explain: "Các mặt là số nguyên tố có 3 mặt (2, 3, 5). Xác suất = 3/6 = 1/2 (50%)."
-      },
-      {
-        id: 8,
-        title: "Vừa gà vừa chó có tất cả 36 con, đếm được 100 cái chân. Hỏi có bao nhiêu con chó?",
-        options: ["12 con", "14 con", "22 con", "24 con"],
-        correct: 1, // "14 con"
-        explain: "Giả sử tất cả 36 con đều là gà: có 36 x 2 = 72 chân. Số chân thiếu: 100 - 72 = 28 chân. Số chó = 28 : (4 - 2) = 14 con."
-      },
-      {
-        id: 9,
-        title: "Có 3 bạn A, B, C. A nói: 'B nói dối'. B nói: 'C nói dối'. C nói: 'Cả A và B đều nói dối'. Hỏi ai là người nói thật?",
-        options: ["Bạn A", "Bạn B", "Bạn C", "Không có ai"],
-        correct: 1, // "Bạn B"
-        explain: "Nếu B nói thật -> A nói dối và C nói dối. Khi C nói dối thì phát biểu 'A và B đều nói dối' là sai (khớp vì B nói thật). Vậy B là người nói thật."
-      },
-      {
-        id: 10,
-        title: "Cho hình vuông có cạnh 10cm. Nối trung điểm 4 cạnh tạo thành hình vuông thứ hai. Hỏi diện tích hình vuông thứ hai bằng bao nhiêu cm²?",
-        options: ["25 cm²", "40 cm²", "50 cm²", "75 cm²"],
-        correct: 2, // "50 cm²"
-        explain: "Hình vuông thứ hai có diện tích bằng một nửa diện tích hình vuông ban đầu: (10 x 10) : 2 = 50 cm²."
-      }
-    ];
-
-    // ==========================================
-    // 2. STATE MANAGEMENT
+    // 1. STATE & SMART ANTI-REPEAT ENGINE
     // ==========================================
     let currentGrade = 2;
     let currentQuestions = [];
@@ -650,6 +528,15 @@
     let timerInterval = null;
     let secondsElapsed = 0;
     
+    // Check if logged in as student
+    let currentKid = null;
+    try {
+      const kidSession = localStorage.getItem('kienlt_active_kid_session');
+      if (kidSession) {
+        currentKid = JSON.parse(kidSession);
+      }
+    } catch(e) {}
+
     // Rewards list
     const defaultRewards = [
       "🍬 10 Viên Kẹo",
@@ -668,7 +555,54 @@
     let spinCount = parseInt(localStorage.getItem('kienlt_math_spins') || '1', 10);
 
     // ==========================================
-    // 3. SOUND SYNTHESIZER (Web Audio API)
+    // SMART RANDOMIZER: Pick 10 questions without repeating in 3 consecutive runs
+    // ==========================================
+    function getSmartRandom10Questions(grade) {
+      const fullBank = grade === 2 ? mathBankGrade2 : mathBankGrade5;
+      const recentKey = `kienlt_recent_q_ids_grade_${grade}`;
+      
+      // Load recent history (array of arrays or flat array of IDs from last 3 sessions)
+      let recentHistory = JSON.parse(localStorage.getItem(recentKey) || '[]');
+      // Flatten into unique set of IDs used in last 3 runs
+      const recentSet = new Set(recentHistory.flat());
+
+      // Filter out questions used recently
+      let eligible = fullBank.filter(q => !recentSet.has(q.id));
+
+      // If eligible has less than 10 questions, reset oldest history or take least recently used
+      if (eligible.length < 10) {
+        recentHistory.shift(); // remove oldest run
+        const updatedRecentSet = new Set(recentHistory.flat());
+        eligible = fullBank.filter(q => !updatedRecentSet.has(q.id));
+      }
+
+      // If still less than 10, use all questions
+      if (eligible.length < 10) {
+        eligible = [...fullBank];
+      }
+
+      // Shuffle eligible questions using Fisher-Yates
+      for (let i = eligible.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [eligible[i], eligible[j]] = [eligible[j], eligible[i]];
+      }
+
+      // Pick 10 questions
+      const selected10 = eligible.slice(0, 10);
+      const selectedIds = selected10.map(q => q.id);
+
+      // Save to recent history (keep max 3 sessions)
+      recentHistory.push(selectedIds);
+      if (recentHistory.length > 3) {
+        recentHistory.shift();
+      }
+      localStorage.setItem(recentKey, JSON.stringify(recentHistory));
+
+      return selected10;
+    }
+
+    // ==========================================
+    // 2. SOUND SYNTHESIZER (Web Audio API)
     // ==========================================
     function playTone(freq, type, duration) {
       try {
@@ -690,11 +624,11 @@
     function soundWin() { playTone(523.25, 'triangle', 0.15); setTimeout(() => playTone(659.25, 'triangle', 0.15), 150); setTimeout(() => playTone(783.99, 'triangle', 0.4), 300); }
 
     // ==========================================
-    // 4. QUIZ LOGIC
+    // 3. QUIZ LOGIC
     // ==========================================
     function startQuiz(grade) {
       currentGrade = grade;
-      currentQuestions = grade === 2 ? questionsGrade2 : questionsGrade5;
+      currentQuestions = getSmartRandom10Questions(grade);
       currentQuestionIndex = 0;
       userAnswers = {};
       secondsElapsed = 0;
@@ -707,6 +641,9 @@
       const badge = document.getElementById('quiz-badge');
       badge.textContent = `Lớp ${grade} - Toán Tư Duy`;
       badge.className = grade === 2 ? 'px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-800' : 'px-3 py-1 rounded-xl text-xs font-extrabold bg-sky-100 text-sky-800';
+
+      const sName = currentKid ? currentKid.name : 'Bé Học Sinh';
+      document.getElementById('quiz-student-name').textContent = sName;
 
       // Start timer
       clearInterval(timerInterval);
@@ -793,10 +730,12 @@
       localStorage.setItem('kienlt_math_spins', spinCount);
       updateSpinBadge();
 
+      const sName = currentKid ? currentKid.name : 'Bé Học Sinh';
+
       // Create Submission Record for Teacher Review
       const newSubmission = {
         id: Date.now(),
-        studentName: 'Học sinh KIENLT90',
+        studentName: sName,
         grade: currentGrade,
         score: correctCount,
         timeSpent: document.getElementById('quiz-timer').textContent,
@@ -834,7 +773,7 @@
     }
 
     // ==========================================
-    // 5. LUCKY WHEEL ENGINE (Canvas 360)
+    // 4. LUCKY WHEEL ENGINE & RESET FUNCTION
     // ==========================================
     let isSpinning = false;
     let currentWheelAngle = 0;
@@ -895,7 +834,6 @@
       const arcSize = (2 * Math.PI) / numSegments;
       const winningIndex = Math.floor(Math.random() * numSegments);
 
-      // Target angle to land pointer at winning index (top pointer at 270 deg / 1.5 PI)
       const extraRounds = 5 + Math.floor(Math.random() * 3);
       const targetAngle = (extraRounds * 2 * Math.PI) + (1.5 * Math.PI - (winningIndex * arcSize + arcSize / 2));
       
@@ -907,7 +845,6 @@
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Ease out cubic
         const easeOut = 1 - Math.pow(1 - progress, 3);
         currentWheelAngle = startAngle + (targetAngle - startAngle) * easeOut;
         drawWheel();
@@ -929,6 +866,25 @@
       requestAnimationFrame(animateWheel);
     }
 
+    function resetWheelSpins() {
+      const choice = prompt("Chọn hành động Reset vòng quay:
+1 - Đặt lại số lượt quay về 1
+2 - Đặt lại số lượt quay về 0
+3 - Thêm +5 lượt quay thưởng cho bé", "1");
+      if (choice === "1") {
+        spinCount = 1;
+      } else if (choice === "2") {
+        spinCount = 0;
+      } else if (choice === "3") {
+        spinCount += 5;
+      } else {
+        return;
+      }
+      localStorage.setItem('kienlt_math_spins', spinCount);
+      updateSpinBadge();
+      alert(`Đã cập nhật số lượt quay thành công: ${spinCount} lượt!`);
+    }
+
     function updateSpinBadge() {
       const badge = document.getElementById('spin-badge');
       const countEl = document.getElementById('user-spin-count');
@@ -944,7 +900,7 @@
     }
 
     // ==========================================
-    // 6. TEACHER REVIEW & APPROVAL
+    // 5. TEACHER REVIEW & APPROVAL
     // ==========================================
     function updatePendingBadge() {
       const badge = document.getElementById('pending-badge');
@@ -1078,7 +1034,7 @@
     }
 
     // ==========================================
-    // 7. REWARDS CATALOG MANAGEMENT
+    // 6. REWARDS CATALOG MANAGEMENT
     // ==========================================
     function renderRewardsTable() {
       const tbody = document.getElementById('rewards-table-body');
@@ -1131,8 +1087,13 @@
       }
     }
 
+    function logoutKid() {
+      localStorage.removeItem('kienlt_active_kid_session');
+      window.location.href = 'index.html';
+    }
+
     // ==========================================
-    // 8. TAB NAVIGATION SWITCHER
+    // 7. TAB NAVIGATION SWITCHER
     // ==========================================
     function switchTab(tab) {
       ['arena', 'wheel', 'teacher', 'rewards'].forEach(t => {
@@ -1168,6 +1129,20 @@
       updateSpinBadge();
       updatePendingBadge();
       drawWheel();
+
+      // If logged in as student, customize greeting
+      if (currentKid) {
+        document.getElementById('header-student-greeting').textContent = `Chào mừng bé: ${currentKid.name}`;
+        document.getElementById('student-welcome-banner').classList.remove('hidden');
+        document.getElementById('student-banner-name').textContent = currentKid.name;
+        document.getElementById('student-banner-grade').textContent = `Lớp ${currentKid.grade}`;
+        document.getElementById('btn-back-portal').classList.add('hidden'); // Kids stay in math arena
+        
+        // Auto-scroll or pre-select kid's grade
+        if (currentKid.grade === 2 || currentKid.grade === 5) {
+          // Keep level cards for choice or can auto-start
+        }
+      }
     });
   </script>
 </body>
