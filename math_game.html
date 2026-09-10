@@ -642,7 +642,7 @@
       badge.textContent = `Lớp ${grade} - Toán Tư Duy`;
       badge.className = grade === 2 ? 'px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-100 text-amber-800' : 'px-3 py-1 rounded-xl text-xs font-extrabold bg-sky-100 text-sky-800';
 
-      const sName = currentKid ? currentKid.name : 'Bé Học Sinh';
+      const sName = currentKid ? currentKid.name : (currentGrade === 2 ? 'THÓC' : 'Gấu');
       document.getElementById('quiz-student-name').textContent = sName;
 
       // Start timer
@@ -730,7 +730,7 @@
       localStorage.setItem('kienlt_math_spins', spinCount);
       updateSpinBadge();
 
-      const sName = currentKid ? currentKid.name : 'Bé Học Sinh';
+      const sName = currentKid ? currentKid.name : (currentGrade === 2 ? 'THÓC' : 'Gấu');
 
       // Create Submission Record for Teacher Review
       const newSubmission = {

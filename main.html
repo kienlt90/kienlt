@@ -623,12 +623,31 @@
   <script>
     // Kid Manager State & Functions
     const defaultKids = [
-      { id: 'kid_1', name: 'Bé Bắp', grade: 2, username: 'bap2', pin: '1234' },
-      { id: 'kid_2', name: 'Bé Sóc', grade: 5, username: 'soc5', pin: '1234' }
+      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
     ];
 
     function getKidsList() {
-      return JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
+      const saved = localStorage.getItem('kienlt_kid_accounts');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            // Check if old default kids exist and migrate if needed
+            const hasOldBap = parsed.some(k => k.name === 'Bé Bắp' || k.name === 'Bé Sóc');
+            if (hasOldBap) {
+              const cleaned = parsed.filter(k => k.name !== 'Bé Bắp' && k.name !== 'Bé Sóc');
+              if (!cleaned.some(k => k.name === 'THÓC')) cleaned.unshift(defaultKids[0]);
+              if (!cleaned.some(k => k.name === 'Gấu')) cleaned.push(defaultKids[1]);
+              localStorage.setItem('kienlt_kid_accounts', JSON.stringify(cleaned));
+              return cleaned;
+            }
+            return parsed;
+          }
+        } catch(e) {}
+      }
+      localStorage.setItem('kienlt_kid_accounts', JSON.stringify(defaultKids));
+      return defaultKids;
     }
 
     function saveKidsList(kids) {

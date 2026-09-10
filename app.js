@@ -37,8 +37,8 @@ window.renderKidsLoginList = function() {
   if (!container) return;
 
   const defaultKids = [
-    { id: 'kid_1', name: 'Bé Bắp', grade: 2, username: 'bap2', pin: '1234' },
-    { id: 'kid_2', name: 'Bé Sóc', grade: 5, username: 'soc5', pin: '1234' }
+    { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+    { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
   ];
   const kids = JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
 
@@ -58,8 +58,8 @@ window.renderKidsLoginList = function() {
 
 window.loginDirectAsKid = function(kidId) {
   const defaultKids = [
-    { id: 'kid_1', name: 'Bé Bắp', grade: 2, username: 'bap2', pin: '1234' },
-    { id: 'kid_2', name: 'Bé Sóc', grade: 5, username: 'soc5', pin: '1234' }
+    { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+    { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
   ];
   const kids = JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
   const kid = kids.find(k => k.id === kidId) || kids[0];
