@@ -29,49 +29,38 @@ window.renderKidsLoginList = function() {
   function render(kids) {
     container.innerHTML = kids.map(k => {
       const isGrade2 = k.grade === 2 || k.id === 'kid_thoc';
-      const theme = isGrade2 ? {
-        cardBg: 'from-amber-50 via-orange-50/40 to-white',
-        border: 'border-amber-300 hover:border-amber-500',
-        avatarBg: 'bg-amber-100 border-amber-300 text-amber-800',
-        nameColor: 'text-amber-950 group-hover:text-amber-700',
-        badgeBg: 'bg-amber-200/80 text-amber-900 border border-amber-300/60',
-        subColor: 'text-amber-800',
-        btnBg: 'from-amber-500 to-orange-500 group-hover:from-amber-600 group-hover:to-orange-600',
-        shadow: 'shadow-amber-500/20'
-      } : {
-        cardBg: 'from-sky-50 via-indigo-50/40 to-white',
-        border: 'border-sky-300 hover:border-sky-500',
-        avatarBg: 'bg-sky-100 border-sky-300 text-sky-800',
-        nameColor: 'text-slate-900 group-hover:text-sky-700',
-        badgeBg: 'bg-sky-200/80 text-sky-900 border border-sky-300/60',
-        subColor: 'text-sky-800',
-        btnBg: 'from-sky-600 to-indigo-600 group-hover:from-sky-700 group-hover:to-indigo-700',
-        shadow: 'shadow-sky-500/20'
-      };
+      const cardBg = isGrade2 ? '#fffbeb' : '#f0f9ff';
+      const borderColor = isGrade2 ? '#f59e0b' : '#0ea5e9';
+      const avatarBg = isGrade2 ? '#fef3c7' : '#e0f2fe';
+      const avatarBorder = isGrade2 ? '#fcd34d' : '#7dd3fc';
+      const nameColor = isGrade2 ? '#451a03' : '#082f49';
+      const badgeBg = isGrade2 ? '#fde68a' : '#bae6fd';
+      const badgeColor = isGrade2 ? '#78350f' : '#0369a1';
+      const subColor = isGrade2 ? '#92400e' : '#0369a1';
+      const btnBg = isGrade2 ? 'linear-gradient(135deg, #f59e0b, #ea580c)' : 'linear-gradient(135deg, #0284c7, #4f46e5)';
+      const btnShadow = isGrade2 ? '0 4px 12px rgba(234, 88, 12, 0.3)' : '0 4px 12px rgba(2, 132, 199, 0.3)';
 
       return `
-        <button type="button" onclick="loginDirectAsKid('${k.id}')" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r ${theme.cardBg} border-2 ${theme.border} hover:shadow-md hover:scale-[1.01] transition-all duration-200 text-left group cursor-pointer shadow-xs">
+        <button type="button" onclick="loginDirectAsKid('${k.id}')" class="w-full flex items-center justify-between p-3.5 rounded-2xl border-2 hover:shadow-md hover:scale-[1.01] transition-all duration-200 text-left group cursor-pointer shadow-sm" style="background-color: ${cardBg} !important; border-color: ${borderColor} !important;">
           <div class="flex items-center space-x-3">
-            <div class="w-11 h-11 rounded-xl ${theme.avatarBg} border flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition shrink-0">
+            <div class="w-11 h-11 rounded-xl border-2 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition shrink-0" style="background-color: ${avatarBg} !important; border-color: ${avatarBorder} !important;">
               🎓
             </div>
             <div>
               <div class="flex items-center space-x-2">
-                <span class="font-black text-sm ${theme.nameColor} transition">${k.name}</span>
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${theme.badgeBg}">
+                <span class="font-black text-base" style="color: ${nameColor} !important;">${k.name}</span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full" style="background-color: ${badgeBg} !important; color: ${badgeColor} !important; border: 1px solid ${borderColor} !important;">
                   Lớp ${k.grade}
                 </span>
               </div>
-              <div class="text-[11px] font-bold ${theme.subColor} mt-0.5 flex items-center space-x-1.5">
-                <span>Toán Tư Duy</span>
-                <span class="text-slate-400">•</span>
-                <span class="font-semibold text-slate-500">#${k.username}</span>
+              <div class="text-xs font-bold mt-0.5" style="color: ${subColor} !important;">
+                Toán Tư Duy • <span class="font-semibold text-slate-500">#${k.username}</span>
               </div>
             </div>
           </div>
-          <span class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r ${theme.btnBg} text-white text-xs font-black shadow-md ${theme.shadow} transition flex items-center space-x-1.5 shrink-0">
+          <span class="px-3.5 py-1.5 rounded-xl text-white text-xs font-black shadow-md transition flex items-center space-x-1.5 shrink-0" style="background: ${btnBg} !important; color: #ffffff !important; box-shadow: ${btnShadow} !important;">
             <span>Vào thi</span>
-            <span class="text-sm">➔</span>
+            <span class="text-sm font-black">➔</span>
           </span>
         </button>
       `;
