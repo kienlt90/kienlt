@@ -77,7 +77,7 @@
   <div class="w-full max-w-5xl mx-auto min-h-screen flex flex-col px-3 sm:px-6 py-4 sm:py-6">
 
     <!-- Top Navigation Header -->
-    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-6">
+    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-4">
       <div class="flex items-center space-x-3">
         <a href="main.html" id="btn-back-portal" class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-teal-500/20 text-lg hover:scale-105 transition" title="Về Portal">
           🇬🇧
@@ -127,6 +127,28 @@
         </button>
       </div>
     </header>
+
+    <!-- KID ACCOUNT SELECTOR / SWITCHER BAR -->
+    <div class="bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-teal-200/90 shadow-sm flex flex-wrap items-center justify-between gap-2.5 mb-5" id="account-switcher-bar">
+      <div class="flex items-center space-x-2">
+        <span class="text-xl">👶</span>
+        <div>
+          <span class="text-xs font-extrabold text-slate-800">Tài khoản bé đang chọn:</span>
+          <span class="text-xs font-bold text-teal-700 ml-1" id="current-active-kid-label">Chưa chọn (Phụ huynh / Admin)</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-1.5">
+        <button onclick="switchActiveKid('kid_thoc')" id="btn-sw-thoc" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-teal-50 hover:bg-teal-100 text-teal-800 border-teal-300">
+          <span>🌱 Bé THÓC (Lớp 2)</span>
+        </button>
+        <button onclick="switchActiveKid('kid_gau')" id="btn-sw-gau" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300">
+          <span>🚀 Bé Gấu (Lớp 5)</span>
+        </button>
+        <button onclick="switchActiveKid('admin')" id="btn-sw-admin" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-slate-800 text-white border-slate-800 shadow-xs">
+          <span>👨‍💼 Phụ huynh / Admin</span>
+        </button>
+      </div>
+    </div>
 
     <!-- CONTENT SECTIONS -->
 
@@ -197,7 +219,7 @@
       </div>
 
       <!-- ADMIN STATS SUMMARY DASHBOARD (Shown for admin) -->
-      <div id="admin-stats-summary-card" class="hidden bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+      <div id="admin-stats-summary-card" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div class="flex items-center space-x-2.5">
             <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-lg">
@@ -437,7 +459,7 @@
     <section id="view-wheel" class="hidden space-y-6">
       
       <!-- ADMIN-ONLY: BẢNG QUẢN LÝ & RESET LƯỢT QUAY THEO TỪNG BÉ (SYNC REALTIME) -->
-      <div id="admin-spin-dashboard" class="hidden bg-white p-5 sm:p-6 rounded-3xl border border-amber-200 shadow-md space-y-4 max-w-3xl mx-auto text-left">
+      <div id="admin-spin-dashboard" class="bg-white p-5 sm:p-6 rounded-3xl border border-amber-200 shadow-md space-y-4 max-w-3xl mx-auto text-left">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xl">
@@ -1945,11 +1967,131 @@ const englishBankGrade5 = [
     let wonRewardsHistory = [];
 
     // ==========================================
+    // 0. KID ACCOUNT SWITCHER HANDLER
+    // ==========================================
+    function switchActiveKid(kidId) {
+      if (kidId === 'admin') {
+        currentKid = null;
+        try { localStorage.removeItem('kienlt_active_kid_session'); } catch(e) {}
+      } else {
+        const matched = kidsList.find(k => k.id === kidId) || (kidId === 'kid_thoc' ? kidsList[0] : kidsList[1]);
+        currentKid = matched;
+        try { localStorage.setItem('kienlt_active_kid_session', JSON.stringify(matched)); } catch(e) {}
+      }
+
+      applyUserRoleAndState();
+      calculateAndRenderStats();
+      updateSpinUI();
+      lucide.createIcons();
+    }
+
+    function applyUserRoleAndState() {
+      const swThoc = document.getElementById('btn-sw-thoc');
+      const swGau = document.getElementById('btn-sw-gau');
+      const swAdmin = document.getElementById('btn-sw-admin');
+      const activeLabel = document.getElementById('current-active-kid-label');
+
+      // Reset button styles
+      if (swThoc) swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+      if (swGau) swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+      if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+
+      const cardG2 = document.getElementById('card-grade-2');
+      const cardG5 = document.getElementById('card-grade-5');
+      const welcomeBanner = document.getElementById('student-welcome-banner');
+      const adminStatsCard = document.getElementById('admin-stats-summary-card');
+      const kidStatsCard = document.getElementById('kid-personal-stats-card');
+      const adminDash = document.getElementById('admin-spin-dashboard');
+      const navTeacher = document.getElementById('nav-teacher');
+      const navRewards = document.getElementById('nav-rewards');
+      const btnBackPortal = document.getElementById('btn-back-portal');
+      const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
+
+      if (currentKid) {
+        const gNum = parseInt(currentKid.grade, 10);
+        selectedGrade = gNum;
+
+        if (activeLabel) activeLabel.textContent = `${currentKid.name} (Lớp ${gNum})`;
+
+        if (currentKid.id === 'kid_thoc' && swThoc) {
+          swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-teal-600 text-white border-teal-600 shadow-sm ring-2 ring-teal-300';
+        } else if (currentKid.id === 'kid_gau' && swGau) {
+          swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-emerald-600 text-white border-emerald-600 shadow-sm ring-2 ring-emerald-300';
+        }
+
+        // Header and banner
+        document.getElementById('header-badge-title').textContent = `Tiếng Anh Lớp ${gNum}`;
+        document.getElementById('header-student-greeting').textContent = `Chào mừng bé: ${currentKid.name} (Lớp ${gNum})`;
+        
+        if (welcomeBanner) {
+          welcomeBanner.classList.remove('hidden');
+          document.getElementById('student-banner-name').textContent = currentKid.name;
+          document.getElementById('student-banner-grade').textContent = `Lớp ${gNum}`;
+        }
+
+        if (kidStatsCard) kidStatsCard.classList.remove('hidden');
+        if (adminStatsCard) adminStatsCard.classList.add('hidden');
+
+        // Isolate Grade Cards
+        if (gNum === 2) {
+          if (cardG5) cardG5.classList.add('hidden');
+          if (cardG2) {
+            cardG2.classList.remove('hidden');
+            cardG2.className = 'col-span-full group bg-gradient-to-br from-white to-teal-50/70 p-8 rounded-3xl border-2 border-teal-300 shadow-md hover:border-teal-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          }
+        } else if (gNum === 5) {
+          if (cardG2) cardG2.classList.add('hidden');
+          if (cardG5) {
+            cardG5.classList.remove('hidden');
+            cardG5.className = 'col-span-full group bg-gradient-to-br from-white to-emerald-50/70 p-8 rounded-3xl border-2 border-emerald-300 shadow-md hover:border-emerald-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          }
+        }
+
+        // Hide Admin tools for kid
+        if (adminDash) adminDash.classList.add('hidden');
+        if (navTeacher) navTeacher.classList.add('hidden');
+        if (navRewards) navRewards.classList.add('hidden');
+        if (wheelSettings) wheelSettings.classList.add('hidden');
+
+      } else {
+        // Admin / Parent Mode
+        if (activeLabel) activeLabel.textContent = 'Phụ huynh / Quản trị viên (Toàn quyền)';
+        if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-400';
+
+        document.getElementById('header-badge-title').textContent = `Quản Trị / Giáo Viên`;
+        document.getElementById('header-student-greeting').textContent = `Đấu Trường Tiếng Anh - Góc Phụ Huynh & Giáo Viên`;
+        
+        if (welcomeBanner) welcomeBanner.classList.add('hidden');
+        if (btnBackPortal) btnBackPortal.classList.remove('hidden');
+
+        if (kidStatsCard) kidStatsCard.classList.add('hidden');
+        if (adminStatsCard) adminStatsCard.classList.remove('hidden');
+
+        // Show Both Grade Cards
+        if (cardG2) {
+          cardG2.classList.remove('hidden');
+          cardG2.className = 'group bg-gradient-to-br from-white to-teal-50/70 p-6 rounded-3xl border-2 border-teal-200/80 shadow-md hover:border-teal-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+        }
+        if (cardG5) {
+          cardG5.classList.remove('hidden');
+          cardG5.className = 'group bg-gradient-to-br from-white to-emerald-50/70 p-6 rounded-3xl border-2 border-emerald-200/80 shadow-md hover:border-emerald-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+        }
+
+        // Show Admin Tools
+        if (adminDash) adminDash.classList.remove('hidden');
+        if (navTeacher) navTeacher.classList.remove('hidden');
+        if (navRewards) navRewards.classList.remove('hidden');
+        if (wheelSettings) {
+          wheelSettings.classList.remove('hidden');
+          wheelSettings.classList.add('flex');
+        }
+      }
+    }
+
+    // ==========================================
     // 1. STATS CALCULATION & RENDERING
     // ==========================================
     function calculateAndRenderStats() {
-      const currentKidId = currentKid ? currentKid.id : null;
-
       // Render Admin Table
       const adminTableBody = document.getElementById('admin-stats-table-body');
       if (adminTableBody) {
@@ -1957,7 +2099,7 @@ const englishBankGrade5 = [
           const kidSubs = submissions.filter(s => s.studentId === kid.id || s.studentName === kid.name);
           const totalQuizzes = kidSubs.length;
           
-          let avgScore = 0;
+          let avgScore = "0.0";
           let maxScore = 0;
           let totalCorrect = 0;
           let totalWrong = 0;
@@ -1999,7 +2141,7 @@ const englishBankGrade5 = [
                 </div>
               </td>
               <td class="p-3 text-center font-bold text-slate-800">${totalQuizzes} bài</td>
-              <td class="p-3 text-center font-extrabold ${avgScore >= 8 ? 'text-emerald-600' : (avgScore >= 5 ? 'text-amber-600' : 'text-slate-600')}">${avgScore} / 10</td>
+              <td class="p-3 text-center font-extrabold ${parseFloat(avgScore) >= 8 ? 'text-emerald-600' : (parseFloat(avgScore) >= 5 ? 'text-amber-600' : 'text-slate-600')}">${avgScore} / 10</td>
               <td class="p-3 text-center font-bold">
                 <span class="text-emerald-600">${totalCorrect}</span> / <span class="text-rose-500">${totalWrong}</span>
               </td>
@@ -2019,7 +2161,7 @@ const englishBankGrade5 = [
       if (currentKid) {
         const kidSubs = submissions.filter(s => s.studentId === currentKid.id || s.studentName === currentKid.name);
         const totalQuizzes = kidSubs.length;
-        let avgScore = 0;
+        let avgScore = "0.0";
         let totalCorrect = 0;
         let totalWrong = 0;
         let accuracy = 0;
@@ -2044,16 +2186,15 @@ const englishBankGrade5 = [
           accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
         }
 
-        document.getElementById('kid-stat-total-quizzes').textContent = `${totalQuizzes} bài`;
-        document.getElementById('kid-stat-avg-score').textContent = `${avgScore} / 10`;
-        document.getElementById('kid-stat-correct-wrong').innerHTML = `<span class="text-emerald-600">${totalCorrect}</span> / <span class="text-rose-500">${totalWrong}</span>`;
-        document.getElementById('kid-stat-accuracy').textContent = `${accuracy}%`;
+        const totalQEl = document.getElementById('kid-stat-total-quizzes');
+        const avgScoreEl = document.getElementById('kid-stat-avg-score');
+        const cwEl = document.getElementById('kid-stat-correct-wrong');
+        const accEl = document.getElementById('kid-stat-accuracy');
 
-        document.getElementById('kid-personal-stats-card').classList.remove('hidden');
-        document.getElementById('admin-stats-summary-card').classList.add('hidden');
-      } else {
-        document.getElementById('kid-personal-stats-card').classList.add('hidden');
-        document.getElementById('admin-stats-summary-card').classList.remove('hidden');
+        if (totalQEl) totalQEl.textContent = `${totalQuizzes} bài`;
+        if (avgScoreEl) avgScoreEl.textContent = `${avgScore} / 10`;
+        if (cwEl) cwEl.innerHTML = `<span class="text-emerald-600">${totalCorrect}</span> / <span class="text-rose-500">${totalWrong}</span>`;
+        if (accEl) accEl.textContent = `${accuracy}%`;
       }
     }
 
@@ -2074,7 +2215,7 @@ const englishBankGrade5 = [
       quizSeconds = 0;
 
       document.getElementById('quiz-badge').textContent = `Lớp ${grade}`;
-      document.getElementById('quiz-student-name').textContent = currentKid ? currentKid.name : 'Khách / Quản trị viên';
+      document.getElementById('quiz-student-name').textContent = currentKid ? currentKid.name : (grade === 2 ? 'Bé THÓC' : 'Bé Gấu');
       
       document.getElementById('level-selection').classList.add('hidden');
       document.getElementById('quiz-result-box').classList.add('hidden');
@@ -2199,8 +2340,8 @@ const englishBankGrade5 = [
       else if (score >= 8) earnedSpins = 1;
 
       // Update student spin balance
-      const kidId = currentKid ? currentKid.id : 'kid_thoc';
-      const studentName = currentKid ? currentKid.name : 'Khách / Quản trị viên';
+      const kidId = currentKid ? currentKid.id : (selectedGrade === 2 ? 'kid_thoc' : 'kid_gau');
+      const studentName = currentKid ? currentKid.name : (selectedGrade === 2 ? 'THÓC' : 'Gấu');
 
       if (earnedSpins > 0) {
         const currentSpins = spinsMap[kidId] !== undefined ? spinsMap[kidId] : 1;
@@ -2840,6 +2981,7 @@ const englishBankGrade5 = [
         // Sync Kids list
         window.CloudSync.getKids((kids) => {
           kidsList = kids;
+          applyUserRoleAndState();
           if (!currentKid) {
             renderAdminKidsSpinList();
           }
@@ -2870,93 +3012,9 @@ const englishBankGrade5 = [
         });
       }
 
-      if (currentKid) {
-        // ==========================================
-        // 👧 CHẾ ĐỘ DÀNH CHO HỌC SINH (BÉ)
-        // ==========================================
-        const gNum = parseInt(currentKid.grade, 10);
-        document.getElementById('header-badge-title').textContent = `Tiếng Anh Lớp ${gNum}`;
-        document.getElementById('header-student-greeting').textContent = `Chào mừng bé: ${currentKid.name} (Lớp ${gNum})`;
-        
-        document.getElementById('student-welcome-banner').classList.remove('hidden');
-        document.getElementById('student-banner-name').textContent = currentKid.name;
-        document.getElementById('student-banner-grade').textContent = `Lớp ${gNum}`;
-        document.getElementById('btn-back-portal').classList.add('hidden');
-
-        // Cách ly khối lớp
-        const cardG2 = document.getElementById('card-grade-2');
-        const cardG5 = document.getElementById('card-grade-5');
-
-        if (gNum === 2) {
-          if (cardG5) cardG5.classList.add('hidden');
-          if (cardG2) {
-            cardG2.classList.remove('hidden');
-            cardG2.className = 'col-span-full group bg-gradient-to-br from-white to-teal-50/70 p-8 rounded-3xl border-2 border-teal-300 shadow-md hover:border-teal-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
-          }
-        } else if (gNum === 5) {
-          if (cardG2) cardG2.classList.add('hidden');
-          if (cardG5) {
-            cardG5.classList.remove('hidden');
-            cardG5.className = 'col-span-full group bg-gradient-to-br from-white to-emerald-50/70 p-8 rounded-3xl border-2 border-emerald-300 shadow-md hover:border-emerald-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
-          }
-        }
-
-        // ẨN TOÀN BỘ CHỨC NĂNG QUẢN TRỊ ĐỐI VỚI BÉ:
-        const adminDash = document.getElementById('admin-spin-dashboard');
-        if (adminDash) adminDash.classList.add('hidden');
-
-        const btnResetSpins = document.getElementById('btn-reset-spins');
-        if (btnResetSpins) btnResetSpins.classList.add('hidden');
-
-        const navRewards = document.getElementById('nav-rewards');
-        if (navRewards) navRewards.classList.add('hidden');
-        const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
-        if (wheelSettings) wheelSettings.classList.add('hidden');
-
-        const navTeacher = document.getElementById('nav-teacher');
-        if (navTeacher) navTeacher.classList.add('hidden');
-
-      } else {
-        // ==========================================
-        // 👨‍💼 CHẾ ĐỘ DÀNH CHO ADMIN / GIÁO VIÊN / PHỤ HUYNH
-        // ==========================================
-        document.getElementById('header-badge-title').textContent = `Quản Trị / Giáo Viên`;
-        document.getElementById('header-student-greeting').textContent = `Đấu Trường Tiếng Anh - Góc Phụ Huynh & Giáo Viên`;
-        document.getElementById('student-welcome-banner').classList.add('hidden');
-        document.getElementById('btn-back-portal').classList.remove('hidden');
-
-        const cardG2 = document.getElementById('card-grade-2');
-        const cardG5 = document.getElementById('card-grade-5');
-        if (cardG2) {
-          cardG2.classList.remove('hidden');
-          cardG2.className = 'group bg-gradient-to-br from-white to-teal-50/70 p-6 rounded-3xl border-2 border-teal-200/80 shadow-md hover:border-teal-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
-        }
-        if (cardG5) {
-          cardG5.classList.remove('hidden');
-          cardG5.className = 'group bg-gradient-to-br from-white to-emerald-50/70 p-6 rounded-3xl border-2 border-emerald-200/80 shadow-md hover:border-emerald-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
-        }
-
-        // HIỂN THỊ ĐẦY ĐỦ CÁC QUYỀN:
-        const adminDash = document.getElementById('admin-spin-dashboard');
-        if (adminDash) {
-          adminDash.classList.remove('hidden');
-          renderAdminKidsSpinList();
-        }
-
-        const btnResetSpins = document.getElementById('btn-reset-spins');
-        if (btnResetSpins) btnResetSpins.classList.remove('hidden');
-
-        const navRewards = document.getElementById('nav-rewards');
-        if (navRewards) navRewards.classList.remove('hidden');
-        const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
-        if (wheelSettings) {
-          wheelSettings.classList.remove('hidden');
-          wheelSettings.classList.add('flex');
-        }
-
-        const navTeacher = document.getElementById('nav-teacher');
-        if (navTeacher) navTeacher.classList.remove('hidden');
-      }
+      applyUserRoleAndState();
+      calculateAndRenderStats();
+      updateSpinUI();
     });
   </script>
 </body>

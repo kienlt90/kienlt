@@ -128,6 +128,28 @@
       </div>
     </header>
 
+    <!-- KID ACCOUNT SELECTOR / SWITCHER BAR -->
+    <div class="bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-amber-200/90 shadow-sm flex flex-wrap items-center justify-between gap-2.5 mb-5" id="account-switcher-bar">
+      <div class="flex items-center space-x-2">
+        <span class="text-xl">👶</span>
+        <div>
+          <span class="text-xs font-extrabold text-slate-800">Tài khoản bé đang chọn:</span>
+          <span class="text-xs font-bold text-amber-700 ml-1" id="current-active-kid-label">Chưa chọn (Phụ huynh / Admin)</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-1.5">
+        <button onclick="switchActiveKid('kid_thoc')" id="btn-sw-thoc" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300">
+          <span>🌱 Bé THÓC (Lớp 2)</span>
+        </button>
+        <button onclick="switchActiveKid('kid_gau')" id="btn-sw-gau" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-sky-50 hover:bg-sky-100 text-sky-800 border-sky-300">
+          <span>🚀 Bé Gấu (Lớp 5)</span>
+        </button>
+        <button onclick="switchActiveKid('admin')" id="btn-sw-admin" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-slate-800 text-white border-slate-800 shadow-xs">
+          <span>👨‍💼 Phụ huynh / Admin</span>
+        </button>
+      </div>
+    </div>
+
     <!-- CONTENT SECTIONS -->
 
     <!-- ============================================== -->
@@ -4096,23 +4118,74 @@ const mathBankGrade5 = [
         });
       }
 
+    // ==========================================
+    // 0. KID ACCOUNT SWITCHER HANDLER
+    // ==========================================
+    function switchActiveKid(kidId) {
+      if (kidId === 'admin') {
+        currentKid = null;
+        try { localStorage.removeItem('kienlt_active_kid_session'); } catch(e) {}
+      } else {
+        const allK = getAllKids();
+        const matched = allK.find(k => k.id === kidId) || (kidId === 'kid_thoc' ? allK[0] : allK[1]);
+        currentKid = matched;
+        try { localStorage.setItem('kienlt_active_kid_session', JSON.stringify(matched)); } catch(e) {}
+      }
+
+      applyUserRoleAndState();
+      calculateAndRenderStats();
+      updateSpinUI();
+      lucide.createIcons();
+    }
+
+    function applyUserRoleAndState() {
+      const swThoc = document.getElementById('btn-sw-thoc');
+      const swGau = document.getElementById('btn-sw-gau');
+      const swAdmin = document.getElementById('btn-sw-admin');
+      const activeLabel = document.getElementById('current-active-kid-label');
+
+      // Reset button styles
+      if (swThoc) swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+      if (swGau) swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+      if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+
+      const cardG2 = document.getElementById('card-grade-2');
+      const cardG5 = document.getElementById('card-grade-5');
+      const welcomeBanner = document.getElementById('student-welcome-banner');
+      const adminStatsCard = document.getElementById('admin-stats-summary-card');
+      const kidStatsCard = document.getElementById('kid-personal-stats-card');
+      const adminDash = document.getElementById('admin-spin-dashboard');
+      const navTeacher = document.getElementById('nav-teacher');
+      const navRewards = document.getElementById('nav-rewards');
+      const btnBackPortal = document.getElementById('btn-back-portal');
+      const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
+
       if (currentKid) {
-        // ==========================================
-        // 👧 CHẾ ĐỘ DÀNH CHO HỌC SINH (BÉ)
-        // ==========================================
         const gNum = parseInt(currentKid.grade, 10);
+        currentGrade = gNum;
+
+        if (activeLabel) activeLabel.textContent = `${currentKid.name} (Lớp ${gNum})`;
+
+        if (currentKid.id === 'kid_thoc' && swThoc) {
+          swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-amber-500 text-white border-amber-500 shadow-sm ring-2 ring-amber-300';
+        } else if (currentKid.id === 'kid_gau' && swGau) {
+          swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-sky-600 text-white border-sky-600 shadow-sm ring-2 ring-sky-300';
+        }
+
+        // Header and banner
         document.getElementById('header-badge-title').textContent = `Toán Lớp ${gNum}`;
         document.getElementById('header-student-greeting').textContent = `Chào mừng bé: ${currentKid.name} (Lớp ${gNum})`;
         
-        document.getElementById('student-welcome-banner').classList.remove('hidden');
-        document.getElementById('student-banner-name').textContent = currentKid.name;
-        document.getElementById('student-banner-grade').textContent = `Lớp ${gNum}`;
-        document.getElementById('btn-back-portal').classList.add('hidden');
+        if (welcomeBanner) {
+          welcomeBanner.classList.remove('hidden');
+          document.getElementById('student-banner-name').textContent = currentKid.name;
+          document.getElementById('student-banner-grade').textContent = `Lớp ${gNum}`;
+        }
 
-        // Cách ly khối lớp
-        const cardG2 = document.getElementById('card-grade-2');
-        const cardG5 = document.getElementById('card-grade-5');
+        if (kidStatsCard) kidStatsCard.classList.remove('hidden');
+        if (adminStatsCard) adminStatsCard.classList.add('hidden');
 
+        // Isolate Grade Cards
         if (gNum === 2) {
           if (cardG5) cardG5.classList.add('hidden');
           if (cardG2) {
@@ -4127,32 +4200,27 @@ const mathBankGrade5 = [
           }
         }
 
-        // ẨN TOÀN BỘ CHỨC NĂNG QUẢN TRỊ ĐỐI VỚI BÉ:
-        const adminDash = document.getElementById('admin-spin-dashboard');
+        // Hide Admin tools for kid
         if (adminDash) adminDash.classList.add('hidden');
-
-        const btnResetSpins = document.getElementById('btn-reset-spins');
-        if (btnResetSpins) btnResetSpins.classList.add('hidden');
-
-        const navRewards = document.getElementById('nav-rewards');
+        if (navTeacher) navTeacher.classList.add('hidden');
         if (navRewards) navRewards.classList.add('hidden');
-        const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
         if (wheelSettings) wheelSettings.classList.add('hidden');
 
-        const navTeacher = document.getElementById('nav-teacher');
-        if (navTeacher) navTeacher.classList.add('hidden');
-
       } else {
-        // ==========================================
-        // 👨‍💼 CHẾ ĐỘ DÀNH CHO ADMIN / GIÁO VIÊN / PHỤ HUYNH
-        // ==========================================
+        // Admin / Parent Mode
+        if (activeLabel) activeLabel.textContent = 'Phụ huynh / Quản trị viên (Toàn quyền)';
+        if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-400';
+
         document.getElementById('header-badge-title').textContent = `Quản Trị / Giáo Viên`;
         document.getElementById('header-student-greeting').textContent = `Đấu Trường Toán Học - Góc Phụ Huynh & Giáo Viên`;
-        document.getElementById('student-welcome-banner').classList.add('hidden');
-        document.getElementById('btn-back-portal').classList.remove('hidden');
+        
+        if (welcomeBanner) welcomeBanner.classList.add('hidden');
+        if (btnBackPortal) btnBackPortal.classList.remove('hidden');
 
-        const cardG2 = document.getElementById('card-grade-2');
-        const cardG5 = document.getElementById('card-grade-5');
+        if (kidStatsCard) kidStatsCard.classList.add('hidden');
+        if (adminStatsCard) adminStatsCard.classList.remove('hidden');
+
+        // Show Both Grade Cards
         if (cardG2) {
           cardG2.classList.remove('hidden');
           cardG2.className = 'group bg-gradient-to-br from-white to-amber-50/70 p-6 rounded-3xl border-2 border-amber-200/80 shadow-md hover:border-amber-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
@@ -4162,27 +4230,62 @@ const mathBankGrade5 = [
           cardG5.className = 'group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
         }
 
-        // HIỂN THỊ ĐẦY ĐỦ CÁC QUYỀN:
-        const adminDash = document.getElementById('admin-spin-dashboard');
-        if (adminDash) {
-          adminDash.classList.remove('hidden');
-          renderAdminKidsSpinList();
-        }
-
-        const btnResetSpins = document.getElementById('btn-reset-spins');
-        if (btnResetSpins) btnResetSpins.classList.remove('hidden');
-
-        const navRewards = document.getElementById('nav-rewards');
+        // Show Admin Tools
+        if (adminDash) adminDash.classList.remove('hidden');
+        if (navTeacher) navTeacher.classList.remove('hidden');
         if (navRewards) navRewards.classList.remove('hidden');
-        const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
         if (wheelSettings) {
           wheelSettings.classList.remove('hidden');
           wheelSettings.classList.add('flex');
         }
-
-        const navTeacher = document.getElementById('nav-teacher');
-        if (navTeacher) navTeacher.classList.remove('hidden');
       }
+    }
+
+    // ==========================================
+    // 8. INITIALIZE & REALTIME CLOUD LISTENERS
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      // Setup Realtime Cloud Sync Listeners
+      if (window.CloudSync) {
+        // Sync Kids list
+        window.CloudSync.getKids((kids) => {
+          kidsList = kids;
+          applyUserRoleAndState();
+          if (!currentKid) {
+            renderAdminKidsSpinList();
+          }
+          calculateAndRenderStats();
+        });
+
+        // Sync Spins
+        window.CloudSync.getSpins((spins) => {
+          spinsMap = spins;
+          updateSpinUI();
+          if (!currentKid) renderAdminKidsSpinList();
+          calculateAndRenderStats();
+        });
+
+        // Sync Submissions
+        window.CloudSync.getSubmissions((subs) => {
+          submissions = subs;
+          updatePendingBadge();
+          if (!currentKid) renderTeacherSubmissions();
+          calculateAndRenderStats();
+        });
+
+        // Sync Rewards
+        window.CloudSync.getRewards((rewards) => {
+          rewardItems = rewards;
+          drawWheel();
+          if (!currentKid) renderRewardsTable();
+        });
+      }
+
+      applyUserRoleAndState();
+      calculateAndRenderStats();
+      updateSpinUI();
     });
   </script>
 </body>
