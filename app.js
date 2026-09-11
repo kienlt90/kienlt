@@ -36,24 +36,31 @@ window.renderKidsLoginList = function() {
   const container = document.getElementById('kids-avatar-list');
   if (!container) return;
 
-  const defaultKids = [
-    { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
-    { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
-  ];
-  const kids = JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
-
-  container.innerHTML = kids.map(k => `
-    <button type="button" onclick="loginDirectAsKid('${k.id}')" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 12px; color: #fff; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(251, 191, 36, 0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 1.4rem;">🎓</span>
-        <div style="text-align: left;">
-          <div style="font-weight: 700; font-size: 0.85rem; color: #f8fafc;">${k.name}</div>
-          <div style="font-size: 0.7rem; color: #fbbf24;">Toán Lớp ${k.grade}</div>
+  function render(kids) {
+    container.innerHTML = kids.map(k => `
+      <button type="button" onclick="loginDirectAsKid('${k.id}')" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 12px; color: #fff; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(251, 191, 36, 0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.4rem;">🎓</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 700; font-size: 0.85rem; color: #f8fafc;">${k.name}</div>
+            <div style="font-size: 0.7rem; color: #fbbf24;">Toán Lớp ${k.grade}</div>
+          </div>
         </div>
-      </div>
-      <span style="font-size: 0.75rem; font-weight: 700; color: #38bdf8;">Vào thi ➔</span>
-    </button>
-  `).join('');
+        <span style="font-size: 0.75rem; font-weight: 700; color: #38bdf8;">Vào thi ➔</span>
+      </button>
+    `).join('');
+  }
+
+  if (window.CloudSync) {
+    window.CloudSync.getKids(render);
+  } else {
+    const defaultKids = [
+      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
+    ];
+    const kids = JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
+    render(kids);
+  }
 };
 
 window.loginDirectAsKid = function(kidId) {
@@ -61,7 +68,11 @@ window.loginDirectAsKid = function(kidId) {
     { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
     { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
   ];
-  const kids = JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
+  let kids = defaultKids;
+  try {
+    const stored = localStorage.getItem('kienlt_kid_accounts');
+    if (stored) kids = JSON.parse(stored);
+  } catch(e) {}
   const kid = kids.find(k => k.id === kidId) || kids[0];
 
   localStorage.setItem('kienlt_active_kid_session', JSON.stringify(kid));

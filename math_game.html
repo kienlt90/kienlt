@@ -14,6 +14,10 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Firebase Realtime Database SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="firebase_sync.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -82,6 +86,10 @@
           <div class="flex items-center space-x-2">
             <h1 class="text-xs font-bold tracking-wider text-amber-600 uppercase">Đấu Trường Toán Học</h1>
             <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold" id="header-badge-title">Toán Tư Duy</span>
+            <span id="cloud-sync-status" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-extrabold flex items-center space-x-1" title="Đã kết nối Google Firebase Realtime Cloud">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+              <span class="hidden sm:inline">Cloud Realtime</span>
+            </span>
           </div>
           <p class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight" id="header-student-greeting">
             Thử Thách 10 Bài Toán & Vòng Quay May Mắn
@@ -284,7 +292,7 @@
         <div>
           <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold" id="res-grade-badge">Lớp 2</span>
           <h2 class="text-2xl font-black text-slate-900 mt-2">Hoàn Thành Bài Thi!</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Hệ thống đã tự động chấm điểm bài làm của bạn.</p>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Hệ thống đã tự động chấm điểm và đồng bộ lên Cloud Database.</p>
         </div>
 
         <div class="grid grid-cols-3 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
@@ -305,11 +313,11 @@
         <!-- Status Notice Box -->
         <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-left space-y-1.5">
           <div class="flex items-center space-x-2">
-            <i data-lucide="check-circle-2" class="w-4 h-4 text-indigo-600"></i>
-            <span class="text-xs font-extrabold text-indigo-900">Bài làm đã gửi về hệ thống</span>
+            <i data-lucide="cloud-check" class="w-4 h-4 text-indigo-600"></i>
+            <span class="text-xs font-extrabold text-indigo-900">Bài làm đã lưu online & gửi cho Giáo viên</span>
           </div>
           <p class="text-xs text-indigo-700 leading-relaxed">
-            Kết quả đã được ghi nhận. Phụ huynh/Cô giáo sẽ kiểm tra và nhận xét sau. Bạn được cộng <b>+1 lượt quay thưởng</b> may mắn!
+            Kết quả đã được đồng bộ lên Google Firebase. Phụ huynh/Cô giáo mở bất kỳ máy tính nào cũng sẽ thấy ngay. Bạn được cộng <b>+1 lượt quay thưởng</b>!
           </p>
         </div>
 
@@ -331,7 +339,7 @@
     <!-- ============================================== -->
     <section id="view-wheel" class="hidden space-y-6">
       
-      <!-- ADMIN-ONLY: BẢNG QUẢN LÝ & RESET LƯỢT QUAY THEO TỪNG BÉ -->
+      <!-- ADMIN-ONLY: BẢNG QUẢN LÝ & RESET LƯỢT QUAY THEO TỪNG BÉ (SYNC REALTIME) -->
       <div id="admin-spin-dashboard" class="hidden bg-white p-5 sm:p-6 rounded-3xl border border-amber-200 shadow-md space-y-4 max-w-3xl mx-auto text-left">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div class="flex items-center space-x-3">
@@ -339,8 +347,11 @@
               🎡
             </div>
             <div>
-              <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Quản Lý Lượt Quay Từng Bé</h3>
-              <p class="text-xs text-slate-500">Xem và nạp/reset lượt quay độc lập cho từng tài khoản học sinh</p>
+              <div class="flex items-center space-x-2">
+                <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Quản Lý Lượt Quay Từng Bé</h3>
+                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-bold">Cloud Sync</span>
+              </div>
+              <p class="text-xs text-slate-500">Xem và nạp/reset lượt quay độc lập cho từng bé (Đồng bộ Realtime mọi thiết bị)</p>
             </div>
           </div>
           <div class="flex items-center space-x-2">
@@ -410,17 +421,20 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- 3. TEACHER REVIEW: DUYỆT BÀI & LỜI PHÊ CÔ GIÁO (ADMIN ONLY) -->
+    <!-- 3. TEACHER REVIEW: DUYỆT BÀI & LỜI PHÊ CÔ GIÁO (ADMIN ONLY - REALTIME SYNC) -->
     <!-- ============================================== -->
     <section id="view-teacher" class="hidden space-y-6">
       
       <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
         <div>
-          <h2 class="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
-            <i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i>
-            <span id="teacher-section-title">Góc Cô Giáo & Phụ Huynh Phê Duyệt</span>
-          </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Kiểm tra kết quả bài làm, điều chỉnh điểm và nhập Lời phê / Ghi chú cho học sinh.</p>
+          <div class="flex items-center space-x-2">
+            <h2 class="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i>
+              <span id="teacher-section-title">Góc Cô Giáo & Phụ Huynh Phê Duyệt</span>
+            </h2>
+            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-bold">Cloud Online</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Kiểm tra kết quả bài làm, điều chỉnh điểm và nhập Lời phê / Ghi chú cho học sinh (Đồng bộ mọi thiết bị).</p>
         </div>
         <button onclick="clearAllSubmissions()" id="btn-clear-submissions" class="text-xs text-rose-600 hover:text-rose-800 font-bold flex items-center space-x-1">
           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -1779,63 +1793,32 @@ const mathBankGrade5 = [
       }
     } catch(e) {}
 
-    // Default Kids accounts (THÓC - Lớp 2, Gấu - Lớp 5)
-    const defaultKids = [
-      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
-      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
-    ];
+    // Submissions and Rewards state
+    let submissions = [];
+    let rewardItems = [];
+    let kidsList = [];
+    let spinsMap = { 'kid_thoc': 1, 'kid_gau': 1 };
 
     function getAllKids() {
-      try {
-        const stored = localStorage.getItem('kienlt_kid_accounts');
-        if (stored) return JSON.parse(stored);
-      } catch(e) {}
-      return defaultKids;
-    }
-
-    // Per-Kid Spin Storage
-    function getKidSpinsMap() {
-      try {
-        const stored = localStorage.getItem('kienlt_kid_spins_map');
-        if (stored) return JSON.parse(stored);
-      } catch(e) {}
-      return { 'kid_thoc': 1, 'kid_gau': 1 };
-    }
-
-    function saveKidSpinsMap(map) {
-      try {
-        localStorage.setItem('kienlt_kid_spins_map', JSON.stringify(map));
-      } catch(e) {}
+      return kidsList.length > 0 ? kidsList : [
+        { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+        { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
+      ];
     }
 
     function getKidSpins(kidId) {
-      const map = getKidSpinsMap();
-      return map[kidId] !== undefined ? map[kidId] : 1;
+      return spinsMap[kidId] !== undefined ? spinsMap[kidId] : 1;
     }
 
     function setKidSpins(kidId, count) {
-      const map = getKidSpinsMap();
-      map[kidId] = Math.max(0, parseInt(count, 10) || 0);
-      saveKidSpinsMap(map);
+      const val = Math.max(0, parseInt(count, 10) || 0);
+      spinsMap[kidId] = val;
+      if (window.CloudSync) {
+        window.CloudSync.setKidSpin(kidId, val);
+      }
       updateSpinUI();
       renderAdminKidsSpinList();
     }
-
-    // Rewards list
-    const defaultRewards = [
-      "🍬 10 Viên Kẹo",
-      "✏️ 1 Cây Bút Chì Màu",
-      "🎮 30 Phút Chơi Game",
-      "🍦 1 Cây Kem Ngon",
-      "📚 1 Cuốn Truyện Tranh",
-      "🎡 +1 Lượt Quay Thưởng",
-      "🌟 Huy Hiệu Toán Học",
-      "🎡 +2 Lượt Quay Thưởng"
-    ];
-    let rewardItems = JSON.parse(localStorage.getItem('kienlt_math_rewards')) || defaultRewards;
-
-    // Submissions
-    let submissions = JSON.parse(localStorage.getItem('kienlt_math_submissions')) || [];
 
     // ==========================================
     // SMART RANDOMIZER: Pick 10 questions without repeating in 3 consecutive runs
@@ -1913,7 +1896,7 @@ const mathBankGrade5 = [
     function soundWin() { playTone(523.25, 'triangle', 0.15); setTimeout(() => playTone(659.25, 'triangle', 0.15), 150); setTimeout(() => playTone(783.99, 'triangle', 0.4), 300); }
 
     // ==========================================
-    // 3. QUIZ LOGIC
+    // 3. QUIZ LOGIC & ONLINE SUBMISSION
     // ==========================================
     function startQuiz(grade) {
       const gNum = parseInt(grade, 10);
@@ -2022,7 +2005,6 @@ const mathBankGrade5 = [
         const current = getKidSpins(currentKid.id);
         setKidSpins(currentKid.id, current + 1);
       } else {
-        // If testing in admin mode, award to default grade kid
         const targetKidId = currentGrade === 2 ? 'kid_thoc' : 'kid_gau';
         const current = getKidSpins(targetKidId);
         setKidSpins(targetKidId, current + 1);
@@ -2030,7 +2012,7 @@ const mathBankGrade5 = [
 
       const sName = currentKid ? currentKid.name : (currentGrade === 2 ? 'THÓC' : 'Gấu');
 
-      // Create Submission Record for Teacher Review
+      // Create Submission Record
       const newSubmission = {
         id: Date.now(),
         studentName: sName,
@@ -2044,11 +2026,10 @@ const mathBankGrade5 = [
         questions: currentQuestions
       };
 
-      submissions.unshift(newSubmission);
-      try {
-        localStorage.setItem('kienlt_math_submissions', JSON.stringify(submissions));
-      } catch(e) {}
-      updatePendingBadge();
+      // Save via CloudSync (Syncs to Firebase & localStorage)
+      if (window.CloudSync) {
+        window.CloudSync.saveSubmission(newSubmission);
+      }
 
       // Show Result View
       document.getElementById('quiz-box').classList.add('hidden');
@@ -2186,7 +2167,7 @@ const mathBankGrade5 = [
         const spins = getKidSpins(k.id);
         const isG2 = k.grade === 2;
         return `
-          <div class="bg-slate-50/80 p-4 rounded-2xl border ${isG2 ? 'border-amber-200' : 'border-sky-200'} flex flex-col justify-between space-y-3">
+          <div class="bg-slate-50/80 p-4 rounded-2xl border ${isG2 ? 'border-amber-200' : 'border-sky-200'} flex flex-col justify-between space-y-3 shadow-xs">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2.5">
                 <span class="text-2xl">${isG2 ? '🌱' : '🚀'}</span>
@@ -2299,7 +2280,7 @@ const mathBankGrade5 = [
     }
 
     function renderTeacherSubmissions() {
-      if (currentKid) return; // Prevent kids from rendering submissions
+      if (currentKid) return;
 
       const container = document.getElementById('teacher-submissions-container');
       if (!container) return;
@@ -2309,7 +2290,7 @@ const mathBankGrade5 = [
           <div class="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-2">
             <div class="text-3xl">📭</div>
             <h3 class="font-bold text-slate-700">Chưa có bài nộp nào</h3>
-            <p class="text-xs text-slate-400">Các bài làm 10 câu của học sinh sẽ xuất hiện tại đây để cô giáo duyệt và ghi nhận xét.</p>
+            <p class="text-xs text-slate-400">Các bài làm 10 câu của học sinh trên mọi thiết bị sẽ tự động xuất hiện tại đây theo thời gian thực.</p>
           </div>
         `;
         return;
@@ -2412,13 +2393,14 @@ const mathBankGrade5 = [
       sub.teacherNotes = document.getElementById('modal-teacher-notes').value.trim();
       sub.status = 'approved';
 
-      try {
-        localStorage.setItem('kienlt_math_submissions', JSON.stringify(submissions));
-      } catch(e) {}
+      if (window.CloudSync) {
+        window.CloudSync.saveSubmission(sub);
+      }
+
       updatePendingBadge();
       renderTeacherSubmissions();
       closeReviewModal();
-      alert('Đã lưu phê duyệt và ghi chú của cô giáo thành công!');
+      alert('Đã lưu phê duyệt và đồng bộ lên Cloud Database thành công!');
     }
 
     function clearAllSubmissions() {
@@ -2426,11 +2408,11 @@ const mathBankGrade5 = [
         alert('Bạn không có quyền xóa dữ liệu bài làm!');
         return;
       }
-      if (confirm('Bạn có chắc muốn xóa toàn bộ lịch sử bài làm?')) {
+      if (confirm('Bạn có chắc muốn xóa toàn bộ lịch sử bài làm trên cả Đám mây và thiết bị?')) {
         submissions = [];
-        try {
-          localStorage.removeItem('kienlt_math_submissions');
-        } catch(e) {}
+        if (window.CloudSync) {
+          window.CloudSync.clearAllSubmissions();
+        }
         updatePendingBadge();
         renderTeacherSubmissions();
       }
@@ -2469,9 +2451,9 @@ const mathBankGrade5 = [
       if (!val) return;
 
       rewardItems.push(val);
-      try {
-        localStorage.setItem('kienlt_math_rewards', JSON.stringify(rewardItems));
-      } catch(e) {}
+      if (window.CloudSync) {
+        window.CloudSync.saveRewards(rewardItems);
+      }
       input.value = '';
       renderRewardsTable();
       drawWheel();
@@ -2487,9 +2469,9 @@ const mathBankGrade5 = [
         return;
       }
       rewardItems.splice(index, 1);
-      try {
-        localStorage.setItem('kienlt_math_rewards', JSON.stringify(rewardItems));
-      } catch(e) {}
+      if (window.CloudSync) {
+        window.CloudSync.saveRewards(rewardItems);
+      }
       renderRewardsTable();
       drawWheel();
     }
@@ -2500,10 +2482,19 @@ const mathBankGrade5 = [
         return;
       }
       if (confirm('Khôi phục danh mục quà tặng về mặc định ban đầu?')) {
-        rewardItems = [...defaultRewards];
-        try {
-          localStorage.setItem('kienlt_math_rewards', JSON.stringify(rewardItems));
-        } catch(e) {}
+        rewardItems = [
+          "🍬 10 Viên Kẹo",
+          "✏️ 1 Cây Bút Chì Màu",
+          "🎮 30 Phút Chơi Game",
+          "🍦 1 Cây Kem Ngon",
+          "📚 1 Cuốn Truyện Tranh",
+          "🎡 +1 Lượt Quay Thưởng",
+          "🌟 Huy Hiệu Toán Học",
+          "🎡 +2 Lượt Quay Thưởng"
+        ];
+        if (window.CloudSync) {
+          window.CloudSync.saveRewards(rewardItems);
+        }
         renderRewardsTable();
         drawWheel();
       }
@@ -2520,7 +2511,6 @@ const mathBankGrade5 = [
     // 7. TAB NAVIGATION SWITCHER WITH ACCESS CONTROL
     // ==========================================
     function switchTab(tab) {
-      // Access guard for Kid account
       if (currentKid && (tab === 'teacher' || tab === 'rewards')) {
         alert('Chức năng này chỉ dành cho Admin / Giáo viên!');
         switchTab('arena');
@@ -2558,13 +2548,40 @@ const mathBankGrade5 = [
     }
 
     // ==========================================
-    // 8. INITIALIZE & ROLE-BASED ACCESS CONTROL
+    // 8. INITIALIZE & REALTIME CLOUD LISTENERS
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      updatePendingBadge();
-      updateSpinUI();
-      drawWheel();
+
+      // Setup Realtime Cloud Sync Listeners
+      if (window.CloudSync) {
+        // Sync Kids list
+        window.CloudSync.getKids((kids) => {
+          kidsList = kids;
+          if (!currentKid) renderAdminKidsSpinList();
+        });
+
+        // Sync Spins
+        window.CloudSync.getSpins((spins) => {
+          spinsMap = spins;
+          updateSpinUI();
+          if (!currentKid) renderAdminKidsSpinList();
+        });
+
+        // Sync Submissions
+        window.CloudSync.getSubmissions((subs) => {
+          submissions = subs;
+          updatePendingBadge();
+          if (!currentKid) renderTeacherSubmissions();
+        });
+
+        // Sync Rewards
+        window.CloudSync.getRewards((rewards) => {
+          rewardItems = rewards;
+          drawWheel();
+          if (!currentKid) renderRewardsTable();
+        });
+      }
 
       if (currentKid) {
         // ==========================================

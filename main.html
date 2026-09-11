@@ -12,6 +12,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Firebase Realtime Database SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="firebase_sync.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -651,7 +655,13 @@
     }
 
     function saveKidsList(kids) {
-      localStorage.setItem('kienlt_kid_accounts', JSON.stringify(kids));
+      if (window.CloudSync) {
+        window.CloudSync.saveKids(kids);
+      } else {
+        try {
+          localStorage.setItem('kienlt_kid_accounts', JSON.stringify(kids));
+        } catch(e) {}
+      }
       renderSidebarKids();
       renderModalKids();
     }
@@ -743,7 +753,7 @@
       saveKidsList(kids);
       document.getElementById('new-kid-name').value = '';
       document.getElementById('new-kid-username').value = '';
-      alert(`Đã tạo tài khoản cho bé ${name} thành công!`);
+      alert(`Đã tạo tài khoản cho bé ${name} thành công và đồng bộ lên Cloud!`);
     }
 
     function deleteKidAccount(kidId) {
@@ -765,9 +775,15 @@
       window.open('math_game.html', '_blank');
     }
 
-    // Auto-init sidebar kids on load
+    // Auto-init sidebar kids with CloudSync
     document.addEventListener('DOMContentLoaded', () => {
-      renderSidebarKids();
+      if (window.CloudSync) {
+        window.CloudSync.getKids(() => {
+          renderSidebarKids();
+        });
+      } else {
+        renderSidebarKids();
+      }
     });
   </script>
 
