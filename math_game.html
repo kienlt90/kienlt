@@ -175,7 +175,7 @@
               <span>10 câu ngẫu nhiên</span>
               <span>•</span>
               <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
-              <span>+1 Lượt quay</span>
+              <span>Thưởng 1-3 spin theo điểm</span>
             </div>
             <button class="px-4 py-2 bg-amber-500 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-amber-600 flex items-center space-x-1.5 transition">
               <span>Bắt đầu thi</span>
@@ -207,7 +207,7 @@
               <span>10 câu ngẫu nhiên</span>
               <span>•</span>
               <i data-lucide="award" class="w-4 h-4 text-sky-500"></i>
-              <span>+1 Lượt quay</span>
+              <span>Thưởng 1-3 spin theo điểm</span>
             </div>
             <button class="px-4 py-2 bg-sky-600 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-sky-700 flex items-center space-x-1.5 transition">
               <span>Bắt đầu thi</span>
@@ -284,15 +284,15 @@
       </div>
 
       <!-- Quiz Finished / Auto-Graded Summary -->
-      <div id="quiz-result-box" class="hidden bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-lg space-y-6 text-center max-w-xl mx-auto">
-        <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+      <div id="quiz-result-box" class="hidden bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-lg space-y-6 text-center max-w-2xl mx-auto">
+        <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-inner" id="res-icon">
           🎉
         </div>
         
         <div>
           <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold" id="res-grade-badge">Lớp 2</span>
-          <h2 class="text-2xl font-black text-slate-900 mt-2">Hoàn Thành Bài Thi!</h2>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">Hệ thống đã tự động chấm điểm và đồng bộ lên Cloud Database.</p>
+          <h2 class="text-2xl font-black text-slate-900 mt-2" id="res-header-title">Hoàn Thành Bài Thi!</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1" id="res-header-desc">Hệ thống đã tự động chấm điểm và đồng bộ lên Cloud Database.</p>
         </div>
 
         <div class="grid grid-cols-3 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
@@ -305,31 +305,43 @@
             <div class="text-2xl font-black text-sky-700 mt-0.5" id="res-time">02:45</div>
           </div>
           <div>
-            <div class="text-xs text-slate-400 font-semibold">Thưởng</div>
-            <div class="text-2xl font-black text-amber-500 mt-0.5">+1 Quay</div>
+            <div class="text-xs text-slate-400 font-semibold">Thưởng Spin</div>
+            <div class="text-2xl font-black text-amber-500 mt-0.5" id="res-spin-award">+3 Quay</div>
           </div>
         </div>
 
-        <!-- Status Notice Box -->
-        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-left space-y-1.5">
-          <div class="flex items-center space-x-2">
-            <i data-lucide="cloud-check" class="w-4 h-4 text-indigo-600"></i>
-            <span class="text-xs font-extrabold text-indigo-900">Bài làm đã lưu online & gửi cho Giáo viên</span>
-          </div>
-          <p class="text-xs text-indigo-700 leading-relaxed">
-            Kết quả đã được đồng bộ lên Google Firebase. Phụ huynh/Cô giáo mở bất kỳ máy tính nào cũng sẽ thấy ngay. Bạn được cộng <b>+1 lượt quay thưởng</b>!
-          </p>
+        <!-- Score Spin Rules Explanation Notice -->
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 font-semibold flex items-center justify-center space-x-2" id="res-spin-rule-msg">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
+          <span>Thang điểm thưởng: <b>8đ = 1 lượt</b> | <b>9đ = 2 lượt</b> | <b>10đ = 3 lượt quay</b></span>
         </div>
 
+        <!-- Action CTA Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           <button onclick="goToSpinWheel()" class="py-3 px-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-sm rounded-xl shadow-lg hover:from-amber-600 hover:to-orange-600 flex items-center justify-center space-x-2 transition">
             <i data-lucide="sparkles" class="w-5 h-5"></i>
-            <span>Quay Thưởng May Mắn ➔</span>
+            <span>Vào Vòng Quay May Mắn ➔</span>
           </button>
           <button onclick="resetAndBackToArena()" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition">
-            Làm bài thi khác (Đề ngẫu nhiên mới)
+            Làm bài thi khác (Đề mới)
           </button>
         </div>
+
+        <!-- DETAILED QUESTION EXPLANATIONS BOX FOR KIDS -->
+        <div class="text-left pt-4 border-t border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="book-open" class="w-4 h-4 text-sky-600"></i>
+              <span>Chi Tiết Đáp Án & Lời Giải Thích (10 Câu)</span>
+            </h3>
+            <span class="text-xs text-slate-400 font-semibold">Học sinh xem lời giải</span>
+          </div>
+
+          <div id="quiz-result-explanations-list" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar p-1">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
       </div>
 
     </section>
@@ -1896,7 +1908,7 @@ const mathBankGrade5 = [
     function soundWin() { playTone(523.25, 'triangle', 0.15); setTimeout(() => playTone(659.25, 'triangle', 0.15), 150); setTimeout(() => playTone(783.99, 'triangle', 0.4), 300); }
 
     // ==========================================
-    // 3. QUIZ LOGIC & ONLINE SUBMISSION
+    // 3. QUIZ LOGIC & SCORE-BASED SPIN RULES
     // ==========================================
     function startQuiz(grade) {
       const gNum = parseInt(grade, 10);
@@ -2000,14 +2012,36 @@ const mathBankGrade5 = [
         }
       });
 
-      // Award +1 spin to the active kid's account
-      if (currentKid) {
-        const current = getKidSpins(currentKid.id);
-        setKidSpins(currentKid.id, current + 1);
+      // ==========================================
+      // THANG ĐIỂM THƯỞNG LƯỢT QUAY (SPIN RULES):
+      // 8 điểm = 1 lượt | 9 điểm = 2 lượt | 10 điểm = 3 lượt | Dưới 8đ = 0 lượt
+      // ==========================================
+      let earnedSpins = 0;
+      let scoreMessage = '';
+      if (correctCount === 10) {
+        earnedSpins = 3;
+        scoreMessage = '🌟 Xuất sắc! Điểm 10 tuyệt đối nhận ngay +3 Lượt quay!';
+      } else if (correctCount === 9) {
+        earnedSpins = 2;
+        scoreMessage = '🎉 Rất giỏi! Bạn đạt 9 điểm và nhận được +2 Lượt quay!';
+      } else if (correctCount === 8) {
+        earnedSpins = 1;
+        scoreMessage = '👏 Giỏi lắm! Bạn đạt 8 điểm và nhận được +1 Lượt quay!';
       } else {
-        const targetKidId = currentGrade === 2 ? 'kid_thoc' : 'kid_gau';
-        const current = getKidSpins(targetKidId);
-        setKidSpins(targetKidId, current + 1);
+        earnedSpins = 0;
+        scoreMessage = '💪 Cố gắng lên nhé! Đạt từ 8 điểm trở lên để nhận lượt quay may mắn.';
+      }
+
+      // Award spins to the active kid's account
+      if (earnedSpins > 0) {
+        if (currentKid) {
+          const current = getKidSpins(currentKid.id);
+          setKidSpins(currentKid.id, current + earnedSpins);
+        } else {
+          const targetKidId = currentGrade === 2 ? 'kid_thoc' : 'kid_gau';
+          const current = getKidSpins(targetKidId);
+          setKidSpins(targetKidId, current + earnedSpins);
+        }
       }
 
       const sName = currentKid ? currentKid.name : (currentGrade === 2 ? 'THÓC' : 'Gấu');
@@ -2018,6 +2052,7 @@ const mathBankGrade5 = [
         studentName: sName,
         grade: currentGrade,
         score: correctCount,
+        earnedSpins: earnedSpins,
         timeSpent: document.getElementById('quiz-timer').textContent,
         createdAt: new Date().toLocaleString('vi-VN'),
         status: 'pending',
@@ -2038,9 +2073,69 @@ const mathBankGrade5 = [
       document.getElementById('res-grade-badge').textContent = `Lớp ${currentGrade} - Toán Logic`;
       document.getElementById('res-score').textContent = `${correctCount}/10`;
       document.getElementById('res-time').textContent = newSubmission.timeSpent;
+      document.getElementById('res-spin-award').textContent = `+${earnedSpins} Quay`;
+      document.getElementById('res-header-desc').textContent = scoreMessage;
 
-      soundWin();
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      const iconEl = document.getElementById('res-icon');
+      if (iconEl) {
+        iconEl.textContent = correctCount >= 8 ? '🎉' : '📖';
+      }
+
+      // RENDER DETAILED QUESTION EXPLANATIONS FOR KIDS
+      renderResultExplanations(currentQuestions, userAnswers);
+
+      if (correctCount >= 8) {
+        soundWin();
+        confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+      } else {
+        soundCorrect();
+      }
+    }
+
+    // Render question explanations in student result view
+    function renderResultExplanations(questions, answers) {
+      const container = document.getElementById('quiz-result-explanations-list');
+      if (!container) return;
+
+      container.innerHTML = questions.map((q, idx) => {
+        const userChoice = answers[idx];
+        const isCorrect = userChoice === q.correct;
+        return `
+          <div class="p-4 rounded-2xl border ${isCorrect ? 'bg-emerald-50/60 border-emerald-200' : 'bg-rose-50/60 border-rose-200'} space-y-2 text-xs">
+            <div class="flex items-start justify-between gap-2">
+              <span class="font-extrabold text-slate-900 text-xs sm:text-sm">Câu ${idx + 1}: ${q.title}</span>
+              <span class="px-2.5 py-0.5 rounded-full font-black text-[10px] shrink-0 ${isCorrect ? 'bg-emerald-200 text-emerald-900' : 'bg-rose-200 text-rose-900'}">
+                ${isCorrect ? '✓ ĐÚNG (+1đ)' : '✗ CHƯA ĐÚNG'}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1 text-slate-700">
+              <div class="p-2 rounded-xl bg-white/80 border border-slate-200/70">
+                <span class="text-slate-400 font-semibold block text-[10px] uppercase">Lựa chọn của bé:</span>
+                <span class="font-bold ${isCorrect ? 'text-emerald-700' : 'text-rose-600'}">
+                  ${userChoice !== undefined ? `${String.fromCharCode(65 + userChoice)}. ${q.options[userChoice]}` : 'Chưa chọn'}
+                </span>
+              </div>
+              <div class="p-2 rounded-xl bg-white/80 border border-slate-200/70">
+                <span class="text-slate-400 font-semibold block text-[10px] uppercase">Đáp án chính xác:</span>
+                <span class="font-bold text-emerald-700">
+                  ${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}
+                </span>
+              </div>
+            </div>
+
+            <!-- Detailed Logic Explanation Box -->
+            <div class="mt-2 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200 text-amber-950 leading-relaxed font-medium">
+              <div class="flex items-center space-x-1 font-bold text-amber-800 text-[11px] mb-0.5">
+                <span>💡 Lời giải thích chi tiết:</span>
+              </div>
+              <div>${q.explain}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
     }
 
     function resetAndBackToArena() {
@@ -2105,7 +2200,7 @@ const mathBankGrade5 = [
       if (currentKid) {
         const available = getKidSpins(currentKid.id);
         if (available <= 0) {
-          alert(`Bé ${currentKid.name} đã hết lượt quay! Hãy hoàn thành bài thi 10 câu để nhận thêm lượt nhé.`);
+          alert(`Bé ${currentKid.name} đã hết lượt quay! Hãy đạt từ 8 điểm trở lên trong bài thi 10 câu để nhận thêm lượt quay nhé.`);
           return;
         }
         setKidSpins(currentKid.id, available - 1);
@@ -2306,6 +2401,9 @@ const mathBankGrade5 = [
               <h4 class="text-sm font-bold text-slate-900">${sub.studentName}</h4>
               <span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${sub.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
                 ${sub.status === 'approved' ? '✓ Đã Phê Duyệt' : '⏳ Chờ Duyệt'}
+              </span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
+                +${sub.earnedSpins !== undefined ? sub.earnedSpins : (sub.score >= 8 ? (sub.score === 10 ? 3 : (sub.score === 9 ? 2 : 1)) : 0)} Spin
               </span>
             </div>
             <div class="text-xs text-slate-500 flex items-center space-x-3 pt-0.5">
@@ -2555,27 +2653,23 @@ const mathBankGrade5 = [
 
       // Setup Realtime Cloud Sync Listeners
       if (window.CloudSync) {
-        // Sync Kids list
         window.CloudSync.getKids((kids) => {
           kidsList = kids;
           if (!currentKid) renderAdminKidsSpinList();
         });
 
-        // Sync Spins
         window.CloudSync.getSpins((spins) => {
           spinsMap = spins;
           updateSpinUI();
           if (!currentKid) renderAdminKidsSpinList();
         });
 
-        // Sync Submissions
         window.CloudSync.getSubmissions((subs) => {
           submissions = subs;
           updatePendingBadge();
           if (!currentKid) renderTeacherSubmissions();
         });
 
-        // Sync Rewards
         window.CloudSync.getRewards((rewards) => {
           rewardItems = rewards;
           drawWheel();
@@ -2594,9 +2688,9 @@ const mathBankGrade5 = [
         document.getElementById('student-welcome-banner').classList.remove('hidden');
         document.getElementById('student-banner-name').textContent = currentKid.name;
         document.getElementById('student-banner-grade').textContent = `Lớp ${gNum}`;
-        document.getElementById('btn-back-portal').classList.add('hidden'); // Bé không quay lại portal y tế
+        document.getElementById('btn-back-portal').classList.add('hidden');
 
-        // Cách ly khối lớp: Chỉ hiện duy nhất lớp của bé
+        // Cách ly khối lớp
         const cardG2 = document.getElementById('card-grade-2');
         const cardG5 = document.getElementById('card-grade-5');
 
@@ -2638,7 +2732,6 @@ const mathBankGrade5 = [
         document.getElementById('student-welcome-banner').classList.add('hidden');
         document.getElementById('btn-back-portal').classList.remove('hidden');
 
-        // Hiển thị cả 2 khối lớp 2 & lớp 5
         const cardG2 = document.getElementById('card-grade-2');
         const cardG5 = document.getElementById('card-grade-5');
         if (cardG2) {
@@ -2650,7 +2743,7 @@ const mathBankGrade5 = [
           cardG5.className = 'group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
         }
 
-        // HIỂN THỊ ĐẦY ĐỦ CÁC QUYỀN VÀ BẢNG QUẢN LÝ LƯỢT QUAY TỪNG BÉ:
+        // HIỂN THỊ ĐẦY ĐỦ CÁC QUYỀN:
         const adminDash = document.getElementById('admin-spin-dashboard');
         if (adminDash) {
           adminDash.classList.remove('hidden');
