@@ -111,7 +111,7 @@
         <!-- Teacher Tab (Admin / Teacher Only) -->
         <button onclick="switchTab('teacher')" id="nav-teacher" class="hidden px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
           <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
-          <span id="nav-teacher-text">Cô giáo duyệt</span>
+          <span id="nav-teacher-text">Chấm bài</span>
           <span id="pending-badge" class="hidden px-1.5 py-0.2 bg-indigo-600 text-white rounded-full text-[9px] font-extrabold">0</span>
         </button>
         <!-- Rewards Setting Tab (Admin Only) -->
@@ -523,11 +523,11 @@
           <div class="flex items-center space-x-2">
             <h2 class="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
               <i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i>
-              <span id="teacher-section-title">Góc Cô Giáo & Phụ Huynh Phê Duyệt</span>
+              <span id="teacher-section-title">Chấm Bài</span>
             </h2>
             <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-bold">Cloud Online</span>
           </div>
-          <p class="text-xs text-slate-500 mt-0.5">Kiểm tra kết quả bài làm, điều chỉnh điểm và nhập Lời phê / Ghi chú cho học sinh (Đồng bộ mọi thiết bị).</p>
+          <p class="text-xs text-slate-500 mt-0.5">Kiểm tra kết quả bài làm, chấm điểm và nhập Lời nhận xét / Lời phê cho học sinh (Đồng bộ mọi thiết bị).</p>
         </div>
         <button onclick="clearAllSubmissions()" id="btn-clear-submissions" class="text-xs text-rose-600 hover:text-rose-800 font-bold flex items-center space-x-1">
           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -617,7 +617,7 @@
         <!-- Score & Status Editor -->
         <div class="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 space-y-3">
           <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-indigo-900">Điểm số phê duyệt:</label>
+            <label class="text-xs font-bold text-indigo-900">Điểm số chấm bài:</label>
             <div class="flex items-center space-x-2">
               <input type="number" id="modal-edit-score" min="0" max="10" class="w-16 px-2.5 py-1 text-center font-black text-indigo-800 bg-white rounded-lg border border-indigo-200 text-sm">
               <span class="text-xs font-bold text-indigo-900">/ 10 Điểm</span>
@@ -647,7 +647,7 @@
         </button>
         <button onclick="saveTeacherApproval()" id="btn-save-approval" class="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 shadow-md flex items-center space-x-1.5 transition">
           <i data-lucide="check-circle" class="w-4 h-4"></i>
-          <span>Lưu Phê Duyệt & Ghi Chú</span>
+          <span>Lưu Kết Quả Chấm Bài</span>
         </button>
       </div>
 
@@ -3836,7 +3836,7 @@ const mathBankGrade5 = [
 
     function openReviewModal(subId) {
       if (currentKid) {
-        alert('Chỉ giáo viên/phụ huynh mới có quyền kiểm tra và phê duyệt bài thi!');
+        alert('Chỉ giáo viên/phụ huynh mới có quyền kiểm tra và chấm bài thi!');
         return;
       }
       activeReviewSubmissionId = subId;
@@ -3883,7 +3883,7 @@ const mathBankGrade5 = [
 
     function saveTeacherApproval() {
       if (currentKid) {
-        alert('Chỉ tài khoản admin/giáo viên mới có quyền phê duyệt bài làm!');
+        alert('Chỉ tài khoản admin/giáo viên mới có quyền chấm bài làm!');
         return;
       }
       const sub = submissions.find(s => s.id === activeReviewSubmissionId);
@@ -3901,7 +3901,7 @@ const mathBankGrade5 = [
       renderTeacherSubmissions();
       calculateAndRenderStats();
       closeReviewModal();
-      alert('Đã lưu phê duyệt và đồng bộ lên Cloud Database thành công!');
+      alert('Đã lưu kết quả chấm bài và đồng bộ lên Cloud Database thành công!');
     }
 
     function clearAllSubmissions() {
