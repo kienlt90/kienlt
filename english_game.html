@@ -1931,12 +1931,39 @@ const englishBankGrade5 = [
 
   <!-- MAIN SCRIPT LOGIC -->
   <script>
-    // Global State
+    // Global State & URL Parameters Parsing
     let currentKid = null;
+    const urlParams = new URLSearchParams(window.location.search);
+    const kidParam = urlParams.get('kid');
+
+    const defaultKids = [
+      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
+    ];
+
+    let cachedKids = defaultKids;
     try {
-      const stored = localStorage.getItem('kienlt_active_kid_session');
-      if (stored) currentKid = JSON.parse(stored);
+      const storedK = localStorage.getItem('kienlt_kid_accounts');
+      if (storedK) cachedKids = JSON.parse(storedK);
     } catch(e) {}
+
+    if (kidParam) {
+      if (kidParam === 'admin') {
+        currentKid = null;
+        try { localStorage.removeItem('kienlt_active_kid_session'); } catch(e) {}
+      } else {
+        const found = cachedKids.find(k => k.id === kidParam || k.username.toLowerCase() === kidParam.toLowerCase() || (kidParam.includes('thoc') && k.id === 'kid_thoc') || (kidParam.includes('gau') && k.id === 'kid_gau'));
+        if (found) {
+          currentKid = found;
+          try { localStorage.setItem('kienlt_active_kid_session', JSON.stringify(found)); } catch(e) {}
+        }
+      }
+    } else {
+      try {
+        const stored = localStorage.getItem('kienlt_active_kid_session');
+        if (stored) currentKid = JSON.parse(stored);
+      } catch(e) {}
+    }
 
     let selectedGrade = 2;
     let currentQuizQuestions = [];
@@ -1946,10 +1973,7 @@ const englishBankGrade5 = [
     let quizSeconds = 0;
     let isQuizSubmitted = false;
 
-    let kidsList = [
-      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
-      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
-    ];
+    let kidsList = cachedKids;
 
     let spinsMap = { 'kid_thoc': 1, 'kid_gau': 1 };
     let submissions = [];

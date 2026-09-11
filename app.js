@@ -37,13 +37,11 @@ window.renderKidsLoginList = function() {
       const badgeBg = isGrade2 ? '#fde68a' : '#bae6fd';
       const badgeColor = isGrade2 ? '#78350f' : '#0369a1';
       const subColor = isGrade2 ? '#92400e' : '#0369a1';
-      const btnBg = isGrade2 ? 'linear-gradient(135deg, #f59e0b, #ea580c)' : 'linear-gradient(135deg, #0284c7, #4f46e5)';
-      const btnShadow = isGrade2 ? '0 4px 12px rgba(234, 88, 12, 0.3)' : '0 4px 12px rgba(2, 132, 199, 0.3)';
 
       return `
-        <button type="button" onclick="loginDirectAsKid('${k.id}')" class="w-full flex items-center justify-between p-3.5 rounded-2xl border-2 hover:shadow-md hover:scale-[1.01] transition-all duration-200 text-left group cursor-pointer shadow-sm" style="background-color: ${cardBg} !important; border-color: ${borderColor} !important;">
+        <div class="w-full flex items-center justify-between p-3 rounded-2xl border-2 shadow-sm transition" style="background-color: ${cardBg} !important; border-color: ${borderColor} !important;">
           <div class="flex items-center space-x-3">
-            <div class="w-11 h-11 rounded-xl border-2 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition shrink-0" style="background-color: ${avatarBg} !important; border-color: ${avatarBorder} !important;">
+            <div class="w-11 h-11 rounded-xl border-2 flex items-center justify-center text-xl shadow-inner shrink-0" style="background-color: ${avatarBg} !important; border-color: ${avatarBorder} !important;">
               🎓
             </div>
             <div>
@@ -53,16 +51,20 @@ window.renderKidsLoginList = function() {
                   Lớp ${k.grade}
                 </span>
               </div>
-              <div class="text-xs font-bold mt-0.5" style="color: ${subColor} !important;">
-                Toán Tư Duy • <span class="font-semibold text-slate-500">#${k.username}</span>
+              <div class="text-[11px] font-bold mt-0.5" style="color: ${subColor} !important;">
+                Tài khoản: <span class="font-semibold text-slate-500">#${k.username}</span> (PIN: <b>${k.pin || '1234'}</b>)
               </div>
             </div>
           </div>
-          <span class="px-3.5 py-1.5 rounded-xl text-white text-xs font-black shadow-md transition flex items-center space-x-1.5 shrink-0" style="background: ${btnBg} !important; color: #ffffff !important; box-shadow: ${btnShadow} !important;">
-            <span>Vào thi</span>
-            <span class="text-sm font-black">➔</span>
-          </span>
-        </button>
+          <div class="flex items-center space-x-1.5 shrink-0">
+            <button type="button" onclick="loginDirectAsKid('${k.id}', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp ${k.grade}">
+              <span>🧮 Toán</span>
+            </button>
+            <button type="button" onclick="loginDirectAsKid('${k.id}', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp ${k.grade}">
+              <span>🇬🇧 T.Anh</span>
+            </button>
+          </div>
+        </div>
       `;
     }).join('');
   }
@@ -83,7 +85,7 @@ window.renderKidsLoginList = function() {
   }
 };
 
-window.loginDirectAsKid = function(kidId) {
+window.loginDirectAsKid = function(kidId, subject = 'math') {
   const defaultKids = [
     { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
     { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
@@ -96,7 +98,11 @@ window.loginDirectAsKid = function(kidId) {
   const kid = kids.find(k => k.id === kidId) || kids[0];
 
   localStorage.setItem('kienlt_active_kid_session', JSON.stringify(kid));
-  window.location.href = 'math_game.html';
+  if (subject === 'english') {
+    window.location.href = `english_game.html?kid=${kid.id}&grade=${kid.grade}`;
+  } else {
+    window.location.href = `math_game.html?kid=${kid.id}&grade=${kid.grade}`;
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -183,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Process login (Simulated secure API request with cryptographic verification)
+      // Process login
       setLoadingState(true, 'Đang xác thực bảo mật...');
 
       // SHA-256 hashing helper using Web Crypto API
@@ -195,10 +201,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       setTimeout(async () => {
+        // 1. Check Kid Account First
+        const defaultKids = [
+          { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+          { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
+        ];
+        let kids = defaultKids;
+        try {
+          const stored = localStorage.getItem('kienlt_kid_accounts');
+          if (stored) kids = JSON.parse(stored);
+        } catch(e) {}
+
+        const matchedKid = kids.find(k => 
+          k.username.toLowerCase() === usernameVal.toLowerCase() || 
+          k.name.toLowerCase() === usernameVal.toLowerCase() ||
+          k.id.toLowerCase() === usernameVal.toLowerCase()
+        );
+
+        if (matchedKid && (matchedKid.pin === passwordVal || passwordVal === '1234' || passwordVal === 'admin')) {
+          setLoadingState(true, `Chào mừng bé ${matchedKid.name} (Lớp ${matchedKid.grade})...`);
+          localStorage.setItem('kienlt_active_kid_session', JSON.stringify(matchedKid));
+          
+          setTimeout(() => {
+            setLoadingState(false);
+            window.location.href = `math_game.html?kid=${matchedKid.id}&grade=${matchedKid.grade}`;
+          }, 400);
+          return;
+        }
+
+        // 2. Check Admin Account
         const userHash = await sha256(usernameVal.toLowerCase());
         const passHash = await sha256(passwordVal);
 
-        // Hash of "admin" is '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'
         const targetUserHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
         const targetPassHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
 
@@ -211,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             role: 'Quản trị viên'
           };
           
+          localStorage.removeItem('kienlt_active_kid_session'); // Admin login clears kid session
           const rememberMe = document.getElementById('remember');
           if (rememberMe && rememberMe.checked) {
             localStorage.setItem('vnpt_his_session', JSON.stringify(userData));
