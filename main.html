@@ -94,6 +94,10 @@
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
           <span>Toán Tư Duy</span>
         </a>
+        <a href="english_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-teal-700 hover:text-teal-900 hover:bg-teal-50 flex items-center space-x-1.5 transition">
+          <i data-lucide="languages" class="w-3.5 h-3.5 text-teal-500"></i>
+          <span>Tiếng Anh</span>
+        </a>
         <a href="javascript:void(0)" onclick="document.getElementById('modulesSection').scrollIntoView({behavior: 'smooth'})" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center space-x-1.5 transition">
           <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
           <span>Công cụ</span>
@@ -235,6 +239,13 @@
                 </span>
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
               </a>
+              <a href="english_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-teal-900 bg-teal-50/70 hover:bg-teal-100/80 transition">
+                <span class="flex items-center space-x-2">
+                  <span class="text-sm">🇬🇧</span>
+                  <span>Đấu trường Tiếng Anh (Starters & Movers)</span>
+                </span>
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-teal-500"></i>
+              </a>
               <a href="survey.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
                 <span class="flex items-center space-x-2">
                   <i data-lucide="clipboard-check" class="w-4 h-4 text-teal-600"></i>
@@ -311,6 +322,23 @@
                   </div>
                 </div>
                 <i data-lucide="chevron-right" class="w-4 h-4 text-amber-500 group-hover:text-amber-700 group-hover:translate-x-1 transition"></i>
+              </div>
+
+              <!-- Item 0b: English Arena Game (Grade 2 & 5) -->
+              <div onclick="localStorage.removeItem('kienlt_active_kid_session'); window.open('english_game.html', '_blank')" class="module-item bg-gradient-to-r from-teal-50/70 via-emerald-50/50 to-white p-4 rounded-2xl border-2 border-teal-300 shadow-sm hover:border-teal-500 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center shrink-0 border border-teal-300 text-xl group-hover:scale-110 transition shadow-inner">
+                    🇬🇧
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-xs md:text-sm font-extrabold text-slate-900 group-hover:text-teal-700 transition">Đấu Trường Tiếng Anh (Starters & Movers)</h4>
+                      <span class="text-[9px] font-extrabold px-2 py-0.5 bg-teal-600 text-white rounded-full shadow-xs animate-pulse">100 Câu Hỏi</span>
+                    </div>
+                    <p class="text-[11px] md:text-xs text-slate-600 line-clamp-1 mt-0.5">100 câu hỏi song ngữ chuẩn Cambridge cho bé Thóc & bé Gấu, giải thích chi tiết</p>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-teal-500 group-hover:text-teal-700 group-hover:translate-x-1 transition"></i>
               </div>
 
               <!-- Item 1: RIS/PACS -->

@@ -189,7 +189,64 @@ window.CloudSync = {
   },
 
   // ==========================================
-  // 4. REWARDS CATALOG SYNC
+  // 4. ENGLISH ARENA SUBMISSIONS SYNC
+  // ==========================================
+  getEnglishSubmissions(callback) {
+    let localSubs = [];
+    try {
+      const stored = localStorage.getItem('kienlt_english_submissions');
+      if (stored) localSubs = JSON.parse(stored);
+    } catch(e) {}
+    if (callback) callback(localSubs);
+
+    if (isFirebaseReady && db) {
+      db.ref('english_game/submissions').on('value', (snap) => {
+        const val = snap.val();
+        let list = [];
+        if (val) {
+          list = Object.values(val).sort((a, b) => (b.id || 0) - (a.id || 0));
+        }
+        try {
+          localStorage.setItem('kienlt_english_submissions', JSON.stringify(list));
+        } catch(e) {}
+        if (callback) callback(list);
+      });
+    }
+  },
+
+  saveEnglishSubmission(submission) {
+    let list = [];
+    try {
+      list = JSON.parse(localStorage.getItem('kienlt_english_submissions') || '[]');
+    } catch(e) {}
+    const existingIdx = list.findIndex(s => s.id === submission.id);
+    if (existingIdx >= 0) {
+      list[existingIdx] = submission;
+    } else {
+      list.unshift(submission);
+    }
+    try {
+      localStorage.setItem('kienlt_english_submissions', JSON.stringify(list));
+    } catch(e) {}
+
+    if (isFirebaseReady && db) {
+      db.ref('english_game/submissions/' + submission.id).set(submission)
+        .catch(e => console.error("Firebase saveEnglishSubmission error:", e));
+    }
+  },
+
+  clearAllEnglishSubmissions() {
+    try {
+      localStorage.removeItem('kienlt_english_submissions');
+    } catch(e) {}
+    if (isFirebaseReady && db) {
+      db.ref('english_game/submissions').remove()
+        .catch(e => console.error("Firebase clearAllEnglishSubmissions error:", e));
+    }
+  },
+
+  // ==========================================
+  // 5. REWARDS CATALOG SYNC
   // ==========================================
   getRewards(callback) {
     let localRewards = defaultRewardsList;

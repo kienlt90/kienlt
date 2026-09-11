@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đấu Trường Tiếng Anh & Vòng Quay May Mắn - KIENLT90</title>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Firebase Realtime Database SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="firebase_sync.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .wheel-pointer {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 32px solid #ef4444;
+      z-index: 30;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-100 via-emerald-50/50 to-teal-50 text-slate-800 antialiased min-h-full flex flex-col selection:bg-teal-200 selection:text-teal-900">
+
+  <!-- Main Responsive Container -->
+  <div class="w-full max-w-5xl mx-auto min-h-screen flex flex-col px-3 sm:px-6 py-4 sm:py-6">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-6">
+      <div class="flex items-center space-x-3">
+        <a href="main.html" id="btn-back-portal" class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-extrabold shadow-md shadow-teal-500/20 text-lg hover:scale-105 transition" title="Về Portal">
+          🇬🇧
+        </a>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xs font-bold tracking-wider text-teal-600 uppercase">Đấu Trường Tiếng Anh</h1>
+            <span class="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full text-[10px] font-bold" id="header-badge-title">English Arena</span>
+            <span id="cloud-sync-status" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-extrabold flex items-center space-x-1" title="Đã kết nối Google Firebase Realtime Cloud">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+              <span class="hidden sm:inline">Cloud Realtime</span>
+            </span>
+          </div>
+          <p class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight" id="header-student-greeting">
+            Thử Thách 10 Câu Tiếng Anh & Vòng Quay May Mắn
+          </p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button onclick="switchTab('arena')" id="nav-arena" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-teal-600 text-white shadow-sm flex items-center space-x-1.5 transition">
+          <i data-lucide="gamepad-2" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Làm bài</span>
+        </button>
+        <button onclick="switchTab('wheel')" id="nav-wheel" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+          <span>Vòng quay</span>
+          <span id="spin-badge" class="hidden px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-extrabold animate-pulse">1</span>
+        </button>
+        <!-- Teacher Tab (Admin Only) -->
+        <button onclick="switchTab('teacher')" id="nav-teacher" class="hidden px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
+          <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
+          <span id="nav-teacher-text">Chấm bài</span>
+          <span id="pending-badge" class="hidden px-1.5 py-0.2 bg-indigo-600 text-white rounded-full text-[9px] font-extrabold">0</span>
+        </button>
+        <!-- Rewards Setting Tab (Admin Only) -->
+        <button onclick="switchTab('rewards')" id="nav-rewards" class="hidden px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition" title="Cài đặt quà">
+          <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
+        </button>
+        <a href="math_game.html" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 flex items-center space-x-1 transition" title="Đổi sang Đấu trường Toán">
+          <span>🧮</span>
+          <span class="hidden sm:inline">Toán Học</span>
+        </a>
+        <button onclick="logoutKid()" class="px-2.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="Thoát tài khoản">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT SECTIONS -->
+
+    <!-- ============================================== -->
+    <!-- 1. ARENA: LÀM 10 CÂU TIẾNG ANH TƯ DUY -->
+    <!-- ============================================== -->
+    <section id="view-arena" class="space-y-6">
+
+      <!-- Student Banner (Shown when kid logs in) -->
+      <div id="student-welcome-banner" class="hidden bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 text-white p-4 sm:p-5 rounded-2xl shadow-md flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl">
+            🎓
+          </div>
+          <div>
+            <span class="px-2 py-0.5 bg-black/20 text-teal-100 rounded text-[10px] font-bold">Học sinh đăng nhập</span>
+            <h3 class="text-base sm:text-lg font-black" id="student-banner-name">Bé THÓC</h3>
+            <p class="text-xs text-teal-100/90" id="student-banner-desc">Ready for 10 fun English questions today?</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-xs font-bold text-teal-100 block">Lớp đăng ký:</span>
+          <span class="text-base sm:text-lg font-black bg-white text-teal-700 px-3 py-1 rounded-xl shadow-sm inline-block" id="student-banner-grade">Lớp 2</span>
+        </div>
+      </div>
+
+      <!-- KID PERSONAL STATS SUMMARY -->
+      <div id="kid-personal-stats-card" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-black text-lg">
+            📝
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Số bài đã làm</span>
+            <span class="text-base font-black text-slate-900" id="kid-stat-total-quizzes">0 bài</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-black text-lg">
+            🎯
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Điểm trung bình</span>
+            <span class="text-base font-black text-amber-600" id="kid-stat-avg-score">0.0 / 10</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-lg">
+            ✅
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Số câu Đúng / Sai</span>
+            <span class="text-sm sm:text-base font-black text-slate-900" id="kid-stat-correct-wrong"><span class="text-emerald-600">0</span> / <span class="text-rose-500">0</span></span>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-lg">
+            🏆
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Tỉ lệ chính xác</span>
+            <span class="text-base font-black text-purple-600" id="kid-stat-accuracy">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN STATS SUMMARY TABLE -->
+      <div id="admin-stats-summary-card" class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 text-teal-600"></i>
+            <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase tracking-wider">
+              Bảng Thống Kê Điểm Số Học Sinh (Admin)
+            </h3>
+          </div>
+          <span class="text-[10px] text-slate-400 font-bold">Tự động tổng hợp thời gian thực</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-400 font-bold">
+                <th class="pb-2">Học sinh</th>
+                <th class="pb-2 text-center">Khối lớp</th>
+                <th class="pb-2 text-center">Số bài đã làm</th>
+                <th class="pb-2 text-center">Điểm TB</th>
+                <th class="pb-2 text-center">Điểm cao nhất</th>
+                <th class="pb-2 text-center">Đúng / Sai</th>
+                <th class="pb-2 text-center">Tỉ lệ chính xác</th>
+                <th class="pb-2 text-right">Lượt quay</th>
+              </tr>
+            </thead>
+            <tbody id="admin-stats-table-body" class="divide-y divide-slate-100 font-semibold text-slate-700">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grade Selector (Only for Admin) -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3" id="grade-selector-wrapper">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Chọn Khối Lớp Trắc Nghiệm Tiếng Anh</h2>
+          <p class="text-xs text-slate-500">Mỗi đề gồm 10 câu hỏi ngữ pháp, từ vựng và câu đố tư duy.</p>
+        </div>
+        
+        <div class="flex items-center space-x-2 w-full sm:w-auto" id="grade-btn-container">
+          <button onclick="setGrade(2)" id="btn-grade-2" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border-2 border-teal-500 bg-teal-50 text-teal-800 transition">
+            🇬🇧 Lớp 2 (Bé THÓC)
+          </button>
+          <button onclick="setGrade(5)" id="btn-grade-5" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border-2 border-slate-200 hover:border-slate-300 text-slate-600 transition">
+            🇬🇧 Lớp 5 (Bé Gấu)
+          </button>
+        </div>
+      </div>
+
+      <!-- Question Card Container -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden" id="quiz-box">
+        
+        <!-- Quiz Header: Progress & Timer -->
+        <div class="p-4 sm:p-6 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <span class="px-2.5 py-1 bg-teal-600 text-white rounded-lg text-xs font-black shadow-xs" id="question-badge">
+              Câu 1/10
+            </span>
+            <div class="h-2 w-24 sm:w-48 bg-slate-200 rounded-full overflow-hidden">
+              <div id="quiz-progress-bar" class="h-full bg-teal-500 rounded-full transition-all duration-300" style="width: 10%"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-1 text-slate-600 font-mono text-xs sm:text-sm font-bold bg-white px-3 py-1.5 rounded-xl border border-slate-200">
+            <i data-lucide="clock" class="w-4 h-4 text-teal-600"></i>
+            <span id="quiz-timer">00:00</span>
+          </div>
+        </div>
+
+        <!-- Question Body -->
+        <div class="p-5 sm:p-8 space-y-6">
+          <div class="space-y-2">
+            <span class="text-[11px] font-bold text-teal-600 uppercase tracking-wider" id="question-category">English Logic & Vocabulary</span>
+            <h3 class="text-base sm:text-lg md:text-xl font-black text-slate-900 leading-relaxed" id="question-title">
+              Loading question...
+            </h3>
+          </div>
+
+          <!-- 4 Options Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4" id="options-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Quiz Footer Controls -->
+        <div class="p-4 sm:p-6 bg-slate-50/80 border-t border-slate-200 flex items-center justify-between">
+          <button onclick="prevQuestion()" id="btn-prev" class="px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 hover:bg-slate-100 text-slate-600 transition disabled:opacity-40 disabled:pointer-events-none">
+            ← Câu trước
+          </button>
+          
+          <div class="flex items-center space-x-2">
+            <button onclick="nextQuestion()" id="btn-next" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white shadow-sm transition">
+              Câu tiếp →
+            </button>
+            <button onclick="submitQuiz()" id="btn-submit" class="hidden px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition">
+              Nộp bài thi 🎯
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Result Card (Shown after submit) -->
+      <div id="quiz-result-box" class="hidden bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md text-center space-y-6">
+        
+        <div class="inline-flex w-20 h-20 rounded-3xl bg-teal-100 text-teal-700 items-center justify-center text-4xl shadow-inner animate-bounce">
+          🎉
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900" id="result-title">Hoàn Thành Bài Thi Tiếng Anh!</h3>
+          <p class="text-xs sm:text-sm text-slate-500" id="result-subtitle">Kết quả đã được ghi nhận và đồng bộ trực tiếp lên hệ thống.</p>
+        </div>
+
+        <!-- Score Metric Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mx-auto">
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Điểm số</span>
+            <span class="text-xl font-black text-teal-600" id="res-score">10/10</span>
+          </div>
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Thời gian</span>
+            <span class="text-base font-black text-slate-800" id="res-time">01:45</span>
+          </div>
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Đúng / Sai</span>
+            <span class="text-base font-black text-slate-800" id="res-correct">10/0</span>
+          </div>
+          <div class="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200">
+            <span class="text-[10px] text-emerald-700 font-bold block uppercase">Thưởng Spin</span>
+            <span class="text-base font-black text-emerald-700" id="res-spin">+3 lượt</span>
+          </div>
+        </div>
+
+        <!-- Action CTAs -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <button onclick="switchTab('wheel')" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-lg shadow-orange-500/25 flex items-center justify-center space-x-2 transition">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Quay Vòng May Mắn Ngay</span>
+          </button>
+          <button onclick="restartQuiz()" class="w-full sm:w-auto px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm rounded-2xl transition">
+            Làm đề thi khác
+          </button>
+        </div>
+
+        <!-- Detailed Question Explanations -->
+        <div class="pt-6 border-t border-slate-200 text-left space-y-3" id="result-explanations-wrapper">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-1.5">
+            <i data-lucide="book-open" class="w-4 h-4 text-teal-600"></i>
+            <span>Xem Chi Tiết Đáp Án & Lời Giải Thích Song Ngữ</span>
+          </h4>
+          <div id="result-explanations-list" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 2. LUCKY WHEEL: VÒNG QUAY MAY MẮN -->
+    <!-- ============================================== -->
+    <section id="view-wheel" class="hidden space-y-6">
+      
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+            <i data-lucide="gift" class="w-5 h-5 text-amber-500"></i>
+            <span>Vòng Quay May Mắn</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">Mỗi bài thi đạt từ 8 điểm trở lên sẽ được cộng thêm lượt quay may mắn!</p>
+        </div>
+
+        <!-- Available Spins Badge -->
+        <div class="flex items-center space-x-3 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
+          <span class="text-2xl">🎡</span>
+          <div>
+            <span class="text-[10px] text-amber-700 font-bold block uppercase">Lượt quay khả dụng:</span>
+            <span class="text-lg font-black text-amber-900" id="wheel-spins-count">1 lượt</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wheel Visual Box -->
+      <div class="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center justify-center space-y-6 relative overflow-hidden">
+        
+        <!-- Canvas Container with Pointer -->
+        <div class="relative flex items-center justify-center">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheel-canvas" width="340" height="340" class="max-w-full rounded-full shadow-2xl border-4 border-slate-800 bg-white"></canvas>
+        </div>
+
+        <!-- Spin Action Button -->
+        <button onclick="spinWheel()" id="btn-spin-wheel" class="px-8 py-3.5 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-black text-sm sm:text-base rounded-2xl shadow-xl shadow-orange-500/30 hover:scale-105 active:scale-95 transition-all flex items-center space-x-2 cursor-pointer disabled:opacity-50 disabled:pointer-events-none">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+          <span>QUAY THƯỞNG NGAY</span>
+        </button>
+
+        <!-- Prize Result Toast -->
+        <div id="wheel-prize-toast" class="hidden p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-emerald-900 text-center font-bold text-sm max-w-sm w-full animate-bounce">
+          🎉 Chúc mừng! Phần thưởng: <span id="wheel-prize-text" class="font-black text-emerald-800">10 Viên Kẹo</span>
+        </div>
+
+        <!-- Wheel Settings Link (Admin Only) -->
+        <div class="hidden justify-center space-x-3 pt-2" id="wheel-settings-link-wrapper">
+          <button onclick="switchTab('rewards')" class="text-xs font-bold text-slate-500 hover:text-teal-700 flex items-center space-x-1">
+            <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+            <span>Tùy chỉnh danh mục quà tặng (Admin)</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 3. TEACHER REVIEW: CHẤM BÀI & NHẬN XÉT -->
+    <!-- ============================================== -->
+    <section id="view-teacher" class="hidden space-y-6">
+      
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center space-x-2">
+            <h2 class="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i>
+              <span id="teacher-section-title">Chấm Bài Tiếng Anh</span>
+            </h2>
+            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-bold">Cloud Online</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Kiểm tra kết quả bài làm, chấm điểm và nhập Lời nhận xét / Lời phê cho học sinh (Đồng bộ mọi thiết bị).</p>
+        </div>
+        <button onclick="clearAllSubmissions()" id="btn-clear-submissions" class="text-xs text-rose-600 hover:text-rose-800 font-bold flex items-center space-x-1">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          <span>Xóa lịch sử bài làm</span>
+        </button>
+      </div>
+
+      <!-- Submissions List -->
+      <div id="teacher-submissions-container" class="space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 4. REWARDS MANAGEMENT (ADMIN ONLY) -->
+    <!-- ============================================== -->
+    <section id="view-rewards" class="hidden space-y-6">
+      
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h2 class="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
+          <i data-lucide="settings-2" class="w-5 h-5 text-teal-600"></i>
+          <span>Cấu Hình Phần Thưởng Vòng Quay & Lượt Quay</span>
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">Tùy chỉnh 8 ô phần thưởng xuất hiện trên Vòng quay may mắn (Đồng bộ Google Firebase Cloud).</p>
+      </div>
+
+      <!-- Admin Reset Spins Card -->
+      <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-5 rounded-2xl border-2 border-amber-200 space-y-3">
+        <h3 class="text-sm font-extrabold text-amber-900 flex items-center space-x-2">
+          <i data-lucide="rotate-ccw" class="w-4 h-4 text-amber-600"></i>
+          <span>Quản Lý Lượt Quay Cho Từng Bé</span>
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="admin-per-kid-spins-container">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Rewards Items Form -->
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-sm font-bold text-slate-900">Danh sách 8 ô quà tặng trên Vòng Quay:</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="rewards-inputs-container">
+          <!-- 8 Inputs rendered by JS -->
+        </div>
+
+        <div class="pt-2 flex justify-end">
+          <button onclick="saveRewardsConfig()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center space-x-1.5 transition">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Lưu Danh Mục Quà Lên Cloud</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- REVIEW SUBMISSION MODAL (TEACHER) -->
+  <div id="review-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="p-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-lg">
+            👩‍🏫
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900" id="modal-student-title">Chi Tiết Bài Làm Tiếng Anh</h3>
+            <p class="text-xs text-slate-500" id="modal-submit-time">Nộp bài lúc 15:30:00</p>
+          </div>
+        </div>
+        <button onclick="closeReviewModal()" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300 flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-5 custom-scrollbar flex-1">
+        
+        <!-- Score & Status Editor -->
+        <div class="bg-teal-50/70 p-4 rounded-2xl border border-teal-100 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-teal-900">Điểm số chấm bài:</label>
+            <div class="flex items-center space-x-2">
+              <input type="number" id="modal-edit-score" min="0" max="10" class="w-16 px-2.5 py-1 text-center font-black text-teal-800 bg-white rounded-lg border border-teal-200 text-sm">
+              <span class="text-xs font-bold text-teal-900">/ 10 Điểm</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-teal-900 block mb-1">Lời nhận xét / Lời phê cho học sinh:</label>
+            <textarea id="modal-teacher-notes" rows="3" placeholder="Nhập nhận xét (Ví dụ: Con làm rất tốt phần từ vựng con vật, cần ôn thêm phần thì quá khứ...)" class="w-full p-3 bg-white rounded-xl border border-teal-200 text-xs text-slate-800 focus:outline-none focus:border-teal-500"></textarea>
+          </div>
+        </div>
+
+        <!-- Detailed Questions Inspection -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Chi tiết từng câu hỏi & Đáp án</h4>
+          <div id="modal-questions-list" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <button onclick="closeReviewModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200 transition">
+          Đóng lại
+        </button>
+        <button onclick="saveTeacherApproval()" id="btn-save-approval" class="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 shadow-md flex items-center space-x-1.5 transition">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Lưu Kết Quả Chấm Bài</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EMBEDDED 100-QUESTION ENGLISH BANK -->
+  <script>
+// NGÂN HÀNG 100 CÂU HỎI TIẾNG ANH TƯ DUY (50 CÂU LỚP 2 + 50 CÂU LỚP 5)
+const englishBankGrade2 = [
+  {
+    "id": 101,
+    "title": "I have four legs, a long tail, and I say 'Meow'. What am I?",
+    "options": [
+      "A Dog",
+      "A Cat",
+      "A Duck",
+      "A Bird"
+    ],
+    "correct": 1,
+    "explain": "Cat nghĩa là Con mèo, có 4 chân, đuôi dài và kêu 'Meow'."
+  },
+  {
+    "id": 102,
+    "title": "Which word is DIFFERENT from the others?",
+    "options": [
+      "Apple",
+      "Banana",
+      "Pencil",
+      "Orange"
+    ],
+    "correct": 2,
+    "explain": "Apple, Banana, Orange là các loại trái cây. Pencil là bút chì (đồ dùng học tập)."
+  },
+  {
+    "id": 103,
+    "title": "There are 5 birds on a tree. 2 birds fly away. How many birds are left?",
+    "options": [
+      "Three (3)",
+      "Four (4)",
+      "Five (5)",
+      "Seven (7)"
+    ],
+    "correct": 0,
+    "explain": "5 con chim bay mất 2 con: 5 - 2 = 3 (Three)."
+  },
+  {
+    "id": 104,
+    "title": "What is the opposite (trái nghĩa) of 'BIG'?",
+    "options": [
+      "Small",
+      "Tall",
+      "Long",
+      "Heavy"
+    ],
+    "correct": 0,
+    "explain": "Trái nghĩa với 'Big' (to lớn) là 'Small' (nhỏ bé)."
+  },
+  {
+    "id": 105,
+    "title": "What color do you get when you mix Red and Yellow?",
+    "options": [
+      "Green",
+      "Orange",
+      "Purple",
+      "Blue"
+    ],
+    "correct": 1,
+    "explain": "Trộn màu Đỏ (Red) và Vàng (Yellow) sẽ tạo thành màu Cam (Orange)."
+  },
+  {
+    "id": 106,
+    "title": "How many days are there in a week?",
+    "options": [
+      "Five",
+      "Six",
+      "Seven",
+      "Eight"
+    ],
+    "correct": 2,
+    "explain": "Một tuần lễ có 7 ngày (Seven days)."
+  },
+  {
+    "id": 107,
+    "title": "I am yellow. Monkeys love to eat me. What fruit am I?",
+    "options": [
+      "An Apple",
+      "A Banana",
+      "A Grape",
+      "A Watermelon"
+    ],
+    "correct": 1,
+    "explain": "Quả chuối (Banana) màu vàng và là món yêu thích của loài khỉ."
+  },
+  {
+    "id": 108,
+    "title": "Choose the correct spelling:",
+    "options": [
+      "Elaphant",
+      "Elephant",
+      "Elephent",
+      "Elefant"
+    ],
+    "correct": 1,
+    "explain": "Từ đúng chính tả của con voi là 'Elephant'."
+  },
+  {
+    "id": 109,
+    "title": "Where does a fish live?",
+    "options": [
+      "In the sky",
+      "In the tree",
+      "In the water",
+      "On the road"
+    ],
+    "correct": 2,
+    "explain": "Cá sống dưới nước (In the water)."
+  },
+  {
+    "id": 110,
+    "title": "Which animal can FLY?",
+    "options": [
+      "A Dog",
+      "An Elephant",
+      "A Bird",
+      "A Tiger"
+    ],
+    "correct": 2,
+    "explain": "Con chim (Bird) có cánh và biết bay."
+  },
+  {
+    "id": 111,
+    "title": "What is this: 👁️ ?",
+    "options": [
+      "Nose",
+      "Ear",
+      "Eye",
+      "Mouth"
+    ],
+    "correct": 2,
+    "explain": "Biểu tượng 👁️ là Con mắt (Eye)."
+  },
+  {
+    "id": 112,
+    "title": "I am cold and sweet. Children love to eat me in summer. What am I?",
+    "options": [
+      "Soup",
+      "Ice cream",
+      "Hot tea",
+      "Rice"
+    ],
+    "correct": 1,
+    "explain": "Kem (Ice cream) mát lạnh và ngọt ngào, rất thích hợp ăn vào mùa hè."
+  },
+  {
+    "id": 113,
+    "title": "Fill in the blank: 'She _____ my teacher.'",
+    "options": [
+      "am",
+      "is",
+      "are",
+      "be"
+    ],
+    "correct": 1,
+    "explain": "Chủ ngữ 'She' (số ít) đi với động từ to-be là 'is'."
+  },
+  {
+    "id": 114,
+    "title": "Which number comes after NINE (9)?",
+    "options": [
+      "Seven",
+      "Eight",
+      "Ten",
+      "Eleven"
+    ],
+    "correct": 2,
+    "explain": "Số đứng liền sau số 9 (Nine) là số 10 (Ten)."
+  },
+  {
+    "id": 115,
+    "title": "What do you say when you meet someone in the morning?",
+    "options": [
+      "Good night",
+      "Good morning",
+      "Good afternoon",
+      "Goodbye"
+    ],
+    "correct": 1,
+    "explain": "Chào buổi sáng tiếng Anh là 'Good morning'."
+  },
+  {
+    "id": 116,
+    "title": "How many fingers do you have on TWO hands?",
+    "options": [
+      "Five",
+      "Eight",
+      "Ten",
+      "Twelve"
+    ],
+    "correct": 2,
+    "explain": "Hai bàn tay có tất cả 10 ngón tay (Ten fingers)."
+  },
+  {
+    "id": 117,
+    "title": "The sun rises in the morning. What color is the sun?",
+    "options": [
+      "Blue",
+      "Yellow",
+      "Green",
+      "Black"
+    ],
+    "correct": 1,
+    "explain": "Mặt trời tỏa ánh sáng màu vàng (Yellow)."
+  },
+  {
+    "id": 118,
+    "title": "Which vehicle has TWO wheels?",
+    "options": [
+      "A Car",
+      "A Bus",
+      "A Bicycle",
+      "A Truck"
+    ],
+    "correct": 2,
+    "explain": "Xe đạp (Bicycle) có 2 bánh xe."
+  },
+  {
+    "id": 119,
+    "title": "Find the odd one out:",
+    "options": [
+      "Red",
+      "Blue",
+      "Cat",
+      "Green"
+    ],
+    "correct": 2,
+    "explain": "Red, Blue, Green là các màu sắc. Cat là con mèo (động vật)."
+  },
+  {
+    "id": 120,
+    "title": "What is the baby dog called?",
+    "options": [
+      "Kitten",
+      "Puppy",
+      "Duckling",
+      "Chick"
+    ],
+    "correct": 1,
+    "explain": "Chó con trong tiếng Anh gọi là 'Puppy'."
+  },
+  {
+    "id": 121,
+    "title": "Fill in the blank: 'The book is _____ the table.' (Trên bàn)",
+    "options": [
+      "in",
+      "on",
+      "under",
+      "at"
+    ],
+    "correct": 1,
+    "explain": "Ở trên mặt bàn dùng giới từ 'on'."
+  },
+  {
+    "id": 122,
+    "title": "Which one can you DRINK?",
+    "options": [
+      "Bread",
+      "Milk",
+      "Cake",
+      "Pizza"
+    ],
+    "correct": 1,
+    "explain": "Sữa (Milk) là đồ uống."
+  },
+  {
+    "id": 123,
+    "title": "What is 4 + 4 in English?",
+    "options": [
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine"
+    ],
+    "correct": 2,
+    "explain": "4 + 4 = 8 (Eight)."
+  },
+  {
+    "id": 124,
+    "title": "Which shape has THREE corners (góc)?",
+    "options": [
+      "Square",
+      "Circle",
+      "Triangle",
+      "Rectangle"
+    ],
+    "correct": 2,
+    "explain": "Hình tam giác (Triangle) có 3 góc và 3 cạnh."
+  },
+  {
+    "id": 125,
+    "title": "What do you use to write on paper?",
+    "options": [
+      "A Spoon",
+      "A Pen",
+      "A Shoe",
+      "A Hat"
+    ],
+    "correct": 1,
+    "explain": "Cây bút (Pen/Pencil) dùng để viết lên giấy."
+  },
+  {
+    "id": 126,
+    "title": "Opposite of 'HOT' is:",
+    "options": [
+      "Warm",
+      "Cold",
+      "Dry",
+      "Sunny"
+    ],
+    "correct": 1,
+    "explain": "Trái nghĩa với 'Hot' (nóng) là 'Cold' (lạnh)."
+  },
+  {
+    "id": 127,
+    "title": "What room do you sleep in?",
+    "options": [
+      "Kitchen",
+      "Bathroom",
+      "Bedroom",
+      "Garden"
+    ],
+    "correct": 2,
+    "explain": "Phòng ngủ là 'Bedroom'."
+  },
+  {
+    "id": 128,
+    "title": "Which letter comes before 'D' in the English alphabet?",
+    "options": [
+      "A",
+      "B",
+      "C",
+      "E"
+    ],
+    "correct": 2,
+    "explain": "Thứ tự bảng chữ cái: A, B, C, D $\\rightarrow$ Chữ cái đứng trước D là C."
+  },
+  {
+    "id": 129,
+    "title": "A rabbit has two long _____.",
+    "options": [
+      "Ears",
+      "Noses",
+      "Mouths",
+      "Eyes"
+    ],
+    "correct": 0,
+    "explain": "Con thỏ có 2 chiếc tai dài (Long ears)."
+  },
+  {
+    "id": 130,
+    "title": "What animal gives us milk and says 'Moo'?",
+    "options": [
+      "A Horse",
+      "A Cow",
+      "A Sheep",
+      "A Pig"
+    ],
+    "correct": 1,
+    "explain": "Con bò sữa (Cow) cho sữa và kêu 'Moo'."
+  },
+  {
+    "id": 131,
+    "title": "Choose the correct word: 'I have a _____ ball.'",
+    "options": [
+      "red",
+      "reds",
+      "reding",
+      "redly"
+    ],
+    "correct": 0,
+    "explain": "Tính từ chỉ màu sắc đứng trước danh từ là 'red'."
+  },
+  {
+    "id": 132,
+    "title": "Which one is a SCHOOL OBJECT?",
+    "options": [
+      "Ruler",
+      "Bed",
+      "Sofa",
+      "Refrigerator"
+    ],
+    "correct": 0,
+    "explain": "Thước kẻ (Ruler) là đồ dùng học tập tại trường."
+  },
+  {
+    "id": 133,
+    "title": "What is the color of the grass?",
+    "options": [
+      "Pink",
+      "Green",
+      "White",
+      "Purple"
+    ],
+    "correct": 1,
+    "explain": "Cỏ cây có màu xanh lá cây (Green)."
+  },
+  {
+    "id": 134,
+    "title": "How do you say 'Cảm ơn' in English?",
+    "options": [
+      "Sorry",
+      "Please",
+      "Thank you",
+      "Hello"
+    ],
+    "correct": 2,
+    "explain": "'Cảm ơn' trong tiếng Anh là 'Thank you'."
+  },
+  {
+    "id": 135,
+    "title": "A duck says: 'Quack Quack'. What can a duck do?",
+    "options": [
+      "Swim",
+      "Drive a car",
+      "Cook",
+      "Read"
+    ],
+    "correct": 0,
+    "explain": "Vịt biết bơi dưới nước (Swim)."
+  },
+  {
+    "id": 136,
+    "title": "Which number is ODD (số lẻ)?",
+    "options": [
+      "Two (2)",
+      "Four (4)",
+      "Seven (7)",
+      "Six (6)"
+    ],
+    "correct": 2,
+    "explain": "Số 7 (Seven) là số lẻ."
+  },
+  {
+    "id": 137,
+    "title": "What is this: 👂 ?",
+    "options": [
+      "Mouth",
+      "Ear",
+      "Hand",
+      "Foot"
+    ],
+    "correct": 1,
+    "explain": "Biểu tượng 👂 là Cái tai (Ear)."
+  },
+  {
+    "id": 138,
+    "title": "Look at the sky at night. What can you see?",
+    "options": [
+      "The Sun",
+      "The Moon & Stars",
+      "Rainbow",
+      "Clouds only"
+    ],
+    "correct": 1,
+    "explain": "Ban đêm trên bầu trời có Mặt trăng và các vì sao (The Moon & Stars)."
+  },
+  {
+    "id": 139,
+    "title": "Opposite of 'HAPPY' is:",
+    "options": [
+      "Sad",
+      "Glad",
+      "Fun",
+      "Good"
+    ],
+    "correct": 0,
+    "explain": "Trái nghĩa với 'Happy' (vui vẻ) là 'Sad' (buồn bã)."
+  },
+  {
+    "id": 140,
+    "title": "Fill in: 'They _____ playing football.'",
+    "options": [
+      "is",
+      "am",
+      "are",
+      "be"
+    ],
+    "correct": 2,
+    "explain": "Chủ ngữ 'They' (số nhiều) đi với 'are'."
+  },
+  {
+    "id": 141,
+    "title": "Which animal is the KING of the jungle?",
+    "options": [
+      "Lion",
+      "Monkey",
+      "Mouse",
+      "Rabbit"
+    ],
+    "correct": 0,
+    "explain": "Sư tử (Lion) được mệnh danh là chúa tể rừng xanh."
+  },
+  {
+    "id": 142,
+    "title": "What do you wear on your FEET?",
+    "options": [
+      "Hat",
+      "Shirt",
+      "Shoes",
+      "Gloves"
+    ],
+    "correct": 2,
+    "explain": "Đôi giày (Shoes) đi vào bàn chân."
+  },
+  {
+    "id": 143,
+    "title": "How many legs does a spider have?",
+    "options": [
+      "4",
+      "6",
+      "8",
+      "10"
+    ],
+    "correct": 2,
+    "explain": "Con nhện (Spider) có 8 chân."
+  },
+  {
+    "id": 144,
+    "title": "Fill in the blank: 'An _____ a day keeps the doctor away.'",
+    "options": [
+      "Orange",
+      "Apple",
+      "Egg",
+      "Ice"
+    ],
+    "correct": 1,
+    "explain": "Thành ngữ tiếng Anh: 'An Apple a day keeps the doctor away' (Mỗi ngày ăn một quả táo giúp cơ thể khỏe mạnh)."
+  },
+  {
+    "id": 145,
+    "title": "What do you do with a BOOK?",
+    "options": [
+      "Eat it",
+      "Read it",
+      "Drink it",
+      "Wear it"
+    ],
+    "correct": 1,
+    "explain": "Sách dùng để đọc (Read it)."
+  },
+  {
+    "id": 146,
+    "title": "Which one is FAST?",
+    "options": [
+      "A Snail",
+      "A Turtle",
+      "A Cheetah",
+      "A Sloth"
+    ],
+    "correct": 2,
+    "explain": "Báo săn (Cheetah) là loài thú chạy nhanh nhất thế giới."
+  },
+  {
+    "id": 147,
+    "title": "What is the first month of the year?",
+    "options": [
+      "January",
+      "February",
+      "March",
+      "December"
+    ],
+    "correct": 0,
+    "explain": "Tháng 1 là January."
+  },
+  {
+    "id": 148,
+    "title": "You use an umbrella when it is:",
+    "options": [
+      "Raining",
+      "Sunny only",
+      "Snowing only",
+      "Night"
+    ],
+    "correct": 0,
+    "explain": "Dùng ô che khi trời mưa (Raining)."
+  },
+  {
+    "id": 149,
+    "title": "Which animal can SWIM and has a long nose called a trunk?",
+    "options": [
+      "Giraffe",
+      "Elephant",
+      "Zebra",
+      "Kangaroo"
+    ],
+    "correct": 1,
+    "explain": "Voi (Elephant) có vòi dài (trunk) và biết bơi rất giỏi."
+  },
+  {
+    "id": 150,
+    "title": "10 minus 3 equals:",
+    "options": [
+      "Six",
+      "Seven",
+      "Eight",
+      "Five"
+    ],
+    "correct": 1,
+    "explain": "10 - 3 = 7 (Seven)."
+  }
+];
+
+const englishBankGrade5 = [
+  {
+    "id": 201,
+    "title": "What has hands and a face, but cannot clap or smile?",
+    "options": [
+      "A Robot",
+      "A Clock",
+      "A Doll",
+      "A Mirror"
+    ],
+    "correct": 1,
+    "explain": "Đồng hồ (Clock) có mặt số (face) và kim giờ/phút (hands) nhưng không biết vỗ tay hay cười."
+  },
+  {
+    "id": 202,
+    "title": "What occurs once in a MINUTE, twice in a MOMENT, but never in a THOUSAND YEARS?",
+    "options": [
+      "The letter 'M'",
+      "The letter 'T'",
+      "The letter 'E'",
+      "The letter 'O'"
+    ],
+    "correct": 0,
+    "explain": "Chữ cái 'M' xuất hiện 1 lần trong từ 'minute', 2 lần trong 'moment' và 0 lần trong 'thousand years'."
+  },
+  {
+    "id": 203,
+    "title": "Tom is taller than Peter. Peter is taller than John. Who is the SHORTEST?",
+    "options": [
+      "Tom",
+      "Peter",
+      "John",
+      "Cannot tell"
+    ],
+    "correct": 2,
+    "explain": "Tom > Peter > John $\\rightarrow$ John là bạn thấp nhất (Shortest)."
+  },
+  {
+    "id": 204,
+    "title": "Look at those dark clouds! It ________ rain soon.",
+    "options": [
+      "will",
+      "is going to",
+      "rains",
+      "rained"
+    ],
+    "correct": 1,
+    "explain": "Có bằng chứng rõ ràng ở hiện tại (mây đen) $\\rightarrow$ Dùng cấu trúc 'be going to' diễn tả dự đoán."
+  },
+  {
+    "id": 205,
+    "title": "Which planet in our solar system is known as the 'Red Planet'?",
+    "options": [
+      "Venus",
+      "Mars",
+      "Jupiter",
+      "Saturn"
+    ],
+    "correct": 1,
+    "explain": "Sao Hỏa (Mars) được gọi là Hành tinh Đỏ."
+  },
+  {
+    "id": 206,
+    "title": "If you freeze water, what do you get?",
+    "options": [
+      "Steam",
+      "Ice",
+      "Juice",
+      "Lava"
+    ],
+    "correct": 1,
+    "explain": "Nước đóng băng sẽ chuyển thành Đá lạnh (Ice)."
+  },
+  {
+    "id": 207,
+    "title": "Find the SYNONYM (từ đồng nghĩa) of 'QUICK':",
+    "options": [
+      "Slow",
+      "Fast",
+      "Quiet",
+      "Heavy"
+    ],
+    "correct": 1,
+    "explain": "'Quick' và 'Fast' đều có nghĩa là nhanh chóng."
+  },
+  {
+    "id": 208,
+    "title": "What has to be BROKEN before you can use it?",
+    "options": [
+      "A Glass",
+      "An Egg",
+      "A Chair",
+      "A Phone"
+    ],
+    "correct": 1,
+    "explain": "Quả trứng (Egg) phải được đập vỡ vỏ trước khi chế biến/sử dụng."
+  },
+  {
+    "id": 209,
+    "title": "Mary's father has 5 daughters: Nana, Nene, Nini, Nono. What is the 5th daughter's name?",
+    "options": [
+      "Nunu",
+      "Mary",
+      "Anna",
+      "Nina"
+    ],
+    "correct": 1,
+    "explain": "Bố của Mary (Mary's father) có 5 cô con gái $\\rightarrow$ Người con thứ 5 chính là Mary!"
+  },
+  {
+    "id": 210,
+    "title": "Choose the correct sentence:",
+    "options": [
+      "He don't like apples.",
+      "He doesn't likes apples.",
+      "He doesn't like apples.",
+      "He isn't like apples."
+    ],
+    "correct": 2,
+    "explain": "Chủ ngữ 'He' phủ định thì hiện tại đơn: doesn't + động từ nguyên thể 'like'."
+  },
+  {
+    "id": 211,
+    "title": "Which country is famous for the Eiffel Tower?",
+    "options": [
+      "England",
+      "France",
+      "Germany",
+      "Italy"
+    ],
+    "correct": 1,
+    "explain": "Tháp Eiffel nằm ở thủ đô Paris, nước Pháp (France)."
+  },
+  {
+    "id": 212,
+    "title": "I am full of holes, but I still hold water. What am I?",
+    "options": [
+      "A Sponge",
+      "A Net",
+      "A Bucket",
+      "A Towel"
+    ],
+    "correct": 0,
+    "explain": "Miếng bọt biển (Sponge) có rất nhiều lỗ nhỏ nhưng lại thấm và giữ được nước."
+  },
+  {
+    "id": 213,
+    "title": "What is the past tense (thì quá khứ) of the verb 'GO'?",
+    "options": [
+      "Goed",
+      "Gone",
+      "Went",
+      "Going"
+    ],
+    "correct": 2,
+    "explain": "Quá khứ bất quy tắc của 'Go' là 'Went'."
+  },
+  {
+    "id": 214,
+    "title": "How many continents (châu lục) are there on Earth?",
+    "options": [
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "correct": 2,
+    "explain": "Trái Đất có 7 châu lục (Seven continents)."
+  },
+  {
+    "id": 215,
+    "title": "Which animal is the largest mammal in the world?",
+    "options": [
+      "African Elephant",
+      "Blue Whale",
+      "Giraffe",
+      "Hippopotamus"
+    ],
+    "correct": 1,
+    "explain": "Cá voi xanh (Blue Whale) là loài động vật có vú lớn nhất hành tinh."
+  },
+  {
+    "id": 216,
+    "title": "Fill in the blank: 'This exercise is ________ than that one.'",
+    "options": [
+      "easy",
+      "easier",
+      "more easy",
+      "easiest"
+    ],
+    "correct": 1,
+    "explain": "So sánh hơn của tính từ ngắn đuôi -y: 'easy' $\\rightarrow$ 'easier'."
+  },
+  {
+    "id": 217,
+    "title": "What goes up but never comes down?",
+    "options": [
+      "Rain",
+      "Your Age",
+      "A Balloon",
+      "A Kite"
+    ],
+    "correct": 1,
+    "explain": "Tuổi tác của con người (Your Age) chỉ tăng lên theo năm tháng chứ không bao giờ giảm đi."
+  },
+  {
+    "id": 218,
+    "title": "Choose the correct question: '________ do you go to school?' - 'By bus.'",
+    "options": [
+      "Where",
+      "When",
+      "How",
+      "Why"
+    ],
+    "correct": 2,
+    "explain": "Hỏi về phương tiện đi lại dùng từ để hỏi 'How' (Bằng cách nào / Bằng phương tiện gì)."
+  },
+  {
+    "id": 219,
+    "title": "What gets WETTER the more it dries?",
+    "options": [
+      "A Towel",
+      "A Sponge",
+      "A Cloud",
+      "A Sunbeam"
+    ],
+    "correct": 0,
+    "explain": "Chiếc khăn tắm (Towel) càng lau khô người cho bạn thì bản thân nó càng ướt."
+  },
+  {
+    "id": 220,
+    "title": "Which gas do plants absorb from the air during photosynthesis (quang hợp)?",
+    "options": [
+      "Oxygen",
+      "Carbon Dioxide",
+      "Nitrogen",
+      "Hydrogen"
+    ],
+    "correct": 1,
+    "explain": "Cây xanh hấp thụ khí Carbon Dioxide ($CO_2$) để quang hợp và nhả ra khí Oxy."
+  },
+  {
+    "id": 221,
+    "title": "Rearrange the words: 'always / He / early / wakes up.'",
+    "options": [
+      "He wakes up always early.",
+      "He always wakes up early.",
+      "Always he wakes up early.",
+      "He early wakes up always."
+    ],
+    "correct": 1,
+    "explain": "Trạng từ chỉ tần suất 'always' đứng trước động từ thường 'wakes up'."
+  },
+  {
+    "id": 222,
+    "title": "What is the capital city of Japan?",
+    "options": [
+      "Beijing",
+      "Seoul",
+      "Tokyo",
+      "Bangkok"
+    ],
+    "correct": 2,
+    "explain": "Thủ đô của Nhật Bản là Tokyo."
+  },
+  {
+    "id": 223,
+    "title": "If yesterday was Wednesday, what day will tomorrow be?",
+    "options": [
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "correct": 1,
+    "explain": "Hôm qua là thứ Tư $\\rightarrow$ Hôm nay là thứ Năm $\\rightarrow$ Ngày mai là thứ Sáu (Friday)."
+  },
+  {
+    "id": 224,
+    "title": "Choose the correct word: 'There are many ________ in the park.'",
+    "options": [
+      "child",
+      "childs",
+      "children",
+      "childrens"
+    ],
+    "correct": 2,
+    "explain": "Danh từ số nhiều bất quy tắc của 'child' là 'children'."
+  },
+  {
+    "id": 225,
+    "title": "What has a neck, but no head?",
+    "options": [
+      "A Bottle",
+      "A Shirt",
+      "A Guitar",
+      "All of above"
+    ],
+    "correct": 3,
+    "explain": "Cổ chai (bottle neck), cổ áo (shirt neck), cần đàn (guitar neck) đều có từ 'neck' nhưng không có đầu."
+  },
+  {
+    "id": 226,
+    "title": "Which instrument has 88 black and white keys?",
+    "options": [
+      "Guitar",
+      "Violin",
+      "Piano",
+      "Flute"
+    ],
+    "correct": 2,
+    "explain": "Đàn Piano tiêu chuẩn có 88 phím đen và trắng."
+  },
+  {
+    "id": 227,
+    "title": "Fill in the blank: 'She is interested ________ learning English.'",
+    "options": [
+      "on",
+      "at",
+      "in",
+      "with"
+    ],
+    "correct": 2,
+    "explain": "Cụm tính từ đi kèm giới từ: 'be interested in' (thích thú, quan tâm đến điều gì)."
+  },
+  {
+    "id": 228,
+    "title": "What flies without wings and cries without eyes?",
+    "options": [
+      "A Cloud",
+      "The Wind",
+      "A Bird",
+      "The Rain"
+    ],
+    "correct": 0,
+    "explain": "Đám mây (Cloud) bay lượn không cần cánh và 'khóc' tạo thành mưa."
+  },
+  {
+    "id": 229,
+    "title": "Find the antonym of 'ANCIENT' (cổ xưa):",
+    "options": [
+      "Old",
+      "Modern",
+      "Historic",
+      "Traditional"
+    ],
+    "correct": 1,
+    "explain": "Trái nghĩa với 'Ancient' (cổ kính/cổ xưa) là 'Modern' (hiện đại)."
+  },
+  {
+    "id": 230,
+    "title": "How many degrees are in a full CIRCLE?",
+    "options": [
+      "90°",
+      "180°",
+      "270°",
+      "360°"
+    ],
+    "correct": 3,
+    "explain": "Một hình tròn hoàn chỉnh có $360^\\circ$."
+  },
+  {
+    "id": 231,
+    "title": "Which animal sleeps while standing up?",
+    "options": [
+      "A Dog",
+      "A Horse",
+      "A Cat",
+      "A Lion"
+    ],
+    "correct": 1,
+    "explain": "Loài ngựa (Horse) có thể ngủ trong tư thế đứng nhờ cấu trúc khớp chân đặc biệt."
+  },
+  {
+    "id": 232,
+    "title": "Choose the correct sentence in passive voice: 'The chef cooked the dinner.'",
+    "options": [
+      "The dinner is cooked by the chef.",
+      "The dinner was cooked by the chef.",
+      "The dinner cooked by the chef.",
+      "The chef was cooked by dinner."
+    ],
+    "correct": 1,
+    "explain": "Câu bị động ở thì quá khứ đơn: S + was/were + V3/ed + by O $\\rightarrow$ 'The dinner was cooked by the chef.'"
+  },
+  {
+    "id": 233,
+    "title": "What has a thumb and four fingers, but is not alive?",
+    "options": [
+      "A Glove",
+      "A Hand",
+      "A Clock",
+      "A Tree"
+    ],
+    "correct": 0,
+    "explain": "Chiếc găng tay (Glove) có ngón cái và 4 ngón tay nhưng không phải là vật sống."
+  },
+  {
+    "id": 234,
+    "title": "Which one is NOT a renewable energy source (năng lượng tái tạo)?",
+    "options": [
+      "Solar energy",
+      "Wind energy",
+      "Coal (Than đá)",
+      "Hydro energy"
+    ],
+    "correct": 2,
+    "explain": "Than đá (Coal) là nhiên liệu hóa thạch, không phải năng lượng tái tạo."
+  },
+  {
+    "id": 235,
+    "title": "Fill in the blank: 'If it rains tomorrow, we ________ at home.'",
+    "options": [
+      "stay",
+      "will stay",
+      "stayed",
+      "staying"
+    ],
+    "correct": 1,
+    "explain": "Câu điều kiện loại 1: If + HTĐ, S + will + V-nguyên thể $\\rightarrow$ 'will stay'."
+  },
+  {
+    "id": 236,
+    "title": "What belongs to you, but other people use it more than you do?",
+    "options": [
+      "Your phone",
+      "Your name",
+      "Your money",
+      "Your car"
+    ],
+    "correct": 1,
+    "explain": "Tên của bạn (Your name) là của bạn, nhưng người khác thường gọi nó nhiều hơn chính bạn."
+  },
+  {
+    "id": 237,
+    "title": "What is the longest river in the world?",
+    "options": [
+      "Amazon River",
+      "Nile River",
+      "Mekong River",
+      "Yangtze River"
+    ],
+    "correct": 1,
+    "explain": "Sông Nin (Nile River) ở Châu Phi là con sông dài nhất thế giới."
+  },
+  {
+    "id": 238,
+    "title": "Choose the correct preposition: 'I was born _____ May 15th, 2015.'",
+    "options": [
+      "in",
+      "on",
+      "at",
+      "by"
+    ],
+    "correct": 1,
+    "explain": "Đi kèm với ngày tháng cụ thể dùng giới từ 'on'."
+  },
+  {
+    "id": 239,
+    "title": "What has many teeth, but cannot bite?",
+    "options": [
+      "A Comb",
+      "A Saw",
+      "A Shark",
+      "A Zipper"
+    ],
+    "correct": 0,
+    "explain": "Cái lược chải đầu (Comb) có nhiều răng lược (teeth) nhưng không cắn được."
+  },
+  {
+    "id": 240,
+    "title": "Which ocean is the largest on Earth?",
+    "options": [
+      "Atlantic Ocean",
+      "Indian Ocean",
+      "Pacific Ocean",
+      "Arctic Ocean"
+    ],
+    "correct": 2,
+    "explain": "Thái Bình Dương (Pacific Ocean) là đại dương lớn nhất thế giới."
+  },
+  {
+    "id": 241,
+    "title": "Fill in the blank: 'She has lived here ________ 5 years.'",
+    "options": [
+      "since",
+      "for",
+      "in",
+      "during"
+    ],
+    "correct": 1,
+    "explain": "Đi kèm khoảng thời gian trong thì hiện tại hoàn thành dùng 'for' (for 5 years)."
+  },
+  {
+    "id": 242,
+    "title": "What building has the most stories (tầng / câu chuyện)?",
+    "options": [
+      "The Library",
+      "The Skyscraper",
+      "The Hospital",
+      "The Hotel"
+    ],
+    "correct": 0,
+    "explain": "Câu đố chữ: 'Stories' vừa có nghĩa là tầng nhà, vừa có nghĩa là truyện $\\rightarrow$ Thư viện (Library) có nhiều truyện nhất!"
+  },
+  {
+    "id": 243,
+    "title": "Choose the correct spelling:",
+    "options": [
+      "Beautifull",
+      "Beautiful",
+      "Beutiful",
+      "Beatiful"
+    ],
+    "correct": 1,
+    "explain": "Chính tả đúng là 'Beautiful'."
+  },
+  {
+    "id": 244,
+    "title": "Which animal can change its skin color to camouflage (ngụy trang)?",
+    "options": [
+      "Chameleon (Tắc kè hoa)",
+      "Snake",
+      "Frog",
+      "Lizard"
+    ],
+    "correct": 0,
+    "explain": "Tắc kè hoa (Chameleon) có khả năng đổi màu da ngoạn mục để ngụy trang."
+  },
+  {
+    "id": 245,
+    "title": "Fill in the blank: 'You ________ brush your teeth twice a day.'",
+    "options": [
+      "should",
+      "could",
+      "would",
+      "might"
+    ],
+    "correct": 0,
+    "explain": "Đưa ra lời khuyên nên làm gì dùng 'should'."
+  },
+  {
+    "id": 246,
+    "title": "What starts with 'T', ends with 'T', and is full of 'T'?",
+    "options": [
+      "A Teapot",
+      "A Tent",
+      "A Toast",
+      "A Target"
+    ],
+    "correct": 0,
+    "explain": "Ấm trà (Teapot) bắt đầu bằng chữ T, kết thúc bằng chữ T và bên trong chứa đầy trà (Tea)."
+  },
+  {
+    "id": 247,
+    "title": "How many bones are there in the adult human body?",
+    "options": [
+      "106",
+      "206",
+      "306",
+      "406"
+    ],
+    "correct": 1,
+    "explain": "Cơ thể người trưởng thành có 206 khúc xương."
+  },
+  {
+    "id": 248,
+    "title": "Which country invented paper and tea?",
+    "options": [
+      "India",
+      "Egypt",
+      "China",
+      "Greece"
+    ],
+    "correct": 2,
+    "explain": "Trung Quốc (China) là nơi phát minh ra giấy viết và nghệ thuật trà đạo từ thời cổ đại."
+  },
+  {
+    "id": 249,
+    "title": "Choose the adverb form of 'GOOD':",
+    "options": [
+      "Goodly",
+      "Well",
+      "Better",
+      "Best"
+    ],
+    "correct": 1,
+    "explain": "Trạng từ của tính từ 'Good' là 'Well'."
+  },
+  {
+    "id": 250,
+    "title": "I am light as a feather, yet the strongest person cannot hold me for 5 minutes. What am I?",
+    "options": [
+      "Breath (Hơi thở)",
+      "A Feather",
+      "Air",
+      "Water"
+    ],
+    "correct": 0,
+    "explain": "Hơi thở nhẹ như lông hồng nhưng không ai có thể nín thở liên tục quá 5 phút."
+  }
+];
+
+  </script>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    // ==========================================
+    // 1. STATE & PER-KID SPIN ACCOUNTS
+    // ==========================================
+    let currentGrade = 2;
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = {};
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    
+    // Check Kid session vs Admin session
+    let currentKid = null;
+    try {
+      const kidSession = localStorage.getItem('kienlt_active_kid_session');
+      if (kidSession) {
+        currentKid = JSON.parse(kidSession);
+      }
+    } catch(e) {}
+
+    // Submissions and Rewards state
+    let submissions = [];
+    let rewardItems = [];
+    let kidsList = [];
+    let spinsMap = { 'kid_thoc': 1, 'kid_gau': 1 };
+
+    function getAllKids() {
+      if (kidsList && kidsList.length > 0) return kidsList;
+      return [
+        { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
+        { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
+      ];
+    }
+
+    function getCurrentKidSpins() {
+      const kidId = currentKid ? currentKid.id : 'kid_thoc';
+      return spinsMap[kidId] !== undefined ? spinsMap[kidId] : 0;
+    }
+
+    function updateKidSpins(kidId, change) {
+      const current = spinsMap[kidId] !== undefined ? spinsMap[kidId] : 0;
+      const nextVal = Math.max(0, current + change);
+      spinsMap[kidId] = nextVal;
+      if (window.CloudSync) {
+        window.CloudSync.saveSpins(spinsMap);
+      } else {
+        localStorage.setItem('kienlt_kid_spins_map', JSON.stringify(spinsMap));
+      }
+      updateSpinBadge();
+      renderAdminSpinsManagement();
+      calculateAndRenderStats();
+    }
+
+    function setKidSpinsDirect(kidId, count) {
+      const nextVal = Math.max(0, parseInt(count, 10) || 0);
+      spinsMap[kidId] = nextVal;
+      if (window.CloudSync) {
+        window.CloudSync.saveSpins(spinsMap);
+      } else {
+        localStorage.setItem('kienlt_kid_spins_map', JSON.stringify(spinsMap));
+      }
+      updateSpinBadge();
+      renderAdminSpinsManagement();
+      calculateAndRenderStats();
+    }
+
+    function updateSpinBadge() {
+      const count = getCurrentKidSpins();
+      const badge = document.getElementById('spin-badge');
+      const wheelCount = document.getElementById('wheel-spins-count');
+      if (badge) {
+        if (count > 0) {
+          badge.textContent = count;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+      if (wheelCount) {
+        const kidName = currentKid ? currentKid.name : 'Bé THÓC';
+        wheelCount.textContent = `${count} lượt (${kidName})`;
+      }
+    }
+
+    // ==========================================
+    // 2. STATS & ANALYTICS CALCULATION
+    // ==========================================
+    function calculateAndRenderStats() {
+      const kids = getAllKids();
+
+      // If logged in as kid: render personal 4-card metric
+      if (currentKid) {
+        const kidSubs = submissions.filter(s => s.studentName === currentKid.name || s.studentName === currentKid.id);
+        const totalQuizzes = kidSubs.length;
+        const totalScore = kidSubs.reduce((acc, cur) => acc + (cur.score || 0), 0);
+        const avgScore = totalQuizzes > 0 ? (totalScore / totalQuizzes).toFixed(1) : "0.0";
+        const totalQuestions = totalQuizzes * 10;
+        const totalCorrect = totalScore;
+        const totalWrong = Math.max(0, totalQuestions - totalCorrect);
+        const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+        const statTotal = document.getElementById('kid-stat-total-quizzes');
+        const statAvg = document.getElementById('kid-stat-avg-score');
+        const statCW = document.getElementById('kid-stat-correct-wrong');
+        const statAcc = document.getElementById('kid-stat-accuracy');
+
+        if (statTotal) statTotal.textContent = `${totalQuizzes} bài`;
+        if (statAvg) statAvg.textContent = `${avgScore} / 10`;
+        if (statCW) statCW.innerHTML = `<span class="text-emerald-600 font-bold">${totalCorrect}</span> / <span class="text-rose-500 font-bold">${totalWrong}</span>`;
+        if (statAcc) statAcc.textContent = `${accuracy}%`;
+      }
+
+      // Render Admin Overview Table
+      const tableBody = document.getElementById('admin-stats-table-body');
+      if (tableBody) {
+        tableBody.innerHTML = kids.map(k => {
+          const kidSubs = submissions.filter(s => s.studentName === k.name || s.studentName === k.id);
+          const totalQuizzes = kidSubs.length;
+          const totalScore = kidSubs.reduce((acc, cur) => acc + (cur.score || 0), 0);
+          const avgScore = totalQuizzes > 0 ? (totalScore / totalQuizzes).toFixed(1) : "0.0";
+          const maxScore = totalQuizzes > 0 ? Math.max(...kidSubs.map(s => s.score || 0)) : 0;
+          const totalQuestions = totalQuizzes * 10;
+          const totalCorrect = totalScore;
+          const totalWrong = Math.max(0, totalQuestions - totalCorrect);
+          const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+          const kidSpins = spinsMap[k.id] !== undefined ? spinsMap[k.id] : 0;
+
+          return `
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-2.5 flex items-center space-x-2">
+                <span class="text-base">🎓</span>
+                <div>
+                  <span class="font-extrabold text-slate-900">${k.name}</span>
+                  <span class="text-[10px] text-slate-400 block font-normal">#${k.username}</span>
+                </div>
+              </td>
+              <td class="py-2.5 text-center">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${k.grade === 2 ? 'bg-amber-100 text-amber-800' : 'bg-teal-100 text-teal-800'}">
+                  Lớp ${k.grade}
+                </span>
+              </td>
+              <td class="py-2.5 text-center font-bold text-slate-800">${totalQuizzes} bài</td>
+              <td class="py-2.5 text-center font-black text-amber-600">${avgScore}</td>
+              <td class="py-2.5 text-center font-bold text-emerald-600">${maxScore}/10</td>
+              <td class="py-2.5 text-center">
+                <span class="text-emerald-600 font-bold">${totalCorrect}</span> / <span class="text-rose-500 font-bold">${totalWrong}</span>
+              </td>
+              <td class="py-2.5 text-center">
+                <div class="flex items-center justify-center space-x-1.5">
+                  <div class="w-12 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-teal-500 rounded-full" style="width: ${accuracy}%"></div>
+                  </div>
+                  <span class="font-bold text-slate-700">${accuracy}%</span>
+                </div>
+              </td>
+              <td class="py-2.5 text-right font-black text-amber-600">${kidSpins} lượt</td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    // ==========================================
+    // 3. ROLE-BASED ACCESS CONTROL
+    // ==========================================
+    function setupRoleAccess() {
+      const navTeacher = document.getElementById('nav-teacher');
+      const navRewards = document.getElementById('nav-rewards');
+      const wheelSettingsLink = document.getElementById('wheel-settings-link-wrapper');
+      const studentBanner = document.getElementById('student-welcome-banner');
+      const gradeSelectorWrapper = document.getElementById('grade-selector-wrapper');
+      const personalStatsCard = document.getElementById('kid-personal-stats-card');
+      const adminStatsCard = document.getElementById('admin-stats-summary-card');
+
+      if (currentKid) {
+        if (navTeacher) navTeacher.classList.add('hidden');
+        if (navRewards) navRewards.classList.add('hidden');
+        if (wheelSettingsLink) wheelSettingsLink.classList.add('hidden');
+        if (adminStatsCard) adminStatsCard.classList.add('hidden');
+        if (personalStatsCard) personalStatsCard.classList.remove('hidden');
+
+        if (studentBanner) {
+          studentBanner.classList.remove('hidden');
+          document.getElementById('student-banner-name').textContent = currentKid.name;
+          document.getElementById('student-banner-grade').textContent = `Lớp ${currentKid.grade}`;
+        }
+
+        currentGrade = currentKid.grade || 2;
+        if (gradeSelectorWrapper) gradeSelectorWrapper.classList.add('hidden');
+
+        document.getElementById('header-student-greeting').textContent = 
+          `Chào ${currentKid.name}! Sẵn sàng thử thách 10 câu Tiếng Anh chưa nào?`;
+      } else {
+        if (navTeacher) navTeacher.classList.remove('hidden');
+        if (navRewards) navRewards.classList.remove('hidden');
+        if (wheelSettingsLink) wheelSettingsLink.classList.remove('hidden');
+        if (wheelSettingsLink) wheelSettingsLink.classList.add('flex');
+        if (adminStatsCard) adminStatsCard.classList.remove('hidden');
+        if (personalStatsCard) personalStatsCard.classList.add('hidden');
+        if (studentBanner) studentBanner.classList.add('hidden');
+        if (gradeSelectorWrapper) gradeSelectorWrapper.classList.remove('hidden');
+      }
+
+      updateSpinBadge();
+      calculateAndRenderStats();
+    }
+
+    function logoutKid() {
+      localStorage.removeItem('kienlt_active_kid_session');
+      window.location.href = 'main.html';
+    }
+
+    // ==========================================
+    // 4. QUIZ INITIALIZATION & NAVIGATION
+    // ==========================================
+    function setGrade(grade) {
+      if (currentKid) return;
+      currentGrade = grade;
+      const btn2 = document.getElementById('btn-grade-2');
+      const btn5 = document.getElementById('btn-grade-5');
+      if (grade === 2) {
+        btn2.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border-2 border-teal-500 bg-teal-50 text-teal-800 transition";
+        btn5.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border-2 border-slate-200 hover:border-slate-300 text-slate-600 transition";
+      } else {
+        btn5.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border-2 border-teal-500 bg-teal-50 text-teal-800 transition";
+        btn2.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border-2 border-slate-200 hover:border-slate-300 text-slate-600 transition";
+      }
+      restartQuiz();
+    }
+
+    function restartQuiz() {
+      document.getElementById('quiz-box').classList.remove('hidden');
+      document.getElementById('quiz-result-box').classList.add('hidden');
+      userAnswers = {};
+      currentQuestionIndex = 0;
+      secondsElapsed = 0;
+      clearInterval(timerInterval);
+
+      // Pick 10 random questions from bank
+      const pool = currentGrade === 2 ? englishBankGrade2 : englishBankGrade5;
+      const shuffled = [...pool].sort(() => 0.5 - Math.random());
+      currentQuestions = shuffled.slice(0, 10);
+
+      // Start timer
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+        const secs = String(secondsElapsed % 60).padStart(2, '0');
+        document.getElementById('quiz-timer').textContent = `${mins}:${secs}`;
+      }, 1000);
+
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      if (!currentQuestions || currentQuestions.length === 0) return;
+      const q = currentQuestions[currentQuestionIndex];
+      
+      document.getElementById('question-badge').textContent = `Câu ${currentQuestionIndex + 1}/10`;
+      document.getElementById('quiz-progress-bar').style.width = `${(currentQuestionIndex + 1) * 10}%`;
+      document.getElementById('question-title').textContent = q.title;
+
+      const optsContainer = document.getElementById('options-container');
+      optsContainer.innerHTML = q.options.map((opt, idx) => {
+        const isSelected = userAnswers[currentQuestionIndex] === idx;
+        const letter = String.fromCharCode(65 + idx);
+        return `
+          <button onclick="selectOption(${idx})" class="w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center space-x-3.5 ${
+            isSelected 
+              ? 'border-teal-500 bg-teal-50/80 shadow-md shadow-teal-500/15' 
+              : 'border-slate-200 hover:border-teal-300 hover:bg-slate-50/80 bg-white'
+          }">
+            <span class="w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs ${
+              isSelected ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-700'
+            }">
+              ${letter}
+            </span>
+            <span class="text-sm sm:text-base font-bold ${isSelected ? 'text-teal-900' : 'text-slate-800'}">
+              ${opt}
+            </span>
+          </button>
+        `;
+      }).join('');
+
+      // Nav Buttons
+      document.getElementById('btn-prev').disabled = currentQuestionIndex === 0;
+      if (currentQuestionIndex === 9) {
+        document.getElementById('btn-next').classList.add('hidden');
+        document.getElementById('btn-submit').classList.remove('hidden');
+      } else {
+        document.getElementById('btn-next').classList.remove('hidden');
+        document.getElementById('btn-submit').classList.add('hidden');
+      }
+    }
+
+    function selectOption(idx) {
+      userAnswers[currentQuestionIndex] = idx;
+      renderCurrentQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < 9) {
+        currentQuestionIndex++;
+        renderCurrentQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderCurrentQuestion();
+      }
+    }
+
+    function submitQuiz() {
+      const answeredCount = Object.keys(userAnswers).length;
+      if (answeredCount < 10) {
+        if (!confirm(`Bạn mới trả lời ${answeredCount}/10 câu hỏi. Bạn có chắc chắn muốn nộp bài sớm không?`)) {
+          return;
+        }
+      }
+      finishAndAutoGrade();
+    }
+
+    function finishAndAutoGrade() {
+      clearInterval(timerInterval);
+      let correctCount = 0;
+      currentQuestions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) {
+          correctCount++;
+        }
+      });
+
+      const score = correctCount; // 1 pt each -> max 10
+      const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+      const secs = String(secondsElapsed % 60).padStart(2, '0');
+      const timeSpent = `${mins}:${secs}`;
+
+      // Reward spins: 8 -> 1, 9 -> 2, 10 -> 3
+      let earnedSpins = 0;
+      if (score === 10) earnedSpins = 3;
+      else if (score === 9) earnedSpins = 2;
+      else if (score === 8) earnedSpins = 1;
+
+      if (earnedSpins > 0) {
+        const kidId = currentKid ? currentKid.id : 'kid_thoc';
+        updateKidSpins(kidId, earnedSpins);
+      }
+
+      // Create submission record
+      const studentName = currentKid ? currentKid.name : (currentGrade === 2 ? "Bé THÓC" : "Bé Gấu");
+      const sub = {
+        id: Date.now(),
+        studentName: studentName,
+        grade: currentGrade,
+        score: score,
+        timeSpent: timeSpent,
+        createdAt: new Date().toLocaleTimeString('vi-VN') + ' ' + new Date().toLocaleDateString('vi-VN'),
+        questions: currentQuestions,
+        userAnswers: userAnswers,
+        status: 'approved',
+        earnedSpins: earnedSpins,
+        teacherNotes: ''
+      };
+
+      submissions.unshift(sub);
+      if (window.CloudSync && window.CloudSync.saveEnglishSubmission) {
+        window.CloudSync.saveEnglishSubmission(sub);
+      }
+
+      // Display results
+      document.getElementById('quiz-box').classList.add('hidden');
+      document.getElementById('quiz-result-box').classList.remove('hidden');
+
+      document.getElementById('res-score').textContent = `${score}/10`;
+      document.getElementById('res-time').textContent = timeSpent;
+      document.getElementById('res-correct').textContent = `${score}/${10 - score}`;
+      document.getElementById('res-spin').textContent = earnedSpins > 0 ? `+${earnedSpins} lượt` : '0 lượt';
+
+      // Render Bilingual Explanations
+      const expList = document.getElementById('result-explanations-list');
+      expList.innerHTML = currentQuestions.map((q, idx) => {
+        const userChoice = userAnswers[idx];
+        const isCorrect = userChoice === q.correct;
+        return `
+          <div class="p-3.5 rounded-2xl border ${isCorrect ? 'bg-emerald-50/60 border-emerald-200' : 'bg-rose-50/60 border-rose-200'} space-y-1.5 text-xs">
+            <div class="flex items-start justify-between font-bold">
+              <span class="text-slate-900">Câu ${idx + 1}: ${q.title}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] ${isCorrect ? 'bg-emerald-200 text-emerald-800' : 'bg-rose-200 text-rose-800'}">
+                ${isCorrect ? '✓ ĐÚNG' : '✗ SAI'}
+              </span>
+            </div>
+            <div class="text-slate-600">
+              <span>Con chọn: <b>${userChoice !== undefined ? q.options[userChoice] : 'Chưa chọn'}</b></span> |
+              <span>Đáp án đúng: <b class="text-emerald-700">${q.options[q.correct]}</b></span>
+            </div>
+            <div class="text-slate-600 italic text-[11px] pt-1 border-t border-slate-200/50">
+              💡 <b>Giải thích:</b> ${q.explain}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      calculateAndRenderStats();
+      renderTeacherSubmissions();
+      updatePendingBadge();
+    }
+
+    // ==========================================
+    // 5. LUCKY WHEEL ENGINE & CANVAS
+    // ==========================================
+    let isSpinning = false;
+    let currentAngle = 0;
+
+    const defaultRewards = [
+      "🍬 10 Viên Kẹo",
+      "✏️ 1 Bút Chì Màu",
+      "🎮 30P Chơi Game",
+      "🍦 1 Cây Kem Ngon",
+      "📚 1 Cuốn Truyện",
+      "🎡 +1 Lượt Quay",
+      "🌟 Sticker Tiếng Anh",
+      "🎡 +2 Lượt Quay"
+    ];
+
+    function drawWheel() {
+      const canvas = document.getElementById('wheel-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const numSegments = 8;
+      const arcSize = (2 * Math.PI) / numSegments;
+      const radius = canvas.width / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const colors = [
+        '#f59e0b', '#0ea5e9', '#10b981', '#8b5cf6',
+        '#ef4444', '#06b6d4', '#f97316', '#6366f1'
+      ];
+
+      for (let i = 0; i < numSegments; i++) {
+        const angle = currentAngle + i * arcSize;
+        ctx.beginPath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, angle, angle + arcSize);
+        ctx.lineTo(radius, radius);
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw Prize Text
+        ctx.save();
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 4;
+        
+        const itemText = rewardItems[i] || defaultRewards[i] || `Phần quà ${i + 1}`;
+        ctx.fillText(itemText, radius - 15, 4);
+        ctx.restore();
+      }
+
+      // Center Hub
+      ctx.beginPath();
+      ctx.arc(radius, radius, 30, 0, 2 * Math.PI);
+      ctx.fillStyle = '#1e293b';
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'black 11px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('QUAY', radius, radius + 4);
+    }
+
+    function spinWheel() {
+      const count = getCurrentKidSpins();
+      if (count <= 0) {
+        alert('Bé đã dùng hết lượt quay rồi! Hãy hoàn thành thêm 1 bài thi từ 8 điểm trở lên để nhận thêm lượt quay nhé!');
+        return;
+      }
+      if (isSpinning) return;
+
+      isSpinning = true;
+      document.getElementById('btn-spin-wheel').disabled = true;
+      document.getElementById('wheel-prize-toast').classList.add('hidden');
+
+      const kidId = currentKid ? currentKid.id : 'kid_thoc';
+      updateKidSpins(kidId, -1);
+
+      const extraSpins = 5 + Math.floor(Math.random() * 5); // 5 to 10 full turns
+      const randomStopSegment = Math.floor(Math.random() * 8);
+      const segmentArc = (2 * Math.PI) / 8;
+      
+      const targetAngle = currentAngle + (extraSpins * 2 * Math.PI) + (randomStopSegment * segmentArc);
+      const startTime = performance.now();
+      const duration = 4000;
+      const startAngle = currentAngle;
+
+      function easeOutCubic(t) {
+        return (--t) * t * t + 1;
+      }
+
+      function animateSpin(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = easeOutCubic(progress);
+        
+        currentAngle = startAngle + (targetAngle - startAngle) * ease;
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animateSpin);
+        } else {
+          isSpinning = false;
+          document.getElementById('btn-spin-wheel').disabled = false;
+          
+          // Determine winning segment (pointer is at Top = 3*PI/2)
+          const normalized = ( (3 * Math.PI / 2) - currentAngle ) % (2 * Math.PI);
+          const positiveNorm = normalized < 0 ? normalized + (2 * Math.PI) : normalized;
+          const winningIdx = Math.floor(positiveNorm / segmentArc) % 8;
+
+          const wonPrize = rewardItems[winningIdx] || defaultRewards[winningIdx];
+          
+          document.getElementById('wheel-prize-text').textContent = wonPrize;
+          document.getElementById('wheel-prize-toast').classList.remove('hidden');
+
+          confetti({
+            particleCount: 120,
+            spread: 80,
+            origin: { y: 0.5 }
+          });
+        }
+      }
+
+      requestAnimationFrame(animateSpin);
+    }
+
+    // ==========================================
+    // 6. TEACHER GRADING & SUBMISSIONS
+    // ==========================================
+    function renderTeacherSubmissions() {
+      const container = document.getElementById('teacher-submissions-container');
+      if (!container) return;
+
+      if (!submissions || submissions.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400">
+            <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+            <p class="text-xs font-bold">Chưa có bài thi nào được nộp.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = submissions.map(sub => `
+        <div class="bg-white p-5 rounded-2xl border ${sub.status === 'approved' ? 'border-emerald-200' : 'border-teal-200'} shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${sub.grade === 2 ? 'bg-amber-100 text-amber-800' : 'bg-teal-100 text-teal-800'}">
+                Lớp ${sub.grade}
+              </span>
+              <h4 class="text-sm font-bold text-slate-900">${sub.studentName}</h4>
+              <span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${sub.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                ${sub.status === 'approved' ? '✓ Đã Chấm' : '⏳ Chờ Chấm'}
+              </span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
+                +${sub.earnedSpins !== undefined ? sub.earnedSpins : 0} Spin
+              </span>
+            </div>
+            <div class="text-xs text-slate-500 flex items-center space-x-3 pt-0.5">
+              <span>Điểm số: <b class="text-slate-800">${sub.score}/10</b></span>
+              <span>•</span>
+              <span>Thời gian: ${sub.timeSpent}</span>
+              <span>•</span>
+              <span>Ngày nộp: ${sub.createdAt}</span>
+            </div>
+            ${sub.teacherNotes ? `
+              <div class="mt-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 text-slate-700">
+                <span class="font-bold text-teal-700">💬 Lời nhận xét:</span> ${sub.teacherNotes}
+              </div>
+            ` : ''}
+          </div>
+
+          <button onclick="openReviewModal(${sub.id})" class="px-4 py-2 bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 rounded-xl font-bold text-xs flex items-center space-x-1.5 transition shrink-0">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span>${sub.status === 'approved' ? 'Xem lại & Chấm lại' : 'Kiểm tra & Chấm bài'}</span>
+          </button>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    let activeReviewSubmissionId = null;
+
+    function openReviewModal(subId) {
+      if (currentKid) {
+        alert('Chỉ giáo viên/phụ huynh mới có quyền kiểm tra và chấm bài thi!');
+        return;
+      }
+      activeReviewSubmissionId = subId;
+      const sub = submissions.find(s => s.id === subId);
+      if (!sub) return;
+
+      document.getElementById('modal-student-title').textContent = `${sub.studentName} - Tiếng Anh Lớp ${sub.grade}`;
+      document.getElementById('modal-submit-time').textContent = `Nộp lúc: ${sub.createdAt} (Thời gian làm: ${sub.timeSpent})`;
+      document.getElementById('modal-edit-score').value = sub.score;
+      document.getElementById('modal-teacher-notes').value = sub.teacherNotes || '';
+      document.getElementById('modal-edit-score').disabled = false;
+      document.getElementById('modal-teacher-notes').disabled = false;
+
+      const qList = document.getElementById('modal-questions-list');
+      qList.innerHTML = sub.questions.map((q, idx) => {
+        const userChoice = sub.userAnswers[idx];
+        const isCorrect = userChoice === q.correct;
+        return `
+          <div class="p-3.5 rounded-2xl border ${isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'} space-y-1.5 text-xs">
+            <div class="flex items-start justify-between font-bold">
+              <span class="text-slate-900">Câu ${idx + 1}: ${q.title}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] ${isCorrect ? 'bg-emerald-200 text-emerald-800' : 'bg-rose-200 text-rose-800'}">
+                ${isCorrect ? 'ĐÚNG' : 'SAI'}
+              </span>
+            </div>
+            <div class="text-slate-600">
+              <span>Học sinh chọn: <b>${userChoice !== undefined ? q.options[userChoice] : 'Chưa chọn'}</b></span> |
+              <span>Đáp án đúng: <b class="text-emerald-700">${q.options[q.correct]}</b></span>
+            </div>
+            <div class="text-slate-500 italic text-[11px] pt-1 border-t border-slate-200/40">
+              💡 Giải thích: ${q.explain}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('review-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeReviewModal() {
+      document.getElementById('review-modal').classList.add('hidden');
+    }
+
+    function saveTeacherApproval() {
+      if (currentKid) {
+        alert('Chỉ tài khoản admin/giáo viên mới có quyền chấm bài làm!');
+        return;
+      }
+      const sub = submissions.find(s => s.id === activeReviewSubmissionId);
+      if (!sub) return;
+
+      sub.score = parseInt(document.getElementById('modal-edit-score').value, 10) || 0;
+      sub.teacherNotes = document.getElementById('modal-teacher-notes').value.trim();
+      sub.status = 'approved';
+
+      if (window.CloudSync && window.CloudSync.saveEnglishSubmission) {
+        window.CloudSync.saveEnglishSubmission(sub);
+      }
+
+      updatePendingBadge();
+      renderTeacherSubmissions();
+      calculateAndRenderStats();
+      closeReviewModal();
+      alert('Đã lưu kết quả chấm bài và đồng bộ lên Cloud Database thành công!');
+    }
+
+    function clearAllSubmissions() {
+      if (currentKid) return;
+      if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Tiếng Anh không?')) {
+        submissions = [];
+        if (window.CloudSync && window.CloudSync.deleteEnglishSubmissions) {
+          window.CloudSync.deleteEnglishSubmissions();
+        }
+        renderTeacherSubmissions();
+        calculateAndRenderStats();
+        updatePendingBadge();
+      }
+    }
+
+    function updatePendingBadge() {
+      const pendingCount = submissions.filter(s => s.status !== 'approved').length;
+      const badge = document.getElementById('pending-badge');
+      if (badge) {
+        if (pendingCount > 0) {
+          badge.textContent = pendingCount;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+    }
+
+    // ==========================================
+    // 7. REWARDS CONFIG & TABS SWITCHER
+    // ==========================================
+    function renderRewardsInputs() {
+      const container = document.getElementById('rewards-inputs-container');
+      if (!container) return;
+      container.innerHTML = defaultRewards.map((item, idx) => {
+        const val = rewardItems[idx] || item;
+        return `
+          <div class="flex items-center space-x-2">
+            <span class="w-6 text-xs font-bold text-slate-400">#${idx + 1}</span>
+            <input type="text" id="reward-item-input-${idx}" value="${val}" class="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:outline-none focus:border-teal-500">
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAdminSpinsManagement() {
+      const container = document.getElementById('admin-per-kid-spins-container');
+      if (!container) return;
+
+      const kids = getAllKids();
+      container.innerHTML = kids.map(k => {
+        const kidSpins = spinsMap[k.id] !== undefined ? spinsMap[k.id] : 0;
+        return `
+          <div class="p-3.5 bg-white rounded-xl border border-amber-200 flex items-center justify-between shadow-xs">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-xl">🎓</span>
+              <div>
+                <span class="text-xs font-extrabold text-slate-900">${k.name} (Lớp ${k.grade})</span>
+                <span class="text-[10px] text-amber-700 block font-semibold">Hiện có: <b class="text-amber-900">${kidSpins} lượt quay</b></span>
+              </div>
+            </div>
+            <div class="flex items-center space-x-1">
+              <button onclick="updateKidSpins('${k.id}', 1)" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white font-black text-xs rounded-lg shadow-xs transition" title="Cộng thêm 1 lượt">
+                +1
+              </button>
+              <button onclick="setKidSpinsDirect('${k.id}', 0)" class="px-2 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 font-bold text-[10px] rounded-lg transition" title="Đặt về 0">
+                Reset
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function saveRewardsConfig() {
+      if (currentKid) return;
+      const newItems = [];
+      for (let i = 0; i < 8; i++) {
+        const el = document.getElementById(`reward-item-input-${i}`);
+        newItems.push(el ? el.value.trim() : defaultRewards[i]);
+      }
+      rewardItems = newItems;
+      if (window.CloudSync) {
+        window.CloudSync.saveRewards(rewardItems);
+      }
+      drawWheel();
+      alert('Đã lưu cấu hình 8 ô quà tặng Tiếng Anh thành công!');
+    }
+
+    function switchTab(tab) {
+      const tabs = ['arena', 'wheel', 'teacher', 'rewards'];
+      tabs.forEach(t => {
+        const viewEl = document.getElementById(`view-${t}`);
+        const navEl = document.getElementById(`nav-${t}`);
+        if (viewEl) viewEl.classList.add('hidden');
+        if (navEl) {
+          navEl.classList.remove('bg-teal-600', 'text-white', 'shadow-sm');
+          navEl.classList.add('text-slate-600', 'hover:bg-slate-100');
+        }
+      });
+
+      const activeView = document.getElementById(`view-${tab}`);
+      const activeNav = document.getElementById(`nav-${tab}`);
+      if (activeView) activeView.classList.remove('hidden');
+      if (activeNav) {
+        activeNav.classList.remove('text-slate-600', 'hover:bg-slate-100');
+        activeNav.classList.add('bg-teal-600', 'text-white', 'shadow-sm');
+      }
+
+      if (tab === 'wheel') {
+        drawWheel();
+        updateSpinBadge();
+      } else if (tab === 'teacher') {
+        renderTeacherSubmissions();
+      } else if (tab === 'rewards') {
+        renderRewardsInputs();
+        renderAdminSpinsManagement();
+      } else if (tab === 'arena') {
+        calculateAndRenderStats();
+      }
+
+      lucide.createIcons();
+    }
+
+    // ==========================================
+    // 8. INITIALIZATION ON LOAD
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      // Hook CloudSync if available
+      if (window.CloudSync) {
+        window.CloudSync.getKids((kids) => {
+          kidsList = kids;
+          setupRoleAccess();
+          renderAdminSpinsManagement();
+          calculateAndRenderStats();
+        });
+
+        window.CloudSync.getSpins((spins) => {
+          spinsMap = spins || { 'kid_thoc': 1, 'kid_gau': 1 };
+          updateSpinBadge();
+          renderAdminSpinsManagement();
+          calculateAndRenderStats();
+        });
+
+        window.CloudSync.getRewards((rewards) => {
+          rewardItems = (rewards && rewards.length === 8) ? rewards : defaultRewards;
+          drawWheel();
+          renderRewardsInputs();
+        });
+
+        if (window.CloudSync.getEnglishSubmissions) {
+          window.CloudSync.getEnglishSubmissions((subs) => {
+            submissions = subs || [];
+            updatePendingBadge();
+            renderTeacherSubmissions();
+            calculateAndRenderStats();
+          });
+        }
+      } else {
+        setupRoleAccess();
+        drawWheel();
+      }
+
+      restartQuiz();
+    });
+  </script>
+</body>
+</html>
