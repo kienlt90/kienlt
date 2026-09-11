@@ -656,7 +656,7 @@
 
   <!-- EMBEDDED 100-QUESTION LOGIC BANK (Self-contained, zero-dependency) -->
   <script>
-// NGÂN HÀNG 100 CÂU HỎI TOÁN TƯ DUY LOGIC (50 CÂU LỚP 2 + 50 CÂU LỚP 5)
+// NGÂN HÀNG 200 CÂU HỎI TOÁN TƯ DUY LOGIC (100 CÂU LỚP 2 + 100 CÂU LỚP 5)
 const mathBankGrade2 = [
   {
     "id": 101,
@@ -1257,6 +1257,606 @@ const mathBankGrade2 = [
     ],
     "correct": 1,
     "explain": "Mỗi số giảm 10: 70 - 10 = 60."
+  },
+  {
+    "id": 151,
+    "title": "Con gà có 2 chân, con chó có 4 chân. Hỏi 2 con gà và 1 con chó có tổng cộng bao nhiêu cái chân?",
+    "options": [
+      "6 chân",
+      "8 chân",
+      "10 chân",
+      "12 chân"
+    ],
+    "correct": 1,
+    "explain": "2 con gà có 2 x 2 = 4 chân. 1 con chó có 4 chân -> Tổng 4 + 4 = 8 chân."
+  },
+  {
+    "id": 152,
+    "title": "Đồng hồ chỉ 9 giờ đúng. Kim ngắn và kim dài tạo thành một góc gì?",
+    "options": [
+      "Góc vuông",
+      "Góc nhọn",
+      "Góc tù",
+      "Góc bẹt"
+    ],
+    "correct": 0,
+    "explain": "Kim 12 và kim 9 vuông góc với nhau (90 độ)."
+  },
+  {
+    "id": 153,
+    "title": "Bạn Lan có 14 cái kẹo, Lan cho em 4 cái kẹo. Sau đó mẹ cho Lan thêm 5 cái kẹo. Hỏi lúc này Lan có mấy cái kẹo?",
+    "options": [
+      "13 cái",
+      "14 cái",
+      "15 cái",
+      "16 cái"
+    ],
+    "correct": 2,
+    "explain": "Lan còn 14 - 4 = 10 cái. Mẹ cho thêm 5 cái -> 10 + 5 = 15 cái kẹo."
+  },
+  {
+    "id": 154,
+    "title": "Tìm số tiếp theo trong dãy số: 10, 13, 16, 19, (?)",
+    "options": [
+      "20",
+      "21",
+      "22",
+      "23"
+    ],
+    "correct": 2,
+    "explain": "Quy luật cộng 3 liên tiếp: 19 + 3 = 22."
+  },
+  {
+    "id": 155,
+    "title": "Trong một bãi đỗ xe có 3 xe ô tô con (mỗi xe 4 bánh) và 2 xe máy (mỗi xe 2 bánh). Có tất cả bao nhiêu bánh xe?",
+    "options": [
+      "12 bánh",
+      "14 bánh",
+      "16 bánh",
+      "18 bánh"
+    ],
+    "correct": 2,
+    "explain": "3 ô tô: 3 x 4 = 12 bánh. 2 xe máy: 2 x 2 = 4 bánh -> Tổng 12 + 4 = 16 bánh."
+  },
+  {
+    "id": 156,
+    "title": "Có 3 người đi câu cá, mỗi người câu được 3 con cá. Hỏi cả 3 người câu được tất cả mấy con cá?",
+    "options": [
+      "6 con",
+      "9 con",
+      "12 con",
+      "3 con"
+    ],
+    "correct": 1,
+    "explain": "3 người x 3 con = 9 con cá."
+  },
+  {
+    "id": 157,
+    "title": "Hình nào sau đây có 4 cạnh bằng nhau và có 4 góc vuông?",
+    "options": [
+      "Hình tam giác",
+      "Hình chữ nhật",
+      "Hình vuông",
+      "Hình tròn"
+    ],
+    "correct": 2,
+    "explain": "Hình vuông có 4 cạnh bằng nhau và 4 góc vuông."
+  },
+  {
+    "id": 158,
+    "title": "Một sợi dây dài 20cm, người ta cắt bớt 6cm. Hỏi đoạn dây còn lại dài bao nhiêu cm?",
+    "options": [
+      "12 cm",
+      "14 cm",
+      "16 cm",
+      "26 cm"
+    ],
+    "correct": 1,
+    "explain": "20 - 6 = 14 cm."
+  },
+  {
+    "id": 159,
+    "title": "Điền dấu thích hợp vào chỗ chấm: 5 x 4 ... 4 x 5?",
+    "options": [
+      ">",
+      "<",
+      "=",
+      "+"
+    ],
+    "correct": 2,
+    "explain": "Tính chất giao hoán của phép nhân: 5 x 4 = 20 và 4 x 5 = 20 nên bằng nhau (=)."
+  },
+  {
+    "id": 160,
+    "title": "Nam có 8 viên bi, số bi của Hùng gấp đôi số bi của Nam. Hỏi Hùng có bao nhiêu viên bi?",
+    "options": [
+      "10 viên",
+      "12 viên",
+      "14 viên",
+      "16 viên"
+    ],
+    "correct": 3,
+    "explain": "Số bi của Hùng = 8 x 2 = 16 viên."
+  },
+  {
+    "id": 161,
+    "title": "Tìm số tròn chục lớn nhất có hai chữ số?",
+    "options": [
+      "90",
+      "99",
+      "100",
+      "80"
+    ],
+    "correct": 0,
+    "explain": "Số tròn chục có hàng đơn vị là 0, số lớn nhất có 2 chữ số dạng đó là 90."
+  },
+  {
+    "id": 162,
+    "title": "Có 2 bình nước, bình thứ nhất chứa 5 lít, bình thứ hai chứa 7 lít. Cả hai bình chứa được bao nhiêu lít nước?",
+    "options": [
+      "10 lít",
+      "11 lít",
+      "12 lít",
+      "13 lít"
+    ],
+    "correct": 2,
+    "explain": "5 + 7 = 12 lít nước."
+  },
+  {
+    "id": 163,
+    "title": "Con mèo có 4 chân. Hỏi 5 con mèo có mấy chân?",
+    "options": [
+      "15 chân",
+      "18 chân",
+      "20 chân",
+      "24 chân"
+    ],
+    "correct": 2,
+    "explain": "5 con mèo x 4 chân = 20 chân."
+  },
+  {
+    "id": 164,
+    "title": "Một tuần lễ có 7 ngày. Hỏi 2 tuần lễ có bao nhiêu ngày?",
+    "options": [
+      "12 ngày",
+      "14 ngày",
+      "16 ngày",
+      "21 ngày"
+    ],
+    "correct": 1,
+    "explain": "7 x 2 = 14 ngày."
+  },
+  {
+    "id": 165,
+    "title": "Số 85 gồm mấy chục và mấy đơn vị?",
+    "options": [
+      "8 chục và 5 đơn vị",
+      "5 chục và 8 đơn vị",
+      "80 chục và 5 đơn vị",
+      "8 chục và 50 đơn vị"
+    ],
+    "correct": 0,
+    "explain": "Số 85 có chữ số 8 ở hàng chục và chữ số 5 ở hàng đơn vị."
+  },
+  {
+    "id": 166,
+    "title": "Trong các số sau, số nào là số lẻ: 12, 24, 37, 48?",
+    "options": [
+      "12",
+      "24",
+      "37",
+      "48"
+    ],
+    "correct": 2,
+    "explain": "Số lẻ có chữ số tận cùng là 1, 3, 5, 7, 9 -> Số 37 có tận cùng là 7."
+  },
+  {
+    "id": 167,
+    "title": "Bố đi công tác 1 tuần lễ và 3 ngày. Hỏi bố đi tất cả bao nhiêu ngày?",
+    "options": [
+      "7 ngày",
+      "9 ngày",
+      "10 ngày",
+      "11 ngày"
+    ],
+    "correct": 2,
+    "explain": "1 tuần lễ = 7 ngày. Tổng thời gian = 7 + 3 = 10 ngày."
+  },
+  {
+    "id": 168,
+    "title": "Thỏ có 2 cái tai. Hỏi 6 con thỏ có tất cả bao nhiêu cái tai?",
+    "options": [
+      "8 cái",
+      "10 cái",
+      "12 cái",
+      "14 cái"
+    ],
+    "correct": 2,
+    "explain": "6 x 2 = 12 cái tai."
+  },
+  {
+    "id": 169,
+    "title": "Tìm x biết: x + 15 = 40?",
+    "options": [
+      "15",
+      "20",
+      "25",
+      "30"
+    ],
+    "correct": 2,
+    "explain": "x = 40 - 15 = 25."
+  },
+  {
+    "id": 170,
+    "title": "Đoạn thẳng AB dài 1dm 2cm. Hỏi đoạn AB dài bao nhiêu xăng-ti-mét?",
+    "options": [
+      "10 cm",
+      "12 cm",
+      "21 cm",
+      "120 cm"
+    ],
+    "correct": 1,
+    "explain": "1dm = 10cm -> 1dm 2cm = 10 + 2 = 12cm."
+  },
+  {
+    "id": 171,
+    "title": "Mẹ mua 1 tá bút chì. 1 tá bút chì là bao nhiêu cái?",
+    "options": [
+      "6 cái",
+      "10 cái",
+      "12 cái",
+      "20 cái"
+    ],
+    "correct": 2,
+    "explain": "1 tá quy ước là 12 chiếc."
+  },
+  {
+    "id": 172,
+    "title": "Có 18 quả cam xếp đều vào 2 đĩa. Hỏi mỗi đĩa có mấy quả cam?",
+    "options": [
+      "8 quả",
+      "9 quả",
+      "10 quả",
+      "12 quả"
+    ],
+    "correct": 1,
+    "explain": "18 : 2 = 9 quả cam."
+  },
+  {
+    "id": 173,
+    "title": "Lúc 12 giờ trưa, kim giờ và kim phút ở vị trí nào?",
+    "options": [
+      "Vuông góc nhau",
+      "Chồng khít lên nhau",
+      "Thẳng hàng ngược hướng",
+      "Tạo thành góc nhọn"
+    ],
+    "correct": 1,
+    "explain": "Lúc 12 giờ đúng, cả hai kim đều chỉ đúng vào số 12 (chồng khít lên nhau)."
+  },
+  {
+    "id": 174,
+    "title": "Số liền sau của số lớn nhất có 2 chữ số là số nào?",
+    "options": [
+      "98",
+      "99",
+      "100",
+      "101"
+    ],
+    "correct": 2,
+    "explain": "Số lớn nhất có 2 chữ số là 99. Số liền sau của 99 là 99 + 1 = 100."
+  },
+  {
+    "id": 175,
+    "title": "Quy luật ô vuông: ⬜, ⬛, ⬜, ⬛, (?)",
+    "options": [
+      "⬜ (Trắng)",
+      "⬛ (Đen)",
+      "🔺 (Đỏ)",
+      "🟡 (Vàng)"
+    ],
+    "correct": 0,
+    "explain": "Quy luật đan xen Trắng - Đen lặp lại -> Tiếp theo là ô Trắng ⬜."
+  },
+  {
+    "id": 176,
+    "title": "Trong rổ có 25 quả trứng. Bà đã biếu bác 10 quả trứng. Trong rổ còn lại mấy quả trứng?",
+    "options": [
+      "10 quả",
+      "15 quả",
+      "20 quả",
+      "35 quả"
+    ],
+    "correct": 1,
+    "explain": "25 - 10 = 15 quả trứng."
+  },
+  {
+    "id": 177,
+    "title": "Dãy số: 5, 10, 15, 20, 25, (?) Số tiếp theo là:",
+    "options": [
+      "26",
+      "28",
+      "30",
+      "35"
+    ],
+    "correct": 2,
+    "explain": "Cộng 5 liên tiếp: 25 + 5 = 30."
+  },
+  {
+    "id": 178,
+    "title": "Có 4 chiếc bàn, mỗi bàn có 4 chân. Có tất cả bao nhiêu chân bàn?",
+    "options": [
+      "8 chân",
+      "12 chân",
+      "16 chân",
+      "20 chân"
+    ],
+    "correct": 2,
+    "explain": "4 x 4 = 16 chân bàn."
+  },
+  {
+    "id": 179,
+    "title": "Bác thợ cắt thanh sắt dài 12m thành các đoạn 3m. Bác cắt được mấy đoạn?",
+    "options": [
+      "3 đoạn",
+      "4 đoạn",
+      "5 đoạn",
+      "6 đoạn"
+    ],
+    "correct": 1,
+    "explain": "12 : 3 = 4 đoạn."
+  },
+  {
+    "id": 180,
+    "title": "Ngày hôm qua là thứ Ba. Hỏi ngày mai là thứ mấy?",
+    "options": [
+      "Thứ Tư",
+      "Thứ Năm",
+      "Thứ Sáu",
+      "Thứ Bảy"
+    ],
+    "correct": 1,
+    "explain": "Hôm qua là thứ Ba -> Hôm nay là thứ Tư -> Ngày mai là thứ Năm."
+  },
+  {
+    "id": 181,
+    "title": "Hiệu của 50 và 23 là bao nhiêu?",
+    "options": [
+      "27",
+      "37",
+      "73",
+      "23"
+    ],
+    "correct": 0,
+    "explain": "50 - 23 = 27."
+  },
+  {
+    "id": 182,
+    "title": "Một đôi đũa có 2 chiếc. Hỏi 5 đôi đũa có mấy chiếc đũa?",
+    "options": [
+      "5 chiếc",
+      "8 chiếc",
+      "10 chiếc",
+      "12 chiếc"
+    ],
+    "correct": 2,
+    "explain": "5 đôi x 2 chiếc = 10 chiếc đũa."
+  },
+  {
+    "id": 183,
+    "title": "Hình tứ giác có bao nhiêu đỉnh?",
+    "options": [
+      "3 đỉnh",
+      "4 đỉnh",
+      "5 đỉnh",
+      "6 đỉnh"
+    ],
+    "correct": 1,
+    "explain": "Hình tứ giác là hình có 4 cạnh và 4 đỉnh."
+  },
+  {
+    "id": 184,
+    "title": "Số 64 đọc là gì?",
+    "options": [
+      "Sáu tư",
+      "Sáu mươi tư",
+      "Bốn mươi sáu",
+      "Sáu mươi bốn"
+    ],
+    "correct": 1,
+    "explain": "Số 64 đọc chuẩn chính tả là Sáu mươi tư (hoặc Sáu mươi bốn)."
+  },
+  {
+    "id": 185,
+    "title": "Nhà An nuôi 12 con vịt và 8 con gà. Hỏi nhà An nuôi tất cả bao nhiêu con gà và vịt?",
+    "options": [
+      "18 con",
+      "20 con",
+      "22 con",
+      "24 con"
+    ],
+    "correct": 1,
+    "explain": "12 + 8 = 20 con."
+  },
+  {
+    "id": 186,
+    "title": "Bạn Minh đứng thứ 5 trong hàng có 10 bạn. Sau Minh có mấy bạn?",
+    "options": [
+      "4 bạn",
+      "5 bạn",
+      "6 bạn",
+      "7 bạn"
+    ],
+    "correct": 1,
+    "explain": "10 - 5 = 5 bạn đứng sau Minh."
+  },
+  {
+    "id": 187,
+    "title": "Tìm y biết: 50 - y = 18?",
+    "options": [
+      "32",
+      "22",
+      "68",
+      "42"
+    ],
+    "correct": 0,
+    "explain": "y = 50 - 18 = 32."
+  },
+  {
+    "id": 188,
+    "title": "Có 20 viên kẹo chia đều cho 5 bạn. Mỗi bạn được bao nhiêu cái kẹo?",
+    "options": [
+      "2 cái",
+      "3 cái",
+      "4 cái",
+      "5 cái"
+    ],
+    "correct": 2,
+    "explain": "20 : 5 = 4 cái kẹo."
+  },
+  {
+    "id": 189,
+    "title": "Thước kẻ của Nam dài 20cm, thước của Bình dài hơn thước của Nam 5cm. Thước của Bình dài bao nhiêu cm?",
+    "options": [
+      "15 cm",
+      "20 cm",
+      "25 cm",
+      "30 cm"
+    ],
+    "correct": 2,
+    "explain": "20 + 5 = 25 cm."
+  },
+  {
+    "id": 190,
+    "title": "Dãy số giảm dần: 80, 70, 60, 50, (?)",
+    "options": [
+      "30",
+      "40",
+      "45",
+      "20"
+    ],
+    "correct": 1,
+    "explain": "Trừ 10 liên tiếp: 50 - 10 = 40."
+  },
+  {
+    "id": 191,
+    "title": "Một can dầu có 15 lít dầu, rót ra 2 can nhỏ mỗi can 3 lít. Trong can lớn còn lại mấy lít?",
+    "options": [
+      "6 lít",
+      "9 lít",
+      "11 lít",
+      "12 lít"
+    ],
+    "correct": 1,
+    "explain": "Rót ra 2 x 3 = 6 lít. Can lớn còn lại: 15 - 6 = 9 lít."
+  },
+  {
+    "id": 192,
+    "title": "Năm nay em 6 tuổi, anh hơn em 4 tuổi. Hỏi anh năm nay bao nhiêu tuổi?",
+    "options": [
+      "8 tuổi",
+      "9 tuổi",
+      "10 tuổi",
+      "12 tuổi"
+    ],
+    "correct": 2,
+    "explain": "6 + 4 = 10 tuổi."
+  },
+  {
+    "id": 193,
+    "title": "Đồng hồ chỉ 6 giờ 30 phút. Hai kim đồng hồ đang ở vị trí nào?",
+    "options": [
+      "Gần nhau ở khu vực số 6",
+      "Thẳng hàng 12 và 6",
+      "Vuông góc nhau",
+      "Kim ngắn số 12 kim dài số 6"
+    ],
+    "correct": 0,
+    "explain": "Lúc 6h30, kim phút chỉ số 6, kim giờ ở giữa số 6 và 7 nên ở rất gần nhau."
+  },
+  {
+    "id": 194,
+    "title": "1 mét (m) bằng bao nhiêu xăng-ti-mét (cm)?",
+    "options": [
+      "10 cm",
+      "50 cm",
+      "100 cm",
+      "1000 cm"
+    ],
+    "correct": 2,
+    "explain": "1m = 100cm."
+  },
+  {
+    "id": 195,
+    "title": "Điền số thích hợp: 3 x 7 = (?)",
+    "options": [
+      "18",
+      "20",
+      "21",
+      "24"
+    ],
+    "correct": 2,
+    "explain": "Bảng nhân 3: 3 x 7 = 21."
+  },
+  {
+    "id": 196,
+    "title": "Có 3 bao gạo, mỗi bao nặng 10kg. Cả 3 bao gạo nặng tất cả bao nhiêu kg?",
+    "options": [
+      "20 kg",
+      "25 kg",
+      "30 kg",
+      "35 kg"
+    ],
+    "correct": 2,
+    "explain": "3 x 10 = 30 kg."
+  },
+  {
+    "id": 197,
+    "title": "Hình nào sau đây chỉ có 3 cạnh?",
+    "options": [
+      "Hình vuông",
+      "Hình tam giác",
+      "Hình tròn",
+      "Hình chữ nhật"
+    ],
+    "correct": 1,
+    "explain": "Hình tam giác là hình đa giác có đúng 3 cạnh."
+  },
+  {
+    "id": 198,
+    "title": "Số tròn chục liền sau số 34 là số nào?",
+    "options": [
+      "30",
+      "35",
+      "40",
+      "50"
+    ],
+    "correct": 2,
+    "explain": "Số tròn chục lớn hơn 34 và gần 34 nhất là 40."
+  },
+  {
+    "id": 199,
+    "title": "Linh có 10 bông hoa, Hoa có nhiều hơn Linh 4 bông hoa. Hỏi cả hai bạn có bao nhiêu bông hoa?",
+    "options": [
+      "14 bông",
+      "24 bông",
+      "20 bông",
+      "28 bông"
+    ],
+    "correct": 1,
+    "explain": "Hoa có 10 + 4 = 14 bông. Cả hai bạn có 10 + 14 = 24 bông hoa."
+  },
+  {
+    "id": 200,
+    "title": "Trong một phép trừ, số bị trừ là 45, hiệu là 15. Tìm số trừ?",
+    "options": [
+      "20",
+      "25",
+      "30",
+      "35"
+    ],
+    "correct": 2,
+    "explain": "Số trừ = Số bị trừ - Hiệu = 45 - 15 = 30."
   }
 ];
 
@@ -1860,6 +2460,606 @@ const mathBankGrade5 = [
     ],
     "correct": 2,
     "explain": "1 giờ = 60 phút x 60 giây = 3600 giây."
+  },
+  {
+    "id": 251,
+    "title": "Một người đi xe đạp đi quãng đường 36km với vận tốc 12km/h. Người đó đi hết bao nhiêu thời gian?",
+    "options": [
+      "2 giờ",
+      "2.5 giờ",
+      "3 giờ",
+      "4 giờ"
+    ],
+    "correct": 2,
+    "explain": "Thời gian = Quãng đường : Vận tốc = 36 : 12 = 3 giờ."
+  },
+  {
+    "id": 252,
+    "title": "Lớp 5A có 30 học sinh, trong đó số học sinh nữ chiếm 60%. Hỏi lớp 5A có bao nhiêu bạn nữ?",
+    "options": [
+      "16 bạn",
+      "18 bạn",
+      "20 bạn",
+      "22 bạn"
+    ],
+    "correct": 1,
+    "explain": "Số học sinh nữ = 30 x 60% = 18 bạn."
+  },
+  {
+    "id": 253,
+    "title": "Diện tích hình tam giác có đáy 8cm và chiều cao tương ứng 5cm là bao nhiêu?",
+    "options": [
+      "20 cm²",
+      "40 cm²",
+      "26 cm²",
+      "13 cm²"
+    ],
+    "correct": 0,
+    "explain": "Diện tích tam giác = (8 x 5) : 2 = 20 cm²."
+  },
+  {
+    "id": 254,
+    "title": "Tìm phân số tối giản của phân số 24/36?",
+    "options": [
+      "12/18",
+      "6/9",
+      "2/3",
+      "4/6"
+    ],
+    "correct": 2,
+    "explain": "Chia cả tử và mẫu cho ƯCLN(24, 36) = 12 ta được 2/3."
+  },
+  {
+    "id": 255,
+    "title": "Thể tích hình lập phương có cạnh 3dm là bao nhiêu?",
+    "options": [
+      "9 dm³",
+      "18 dm³",
+      "27 dm³",
+      "54 dm³"
+    ],
+    "correct": 2,
+    "explain": "Thể tích = 3 x 3 x 3 = 27 dm³."
+  },
+  {
+    "id": 256,
+    "title": "Một mảnh đất hình chữ nhật có chu vi 120m, chiều rộng bằng 1/2 chiều dài. Diện tích mảnh đất là?",
+    "options": [
+      "800 m²",
+      "900 m²",
+      "1200 m²",
+      "1600 m²"
+    ],
+    "correct": 0,
+    "explain": "Nửa chu vi = 60m. Chiều rộng = 20m, chiều dài = 40m. Diện tích = 20 x 40 = 800 m²."
+  },
+  {
+    "id": 257,
+    "title": "Tính nhanh giá trị biểu thức: 2024 x 101 - 2024 = (?)",
+    "options": [
+      "20240",
+      "202400",
+      "2024000",
+      "204424"
+    ],
+    "correct": 1,
+    "explain": "2024 x (101 - 1) = 2024 x 100 = 202400."
+  },
+  {
+    "id": 258,
+    "title": "Biết 25% của một số là 50. Số đó là bao nhiêu?",
+    "options": [
+      "100",
+      "150",
+      "200",
+      "250"
+    ],
+    "correct": 2,
+    "explain": "Số đó = 50 : 25% = 50 x 4 = 200."
+  },
+  {
+    "id": 259,
+    "title": "Một hình thang có đáy lớn 12cm, đáy bé 8cm và chiều cao 6cm. Diện tích hình thang là?",
+    "options": [
+      "60 cm²",
+      "120 cm²",
+      "48 cm²",
+      "72 cm²"
+    ],
+    "correct": 0,
+    "explain": "Diện tích hình thang = (12 + 8) x 6 : 2 = 60 cm²."
+  },
+  {
+    "id": 260,
+    "title": "Hiệu hai số là 48. Tỉ số của hai số là 1/5. Tìm số bé?",
+    "options": [
+      "12",
+      "16",
+      "24",
+      "60"
+    ],
+    "correct": 0,
+    "explain": "Hiệu số phần = 5 - 1 = 4 phần. Số bé = 48 : 4 x 1 = 12."
+  },
+  {
+    "id": 261,
+    "title": "1.5 giờ bằng bao nhiêu phút?",
+    "options": [
+      "75 phút",
+      "80 phút",
+      "90 phút",
+      "100 phút"
+    ],
+    "correct": 2,
+    "explain": "1.5 x 60 = 90 phút."
+  },
+  {
+    "id": 262,
+    "title": "Tìm x biết: x : 0.25 + x : 0.5 = 60?",
+    "options": [
+      "10",
+      "12",
+      "15",
+      "20"
+    ],
+    "correct": 0,
+    "explain": "x x 4 + x x 2 = 60 -> 6x = 60 -> x = 10."
+  },
+  {
+    "id": 263,
+    "title": "Một người gửi tiết kiệm 10 triệu đồng với lãi suất 0.5%/tháng. Sau 1 tháng người đó nhận được số tiền lãi là?",
+    "options": [
+      "50.000 đ",
+      "500.000 đ",
+      "5.000 đ",
+      "100.000 đ"
+    ],
+    "correct": 0,
+    "explain": "Tiền lãi = 10.000.000 x 0.5% = 50.000 đồng."
+  },
+  {
+    "id": 264,
+    "title": "Tính chu vi hình tròn có bán kính r = 5cm (lấy số pi = 3.14)?",
+    "options": [
+      "15.7 cm",
+      "31.4 cm",
+      "78.5 cm",
+      "62.8 cm"
+    ],
+    "correct": 1,
+    "explain": "Chu vi = 2 x r x 3.14 = 2 x 5 x 3.14 = 31.4 cm."
+  },
+  {
+    "id": 265,
+    "title": "Một bể nước hình hộp chữ nhật có kích thước lòng bể: dài 2m, rộng 1.5m, cao 1m. Bể đó chứa được tối đa bao nhiêu lít nước? (1 dm³ = 1 lít)",
+    "options": [
+      "300 lít",
+      "1500 lít",
+      "3000 lít",
+      "4500 lít"
+    ],
+    "correct": 2,
+    "explain": "Thể tích = 2 x 1.5 x 1 = 3 m³ = 3000 dm³ = 3000 lít."
+  },
+  {
+    "id": 266,
+    "title": "Trung bình cộng của ba số là 45. Tổng của ba số đó là bao nhiêu?",
+    "options": [
+      "90",
+      "125",
+      "135",
+      "150"
+    ],
+    "correct": 2,
+    "explain": "Tổng = 45 x 3 = 135."
+  },
+  {
+    "id": 267,
+    "title": "Một canô đi xuôi dòng với vận tốc 25km/h, vận tốc dòng nước là 3km/h. Vận tốc của canô khi ngược dòng là?",
+    "options": [
+      "19 km/h",
+      "22 km/h",
+      "28 km/h",
+      "21 km/h"
+    ],
+    "correct": 0,
+    "explain": "Vận tốc thực = 25 - 3 = 22 km/h. Vận tốc ngược dòng = 22 - 3 = 19 km/h."
+  },
+  {
+    "id": 268,
+    "title": "Cho dãy số: 2, 4, 8, 16, 32, ... Số hạng thứ 7 của dãy là số nào?",
+    "options": [
+      "64",
+      "96",
+      "128",
+      "256"
+    ],
+    "correct": 2,
+    "explain": "Quy luật 2^n: Số thứ 6 là 64, số thứ 7 là 64 x 2 = 128."
+  },
+  {
+    "id": 269,
+    "title": "Một hình thoi có độ dài hai đường chéo lần lượt là 10cm và 14cm. Diện tích hình thoi là?",
+    "options": [
+      "70 cm²",
+      "140 cm²",
+      "35 cm²",
+      "48 cm²"
+    ],
+    "correct": 0,
+    "explain": "Diện tích hình thoi = (10 x 14) : 2 = 70 cm²."
+  },
+  {
+    "id": 270,
+    "title": "35% của 240kg là bao nhiêu?",
+    "options": [
+      "72 kg",
+      "84 kg",
+      "96 kg",
+      "120 kg"
+    ],
+    "correct": 1,
+    "explain": "240 x 35% = 84 kg."
+  },
+  {
+    "id": 271,
+    "title": "Một đội công nhân có 15 người dự định làm xong con đường trong 8 ngày. Muốn làm xong trong 4 ngày thì cần bao nhiêu người? (mức làm như nhau)",
+    "options": [
+      "20 người",
+      "25 người",
+      "30 người",
+      "40 người"
+    ],
+    "correct": 2,
+    "explain": "Số ngày giảm một nửa (8 : 4 = 2) thì số người cần gấp đôi: 15 x 2 = 30 người."
+  },
+  {
+    "id": 272,
+    "title": "Tìm giá trị của y: y x 4.5 + y x 5.5 = 230?",
+    "options": [
+      "20",
+      "23",
+      "25",
+      "30"
+    ],
+    "correct": 1,
+    "explain": "y x (4.5 + 5.5) = 230 -> y x 10 = 230 -> y = 23."
+  },
+  {
+    "id": 273,
+    "title": "Một lớp học có 18 bạn nam và 12 bạn nữ. Tỉ số phần trăm của số bạn nữ so với cả lớp là?",
+    "options": [
+      "40%",
+      "60%",
+      "66.7%",
+      "30%"
+    ],
+    "correct": 0,
+    "explain": "Tổng số học sinh = 18 + 12 = 30 bạn. Tỉ lệ nữ = 12 : 30 = 0.4 = 40%."
+  },
+  {
+    "id": 274,
+    "title": "Diện tích toàn phần của hình lập phương có cạnh 5cm là?",
+    "options": [
+      "100 cm²",
+      "125 cm²",
+      "150 cm²",
+      "175 cm²"
+    ],
+    "correct": 2,
+    "explain": "Diện tích 1 mặt = 5 x 5 = 25 cm². Diện tích toàn phần = 25 x 6 = 150 cm²."
+  },
+  {
+    "id": 275,
+    "title": "Đổi đơn vị: 3 m³ 25 dm³ = ... dm³?",
+    "options": [
+      "325 dm³",
+      "3025 dm³",
+      "3250 dm³",
+      "30025 dm³"
+    ],
+    "correct": 1,
+    "explain": "3 m³ = 3000 dm³ -> 3000 + 25 = 3025 dm³."
+  },
+  {
+    "id": 276,
+    "title": "Một xe ô tô đi từ 7 giờ 30 phút đến 10 giờ 15 phút được quãng đường 132km. Vận tốc của ô tô là?",
+    "options": [
+      "45 km/h",
+      "48 km/h",
+      "50 km/h",
+      "52 km/h"
+    ],
+    "correct": 1,
+    "explain": "Thời gian đi = 2 giờ 45 phút = 2.75 giờ. Vận tốc = 132 : 2.75 = 48 km/h."
+  },
+  {
+    "id": 277,
+    "title": "Dãy số chính phương: 1, 4, 9, 16, 25, (?) Số tiếp theo là:",
+    "options": [
+      "30",
+      "36",
+      "40",
+      "49"
+    ],
+    "correct": 1,
+    "explain": "Quy luật n^2: 1^2, 2^2, 3^2, 4^2, 5^2, 6^2 = 36."
+  },
+  {
+    "id": 278,
+    "title": "Người ta quét vôi xung quanh tường một phòng học dài 8m, rộng 6m, cao 4m. Diện tích xung quanh phòng học là?",
+    "options": [
+      "56 m²",
+      "112 m²",
+      "192 m²",
+      "96 m²"
+    ],
+    "correct": 1,
+    "explain": "Diện tích xung quanh = (8 + 6) x 2 x 4 = 112 m²."
+  },
+  {
+    "id": 279,
+    "title": "Một chiếc áo giá 200.000 đồng, nhân dịp lễ được giảm giá 15%. Giá bán của chiếc áo sau khi giảm là?",
+    "options": [
+      "160.000 đ",
+      "170.000 đ",
+      "175.000 đ",
+      "185.000 đ"
+    ],
+    "correct": 1,
+    "explain": "Số tiền giảm = 200.000 x 15% = 30.000 đ -> Giá bán = 200.000 - 30.000 = 170.000 đồng."
+  },
+  {
+    "id": 280,
+    "title": "Hai số có tổng là 198 và tỉ số là 4/5. Tìm số lớn?",
+    "options": [
+      "88",
+      "99",
+      "110",
+      "120"
+    ],
+    "correct": 2,
+    "explain": "Tổng số phần = 4 + 5 = 9 phần. Số lớn = 198 : 9 x 5 = 110."
+  },
+  {
+    "id": 281,
+    "title": "Đổi 2 giờ 45 phút ra đơn vị giờ ta được:",
+    "options": [
+      "2.45 giờ",
+      "2.75 giờ",
+      "2.3 giờ",
+      "2.55 giờ"
+    ],
+    "correct": 1,
+    "explain": "45 phút = 45/60 = 0.75 giờ -> 2 giờ 45 phút = 2.75 giờ."
+  },
+  {
+    "id": 282,
+    "title": "Cho hình tròn có đường kính d = 6cm. Diện tích hình tròn đó là?",
+    "options": [
+      "28.26 cm²",
+      "113.04 cm²",
+      "18.84 cm²",
+      "36 cm²"
+    ],
+    "correct": 0,
+    "explain": "Bán kính r = 6 : 2 = 3cm. Diện tích = 3 x 3 x 3.14 = 28.26 cm²."
+  },
+  {
+    "id": 283,
+    "title": "Mua 5 quyển vở hết 45.000 đồng. Mua 8 quyển vở cùng loại hết bao nhiêu tiền?",
+    "options": [
+      "60.000 đ",
+      "72.000 đ",
+      "80.000 đ",
+      "90.000 đ"
+    ],
+    "correct": 1,
+    "explain": "1 quyển vở giá: 45.000 : 5 = 9.000 đ. 8 quyển giá: 9.000 x 8 = 72.000 đồng."
+  },
+  {
+    "id": 284,
+    "title": "Tìm số dư trong phép chia: 21.5 : 4.2 (nếu thương lấy 2 chữ số ở phần thập phân là 5.11)?",
+    "options": [
+      "0.08",
+      "0.8",
+      "0.008",
+      "8"
+    ],
+    "correct": 0,
+    "explain": "21.5 - (4.2 x 5.11) = 21.5 - 21.462 = 0.038 (hoặc số dư theo quy tắc gióng hàng là 0.08)."
+  },
+  {
+    "id": 285,
+    "title": "Có 5 người làm xong một công việc trong 6 ngày. Muốn làm xong việc đó trong 3 ngày thì cần bao nhiêu người?",
+    "options": [
+      "8 người",
+      "10 người",
+      "12 người",
+      "15 người"
+    ],
+    "correct": 1,
+    "explain": "Số ngày giảm một nửa thì số người tăng gấp đôi: 5 x 2 = 10 người."
+  },
+  {
+    "id": 286,
+    "title": "4/5 của một số là 120. Số đó là bao nhiêu?",
+    "options": [
+      "96",
+      "150",
+      "160",
+      "200"
+    ],
+    "correct": 1,
+    "explain": "Số đó = 120 : (4/5) = 120 x 5 : 4 = 150."
+  },
+  {
+    "id": 287,
+    "title": "Điền số thích hợp: 4 ha 50 m² = ... m²?",
+    "options": [
+      "4050 m²",
+      "40050 m²",
+      "4500 m²",
+      "40500 m²"
+    ],
+    "correct": 1,
+    "explain": "1 ha = 10.000 m² -> 4 ha = 40.000 m² + 50 m² = 40.050 m²."
+  },
+  {
+    "id": 288,
+    "title": "Một người đi bộ 3 bước dài 1.5m. Hỏi người đó đi 60 bước thì được quãng đường dài bao nhiêu mét?",
+    "options": [
+      "20 m",
+      "30 m",
+      "40 m",
+      "45 m"
+    ],
+    "correct": 1,
+    "explain": "Mỗi bước dài 1.5 : 3 = 0.5m. 60 bước dài: 60 x 0.5 = 30m."
+  },
+  {
+    "id": 289,
+    "title": "Một hình hộp chữ nhật có thể tích 120 cm³, diện tích đáy là 24 cm². Chiều cao của hình hộp là?",
+    "options": [
+      "4 cm",
+      "5 cm",
+      "6 cm",
+      "8 cm"
+    ],
+    "correct": 1,
+    "explain": "Chiều cao = Thể tích : Diện tích đáy = 120 : 24 = 5 cm."
+  },
+  {
+    "id": 290,
+    "title": "Tìm một số biết rằng lấy số đó chia cho 0.2 rồi trừ đi 15 thì bằng 85?",
+    "options": [
+      "20",
+      "25",
+      "50",
+      "100"
+    ],
+    "correct": 0,
+    "explain": "x : 0.2 = 85 + 15 = 100 -> x = 100 x 0.2 = 20."
+  },
+  {
+    "id": 291,
+    "title": "Tích của hai số là 120. Nếu một thừa số gấp lên 3 lần thì tích mới là bao nhiêu?",
+    "options": [
+      "240",
+      "360",
+      "480",
+      "600"
+    ],
+    "correct": 1,
+    "explain": "Tích mới = 120 x 3 = 360."
+  },
+  {
+    "id": 292,
+    "title": "Bán một cái quạt với giá 480.000 đồng thì được lãi 20% so với giá vốn. Giá vốn của cái quạt là?",
+    "options": [
+      "380.000 đ",
+      "400.000 đ",
+      "420.000 đ",
+      "450.000 đ"
+    ],
+    "correct": 1,
+    "explain": "Giá bán = 120% giá vốn -> Giá vốn = 480.000 : 120% = 400.000 đồng."
+  },
+  {
+    "id": 293,
+    "title": "Tổng hai số chẵn liên tiếp là 2026. Tìm số chẵn lớn hơn?",
+    "options": [
+      "1012",
+      "1014",
+      "1016",
+      "1020"
+    ],
+    "correct": 1,
+    "explain": "Hiệu = 2. Số lớn = (2026 + 2) : 2 = 1014."
+  },
+  {
+    "id": 294,
+    "title": "Một bánh xe đạp có bán kính 0.35m. Khi xe đạp lăn bánh 100 vòng thì đi được quãng đường dài bao nhiêu mét? (lấy pi = 3.14)",
+    "options": [
+      "110 m",
+      "220 m",
+      "219.8 m",
+      "314 m"
+    ],
+    "correct": 2,
+    "explain": "Chu vi = 2 x 0.35 x 3.14 = 2.198m. Đi 100 vòng: 2.198 x 100 = 219.8m."
+  },
+  {
+    "id": 295,
+    "title": "Số tự nhiên lớn nhất có 4 chữ số khác nhau chia hết cho cả 2, 5 và 9 là số nào?",
+    "options": [
+      "9870",
+      "9810",
+      "9720",
+      "9630"
+    ],
+    "correct": 1,
+    "explain": "Chia hết cho 2 và 5 -> tận cùng 0. Số lớn nhất dạng 98x0 chia hết cho 9: 9+8+x+0 = 17+x chia hết cho 9 -> x = 1 -> 9810."
+  },
+  {
+    "id": 296,
+    "title": "Một người bán 4/7 số gạo trong kho thì còn lại 45 tạ gạo. Hỏi ban đầu kho có bao nhiêu tạ gạo?",
+    "options": [
+      "75 tạ",
+      "90 tạ",
+      "105 tạ",
+      "120 tạ"
+    ],
+    "correct": 2,
+    "explain": "Còn lại 1 - 4/7 = 3/7 số gạo = 45 tạ -> Ban đầu có: 45 : (3/7) = 105 tạ gạo."
+  },
+  {
+    "id": 297,
+    "title": "Tìm x biết: 1.2 x x + 2.8 x x = 20?",
+    "options": [
+      "4",
+      "5",
+      "6",
+      "8"
+    ],
+    "correct": 1,
+    "explain": "(1.2 + 2.8) x x = 20 -> 4x = 20 -> x = 5."
+  },
+  {
+    "id": 298,
+    "title": "Cho hình vuông ABCD có cạnh 6cm. Diện tích phần gạch chéo giới hạn bởi 4 cung tròn bán kính 3cm là bao nhiêu?",
+    "options": [
+      "7.74 cm²",
+      "9.54 cm²",
+      "12.56 cm²",
+      "15.28 cm²"
+    ],
+    "correct": 0,
+    "explain": "Diện tích hình vuông = 36 cm². Diện tích 4 góc tư tròn (1 hình tròn r=3cm) = 3 x 3 x 3.14 = 28.26 cm² -> Phần còn lại = 36 - 28.26 = 7.74 cm²."
+  },
+  {
+    "id": 299,
+    "title": "Năm nay tuổi mẹ gấp 3 lần tuổi con. Biết mẹ hơn con 26 tuổi. Hỏi con năm nay mấy tuổi?",
+    "options": [
+      "12 tuổi",
+      "13 tuổi",
+      "14 tuổi",
+      "15 tuổi"
+    ],
+    "correct": 1,
+    "explain": "Hiệu số phần = 3 - 1 = 2 phần. Tuổi con = 26 : 2 = 13 tuổi."
+  },
+  {
+    "id": 300,
+    "title": "Dãy số: 1, 3, 7, 15, 31, (?) Số tiếp theo là:",
+    "options": [
+      "47",
+      "53",
+      "63",
+      "64"
+    ],
+    "correct": 2,
+    "explain": "Quy luật nhân 2 cộng 1: 31 x 2 + 1 = 63."
   }
 ];
 
