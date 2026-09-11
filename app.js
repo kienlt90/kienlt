@@ -27,23 +27,55 @@ window.renderKidsLoginList = function() {
   if (!container) return;
 
   function render(kids) {
-    container.innerHTML = kids.map(k => `
-      <button type="button" onclick="loginDirectAsKid('${k.id}')" class="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50/60 to-white border-2 border-amber-300 hover:border-amber-500 hover:shadow-md hover:scale-[1.01] transition-all duration-200 text-left group cursor-pointer shadow-xs">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
-            🎓
+    container.innerHTML = kids.map(k => {
+      const isGrade2 = k.grade === 2 || k.id === 'kid_thoc';
+      const theme = isGrade2 ? {
+        cardBg: 'from-amber-50 via-orange-50/40 to-white',
+        border: 'border-amber-300 hover:border-amber-500',
+        avatarBg: 'bg-amber-100 border-amber-300 text-amber-800',
+        nameColor: 'text-amber-950 group-hover:text-amber-700',
+        badgeBg: 'bg-amber-200/80 text-amber-900 border border-amber-300/60',
+        subColor: 'text-amber-800',
+        btnBg: 'from-amber-500 to-orange-500 group-hover:from-amber-600 group-hover:to-orange-600',
+        shadow: 'shadow-amber-500/20'
+      } : {
+        cardBg: 'from-sky-50 via-indigo-50/40 to-white',
+        border: 'border-sky-300 hover:border-sky-500',
+        avatarBg: 'bg-sky-100 border-sky-300 text-sky-800',
+        nameColor: 'text-slate-900 group-hover:text-sky-700',
+        badgeBg: 'bg-sky-200/80 text-sky-900 border border-sky-300/60',
+        subColor: 'text-sky-800',
+        btnBg: 'from-sky-600 to-indigo-600 group-hover:from-sky-700 group-hover:to-indigo-700',
+        shadow: 'shadow-sky-500/20'
+      };
+
+      return `
+        <button type="button" onclick="loginDirectAsKid('${k.id}')" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r ${theme.cardBg} border-2 ${theme.border} hover:shadow-md hover:scale-[1.01] transition-all duration-200 text-left group cursor-pointer shadow-xs">
+          <div class="flex items-center space-x-3">
+            <div class="w-11 h-11 rounded-xl ${theme.avatarBg} border flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition shrink-0">
+              🎓
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="font-black text-sm ${theme.nameColor} transition">${k.name}</span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${theme.badgeBg}">
+                  Lớp ${k.grade}
+                </span>
+              </div>
+              <div class="text-[11px] font-bold ${theme.subColor} mt-0.5 flex items-center space-x-1.5">
+                <span>Toán Tư Duy</span>
+                <span class="text-slate-400">•</span>
+                <span class="font-semibold text-slate-500">#${k.username}</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <div class="font-extrabold text-sm text-slate-900 group-hover:text-amber-700 transition">${k.name}</div>
-            <div class="text-[11px] font-bold text-amber-600">Toán Lớp ${k.grade}</div>
-          </div>
-        </div>
-        <span class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-extrabold shadow-xs group-hover:from-amber-600 group-hover:to-orange-600 transition flex items-center space-x-1">
-          <span>Vào thi</span>
-          <span>➔</span>
-        </span>
-      </button>
-    `).join('');
+          <span class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r ${theme.btnBg} text-white text-xs font-black shadow-md ${theme.shadow} transition flex items-center space-x-1.5 shrink-0">
+            <span>Vào thi</span>
+            <span class="text-sm">➔</span>
+          </span>
+        </button>
+      `;
+    }).join('');
   }
 
   if (window.CloudSync) {
