@@ -9,24 +9,14 @@ window.switchLoginType = function(type) {
   const loginForm = document.getElementById('login-form');
 
   if (type === 'kid') {
-    btnKid.style.borderColor = '#fbbf24';
-    btnKid.style.background = 'rgba(251, 191, 36, 0.2)';
-    btnKid.style.color = '#fbbf24';
-
-    btnAdmin.style.borderColor = 'rgba(255,255,255,0.15)';
-    btnAdmin.style.background = 'rgba(255,255,255,0.05)';
-    btnAdmin.style.color = '#94a3b8';
+    btnKid.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all duration-200 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-orange-500/25";
+    btnAdmin.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60";
 
     kidSection.classList.remove('hidden');
     renderKidsLoginList();
   } else {
-    btnAdmin.style.borderColor = '#38bdf8';
-    btnAdmin.style.background = 'rgba(56, 189, 248, 0.15)';
-    btnAdmin.style.color = '#38bdf8';
-
-    btnKid.style.borderColor = 'rgba(255,255,255,0.15)';
-    btnKid.style.background = 'rgba(255,255,255,0.05)';
-    btnKid.style.color = '#94a3b8';
+    btnAdmin.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all duration-200 bg-gradient-to-r from-sky-600 to-blue-700 text-white shadow-md shadow-sky-600/25";
+    btnKid.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60";
 
     kidSection.classList.add('hidden');
   }
@@ -38,15 +28,20 @@ window.renderKidsLoginList = function() {
 
   function render(kids) {
     container.innerHTML = kids.map(k => `
-      <button type="button" onclick="loginDirectAsKid('${k.id}')" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 12px; color: #fff; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(251, 191, 36, 0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 1.4rem;">🎓</span>
-          <div style="text-align: left;">
-            <div style="font-weight: 700; font-size: 0.85rem; color: #f8fafc;">${k.name}</div>
-            <div style="font-size: 0.7rem; color: #fbbf24;">Toán Lớp ${k.grade}</div>
+      <button type="button" onclick="loginDirectAsKid('${k.id}')" class="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50/60 to-white border-2 border-amber-300 hover:border-amber-500 hover:shadow-md hover:scale-[1.01] transition-all duration-200 text-left group cursor-pointer shadow-xs">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition">
+            🎓
+          </div>
+          <div>
+            <div class="font-extrabold text-sm text-slate-900 group-hover:text-amber-700 transition">${k.name}</div>
+            <div class="text-[11px] font-bold text-amber-600">Toán Lớp ${k.grade}</div>
           </div>
         </div>
-        <span style="font-size: 0.75rem; font-weight: 700; color: #38bdf8;">Vào thi ➔</span>
+        <span class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-extrabold shadow-xs group-hover:from-amber-600 group-hover:to-orange-600 transition flex items-center space-x-1">
+          <span>Vào thi</span>
+          <span>➔</span>
+        </span>
       </button>
     `).join('');
   }
@@ -58,7 +53,11 @@ window.renderKidsLoginList = function() {
       { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
       { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
     ];
-    const kids = JSON.parse(localStorage.getItem('kienlt_kid_accounts')) || defaultKids;
+    let kids = defaultKids;
+    try {
+      const stored = localStorage.getItem('kienlt_kid_accounts');
+      if (stored) kids = JSON.parse(stored);
+    } catch(e) {}
     render(kids);
   }
 };
@@ -91,8 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const toastMessage = document.getElementById('toast-message');
   const togglePasswordBtn = document.getElementById('toggle-password-btn');
   const submitBtn = document.getElementById('submit-btn');
-  const btnText = submitBtn.querySelector('.btn-text');
-  const btnLoader = submitBtn.querySelector('.btn-loader');
+  const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+  const btnLoader = submitBtn ? submitBtn.querySelector('.btn-loader') : null;
 
   // Check login state on load: if session exists, redirect to main.html
   const currentSession = localStorage.getItem('vnpt_his_session');
@@ -101,103 +100,89 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Toggle password visibility
-  togglePasswordBtn.addEventListener('click', () => {
-    const isPassword = passwordInput.getAttribute('type') === 'password';
-    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-    
-    // Toggle icon visual state
-    if (isPassword) {
-      togglePasswordBtn.classList.add('visible');
-      togglePasswordBtn.innerHTML = `
-        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-          <line x1="1" y1="1" x2="23" y2="23"/>
-        </svg>
-      `;
-    } else {
-      togglePasswordBtn.classList.remove('visible');
-      togglePasswordBtn.innerHTML = `
-        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-      `;
-    }
-  });
+  if (togglePasswordBtn && passwordInput) {
+    togglePasswordBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.getAttribute('type') === 'password';
+      passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+      togglePasswordBtn.innerHTML = isPassword 
+        ? '<i data-lucide="eye-off" class="w-4 h-4"></i>'
+        : '<i data-lucide="eye" class="w-4 h-4"></i>';
+      if (window.lucide) window.lucide.createIcons();
+    });
+  }
 
   // Real-time validation
-  usernameInput.addEventListener('input', () => {
-    if (usernameInput.value.trim().length > 0) {
-      clearFieldError(usernameInput, usernameError);
-    }
-  });
+  if (usernameInput) {
+    usernameInput.addEventListener('input', () => {
+      if (usernameInput.value.trim().length > 0) {
+        clearFieldError(usernameInput, usernameError);
+      }
+    });
+  }
 
-  passwordInput.addEventListener('input', () => {
-    if (passwordInput.value.length >= 4) {
-      clearFieldError(passwordInput, passwordError);
-    }
-  });
+  if (passwordInput) {
+    passwordInput.addEventListener('input', () => {
+      if (passwordInput.value.length >= 4) {
+        clearFieldError(passwordInput, passwordError);
+      }
+    });
+  }
 
   // Handle Form Submission
-  loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    hideToast();
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      hideToast();
 
-    const usernameVal = usernameInput.value.trim();
-    const passwordVal = passwordInput.value;
-    let isValid = true;
+      const usernameVal = usernameInput.value.trim();
+      const passwordVal = passwordInput.value;
+      let isValid = true;
 
-    // Validate Username
-    if (!usernameVal) {
-      showFieldError(usernameInput, usernameError, 'Vui lòng nhập tên đăng nhập.');
-      isValid = false;
-    } else {
-      clearFieldError(usernameInput, usernameError);
-    }
+      // Validate Username
+      if (!usernameVal) {
+        showFieldError(usernameInput, usernameError, 'Vui lòng nhập tên đăng nhập.');
+        isValid = false;
+      } else {
+        clearFieldError(usernameInput, usernameError);
+      }
 
-    // Validate Password
-    if (!passwordVal) {
-      showFieldError(passwordInput, passwordError, 'Vui lòng nhập mật khẩu.');
-      isValid = false;
-    } else if (passwordVal.length < 4) {
-      showFieldError(passwordInput, passwordError, 'Mật khẩu phải có ít nhất 4 ký tự.');
-      isValid = false;
-    } else {
-      clearFieldError(passwordInput, passwordError);
-    }
+      // Validate Password
+      if (!passwordVal) {
+        showFieldError(passwordInput, passwordError, 'Vui lòng nhập mật khẩu.');
+        isValid = false;
+      } else if (passwordVal.length < 4) {
+        showFieldError(passwordInput, passwordError, 'Mật khẩu phải có ít nhất 4 ký tự.');
+        isValid = false;
+      } else {
+        clearFieldError(passwordInput, passwordError);
+      }
 
-    if (!isValid) {
-      triggerCardShake();
-      return;
-    }
+      if (!isValid) {
+        triggerCardShake();
+        return;
+      }
 
-    // Process login (Simulated secure API request with cryptographic verification)
-    setLoadingState(true, 'Đang kết nối cổng xác thực...');
+      // Process login (Simulated secure API request with cryptographic verification)
+      setLoadingState(true, 'Đang xác thực bảo mật...');
 
-    // SHA-256 hashing helper using Web Crypto API
-    async function sha256(message) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+      // SHA-256 hashing helper using Web Crypto API
+      async function sha256(message) {
+        const msgBuffer = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
 
-    // Step 2: Hashing & account credentials checking
-    setTimeout(async () => {
-      setLoadingState(true, 'Xác thực thông tin bảo mật...');
-      
-      const userHash = await sha256(usernameVal.toLowerCase());
-      const passHash = await sha256(passwordVal);
+      setTimeout(async () => {
+        const userHash = await sha256(usernameVal.toLowerCase());
+        const passHash = await sha256(passwordVal);
 
-      // Plaintext credentials are NOT stored in code. Compare SHA-256 hashes instead.
-      // Hash of "admin" is '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'
-      const targetUserHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
-      const targetPassHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+        // Hash of "admin" is '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'
+        const targetUserHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+        const targetPassHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
 
-      // Step 3: Session initialization
-      setTimeout(() => {
         if (userHash === targetUserHash && passHash === targetPassHash) {
-          setLoadingState(true, 'Thiết lập phiên làm việc...');
+          setLoadingState(true, 'Đăng nhập thành công...');
           
           const userData = {
             username: usernameVal,
@@ -205,7 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
             role: 'Quản trị viên'
           };
           
-          if (document.getElementById('remember').checked) {
+          const rememberMe = document.getElementById('remember');
+          if (rememberMe && rememberMe.checked) {
             localStorage.setItem('vnpt_his_session', JSON.stringify(userData));
           } else {
             sessionStorage.setItem('vnpt_his_session', JSON.stringify(userData));
@@ -215,39 +201,51 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             setLoadingState(false);
             window.location.href = 'main.html';
-          }, 600);
+          }, 400);
         } else {
           setLoadingState(false);
           showToast('Tên đăng nhập hoặc mật khẩu không chính xác.');
           triggerCardShake();
         }
-      }, 800);
-    }, 800);
-  });
+      }, 500);
+    });
+  }
 
   // Helper Functions
   function showFieldError(inputEl, errorEl, message) {
-    inputEl.classList.add('error-input');
-    errorEl.textContent = message;
+    if (inputEl) {
+      inputEl.classList.add('border-rose-500', 'bg-rose-50/50');
+      inputEl.classList.remove('border-slate-200', 'bg-slate-50');
+    }
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+    }
   }
 
   function clearFieldError(inputEl, errorEl) {
-    inputEl.classList.remove('error-input');
-    errorEl.textContent = '';
+    if (inputEl) {
+      inputEl.classList.remove('border-rose-500', 'bg-rose-50/50');
+      inputEl.classList.add('border-slate-200', 'bg-slate-50');
+    }
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.add('hidden');
+    }
   }
 
   function showToast(message) {
-    toastMessage.textContent = message;
-    errorToast.classList.remove('hidden');
+    if (toastMessage) toastMessage.textContent = message;
+    if (errorToast) errorToast.classList.remove('hidden');
   }
 
   function hideToast() {
-    errorToast.classList.add('hidden');
+    if (errorToast) errorToast.classList.add('hidden');
   }
 
   function triggerCardShake() {
+    if (!loginCard) return;
     loginCard.classList.remove('shake');
-    // Trigger reflow to restart animation
     void loginCard.offsetWidth;
     loginCard.classList.add('shake');
     setTimeout(() => {
@@ -255,47 +253,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
   }
 
-  function setLoadingState(isLoading, message = 'Đăng nhập') {
+  function setLoadingState(isLoading, message = 'Đăng nhập vào Portal') {
+    if (!submitBtn) return;
     if (isLoading) {
       submitBtn.disabled = true;
-      btnText.textContent = message;
-      btnText.classList.remove('hidden');
-      btnLoader.classList.remove('hidden');
+      if (btnText) btnText.textContent = message;
+      if (btnLoader) btnLoader.classList.remove('hidden');
     } else {
       submitBtn.disabled = false;
-      btnText.textContent = message;
-      btnText.classList.remove('hidden');
-      btnLoader.classList.add('hidden');
+      if (btnText) btnText.textContent = message;
+      if (btnLoader) btnLoader.classList.add('hidden');
     }
-  }
-  // Theme Toggle Logic
-  const themeToggleBtn = document.getElementById('theme-toggle-btn');
-  const themeIcon = document.getElementById('theme-icon');
-  
-  function updateThemeUI(theme) {
-    if (themeIcon) {
-      themeIcon.textContent = theme === 'light' ? '🌙' : '☀️';
-    }
-  }
-
-  // Initial UI Setup
-  const initialTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
-  updateThemeUI(initialTheme);
-
-  if (themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', () => {
-      const currentTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      
-      localStorage.setItem('vnpt_his_theme', newTheme);
-      
-      if (newTheme === 'light') {
-        document.body.classList.add('light-theme');
-      } else {
-        document.body.classList.remove('light-theme');
-      }
-      
-      updateThemeUI(newTheme);
-    });
   }
 });

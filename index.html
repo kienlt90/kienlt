@@ -1,173 +1,229 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng nhập - Hệ thống KIENLT90</title>
-  <!-- Google Fonts: Be Vietnam Pro -->
+  <title>Đăng nhập - Cổng Thông Tin KIENLT90</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="login-body">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
   <script>
-    // Theme Initializer to prevent flash of light
-    (function() {
-      const theme = localStorage.getItem('vnpt_his_theme') || 'dark';
-      if (theme === 'light') {
-        document.body.classList.add('light-theme');
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          },
+          animation: {
+            'blob-slow': 'blob 8s infinite',
+            'blob-delayed': 'blob 8s infinite 4s',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            }
+          }
+        }
       }
-    })();
+    }
   </script>
 
-  <!-- Floating Theme Toggle -->
-  <div class="floating-theme-toggle">
-    <button id="theme-toggle-btn" class="btn-theme-toggle" title="Đổi giao diện">
-      <span id="theme-icon">☀️</span>
-    </button>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .shake {
+      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+    .spinner {
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-sky-950 to-indigo-950 text-slate-800 antialiased min-h-full flex items-center justify-center p-4 relative overflow-x-hidden selection:bg-sky-500 selection:text-white">
+
+  <!-- Ambient Animated Glowing Orbs Background -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl animate-blob-slow"></div>
+    <div class="absolute top-1/2 -right-32 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-blob-delayed"></div>
+    <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-blob-slow"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-900/10 via-transparent to-transparent"></div>
   </div>
 
-  <!-- Floating animated background blobs -->
-  <div class="bg-glow-container">
-    <div class="glow-blob blob-1"></div>
-    <div class="glow-blob blob-2"></div>
-    <div class="glow-blob blob-3"></div>
-  </div>
-
-  <!-- Main Container -->
-  <main class="login-container" id="app-container">
+  <!-- Main Login Card Container -->
+  <main class="w-full max-w-md relative z-10 my-6">
     
-    <!-- LOGIN VIEW -->
-    <section id="login-view" class="auth-section">
-      <div class="glass-card" id="login-card">
+    <!-- Login Card with Glassmorphism & High Contrast -->
+    <div id="login-card" class="bg-white/95 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] p-6 sm:p-8 transition-all duration-300">
+      
+      <!-- Brand Logo & Header -->
+      <div class="text-center mb-6">
         
-        <!-- Brand Logo & Title -->
-        <div class="brand-header">
-          <div class="logo-wrapper">
-            <svg class="vnpt-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#06b6d4" />
-                  <stop offset="50%" stop-color="#3b82f6" />
-                  <stop offset="100%" stop-color="#6366f1" />
-                </linearGradient>
-                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="8" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <!-- Outer glowing hexagon -->
-              <path d="M 100 15 L 173.6 57.5 L 173.6 142.5 L 100 185 L 26.4 142.5 L 26.4 57.5 Z" fill="none" stroke="url(#logo-grad)" stroke-width="3" opacity="0.4" />
-              <path d="M 100 15 L 173.6 57.5 L 173.6 142.5 L 100 185 L 26.4 142.5 L 26.4 57.5 Z" fill="none" stroke="url(#logo-grad)" stroke-width="1.5" opacity="0.8" filter="url(#glow)" />
-              <!-- Thin inner grid lines -->
-              <line x1="100" y1="15" x2="100" y2="185" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="4 4" />
-              <line x1="26.4" y1="100" x2="173.6" y2="100" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="4 4" />
-              <!-- Stylized "9" -->
-              <path d="M 100 90 A 22 22 0 1 0 56 90 A 22 22 0 0 0 100 90 L 100 120 C 100 135, 88 145, 70 145" fill="none" stroke="url(#logo-grad)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-              <!-- Stylized "0" -->
-              <path d="M 154 102.5 A 22 30 0 1 1 110 102.5 A 22 30 0 1 1 154 102.5" fill="none" stroke="var(--color-text-primary)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-              <!-- Small tech nodes -->
-              <circle cx="132" cy="102.5" r="5" fill="#06b6d4" />
-              <circle cx="78" cy="90" r="4" fill="#6366f1" />
-            </svg>
-          </div>
-          <h1 class="brand-name" style="font-size: 1.8rem; line-height: 1.3;">HỆ THỐNG <span>KIENLT90</span></h1>
-          <p class="brand-subtitle" style="font-weight: 500; color: #3b82f6; margin-top: 0.6rem;">Chào mừng bạn đến với Cổng quản lý hệ thống</p>
-        </div>
-
-        <!-- Notification Toast (For error feedback) -->
-        <div id="error-toast" class="toast hidden">
-          <span class="toast-icon">⚠️</span>
-          <span id="toast-message" class="toast-text">Tên đăng nhập hoặc mật khẩu không đúng.</span>
-        </div>
-
-        <!-- Form -->
-        <!-- Quick Switcher: Admin vs Kid Login -->
-        <div class="kid-login-toggle" style="display: flex; gap: 8px; margin-bottom: 1.2rem;">
-          <button type="button" id="tab-admin-login" onclick="switchLoginType('admin')" style="flex: 1; padding: 8px 12px; border-radius: 12px; border: 1px solid #38bdf8; background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
-            🛡️ Quản trị viên
-          </button>
-          <button type="button" id="tab-kid-login" onclick="switchLoginType('kid')" style="flex: 1; padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #94a3b8; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
-            👦 Dành cho Bé
-          </button>
-        </div>
-
-        <!-- Kid Quick Login Section (Hidden by default) -->
-        <div id="kid-quick-section" class="hidden" style="margin-bottom: 1.5rem; text-align: left;">
-          <p style="font-size: 0.75rem; color: #fbbf24; margin-bottom: 0.75rem; font-weight: 600;">
-            ⭐ Chọn tài khoản của bé để vào thẳng Đấu trường Toán:
-          </p>
-          <div id="kids-avatar-list" style="display: flex; flex-direction: column; gap: 8px;">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-
-        <form id="login-form" novalidate>
-          
-          <!-- Input Group: Username -->
-          <div class="input-group">
-            <div class="input-wrapper">
-              <input type="text" id="username" class="form-input" required autocomplete="username" placeholder=" ">
-              <label for="username" class="form-label">Tên đăng nhập</label>
-              <span class="input-highlight"></span>
-            </div>
-            <span class="field-error" id="username-error"></span>
-          </div>
-
-          <!-- Input Group: Password -->
-          <div class="input-group">
-            <div class="input-wrapper">
-              <input type="password" id="password" class="form-input" required autocomplete="current-password" placeholder=" ">
-              <label for="password" class="form-label">Mật khẩu</label>
-              <span class="input-highlight"></span>
-              <span class="toggle-password" id="toggle-password-btn">
-                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
+        <!-- Logo Hexagon Badge -->
+        <div class="inline-flex relative mb-3 group">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-600 via-blue-600 to-indigo-700 p-0.5 shadow-lg shadow-sky-500/30 group-hover:scale-105 transition-transform duration-300">
+            <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
+              <span class="text-2xl font-black bg-gradient-to-r from-sky-600 to-indigo-700 bg-clip-text text-transparent">
+                K90
               </span>
             </div>
-            <span class="field-error" id="password-error"></span>
           </div>
-
-          <!-- Keep Signed In & Forgot Password -->
-          <div class="form-options">
-            <label class="remember-me">
-              <input type="checkbox" id="remember" checked>
-              <span class="custom-checkbox"></span>
-              Ghi nhớ đăng nhập
-            </label>
-            <a href="#" class="forgot-pass-link" id="forgot-link">Quên mật khẩu?</a>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" id="submit-btn" class="btn-primary">
-            <span class="btn-text">Đăng nhập</span>
-            <span class="btn-loader hidden">
-              <span class="spinner"></span>
-            </span>
-          </button>
-        </form>
-
-        <!-- Footer Info -->
-        <div class="card-footer">
-          <p>&copy; 2026 KIENLT90 Portal. All rights reserved.</p>
-          <div class="footer-links">
-            <a href="#">Hỗ trợ kỹ thuật</a>
-            <span class="dot"></span>
-            <a href="#">Điều khoản sử dụng</a>
-          </div>
+          <span class="absolute -bottom-1 -right-1 flex h-4 w-4">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white"></span>
+          </span>
         </div>
 
+        <div class="flex items-center justify-center space-x-2 mb-1">
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            HỆ THỐNG <span class="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">KIENLT90</span>
+          </h1>
+          <span class="px-2 py-0.5 bg-sky-100 text-sky-800 border border-sky-200 rounded-full text-[10px] font-extrabold">v1.0</span>
+        </div>
+        <p class="text-xs sm:text-sm font-semibold text-slate-500">Cổng Quản trị Y tế số & Đấu trường Toán Tư Duy</p>
       </div>
-    </section>
 
+      <!-- Error Toast Notification -->
+      <div id="error-toast" class="hidden mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 flex items-center space-x-2.5 text-rose-800 text-xs font-bold animate-pulse">
+        <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0"></i>
+        <span id="toast-message">Tên đăng nhập hoặc mật khẩu không chính xác.</span>
+      </div>
+
+      <!-- Quick Switcher: Admin vs Kid Login -->
+      <div class="bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 flex gap-1.5 mb-5 shadow-inner">
+        <button type="button" id="tab-admin-login" onclick="switchLoginType('admin')" class="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all duration-200 bg-gradient-to-r from-sky-600 to-blue-700 text-white shadow-md shadow-sky-600/25">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          <span>Quản trị viên</span>
+        </button>
+        <button type="button" id="tab-kid-login" onclick="switchLoginType('kid')" class="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+          <span>Dành cho Bé</span>
+        </button>
+      </div>
+
+      <!-- Kid Quick Login Section (Hidden by default, shown when Kid tab is clicked) -->
+      <div id="kid-quick-section" class="hidden mb-5 space-y-3 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent p-4 rounded-2xl border border-amber-200">
+        <div class="flex items-center space-x-1.5">
+          <i data-lucide="award" class="w-4 h-4 text-amber-600"></i>
+          <p class="text-xs font-bold text-amber-900">
+            Chọn tài khoản của bé để vào thẳng Đấu trường:
+          </p>
+        </div>
+        <div id="kids-avatar-list" class="space-y-2">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Admin Login Form -->
+      <form id="login-form" novalidate class="space-y-4">
+        
+        <!-- Username Input -->
+        <div class="space-y-1.5">
+          <label for="username" class="block text-xs font-bold text-slate-700">Tên đăng nhập</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </div>
+            <input type="text" id="username" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition" placeholder="Nhập tên đăng nhập (admin)..." autocomplete="username">
+          </div>
+          <span class="text-[11px] font-bold text-rose-600 hidden" id="username-error"></span>
+        </div>
+
+        <!-- Password Input -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="password" class="block text-xs font-bold text-slate-700">Mật khẩu</label>
+            <a href="#" class="text-xs font-bold text-sky-600 hover:text-sky-800 hover:underline" id="forgot-link">Quên mật khẩu?</a>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input type="password" id="password" class="w-full pl-10 pr-11 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition" placeholder="Nhập mật khẩu (admin)..." autocomplete="current-password">
+            <button type="button" id="toggle-password-btn" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none" title="Hiện/ẩn mật khẩu">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <span class="text-[11px] font-bold text-rose-600 hidden" id="password-error"></span>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center space-x-2 cursor-pointer select-none">
+            <input type="checkbox" id="remember" checked class="w-4 h-4 rounded text-sky-600 border-slate-300 focus:ring-sky-500">
+            <span class="text-xs font-bold text-slate-600">Ghi nhớ đăng nhập</span>
+          </label>
+          <span class="text-[11px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">Mặc định: admin</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submit-btn" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-sky-600/30 hover:shadow-sky-600/45 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center space-x-2 cursor-pointer">
+          <span class="btn-text">Đăng nhập vào Portal</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          <span class="btn-loader hidden">
+            <span class="spinner"></span>
+          </span>
+        </button>
+      </form>
+
+      <!-- Footer Info -->
+      <div class="mt-6 pt-5 border-t border-slate-200/80 text-center space-y-1.5">
+        <p class="text-[11px] font-medium text-slate-400">&copy; 2026 KIENLT90 Portal. All rights reserved.</p>
+        <div class="flex items-center justify-center space-x-3 text-[11px] font-semibold text-slate-500">
+          <a href="#" class="hover:text-sky-600 transition">Hỗ trợ kỹ thuật</a>
+          <span>•</span>
+          <a href="#" class="hover:text-sky-600 transition">Điều khoản sử dụng</a>
+        </div>
+      </div>
+
+    </div>
   </main>
+
+  <!-- Lucide icons init -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    });
+  </script>
 
   <!-- Firebase Realtime Database SDK (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
