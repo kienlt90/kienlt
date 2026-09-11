@@ -149,6 +149,87 @@
         </div>
       </div>
 
+      <!-- KID PERSONAL STATS SUMMARY (Shown for student) -->
+      <div id="kid-personal-stats-card" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-lg">
+            📝
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Số bài đã làm</span>
+            <span class="text-base font-black text-slate-900" id="kid-stat-total-quizzes">0 bài</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-black text-lg">
+            🎯
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Điểm trung bình</span>
+            <span class="text-base font-black text-amber-600" id="kid-stat-avg-score">0.0 / 10</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-lg">
+            ✅
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Số câu Đúng / Sai</span>
+            <span class="text-sm sm:text-base font-black text-slate-900" id="kid-stat-correct-wrong"><span class="text-emerald-600">0</span> / <span class="text-rose-500">0</span></span>
+          </div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-lg">
+            🏆
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Tỉ lệ chính xác</span>
+            <span class="text-base font-black text-purple-700" id="kid-stat-accuracy">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN STATS SUMMARY DASHBOARD (Shown for admin) -->
+      <div id="admin-stats-summary-card" class="hidden bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
+              📊
+            </div>
+            <div>
+              <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Bảng Thống Kê Điểm Số & Thành Tích Học Sinh</h3>
+              <p class="text-xs text-slate-500">Tổng hợp số bài đã làm, điểm trung bình, số câu đúng/sai cho từng tài khoản</p>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold">
+            Realtime Analytics
+          </span>
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left text-xs min-w-[620px]">
+            <thead class="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase font-bold text-[10px]">
+              <tr>
+                <th class="p-3">#</th>
+                <th class="p-3">Học sinh & Khối lớp</th>
+                <th class="p-3 text-center">Số bài đã làm</th>
+                <th class="p-3 text-center">Điểm trung bình</th>
+                <th class="p-3 text-center">Số câu Đúng / Sai</th>
+                <th class="p-3 text-center">Tỉ lệ chính xác</th>
+                <th class="p-3 text-center">Điểm cao nhất</th>
+                <th class="p-3 text-right">Lượt quay</th>
+              </tr>
+            </thead>
+            <tbody id="admin-stats-table-body" class="divide-y divide-slate-100">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Level Selection (Grade 2 vs Grade 5) -->
       <div id="level-selection" class="grid grid-cols-1 md:grid-cols-2 gap-5">
         
@@ -1830,6 +1911,7 @@ const mathBankGrade5 = [
       }
       updateSpinUI();
       renderAdminKidsSpinList();
+      calculateAndRenderStats();
     }
 
     // ==========================================
@@ -2081,8 +2163,11 @@ const mathBankGrade5 = [
         iconEl.textContent = correctCount >= 8 ? '🎉' : '📖';
       }
 
-      // RENDER DETAILED QUESTION EXPLANATIONS FOR KIDS
+      // Render explanations for student
       renderResultExplanations(currentQuestions, userAnswers);
+
+      // Re-calculate statistics
+      calculateAndRenderStats();
 
       if (correctCount >= 8) {
         soundWin();
@@ -2136,6 +2221,123 @@ const mathBankGrade5 = [
       }).join('');
 
       lucide.createIcons();
+    }
+
+    // ==========================================
+    // SCORE & ACCURACY STATISTICS CALCULATOR
+    // ==========================================
+    function calculateAndRenderStats() {
+      const kids = getAllKids();
+      
+      // If student is logged in, calculate personal statistics
+      if (currentKid) {
+        const kidSubs = submissions.filter(s => s.studentName === currentKid.name || s.studentName === currentKid.id);
+        const totalQuizzes = kidSubs.length;
+        let totalScore = 0;
+        let totalCorrect = 0;
+        
+        kidSubs.forEach(s => {
+          totalScore += (s.score || 0);
+          totalCorrect += (s.score || 0);
+        });
+        
+        const totalQuestions = totalQuizzes * 10;
+        const totalWrong = totalQuestions - totalCorrect;
+        const avgScore = totalQuizzes > 0 ? (totalScore / totalQuizzes).toFixed(1) : '0.0';
+        const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+        const elTotal = document.getElementById('kid-stat-total-quizzes');
+        const elAvg = document.getElementById('kid-stat-avg-score');
+        const elCW = document.getElementById('kid-stat-correct-wrong');
+        const elAcc = document.getElementById('kid-stat-accuracy');
+
+        if (elTotal) elTotal.textContent = `${totalQuizzes} bài`;
+        if (elAvg) elAvg.textContent = `${avgScore} / 10`;
+        if (elCW) elCW.innerHTML = `<span class="text-emerald-600 font-bold">${totalCorrect}</span> / <span class="text-rose-500 font-bold">${totalWrong}</span>`;
+        if (elAcc) elAcc.textContent = `${accuracy}%`;
+
+        const kidStatsBox = document.getElementById('kid-personal-stats-card');
+        if (kidStatsBox) kidStatsBox.classList.remove('hidden');
+
+        const adminStatsBox = document.getElementById('admin-stats-summary-card');
+        if (adminStatsBox) adminStatsBox.classList.add('hidden');
+      } else {
+        // Admin mode: Render complete summary table for all kids
+        const kidStatsBox = document.getElementById('kid-personal-stats-card');
+        if (kidStatsBox) kidStatsBox.classList.add('hidden');
+
+        const adminStatsBox = document.getElementById('admin-stats-summary-card');
+        if (adminStatsBox) adminStatsBox.classList.remove('hidden');
+
+        const tbody = document.getElementById('admin-stats-table-body');
+        if (!tbody) return;
+
+        tbody.innerHTML = kids.map((k, idx) => {
+          const kidSubs = submissions.filter(s => s.studentName === k.name || s.studentName === k.id);
+          const totalQuizzes = kidSubs.length;
+          let totalScore = 0;
+          let highestScore = 0;
+          
+          kidSubs.forEach(s => {
+            const sc = s.score || 0;
+            totalScore += sc;
+            if (sc > highestScore) highestScore = sc;
+          });
+
+          const totalQuestions = totalQuizzes * 10;
+          const totalCorrect = totalScore;
+          const totalWrong = totalQuestions - totalCorrect;
+          const avgScore = totalQuizzes > 0 ? (totalScore / totalQuizzes).toFixed(1) : '0.0';
+          const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+          const spins = getKidSpins(k.id);
+          const isG2 = k.grade === 2;
+
+          return `
+            <tr class="hover:bg-slate-50 transition text-xs">
+              <td class="p-3 font-mono text-slate-400 font-bold">${idx + 1}</td>
+              <td class="p-3">
+                <div class="flex items-center space-x-2">
+                  <span class="text-lg">${isG2 ? '🌱' : '🚀'}</span>
+                  <div>
+                    <span class="font-extrabold text-slate-900 block">${k.name}</span>
+                    <span class="text-[10px] font-bold px-1.5 py-0.2 rounded ${isG2 ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-sky-800'}">Lớp ${k.grade}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="p-3 font-black text-slate-800 text-center">
+                <span class="px-2.5 py-1 bg-slate-100 rounded-lg">${totalQuizzes} bài</span>
+              </td>
+              <td class="p-3 text-center">
+                <span class="font-black text-sm ${parseFloat(avgScore) >= 8 ? 'text-emerald-600' : (parseFloat(avgScore) >= 5 ? 'text-amber-600' : 'text-slate-500')}">${avgScore}</span>
+                <span class="text-[10px] text-slate-400">/10</span>
+              </td>
+              <td class="p-3 text-center">
+                <span class="font-bold text-emerald-600">${totalCorrect} đúng</span>
+                <span class="text-slate-300"> / </span>
+                <span class="font-bold text-rose-500">${totalWrong} sai</span>
+              </td>
+              <td class="p-3 text-center">
+                <div class="flex items-center justify-center space-x-1.5">
+                  <div class="w-12 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-emerald-500 h-full rounded-full" style="width: ${accuracy}%"></div>
+                  </div>
+                  <span class="font-bold text-slate-700 text-[11px]">${accuracy}%</span>
+                </div>
+              </td>
+              <td class="p-3 text-center font-black text-indigo-600">
+                ${highestScore > 0 ? `${highestScore}/10` : '-'}
+              </td>
+              <td class="p-3 text-right">
+                <span class="px-2 py-0.5 rounded-full font-black text-xs bg-amber-100 text-amber-800">
+                  🎡 ${spins}
+                </span>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        lucide.createIcons();
+      }
     }
 
     function resetAndBackToArena() {
@@ -2497,6 +2699,7 @@ const mathBankGrade5 = [
 
       updatePendingBadge();
       renderTeacherSubmissions();
+      calculateAndRenderStats();
       closeReviewModal();
       alert('Đã lưu phê duyệt và đồng bộ lên Cloud Database thành công!');
     }
@@ -2513,6 +2716,7 @@ const mathBankGrade5 = [
         }
         updatePendingBadge();
         renderTeacherSubmissions();
+        calculateAndRenderStats();
       }
     }
 
@@ -2631,7 +2835,9 @@ const mathBankGrade5 = [
         activeNav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-700 text-white shadow-sm flex items-center space-x-1.5 transition relative';
       }
 
-      if (tab === 'wheel') {
+      if (tab === 'arena') {
+        calculateAndRenderStats();
+      } else if (tab === 'wheel') {
         setTimeout(drawWheel, 50);
         if (!currentKid) {
           renderAdminKidsSpinList();
@@ -2653,23 +2859,32 @@ const mathBankGrade5 = [
 
       // Setup Realtime Cloud Sync Listeners
       if (window.CloudSync) {
+        // Sync Kids list
         window.CloudSync.getKids((kids) => {
           kidsList = kids;
-          if (!currentKid) renderAdminKidsSpinList();
+          if (!currentKid) {
+            renderAdminKidsSpinList();
+          }
+          calculateAndRenderStats();
         });
 
+        // Sync Spins
         window.CloudSync.getSpins((spins) => {
           spinsMap = spins;
           updateSpinUI();
           if (!currentKid) renderAdminKidsSpinList();
+          calculateAndRenderStats();
         });
 
+        // Sync Submissions
         window.CloudSync.getSubmissions((subs) => {
           submissions = subs;
           updatePendingBadge();
           if (!currentKid) renderTeacherSubmissions();
+          calculateAndRenderStats();
         });
 
+        // Sync Rewards
         window.CloudSync.getRewards((rewards) => {
           rewardItems = rewards;
           drawWheel();
