@@ -29,14 +29,15 @@ window.renderKidsLoginList = function() {
   function render(kids) {
     container.innerHTML = kids.map(k => {
       const isGrade2 = k.grade === 2 || k.id === 'kid_thoc';
-      const cardBg = isGrade2 ? '#fffbeb' : '#f0f9ff';
-      const borderColor = isGrade2 ? '#f59e0b' : '#0ea5e9';
-      const avatarBg = isGrade2 ? '#fef3c7' : '#e0f2fe';
-      const avatarBorder = isGrade2 ? '#fcd34d' : '#7dd3fc';
-      const nameColor = isGrade2 ? '#451a03' : '#082f49';
-      const badgeBg = isGrade2 ? '#fde68a' : '#bae6fd';
-      const badgeColor = isGrade2 ? '#78350f' : '#0369a1';
-      const subColor = isGrade2 ? '#92400e' : '#0369a1';
+      const isGrade3 = k.grade === 3;
+      const cardBg = isGrade2 ? '#fffbeb' : (isGrade3 ? '#ecfdf5' : '#f0f9ff');
+      const borderColor = isGrade2 ? '#f59e0b' : (isGrade3 ? '#10b981' : '#0ea5e9');
+      const avatarBg = isGrade2 ? '#fef3c7' : (isGrade3 ? '#d1fae5' : '#e0f2fe');
+      const avatarBorder = isGrade2 ? '#fcd34d' : (isGrade3 ? '#6ee7b7' : '#7dd3fc');
+      const nameColor = isGrade2 ? '#451a03' : (isGrade3 ? '#064e3b' : '#082f49');
+      const badgeBg = isGrade2 ? '#fde68a' : (isGrade3 ? '#a7f3d0' : '#bae6fd');
+      const badgeColor = isGrade2 ? '#78350f' : (isGrade3 ? '#065f46' : '#0369a1');
+      const subColor = isGrade2 ? '#92400e' : (isGrade3 ? '#047857' : '#0369a1');
 
       return `
         <div class="w-full flex items-center justify-between p-3 rounded-2xl border-2 shadow-sm transition" style="background-color: ${cardBg} !important; border-color: ${borderColor} !important;">

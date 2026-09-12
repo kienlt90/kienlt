@@ -565,6 +565,7 @@
               <label class="text-[11px] font-bold text-slate-600 block mb-1">Lớp học:</label>
               <select id="new-kid-grade" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-amber-500 bg-white font-bold text-amber-800">
                 <option value="2">🌱 Học sinh Lớp 2</option>
+                <option value="3">⭐ Học sinh Lớp 3</option>
                 <option value="5">🚀 Học sinh Lớp 5</option>
               </select>
             </div>
@@ -653,15 +654,20 @@
       const kids = getKidsList();
       listEl.innerHTML = kids.map(k => {
         const isGrade2 = k.grade === 2 || k.id === 'kid_thoc';
+        const isGrade3 = k.grade === 3;
         const theme = isGrade2 ? {
           bg: 'from-amber-50 to-white border-amber-300 hover:border-amber-400',
           name: 'text-amber-950',
           badge: 'bg-amber-100 text-amber-800 border border-amber-200'
+        } : (isGrade3 ? {
+          bg: 'from-emerald-50 to-white border-emerald-300 hover:border-emerald-400',
+          name: 'text-emerald-950',
+          badge: 'bg-emerald-100 text-emerald-800 border border-emerald-200'
         } : {
           bg: 'from-sky-50 to-white border-sky-300 hover:border-sky-400',
           name: 'text-slate-900',
           badge: 'bg-sky-100 text-sky-800 border border-sky-200'
-        };
+        });
 
         return `
           <div class="flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r ${theme.bg} border text-xs shadow-2xs hover:shadow-xs transition">
@@ -695,12 +701,14 @@
       if (!modalList) return;
 
       const kids = getKidsList();
-      modalList.innerHTML = kids.map((k, idx) => `
+      modalList.innerHTML = kids.map((k, idx) => {
+        const badgeClass = k.grade === 2 ? 'bg-amber-100 text-amber-800' : (k.grade === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800');
+        return `
         <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
           <div class="flex items-center space-x-3">
             <span class="text-xl">🎓</span>
             <div>
-              <h5 class="font-extrabold text-slate-900">${k.name} <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px]">Lớp ${k.grade}</span></h5>
+              <h5 class="font-extrabold text-slate-900">${k.name} <span class="px-2 py-0.5 ${badgeClass} rounded text-[10px] font-bold">Lớp ${k.grade}</span></h5>
               <div class="text-[11px] text-slate-500 mt-0.5">
                 Username: <b>${k.username}</b> | PIN: <b>${k.pin}</b>
               </div>
@@ -718,7 +726,8 @@
             </button>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
       lucide.createIcons();
     }
@@ -756,7 +765,7 @@
       saveKidsList(kids);
       document.getElementById('new-kid-name').value = '';
       document.getElementById('new-kid-username').value = '';
-      alert(`Đã tạo tài khoản cho bé ${name} thành công và đồng bộ lên Cloud!`);
+      alert(`Đã tạo tài khoản cho bé ${name} (Lớp ${grade}) thành công và đồng bộ lên Cloud!`);
     }
 
     function deleteKidAccount(kidId) {
@@ -775,11 +784,8 @@
       const kids = getKidsList();
       const kid = kids.find(k => k.id === kidId) || kids[0];
       localStorage.setItem('kienlt_active_kid_session', JSON.stringify(kid));
-      if (subject === 'english') {
-        window.open('english_game.html', '_blank');
-      } else {
-        window.open('math_game.html', '_blank');
-      }
+      const page = subject === 'english' ? 'english_game.html' : 'math_game.html';
+      window.open(`${page}?kid=${encodeURIComponent(kid.id)}&grade=${kid.grade}`, '_blank');
     }
 
     // Auto-init sidebar kids with CloudSync
