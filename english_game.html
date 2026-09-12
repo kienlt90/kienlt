@@ -257,7 +257,7 @@
       </div>
 
       <!-- Level Selection (Grade 2 vs Grade 5) -->
-      <div id="level-selection" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div id="level-selection" class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         
         <!-- Grade 2 Card -->
         <div id="card-grade-2" onclick="startQuiz(2)" class="group bg-gradient-to-br from-white to-teal-50/70 p-6 rounded-3xl border-2 border-teal-200/80 shadow-md hover:border-teal-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
@@ -285,6 +285,38 @@
               <span>Thưởng 1-3 spin theo điểm</span>
             </div>
             <button class="px-4 py-2 bg-teal-600 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-teal-700 flex items-center space-x-1.5 transition">
+              <span>Bắt đầu thi</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Grade 3 Card -->
+        <div id="card-grade-3" onclick="startQuiz(3)" class="group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
+          <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-sky-200/40 rounded-full blur-2xl pointer-events-none"></div>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-sky-100 text-sky-800 font-extrabold text-xs rounded-full border border-sky-300">
+                ⭐ Dành cho Học sinh Lớp 3 (Movers)
+              </span>
+              <span class="text-3xl">🌟</span>
+            </div>
+            <h2 class="text-xl font-extrabold text-slate-900 group-hover:text-sky-600 transition">
+              Tiếng Anh Movers - Bứt Phá Giao Tiếp & Ngữ Pháp
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+              Ngân hàng <b>50 câu hỏi Cambridge Movers Lớp 3</b> (Hiện tại đơn & tiếp diễn, giới từ vị trí, can/can't, đồ dùng, trường học, gia đình, câu đố logic bằng tiếng Anh...). Rút <b>ngẫu nhiên 10 câu</b> chống lặp!
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-sky-100 flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500">
+              <i data-lucide="shuffle" class="w-4 h-4 text-sky-500"></i>
+              <span>10 câu ngẫu nhiên</span>
+              <span>•</span>
+              <i data-lucide="award" class="w-4 h-4 text-sky-500"></i>
+              <span>Thưởng 1-3 spin theo điểm</span>
+            </div>
+            <button class="px-4 py-2 bg-sky-600 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-sky-700 flex items-center space-x-1.5 transition">
               <span>Bắt đầu thi</span>
               <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
             </button>
@@ -1324,6 +1356,609 @@ const englishBankGrade2 = [
   }
 ];
 
+const englishBankGrade3 = [
+  {
+    "id": 301,
+    "title": "I love numbers, addition and shapes. My favourite school subject is _______.",
+    "options": [
+      "Music",
+      "Maths",
+      "Art",
+      "English"
+    ],
+    "correct": 1,
+    "explain": "Môn học liên quan đến con số (numbers) và hình khối (shapes) là môn Toán (Maths)."
+  },
+  {
+    "id": 302,
+    "title": "What school thing do you use to sharpen your wooden pencils?",
+    "options": [
+      "A ruler",
+      "A pencil sharpener",
+      "An eraser",
+      "A notebook"
+    ],
+    "correct": 1,
+    "explain": "Đồ dùng dùng để gọt bút chì là cái gọt bút chì (pencil sharpener)."
+  },
+  {
+    "id": 303,
+    "title": "Look! There _______ three red apples on the kitchen table.",
+    "options": [
+      "is",
+      "am",
+      "are",
+      "be"
+    ],
+    "correct": 2,
+    "explain": "Với danh từ số nhiều (three red apples), ta dùng \"There are\"."
+  },
+  {
+    "id": 304,
+    "title": "Be quiet! There _______ a cute kitten sleeping on the sofa.",
+    "options": [
+      "is",
+      "are",
+      "have",
+      "were"
+    ],
+    "correct": 0,
+    "explain": "Với danh từ số ít (a cute kitten), ta dùng \"There is\"."
+  },
+  {
+    "id": 305,
+    "title": "_______ many crayons do you have in your pencil case? - I have twelve.",
+    "options": [
+      "What",
+      "How",
+      "Where",
+      "Who"
+    ],
+    "correct": 1,
+    "explain": "Hỏi số lượng đếm được dùng cấu trúc: \"How many + danh từ số nhiều...?\"."
+  },
+  {
+    "id": 306,
+    "title": "_______ is that tall woman over there? - She is our new English teacher, Ms. Anna.",
+    "options": [
+      "Where",
+      "What",
+      "Who",
+      "When"
+    ],
+    "correct": 2,
+    "explain": "Hỏi về người (ai đó) ta dùng từ để hỏi \"Who\" (Ai)."
+  },
+  {
+    "id": 307,
+    "title": "The small dog is sleeping _______ the green mat on the floor.",
+    "options": [
+      "in",
+      "on",
+      "under",
+      "between"
+    ],
+    "correct": 1,
+    "explain": "Nằm trên chiếc thảm ta dùng giới từ \"on\" (ở trên bề mặt)."
+  },
+  {
+    "id": 308,
+    "title": "The tennis ball rolled and stopped _______ the two wooden boxes.",
+    "options": [
+      "between",
+      "on",
+      "in",
+      "next"
+    ],
+    "correct": 0,
+    "explain": "\"Between ... and ...\" mang nghĩa ở giữa hai vật (the two wooden boxes)."
+  },
+  {
+    "id": 309,
+    "title": "I cannot find my shoes! Oh, they are _______ the bed under all those blankets.",
+    "options": [
+      "on",
+      "under",
+      "above",
+      "over"
+    ],
+    "correct": 1,
+    "explain": "\"Under\" nghĩa là ở dưới / gầm giường (under the bed)."
+  },
+  {
+    "id": 310,
+    "title": "Look at _______ colorful birds flying high up in the sky over there!",
+    "options": [
+      "this",
+      "that",
+      "these",
+      "those"
+    ],
+    "correct": 3,
+    "explain": "Chỉ những vật ở xa (over there) và số nhiều (birds) dùng đại từ chỉ định \"those\"."
+  },
+  {
+    "id": 311,
+    "title": "This is my pencil here, and _______ is your ruler on that table over there.",
+    "options": [
+      "this",
+      "that",
+      "these",
+      "those"
+    ],
+    "correct": 1,
+    "explain": "Chỉ một vật (your ruler) ở vị trí xa (over there) dùng đại từ chỉ định \"that\"."
+  },
+  {
+    "id": 312,
+    "title": "Fish _______ swim very fast in the river, but they _______ fly in the sky.",
+    "options": [
+      "can / can",
+      "can / can't",
+      "can't / can",
+      "can't / can't"
+    ],
+    "correct": 1,
+    "explain": "Cá có thể bơi (can swim) nhưng không thể bay (can't fly)."
+  },
+  {
+    "id": 313,
+    "title": "I always _______ my teeth after eating breakfast every morning.",
+    "options": [
+      "wash",
+      "brush",
+      "comb",
+      "cut"
+    ],
+    "correct": 1,
+    "explain": "Cụm từ chỉ thói quen vệ sinh cá nhân: \"brush my teeth\" (đánh răng)."
+  },
+  {
+    "id": 314,
+    "title": "What time do you usually _______ to school? - At seven o'clock.",
+    "options": [
+      "go",
+      "goes",
+      "going",
+      "went"
+    ],
+    "correct": 0,
+    "explain": "Trong câu hỏi thì hiện tại đơn với trợ động từ \"do you...\", động từ đi sau ở dạng nguyên thể: \"go\"."
+  },
+  {
+    "id": 315,
+    "title": "Look! The pupils _______ football happily in the school yard.",
+    "options": [
+      "is playing",
+      "are playing",
+      "plays",
+      "play"
+    ],
+    "correct": 1,
+    "explain": "Thì hiện tại tiếp diễn với chủ ngữ số nhiều \"The pupils\" dùng \"are playing\"."
+  },
+  {
+    "id": 316,
+    "title": "What are you doing in your room, Peter? - I _______ an exciting story book.",
+    "options": [
+      "am reading",
+      "reads",
+      "read",
+      "are reading"
+    ],
+    "correct": 0,
+    "explain": "Chủ ngữ \"I\" đi với \"am + V-ing\": \"I am reading\"."
+  },
+  {
+    "id": 317,
+    "title": "My father always _______ warm tea early in the morning.",
+    "options": [
+      "drink",
+      "drinks",
+      "drinking",
+      "drank"
+    ],
+    "correct": 1,
+    "explain": "Thì hiện tại đơn diễn tả thói quen, chủ ngữ ngôi thứ 3 số ít (My father) thêm \"s\": \"drinks\"."
+  },
+  {
+    "id": 318,
+    "title": "Lucy is a picky eater. She _______ like eating onions or peppers.",
+    "options": [
+      "don't",
+      "doesn't",
+      "isn't",
+      "aren't"
+    ],
+    "correct": 1,
+    "explain": "Thể phủ định hiện tại đơn với chủ ngữ ngôi thứ 3 số ít (She) dùng \"doesn't like\"."
+  },
+  {
+    "id": 319,
+    "title": "My mother's brother is my _______.",
+    "options": [
+      "aunt",
+      "uncle",
+      "cousin",
+      "grandfather"
+    ],
+    "correct": 1,
+    "explain": "Anh/em trai của mẹ (mother's brother) là bác/cậu/chú (uncle)."
+  },
+  {
+    "id": 320,
+    "title": "My father's father is my _______.",
+    "options": [
+      "grandfather",
+      "grandmother",
+      "brother",
+      "uncle"
+    ],
+    "correct": 0,
+    "explain": "Bố của bố (father's father) là ông nội (grandfather)."
+  },
+  {
+    "id": 321,
+    "title": "Which wild animal has a very long neck and eats leaves from tall trees?",
+    "options": [
+      "Elephant",
+      "Giraffe",
+      "Tiger",
+      "Hippo"
+    ],
+    "correct": 1,
+    "explain": "Hươu cao cổ (Giraffe) có cổ rất dài (long neck) và ăn lá cây trên cao."
+  },
+  {
+    "id": 322,
+    "title": "A baby dog is commonly called a _______.",
+    "options": [
+      "kitten",
+      "puppy",
+      "chick",
+      "duckling"
+    ],
+    "correct": 1,
+    "explain": "Chó con trong tiếng Anh là \"puppy\" (mèo con là kitten, gà con là chick)."
+  },
+  {
+    "id": 323,
+    "title": "Monkeys love jumping around branches and eating yellow _______.",
+    "options": [
+      "carrots",
+      "bananas",
+      "fish",
+      "meat"
+    ],
+    "correct": 1,
+    "explain": "Loài khỉ rất thích ăn chuối (bananas)."
+  },
+  {
+    "id": 324,
+    "title": "Which of the following foods is a delicious, juicy fruit?",
+    "options": [
+      "Bread",
+      "Orange",
+      "Egg",
+      "Rice"
+    ],
+    "correct": 1,
+    "explain": "Quả cam (Orange) là loại hoa quả mọng nước (fruit)."
+  },
+  {
+    "id": 325,
+    "title": "Would you like _______ fresh orange juice? - Yes, please!",
+    "options": [
+      "some",
+      "any",
+      "a",
+      "an"
+    ],
+    "correct": 0,
+    "explain": "Trong lời mời lịch sự \"Would you like...?\" với danh từ không đếm được, ta dùng \"some\"."
+  },
+  {
+    "id": 326,
+    "title": "It is raining heavily outside! Don't forget to bring your _______.",
+    "options": [
+      "sunglasses",
+      "umbrella",
+      "shorts",
+      "swimsuit"
+    ],
+    "correct": 1,
+    "explain": "Trời đang mưa to (raining heavily), cần mang theo ô/dù (umbrella)."
+  },
+  {
+    "id": 327,
+    "title": "When the sun shines brightly in the summer sky, the weather is _______.",
+    "options": [
+      "rainy",
+      "snowy",
+      "sunny",
+      "foggy"
+    ],
+    "correct": 2,
+    "explain": "Mặt trời chiếu sáng rực rỡ thì thời tiết nắng ráo (sunny)."
+  },
+  {
+    "id": 328,
+    "title": "You put these on both feet before putting on your trainers. What are they?",
+    "options": [
+      "Gloves",
+      "Socks",
+      "Hats",
+      "Glasses"
+    ],
+    "correct": 1,
+    "explain": "Tất/vớ (Socks) được mang vào bàn chân trước khi đi giày thể thao."
+  },
+  {
+    "id": 329,
+    "title": "In cold winter days, you wrap a warm woolen _______ around your neck.",
+    "options": [
+      "scarf",
+      "belt",
+      "watch",
+      "ring"
+    ],
+    "correct": 0,
+    "explain": "Khăn quàng cổ (scarf) dùng để quàng quanh cổ giữ ấm trong mùa đông."
+  },
+  {
+    "id": 330,
+    "title": "People use their eyes to see and their two _______ to listen to music.",
+    "options": [
+      "hands",
+      "ears",
+      "feet",
+      "noses"
+    ],
+    "correct": 1,
+    "explain": "Đôi tai (ears) dùng để nghe (listen)."
+  },
+  {
+    "id": 331,
+    "title": "Today is Lan's birthday party and she got many gifts. She feels very _______.",
+    "options": [
+      "angry",
+      "sad",
+      "happy",
+      "tired"
+    ],
+    "correct": 2,
+    "explain": "Được nhận quà sinh nhật thì cảm thấy vui sướng (happy)."
+  },
+  {
+    "id": 332,
+    "title": "After riding his bike for 5 kilometers, Tom felt _______ and drank 2 glasses of water.",
+    "options": [
+      "hungry",
+      "thirsty",
+      "sleepy",
+      "bored"
+    ],
+    "correct": 1,
+    "explain": "Cần uống nước nghĩa là cảm thấy khát nước (thirsty)."
+  },
+  {
+    "id": 333,
+    "title": "What time is it when the clock shows 8:15?",
+    "options": [
+      "It's eight fifty.",
+      "It's eight fifteen.",
+      "It's eight five.",
+      "It's nine fifteen."
+    ],
+    "correct": 1,
+    "explain": "8:15 được đọc là \"It's eight fifteen\" (hoặc a quarter past eight)."
+  },
+  {
+    "id": 334,
+    "title": "Which day of the week comes immediately after Tuesday?",
+    "options": [
+      "Monday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "correct": 1,
+    "explain": "Thứ Ba (Tuesday) rồi đến Thứ Tư (Wednesday)."
+  },
+  {
+    "id": 335,
+    "title": "Which is the very first month of every calendar year?",
+    "options": [
+      "December",
+      "February",
+      "January",
+      "March"
+    ],
+    "correct": 2,
+    "explain": "Tháng đầu tiên trong năm là Tháng Một (January)."
+  },
+  {
+    "id": 336,
+    "title": "A big blue whale is _______ than a small dolphin.",
+    "options": [
+      "bigger",
+      "smaller",
+      "shorter",
+      "thinner"
+    ],
+    "correct": 0,
+    "explain": "Cá voi to lớn hơn cá heo: dùng tính từ so sánh hơn \"bigger than\"."
+  },
+  {
+    "id": 337,
+    "title": "A giraffe has a long neck, so it is _______ than a zebra.",
+    "options": [
+      "shorter",
+      "taller",
+      "smaller",
+      "fatter"
+    ],
+    "correct": 1,
+    "explain": "Hươu cao cổ cao hơn (taller than) ngựa vằn."
+  },
+  {
+    "id": 338,
+    "title": "This is my friend Nam. That is _______ brand new bicycle.",
+    "options": [
+      "her",
+      "his",
+      "their",
+      "its"
+    ],
+    "correct": 1,
+    "explain": "Nam là con trai, tính từ sở hữu tương ứng là \"his\" (của cậu ấy)."
+  },
+  {
+    "id": 339,
+    "title": "Hoa is a good student. She always finishes _______ homework on time.",
+    "options": [
+      "her",
+      "his",
+      "your",
+      "my"
+    ],
+    "correct": 0,
+    "explain": "Hoa là nữ, tính từ sở hữu tương ứng là \"her\" (của cô ấy)."
+  },
+  {
+    "id": 340,
+    "title": "We love studying at our school, and _______ teachers are extremely kind to us.",
+    "options": [
+      "our",
+      "their",
+      "its",
+      "your"
+    ],
+    "correct": 0,
+    "explain": "Chủ ngữ là \"We\" thì tính từ sở hữu tương ứng là \"our\" (của chúng tôi)."
+  },
+  {
+    "id": 341,
+    "title": "Find the odd one out (Chọn từ khác loại với các từ còn lại):",
+    "options": [
+      "Dog",
+      "Cat",
+      "Lion",
+      "Apple"
+    ],
+    "correct": 3,
+    "explain": "\"Apple\" là hoa quả, còn 3 từ kia là con vật (animals)."
+  },
+  {
+    "id": 342,
+    "title": "Find the odd one out (Chọn từ khác loại):",
+    "options": [
+      "Pencil",
+      "Ruler",
+      "Eraser",
+      "Sandwich"
+    ],
+    "correct": 3,
+    "explain": "\"Sandwich\" là đồ ăn, còn 3 từ kia là đồ dùng học tập (school supplies)."
+  },
+  {
+    "id": 343,
+    "title": "Find the odd one out (Chọn từ khác loại):",
+    "options": [
+      "Red",
+      "Yellow",
+      "Square",
+      "Green"
+    ],
+    "correct": 2,
+    "explain": "\"Square\" là hình vuông (shape), còn 3 từ kia là màu sắc (colors)."
+  },
+  {
+    "id": 344,
+    "title": "Riddle: \"I have four legs, soft fur, and I say 'Meow'. What am I?\"",
+    "options": [
+      "A dog",
+      "A cat",
+      "A bird",
+      "A frog"
+    ],
+    "correct": 1,
+    "explain": "Con vật kêu \"Meow\" là con mèo (A cat)."
+  },
+  {
+    "id": 345,
+    "title": "Riddle: \"I am black or green. Teachers write on me with white chalk. What am I?\"",
+    "options": [
+      "A desk",
+      "A blackboard",
+      "A chair",
+      "A door"
+    ],
+    "correct": 1,
+    "explain": "Bảng viết phấn ở lớp học là chiếc bảng đen/bảng lớp (A blackboard)."
+  },
+  {
+    "id": 346,
+    "title": "Riddle: \"What has two hands and a face, but cannot walk or smile?\"",
+    "options": [
+      "A doll",
+      "A clock",
+      "A book",
+      "A ball"
+    ],
+    "correct": 1,
+    "explain": "Đồng hồ (clock) có mặt số (face) và kim giờ/phút (hands)."
+  },
+  {
+    "id": 347,
+    "title": "Logic quiz: If yesterday was Saturday, what day is tomorrow?",
+    "options": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Friday"
+    ],
+    "correct": 1,
+    "explain": "Hôm qua là Thứ Bảy -> Hôm nay là Chủ Nhật -> Ngày mai (tomorrow) sẽ là Thứ Hai (Monday)."
+  },
+  {
+    "id": 348,
+    "title": "Phonics sound: Which word contains the /sh/ sound as in \"fish\"?",
+    "options": [
+      "Chair",
+      "Ship",
+      "Watch",
+      "Catch"
+    ],
+    "correct": 1,
+    "explain": "Từ \"Ship\" có âm đầu /sh/ giống như âm cuối của \"fish\"."
+  },
+  {
+    "id": 349,
+    "title": "Complete the conversation: \"Hello Nam! How are you today?\" - \"_______.\"",
+    "options": [
+      "I'm eight years old.",
+      "I'm fine, thank you.",
+      "Yes, I can.",
+      "Nice to see you."
+    ],
+    "correct": 1,
+    "explain": "Đáp lại câu hỏi thăm sức khỏe \"How are you today?\" là \"I'm fine, thank you\"."
+  },
+  {
+    "id": 350,
+    "title": "Reading logic: Tim has a blue kite. Lucy has a red robot. Sam has a green ball. Who has the red toy?",
+    "options": [
+      "Tim",
+      "Lucy",
+      "Sam",
+      "No one"
+    ],
+    "correct": 1,
+    "explain": "Đoạn văn nêu rõ: \"Lucy has a red robot\". Vậy người có món đồ chơi màu đỏ là Lucy."
+  }
+];
+
 const englishBankGrade5 = [
   {
     "id": 201,
@@ -2021,6 +2656,7 @@ const englishBankGrade5 = [
       if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-slate-800 text-white border-slate-800 hover:bg-slate-700';
 
       const cardG2 = document.getElementById('card-grade-2');
+      const cardG3 = document.getElementById('card-grade-3');
       const cardG5 = document.getElementById('card-grade-5');
       const welcomeBanner = document.getElementById('student-welcome-banner');
       const adminStatsCard = document.getElementById('admin-stats-summary-card');
@@ -2058,13 +2694,22 @@ const englishBankGrade5 = [
 
         // Isolate Grade Cards
         if (gNum === 2) {
+          if (cardG3) cardG3.classList.add('hidden');
           if (cardG5) cardG5.classList.add('hidden');
           if (cardG2) {
             cardG2.classList.remove('hidden');
             cardG2.className = 'col-span-full group bg-gradient-to-br from-white to-teal-50/70 p-8 rounded-3xl border-2 border-teal-300 shadow-md hover:border-teal-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
           }
+        } else if (gNum === 3) {
+          if (cardG2) cardG2.classList.add('hidden');
+          if (cardG5) cardG5.classList.add('hidden');
+          if (cardG3) {
+            cardG3.classList.remove('hidden');
+            cardG3.className = 'col-span-full group bg-gradient-to-br from-white to-sky-50/70 p-8 rounded-3xl border-2 border-sky-300 shadow-md hover:border-sky-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          }
         } else if (gNum === 5) {
           if (cardG2) cardG2.classList.add('hidden');
+          if (cardG3) cardG3.classList.add('hidden');
           if (cardG5) {
             cardG5.classList.remove('hidden');
             cardG5.className = 'col-span-full group bg-gradient-to-br from-white to-emerald-50/70 p-8 rounded-3xl border-2 border-emerald-300 shadow-md hover:border-emerald-500 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
@@ -2091,10 +2736,14 @@ const englishBankGrade5 = [
         if (kidStatsCard) kidStatsCard.classList.add('hidden');
         if (adminStatsCard) adminStatsCard.classList.remove('hidden');
 
-        // Show Both Grade Cards
+        // Show All Grade Cards
         if (cardG2) {
           cardG2.classList.remove('hidden');
           cardG2.className = 'group bg-gradient-to-br from-white to-teal-50/70 p-6 rounded-3xl border-2 border-teal-200/80 shadow-md hover:border-teal-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+        }
+        if (cardG3) {
+          cardG3.classList.remove('hidden');
+          cardG3.className = 'group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
         }
         if (cardG5) {
           cardG5.classList.remove('hidden');
@@ -2227,7 +2876,7 @@ const englishBankGrade5 = [
     // ==========================================
     function startQuiz(grade) {
       selectedGrade = grade;
-      const bank = grade === 2 ? englishBankGrade2 : englishBankGrade5;
+      const bank = grade === 2 ? englishBankGrade2 : (grade === 3 ? englishBankGrade3 : englishBankGrade5);
       
       // Shuffle and pick 10 questions
       const shuffled = [...bank].sort(() => 0.5 - Math.random());
@@ -2239,7 +2888,7 @@ const englishBankGrade5 = [
       quizSeconds = 0;
 
       document.getElementById('quiz-badge').textContent = `Lớp ${grade}`;
-      document.getElementById('quiz-student-name').textContent = currentKid ? currentKid.name : (grade === 2 ? 'Bé THÓC' : 'Bé Gấu');
+      document.getElementById('quiz-student-name').textContent = currentKid ? currentKid.name : (grade === 2 ? 'Bé THÓC' : (grade === 3 ? 'Học sinh Lớp 3' : 'Bé Gấu'));
       
       document.getElementById('level-selection').classList.add('hidden');
       document.getElementById('quiz-result-box').classList.add('hidden');
