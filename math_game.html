@@ -77,7 +77,7 @@
   <div class="w-full max-w-5xl mx-auto min-h-screen flex flex-col px-3 sm:px-6 py-4 sm:py-6">
 
     <!-- Top Navigation Header -->
-    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-6">
+    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-4 sm:mb-5">
       <div class="flex items-center space-x-3">
         <a href="main.html" id="btn-back-portal" class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-orange-500/20 text-lg hover:scale-105 transition" title="Về Portal">
           🧮
@@ -99,7 +99,7 @@
 
       <!-- Navigation Tabs -->
       <div class="flex items-center space-x-1.5 sm:space-x-2">
-        <button onclick="switchTab('arena')" id="nav-arena" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-700 text-white shadow-sm flex items-center space-x-1.5 transition">
+        <button onclick="switchTab('arena')" id="nav-arena" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-sm flex items-center space-x-1.5 transition">
           <i data-lucide="gamepad-2" class="w-4 h-4"></i>
           <span class="hidden sm:inline">Làm bài</span>
         </button>
@@ -118,7 +118,7 @@
         <button onclick="switchTab('rewards')" id="nav-rewards" class="hidden px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition" title="Cài đặt quà">
           <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
         </button>
-        <a href="english_game.html" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 flex items-center space-x-1 transition" title="Đổi sang Đấu trường Tiếng Anh">
+        <a href="javascript:void(0)" onclick="switchSubject('english')" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 flex items-center space-x-1 transition" title="Đổi sang Đấu trường Tiếng Anh">
           <span>🇬🇧</span>
           <span class="hidden sm:inline">Tiếng Anh</span>
         </a>
@@ -265,7 +265,7 @@
           <div>
             <div class="flex items-center justify-between mb-4">
               <span class="px-3 py-1 bg-amber-100 text-amber-800 font-extrabold text-xs rounded-full border border-amber-300">
-                🌱 Dành cho Học sinh Lớp 2
+                🌱 Dành cho Học sinh Lớp 2 (Bé THÓC)
               </span>
               <span class="text-3xl">🧩</span>
             </div>
@@ -273,7 +273,7 @@
               Toán Tư Duy - Khám Phá Logic Nhí
             </h2>
             <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-              Ngân hàng <b>50 bài toán logic Lớp 2</b> (Quy luật dãy số, cân thăng bằng con vật, đếm hình học, bài toán cưa gỗ, đồng hồ, tuổi tác...). Mỗi lần thi rút <b>ngẫu nhiên 10 câu</b> chống lặp trong 3 lượt thi!
+              Ngân hàng <b>100 bài toán logic Lớp 2</b> (Quy luật dãy số, cân thăng bằng con vật, đếm hình học, bài toán cưa gỗ, đồng hồ, tuổi tác...). Mỗi lần thi rút <b>ngẫu nhiên 10 câu</b> chống lặp trong 3 lượt thi!
             </p>
           </div>
           <div class="mt-6 pt-4 border-t border-amber-100 flex items-center justify-between">
@@ -297,7 +297,7 @@
           <div>
             <div class="flex items-center justify-between mb-4">
               <span class="px-3 py-1 bg-sky-100 text-sky-800 font-extrabold text-xs rounded-full border border-sky-300">
-                🚀 Dành cho Học sinh Lớp 5
+                🚀 Dành cho Học sinh Lớp 5 (Bé Gấu)
               </span>
               <span class="text-3xl">🏆</span>
             </div>
@@ -341,25 +341,25 @@
           <!-- Progress and Timer -->
           <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-4">
             <div class="flex items-center space-x-1.5 text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">
-              <i data-lucide="timer" class="w-4 h-4 text-sky-600"></i>
+              <i data-lucide="timer" class="w-4 h-4 text-amber-600"></i>
               <span id="quiz-timer">00:00</span>
             </div>
             <div class="text-right">
               <span class="text-xs font-bold text-slate-500">Tiến trình: </span>
-              <span class="text-sm font-extrabold text-sky-700" id="quiz-progress-text">Câu 1/10</span>
+              <span class="text-sm font-extrabold text-amber-600" id="quiz-progress-text">Câu 1/10</span>
             </div>
           </div>
         </div>
 
         <!-- Progress Bar Line -->
         <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-          <div id="quiz-progress-bar" class="bg-gradient-to-r from-sky-500 to-amber-500 h-full rounded-full transition-all duration-300" style="width: 10%"></div>
+          <div id="quiz-progress-bar" class="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full transition-all duration-300" style="width: 10%"></div>
         </div>
 
         <!-- Question Card -->
         <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
           <div class="flex items-start space-x-3">
-            <span class="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 font-extrabold text-sm flex items-center justify-center shrink-0" id="question-number">
+            <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 font-extrabold text-sm flex items-center justify-center shrink-0" id="question-number">
               1
             </span>
             <div class="flex-1">
@@ -381,7 +381,7 @@
               <span>Câu trước</span>
             </button>
 
-            <button onclick="nextQuestion()" id="btn-next" class="px-6 py-2.5 rounded-xl bg-sky-600 text-white font-bold text-xs hover:bg-sky-700 shadow-md flex items-center space-x-1.5 transition">
+            <button onclick="nextQuestion()" id="btn-next" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-xs shadow-md flex items-center space-x-1.5 transition">
               <span id="btn-next-text">Câu tiếp theo</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
@@ -491,6 +491,24 @@
         </div>
       </div>
 
+      <!-- KID-ONLY BANNER FOR SPINS -->
+      <div id="kid-spin-banner" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 p-4 sm:p-5 rounded-3xl text-white shadow-lg flex items-center justify-between">
+        <div class="flex items-center space-x-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl">
+            🎡
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-black" id="wheel-student-greeting">Vòng Quay May Mắn Của Bé</h3>
+            <p class="text-xs text-amber-100" id="wheel-student-sub">Làm đúng nhiều câu để nhận thêm nhiều lượt quay quà nhé!</p>
+          </div>
+        </div>
+
+        <div class="bg-white/20 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/30 text-center">
+          <span class="text-[10px] uppercase font-bold text-amber-100 block">Lượt quay còn lại</span>
+          <span class="text-2xl font-black text-white" id="current-spin-count">0</span>
+        </div>
+      </div>
+
       <!-- MAIN WHEEL CARD -->
       <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md text-center max-w-xl mx-auto space-y-6">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -537,6 +555,17 @@
         </div>
       </div>
 
+      <!-- History of Won Rewards -->
+      <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3 max-w-xl mx-auto">
+        <h4 class="text-sm font-extrabold text-slate-900 flex items-center space-x-2">
+          <i data-lucide="gift" class="w-4 h-4 text-rose-500"></i>
+          <span>Lịch Sử Quà Đã Nhận Được</span>
+        </h4>
+        <div id="reward-history-list" class="space-y-2 text-xs text-slate-600">
+          <p class="text-slate-400 italic py-2 text-center" id="empty-history-text">Chưa có phần thưởng nào được quay.</p>
+        </div>
+      </div>
+
     </section>
 
     <!-- ============================================== -->
@@ -559,6 +588,21 @@
           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
           <span>Xóa lịch sử bài làm</span>
         </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center gap-3 text-xs">
+        <span class="font-bold text-slate-700">Lọc bài thi:</span>
+        <select id="filter-kid-select" onchange="renderTeacherSubmissions()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none">
+          <option value="all">Tất cả học sinh</option>
+          <option value="kid_thoc">Bé THÓC (Lớp 2)</option>
+          <option value="kid_gau">Bé Gấu (Lớp 5)</option>
+        </select>
+        <select id="filter-status-select" onchange="renderTeacherSubmissions()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none">
+          <option value="all">Tất cả trạng thái</option>
+          <option value="pending">Chờ phê duyệt</option>
+          <option value="approved">Đã phê duyệt</option>
+        </select>
       </div>
 
       <!-- Submissions List -->
@@ -3144,6 +3188,7 @@ const mathBankGrade5 = [
     let rewardItems = [];
     let kidsList = cachedKids;
     let spinsMap = { 'kid_thoc': 1, 'kid_gau': 1 };
+    let wonRewardsHistory = [];
 
     function getAllKids() {
       return kidsList.length > 0 ? kidsList : [
@@ -3296,11 +3341,11 @@ const mathBankGrade5 = [
         const isSelected = userAnswers[currentQuestionIndex] === idx;
         const btn = document.createElement('button');
         btn.className = `p-4 rounded-2xl border text-left font-semibold text-xs sm:text-sm flex items-center space-x-3 transition active:scale-98 ${
-          isSelected ? 'border-sky-600 bg-sky-50 text-sky-900 shadow-sm ring-2 ring-sky-400' : 'border-slate-200 bg-slate-50/50 hover:bg-slate-100 text-slate-800'
+          isSelected ? 'border-amber-500 bg-amber-50 text-amber-950 shadow-sm ring-2 ring-amber-300' : 'border-slate-200 bg-slate-50/50 hover:bg-slate-100 text-slate-800'
         }`;
         btn.onclick = () => selectOption(idx);
         btn.innerHTML = `
-          <span class="w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs ${isSelected ? 'bg-sky-600 text-white' : 'bg-white text-slate-600 border border-slate-200'}">
+          <span class="w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs ${isSelected ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 border border-slate-200'}">
             ${String.fromCharCode(65 + idx)}
           </span>
           <span class="flex-1">${opt}</span>
@@ -3694,6 +3739,13 @@ const mathBankGrade5 = [
           document.getElementById('reward-result-alert').classList.remove('hidden');
           soundWin();
           confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
+
+          wonRewardsHistory.unshift({
+            kidName: currentKid ? currentKid.name : 'Bé',
+            reward: wonPrize,
+            time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+          });
+          renderRewardHistory();
         }
       }
 
@@ -3793,11 +3845,17 @@ const mathBankGrade5 = [
       const badge = document.getElementById('spin-badge');
       const countEl = document.getElementById('user-spin-count');
       const labelEl = document.getElementById('wheel-balance-label');
+      const currentSpinEl = document.getElementById('current-spin-count');
+      const wheelGreetingEl = document.getElementById('wheel-student-greeting');
+      const kidSpinBanner = document.getElementById('kid-spin-banner');
 
       if (currentKid) {
         const spins = getKidSpins(currentKid.id);
         if (countEl) countEl.textContent = spins;
+        if (currentSpinEl) currentSpinEl.textContent = spins;
         if (labelEl) labelEl.textContent = `Lượt quay của bé ${currentKid.name}:`;
+        if (wheelGreetingEl) wheelGreetingEl.textContent = `Vòng Quay May Mắn Của Bé ${currentKid.name}`;
+        if (kidSpinBanner) kidSpinBanner.classList.remove('hidden');
         if (badge) {
           if (spins > 0) {
             badge.textContent = spins;
@@ -3808,7 +3866,9 @@ const mathBankGrade5 = [
         }
       } else {
         if (countEl) countEl.textContent = 'Demo';
+        if (currentSpinEl) currentSpinEl.textContent = 'Demo';
         if (labelEl) labelEl.textContent = 'Chế độ quay thử nghiệm:';
+        if (kidSpinBanner) kidSpinBanner.classList.add('hidden');
         if (badge) badge.classList.add('hidden');
       }
     }
@@ -3835,18 +3895,31 @@ const mathBankGrade5 = [
       const container = document.getElementById('teacher-submissions-container');
       if (!container) return;
 
-      if (submissions.length === 0) {
+      const kidSelect = document.getElementById('filter-kid-select');
+      const statusSelect = document.getElementById('filter-status-select');
+      const kidFilter = kidSelect ? kidSelect.value : 'all';
+      const statusFilter = statusSelect ? statusSelect.value : 'all';
+
+      let list = submissions;
+      if (kidFilter !== 'all') {
+        list = list.filter(s => s.kidId === kidFilter || (kidFilter === 'kid_thoc' && (s.studentName || '').toLowerCase().includes('thóc')) || (kidFilter === 'kid_gau' && (s.studentName || '').toLowerCase().includes('gấu')));
+      }
+      if (statusFilter !== 'all') {
+        list = list.filter(s => s.status === statusFilter);
+      }
+
+      if (list.length === 0) {
         container.innerHTML = `
           <div class="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-2">
             <div class="text-3xl">📭</div>
-            <h3 class="font-bold text-slate-700">Chưa có bài nộp nào</h3>
+            <h3 class="font-bold text-slate-700">Chưa có bài nộp nào phù hợp bộ lọc</h3>
             <p class="text-xs text-slate-400">Các bài làm 10 câu của học sinh trên mọi thiết bị sẽ tự động xuất hiện tại đây theo thời gian thực.</p>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = submissions.map(sub => `
+      container.innerHTML = list.map(sub => `
         <div class="bg-white p-5 rounded-2xl border ${sub.status === 'approved' ? 'border-emerald-200' : 'border-indigo-200'} shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="space-y-1">
             <div class="flex items-center space-x-2">
@@ -4085,13 +4158,14 @@ const mathBankGrade5 = [
       const activeNav = document.getElementById(`nav-${tab}`);
       if (activeView) activeView.classList.remove('hidden');
       if (activeNav) {
-        activeNav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-700 text-white shadow-sm flex items-center space-x-1.5 transition relative';
+        activeNav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-sm flex items-center space-x-1.5 transition relative';
       }
 
       if (tab === 'arena') {
         calculateAndRenderStats();
       } else if (tab === 'wheel') {
         setTimeout(drawWheel, 50);
+        renderRewardHistory();
         if (!currentKid) {
           renderAdminKidsSpinList();
         }
@@ -4105,45 +4179,41 @@ const mathBankGrade5 = [
     }
 
     // ==========================================
-    // 8. INITIALIZE & REALTIME CLOUD LISTENERS
+    // CROSS-SUBJECT SWITCHER (PRESERVE KID SESSION)
     // ==========================================
-    document.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-
-      // Setup Realtime Cloud Sync Listeners
-      if (window.CloudSync) {
-        // Sync Kids list
-        window.CloudSync.getKids((kids) => {
-          kidsList = kids;
-          if (!currentKid) {
-            renderAdminKidsSpinList();
-          }
-          calculateAndRenderStats();
-        });
-
-        // Sync Spins
-        window.CloudSync.getSpins((spins) => {
-          spinsMap = spins;
-          updateSpinUI();
-          if (!currentKid) renderAdminKidsSpinList();
-          calculateAndRenderStats();
-        });
-
-        // Sync Submissions
-        window.CloudSync.getSubmissions((subs) => {
-          submissions = subs;
-          updatePendingBadge();
-          if (!currentKid) renderTeacherSubmissions();
-          calculateAndRenderStats();
-        });
-
-        // Sync Rewards
-        window.CloudSync.getRewards((rewards) => {
-          rewardItems = rewards;
-          drawWheel();
-          if (!currentKid) renderRewardsTable();
-        });
+    function switchSubject(target) {
+      const page = target === 'english' ? 'english_game.html' : 'math_game.html';
+      if (currentKid) {
+        window.location.href = `${page}?kid=${encodeURIComponent(currentKid.id)}&grade=${currentKid.grade}`;
+      } else {
+        window.location.href = `${page}?kid=admin`;
       }
+    }
+
+    // ==========================================
+    // REWARD HISTORY RENDERER
+    // ==========================================
+    function renderRewardHistory() {
+      const list = document.getElementById('reward-history-list');
+      if (!list) return;
+      if (wonRewardsHistory.length === 0) {
+        list.innerHTML = '<p class="text-slate-400 italic py-2 text-center" id="empty-history-text">Chưa có phần thưởng nào được quay.</p>';
+        return;
+      }
+
+      list.innerHTML = wonRewardsHistory.map(item => `
+        <div class="flex items-center justify-between p-2.5 bg-amber-50/60 rounded-xl border border-amber-200">
+          <div class="flex items-center space-x-2">
+            <span class="text-lg">🎁</span>
+            <div>
+              <span class="font-extrabold text-slate-900">${item.reward}</span>
+              <span class="text-[10px] text-slate-400 block">${item.kidName} • ${item.time}</span>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-bold text-[10px]">Đã nhận</span>
+        </div>
+      `).join('');
+    }
 
     // ==========================================
     // 0. KID ACCOUNT SWITCHER HANDLER
@@ -4162,6 +4232,7 @@ const mathBankGrade5 = [
       applyUserRoleAndState();
       calculateAndRenderStats();
       updateSpinUI();
+      renderRewardHistory();
       lucide.createIcons();
     }
 
@@ -4172,9 +4243,9 @@ const mathBankGrade5 = [
       const activeLabel = document.getElementById('current-active-kid-label');
 
       // Reset button styles
-      if (swThoc) swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
-      if (swGau) swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
-      if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+      if (swThoc) swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300';
+      if (swGau) swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-sky-50 hover:bg-sky-100 text-sky-800 border-sky-300';
+      if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-slate-800 text-white border-slate-800 hover:bg-slate-700';
 
       const cardG2 = document.getElementById('card-grade-2');
       const cardG5 = document.getElementById('card-grade-5');
@@ -4268,6 +4339,34 @@ const mathBankGrade5 = [
       }
     }
 
+    // Expose functions to window for onclick handlers
+    window.switchActiveKid = switchActiveKid;
+    window.applyUserRoleAndState = applyUserRoleAndState;
+    window.startQuiz = startQuiz;
+    window.switchTab = switchTab;
+    window.switchSubject = switchSubject;
+    window.logoutKid = logoutKid;
+    window.spinTheWheel = spinTheWheel;
+    window.prevQuestion = prevQuestion;
+    window.nextQuestion = nextQuestion;
+    window.selectOption = selectOption;
+    window.resetAndBackToArena = resetAndBackToArena;
+    window.goToSpinWheel = goToSpinWheel;
+    window.renderRewardHistory = renderRewardHistory;
+    window.renderTeacherSubmissions = renderTeacherSubmissions;
+    window.bulkAddSpins = bulkAddSpins;
+    window.bulkResetSpins = bulkResetSpins;
+    window.openAdminSpinManager = openAdminSpinManager;
+    window.clearAllSubmissions = clearAllSubmissions;
+    window.resetDefaultRewards = resetDefaultRewards;
+    window.addRewardItem = addRewardItem;
+    window.closeReviewModal = closeReviewModal;
+    window.saveTeacherApproval = saveTeacherApproval;
+    window.setKidSpins = setKidSpins;
+    window.promptSetKidSpins = promptSetKidSpins;
+    window.openReviewModal = openReviewModal;
+    window.removeRewardItem = removeRewardItem;
+
     // ==========================================
     // 8. INITIALIZE & REALTIME CLOUD LISTENERS
     // ==========================================
@@ -4313,6 +4412,7 @@ const mathBankGrade5 = [
       applyUserRoleAndState();
       calculateAndRenderStats();
       updateSpinUI();
+      renderRewardHistory();
     });
   </script>
 </body>

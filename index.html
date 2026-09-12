@@ -148,9 +148,9 @@
         </div>
                 <div id="kids-avatar-list" class="space-y-2.5">
           <!-- THÓC (Lớp 2) Card -->
-          <button type="button" onclick="loginDirectAsKid('kid_thoc')" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-amber-50 hover:bg-amber-100/80 border-2 border-amber-400 hover:border-amber-500 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-200 text-left group cursor-pointer" style="background-color: #fffbeb !important; border-color: #f59e0b !important;">
+          <div class="w-full flex items-center justify-between p-3 rounded-2xl bg-amber-50 border-2 border-amber-400 shadow-sm" style="background-color: #fffbeb !important; border-color: #f59e0b !important;">
             <div class="flex items-center space-x-3">
-              <div class="w-11 h-11 rounded-xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition shrink-0" style="background-color: #fef3c7 !important; border-color: #fcd34d !important;">
+              <div class="w-11 h-11 rounded-xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-xl shadow-inner shrink-0" style="background-color: #fef3c7 !important; border-color: #fcd34d !important;">
                 🎓
               </div>
               <div>
@@ -160,21 +160,25 @@
                     Lớp 2
                   </span>
                 </div>
-                <div class="text-xs font-bold mt-0.5" style="color: #92400e !important;">
-                  Toán Tư Duy • <span class="font-semibold text-slate-500">#thoc</span>
+                <div class="text-[11px] font-bold mt-0.5" style="color: #92400e !important;">
+                  Tài khoản: <span class="font-semibold text-slate-500">#thoc</span> (PIN: <b>1234</b>)
                 </div>
               </div>
             </div>
-            <span class="px-3.5 py-1.5 rounded-xl text-white text-xs font-black shadow-md transition flex items-center space-x-1.5 shrink-0" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3) !important;">
-              <span>Vào thi</span>
-              <span class="text-sm font-black">➔</span>
-            </span>
-          </button>
+            <div class="flex items-center space-x-1.5 shrink-0">
+              <button type="button" onclick="loginDirectAsKid('kid_thoc', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp 2">
+                <span>🧮 Toán</span>
+              </button>
+              <button type="button" onclick="loginDirectAsKid('kid_thoc', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp 2">
+                <span>🇬🇧 T.Anh</span>
+              </button>
+            </div>
+          </div>
 
           <!-- Gấu (Lớp 5) Card -->
-          <button type="button" onclick="loginDirectAsKid('kid_gau')" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-sky-50 hover:bg-sky-100/80 border-2 border-sky-400 hover:border-sky-500 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-200 text-left group cursor-pointer" style="background-color: #f0f9ff !important; border-color: #0ea5e9 !important;">
+          <div class="w-full flex items-center justify-between p-3 rounded-2xl bg-sky-50 border-2 border-sky-400 shadow-sm" style="background-color: #f0f9ff !important; border-color: #0ea5e9 !important;">
             <div class="flex items-center space-x-3">
-              <div class="w-11 h-11 rounded-xl bg-sky-100 border-2 border-sky-300 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition shrink-0" style="background-color: #e0f2fe !important; border-color: #7dd3fc !important;">
+              <div class="w-11 h-11 rounded-xl bg-sky-100 border-2 border-sky-300 flex items-center justify-center text-xl shadow-inner shrink-0" style="background-color: #e0f2fe !important; border-color: #7dd3fc !important;">
                 🎓
               </div>
               <div>
@@ -184,16 +188,20 @@
                     Lớp 5
                   </span>
                 </div>
-                <div class="text-xs font-bold mt-0.5" style="color: #0369a1 !important;">
-                  Toán Tư Duy • <span class="font-semibold text-slate-500">#Gau</span>
+                <div class="text-[11px] font-bold mt-0.5" style="color: #0369a1 !important;">
+                  Tài khoản: <span class="font-semibold text-slate-500">#Gau</span> (PIN: <b>1234</b>)
                 </div>
               </div>
             </div>
-            <span class="px-3.5 py-1.5 rounded-xl text-white text-xs font-black shadow-md transition flex items-center space-x-1.5 shrink-0" style="background: linear-gradient(135deg, #0284c7, #4f46e5) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3) !important;">
-              <span>Vào thi</span>
-              <span class="text-sm font-black">➔</span>
-            </span>
-          </button>
+            <div class="flex items-center space-x-1.5 shrink-0">
+              <button type="button" onclick="loginDirectAsKid('kid_gau', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp 5">
+                <span>🧮 Toán</span>
+              </button>
+              <button type="button" onclick="loginDirectAsKid('kid_gau', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp 5">
+                <span>🇬🇧 T.Anh</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

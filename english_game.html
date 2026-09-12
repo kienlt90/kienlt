@@ -77,7 +77,7 @@
   <div class="w-full max-w-5xl mx-auto min-h-screen flex flex-col px-3 sm:px-6 py-4 sm:py-6">
 
     <!-- Top Navigation Header -->
-    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-4">
+    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-4 sm:mb-5">
       <div class="flex items-center space-x-3">
         <a href="main.html" id="btn-back-portal" class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-teal-500/20 text-lg hover:scale-105 transition" title="Về Portal">
           🇬🇧
@@ -118,7 +118,7 @@
         <button onclick="switchTab('rewards')" id="nav-rewards" class="hidden px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition" title="Cài đặt quà">
           <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
         </button>
-        <a href="math_game.html" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 flex items-center space-x-1 transition" title="Đổi sang Đấu trường Toán">
+        <a href="javascript:void(0)" onclick="switchSubject('math')" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 flex items-center space-x-1 transition" title="Đổi sang Đấu trường Toán">
           <span>🧮</span>
           <span class="hidden sm:inline">Toán Học</span>
         </a>
@@ -138,10 +138,10 @@
         </div>
       </div>
       <div class="flex items-center space-x-1.5">
-        <button onclick="switchActiveKid('kid_thoc')" id="btn-sw-thoc" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-teal-50 hover:bg-teal-100 text-teal-800 border-teal-300">
+        <button onclick="switchActiveKid('kid_thoc')" id="btn-sw-thoc" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300">
           <span>🌱 Bé THÓC (Lớp 2)</span>
         </button>
-        <button onclick="switchActiveKid('kid_gau')" id="btn-sw-gau" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300">
+        <button onclick="switchActiveKid('kid_gau')" id="btn-sw-gau" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-sky-50 hover:bg-sky-100 text-sky-800 border-sky-300">
           <span>🚀 Bé Gấu (Lớp 5)</span>
         </button>
         <button onclick="switchActiveKid('admin')" id="btn-sw-admin" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-slate-800 text-white border-slate-800 shadow-xs">
@@ -2016,9 +2016,9 @@ const englishBankGrade5 = [
       const activeLabel = document.getElementById('current-active-kid-label');
 
       // Reset button styles
-      if (swThoc) swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
-      if (swGau) swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
-      if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+      if (swThoc) swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300';
+      if (swGau) swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-sky-50 hover:bg-sky-100 text-sky-800 border-sky-300';
+      if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-slate-800 text-white border-slate-800 hover:bg-slate-700';
 
       const cardG2 = document.getElementById('card-grade-2');
       const cardG5 = document.getElementById('card-grade-5');
@@ -2038,9 +2038,9 @@ const englishBankGrade5 = [
         if (activeLabel) activeLabel.textContent = `${currentKid.name} (Lớp ${gNum})`;
 
         if (currentKid.id === 'kid_thoc' && swThoc) {
-          swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-teal-600 text-white border-teal-600 shadow-sm ring-2 ring-teal-300';
+          swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-amber-500 text-white border-amber-500 shadow-sm ring-2 ring-amber-300';
         } else if (currentKid.id === 'kid_gau' && swGau) {
-          swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-emerald-600 text-white border-emerald-600 shadow-sm ring-2 ring-emerald-300';
+          swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-sky-600 text-white border-sky-600 shadow-sm ring-2 ring-sky-300';
         }
 
         // Header and banner
@@ -2993,6 +2993,42 @@ const englishBankGrade5 = [
 
       lucide.createIcons();
     }
+
+    function switchSubject(target) {
+      const page = target === 'english' ? 'english_game.html' : 'math_game.html';
+      if (currentKid) {
+        window.location.href = `${page}?kid=${encodeURIComponent(currentKid.id)}&grade=${currentKid.grade}`;
+      } else {
+        window.location.href = `${page}?kid=admin`;
+      }
+    }
+
+    // Expose functions to window for onclick handlers
+    window.switchActiveKid = switchActiveKid;
+    window.applyUserRoleAndState = applyUserRoleAndState;
+    window.startQuiz = startQuiz;
+    window.switchTab = switchTab;
+    window.switchSubject = switchSubject;
+    window.logoutKid = logoutKid;
+    window.spinWheel = spinWheel;
+    window.prevQuestion = prevQuestion;
+    window.nextQuestion = nextQuestion;
+    window.selectOption = selectOption;
+    window.resetAndBackToArena = resetAndBackToArena;
+    window.goToSpinWheel = goToSpinWheel;
+    window.renderRewardHistory = renderRewardHistory;
+    window.resetAllSpinsTo1 = resetAllSpinsTo1;
+    window.adjustKidSpin = adjustKidSpin;
+    window.setKidSpinExact = setKidSpinExact;
+    window.clearAllSubmissions = clearAllSubmissions;
+    window.renderTeacherSubmissions = renderTeacherSubmissions;
+    window.openReviewModal = openReviewModal;
+    window.closeReviewModal = closeReviewModal;
+    window.saveTeacherApproval = saveTeacherApproval;
+    window.closeRewardWinModal = closeRewardWinModal;
+    window.resetDefaultRewards = resetDefaultRewards;
+    window.addRewardItem = addRewardItem;
+    window.removeRewardItem = removeRewardItem;
 
     // ==========================================
     // 8. INITIALIZE & REALTIME CLOUD LISTENERS
