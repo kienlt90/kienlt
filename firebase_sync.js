@@ -246,7 +246,7 @@ window.CloudSync = {
   },
 
   // ==========================================
-  // 5. REWARDS CATALOG SYNC
+  // 5. REWARDS CATALOG SYNC (PER-KID & GLOBAL)
   // ==========================================
   getRewards(callback) {
     let localRewards = defaultRewardsList;
@@ -277,6 +277,65 @@ window.CloudSync = {
     } catch(e) {}
     if (isFirebaseReady && db) {
       db.ref('math_game/rewards').set(rewards).catch(e => console.error("Firebase saveRewards error:", e));
+    }
+  },
+
+  getRewardsByKid(callback) {
+    const defaultMap = {
+      'kid_thoc': [
+        "🎮 30 Phút Chơi Game",
+        "🍦 1 Cây Kem Bạc Hà",
+        "📚 1 Cuốn Truyện Doremon",
+        "🎡 +1 Lượt Quay Thưởng",
+        "⭐ 10 Điểm Thưởng Siêu Cấp",
+        "🎡 +2 Lượt Quay Thưởng"
+      ],
+      'kid_gau': [
+        "🎮 45 Phút Chơi Roblox",
+        "🥤 1 Ly Trà Sữa Trân Châu",
+        "📚 1 Mô Hình Lego Mini",
+        "🎡 +1 Lượt Quay Thưởng",
+        "🚀 1 Bộ Truyện Tranh Anime",
+        "🎡 +2 Lượt Quay Thưởng"
+      ],
+      'default': [
+        "🎮 30 Phút Chơi Game",
+        "🍦 1 Cây Kem Ngon",
+        "📚 1 Cuốn Truyện Tranh",
+        "🎡 +1 Lượt Quay Thưởng",
+        "🌟 Huy Hiệu Xuất Sắc",
+        "🎡 +2 Lượt Quay Thưởng"
+      ]
+    };
+
+    let localMap = defaultMap;
+    try {
+      const stored = localStorage.getItem('kienlt_rewards_by_kid');
+      if (stored) localMap = JSON.parse(stored);
+    } catch(e) {}
+    if (callback) callback(localMap);
+
+    if (isFirebaseReady && db) {
+      db.ref('math_game/rewards_by_kid').on('value', (snap) => {
+        const val = snap.val();
+        if (val && typeof val === 'object' && Object.keys(val).length > 0) {
+          try {
+            localStorage.setItem('kienlt_rewards_by_kid', JSON.stringify(val));
+          } catch(e) {}
+          if (callback) callback(val);
+        } else if (!val) {
+          this.saveRewardsByKid(localMap);
+        }
+      });
+    }
+  },
+
+  saveRewardsByKid(rewardsMap) {
+    try {
+      localStorage.setItem('kienlt_rewards_by_kid', JSON.stringify(rewardsMap));
+    } catch(e) {}
+    if (isFirebaseReady && db) {
+      db.ref('math_game/rewards_by_kid').set(rewardsMap).catch(e => console.error("Firebase saveRewardsByKid error:", e));
     }
   }
 };

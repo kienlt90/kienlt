@@ -559,6 +559,22 @@
           <span class="text-lg font-black text-amber-600" id="user-spin-count">1</span>
         </div>
 
+        <!-- Admin Wheel Kid Switcher (Admin Only) -->
+        <div id="admin-wheel-kid-selector" class="hidden p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 text-left space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-900 flex items-center space-x-1.5">
+              <span>🎡</span>
+              <span>Đang xem vòng quay riêng của:</span>
+            </span>
+            <span id="admin-wheel-active-name" class="text-[11px] font-black text-amber-800 bg-amber-200/80 px-2.5 py-0.5 rounded-full">
+              Bé THÓC (Lớp 2)
+            </span>
+          </div>
+          <div id="admin-wheel-kid-tabs" class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar pt-0.5">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+
         <!-- Canvas Lucky Wheel Container -->
         <div class="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto flex items-center justify-center">
           <div class="wheel-pointer"></div>
@@ -578,7 +594,7 @@
         <div class="hidden justify-center space-x-3 pt-2" id="wheel-settings-link-wrapper">
           <button onclick="switchTab('rewards')" class="text-xs font-bold text-slate-500 hover:text-sky-700 flex items-center space-x-1">
             <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-            <span>Tùy chỉnh danh mục quà tặng (Admin)</span>
+            <span>Tùy chỉnh danh mục quà tặng riêng từng bé (Admin)</span>
           </button>
         </div>
       </div>
@@ -641,44 +657,60 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- 4. REWARDS CATALOG: BIÊN SOẠN QUÀ THƯỞNG (ADMIN ONLY) -->
+    <!-- 4. REWARDS CATALOG: BIÊN SOẠN QUÀ THƯỞNG RIÊNG CHO TỪNG BÉ (ADMIN ONLY) -->
     <!-- ============================================== -->
     <section id="view-rewards" class="hidden space-y-6">
       
       <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-2">
           <div>
             <h2 class="text-lg font-extrabold text-slate-900 flex items-center space-x-2">
               <i data-lucide="gift" class="w-5 h-5 text-emerald-600"></i>
-              <span>Danh Mục Quà Tặng Vòng Quay</span>
+              <span>Danh Mục Quà Tặng Riêng Cho Từng Bé</span>
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Tự do biên soạn và thêm bớt các phần thưởng cho vòng quay may mắn.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Biên soạn và thêm bớt các phần thưởng riêng phù hợp theo sở thích của mỗi bé.</p>
           </div>
-          <button onclick="resetDefaultRewards()" class="text-xs font-bold text-sky-600 hover:text-sky-800">
-            Khôi phục mặc định
+          <button onclick="resetDefaultRewards()" class="text-xs font-bold text-sky-600 hover:text-sky-800 self-start sm:self-auto cursor-pointer">
+            Khôi phục quà mặc định cho bé này
           </button>
+        </div>
+
+        <!-- Kid Selector Tabs for Rewards -->
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center space-x-1.5">
+              <i data-lucide="user-check" class="w-4 h-4 text-emerald-600"></i>
+              <span>Chọn bé để cài đặt quà:</span>
+            </span>
+            <span id="rewards-active-kid-badge" class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+              Bé THÓC (Lớp 2)
+            </span>
+          </div>
+          <div id="rewards-kid-selector-tabs" class="flex items-center space-x-2 overflow-x-auto custom-scrollbar pt-1">
+            <!-- Rendered by JS -->
+          </div>
         </div>
 
         <!-- Add Reward Form -->
         <div class="flex flex-col sm:flex-row gap-2.5">
-          <input type="text" id="new-reward-input" placeholder="Nhập tên phần thưởng mới (ví dụ: 1 Cây Kem, 1 Giờ Chơi Game...)" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-sky-500">
-          <button onclick="addRewardItem()" class="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs sm:text-sm rounded-xl hover:bg-emerald-700 flex items-center justify-center space-x-1.5 transition">
+          <input type="text" id="new-reward-input" placeholder="Nhập tên phần thưởng mới (ví dụ: 1 Cây Kem, 1 Giờ Chơi Game...)" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-sky-500 bg-slate-50/50 focus:bg-white">
+          <button onclick="addRewardItem()" class="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs sm:text-sm rounded-xl hover:bg-emerald-700 flex items-center justify-center space-x-1.5 transition cursor-pointer shrink-0">
             <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Thêm quà</span>
+            <span>Thêm quà cho bé</span>
           </button>
         </div>
 
         <!-- Rewards List Table -->
-        <div class="border border-slate-200 rounded-2xl overflow-hidden">
+        <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase font-bold text-[10px]">
               <tr>
-                <th class="p-3">#</th>
+                <th class="p-3 w-12 text-center">#</th>
                 <th class="p-3">Tên phần thưởng</th>
-                <th class="p-3 text-right">Thao tác</th>
+                <th class="p-3 text-right w-24">Thao tác</th>
               </tr>
             </thead>
-            <tbody id="rewards-table-body" class="divide-y divide-slate-100">
+            <tbody id="rewards-table-body" class="divide-y divide-slate-100 bg-white">
               <!-- Rendered by JS -->
             </tbody>
           </table>
@@ -3864,8 +3896,119 @@ const mathBankGrade5 = [
 
     // Submissions and Rewards state
     let submissions = [];
-    let rewardItems = [];
     let kidsList = cachedKids;
+    let selectedRewardKidId = 'kid_thoc';
+    let rewardsMapByKid = {
+      'kid_thoc': [
+        "🎮 30 Phút Chơi Game",
+        "🍦 1 Cây Kem Bạc Hà",
+        "📚 1 Cuốn Truyện Doremon",
+        "🎡 +1 Lượt Quay Thưởng",
+        "⭐ 10 Điểm Thưởng Siêu Cấp",
+        "🎡 +2 Lượt Quay Thưởng"
+      ],
+      'kid_gau': [
+        "🎮 45 Phút Chơi Roblox",
+        "🥤 1 Ly Trà Sữa Trân Châu",
+        "📚 1 Mô Hình Lego Mini",
+        "🎡 +1 Lượt Quay Thưởng",
+        "🚀 1 Bộ Truyện Tranh Anime",
+        "🎡 +2 Lượt Quay Thưởng"
+      ],
+      'default': [
+        "🎮 30 Phút Chơi Game",
+        "🍦 1 Cây Kem Ngon",
+        "📚 1 Cuốn Truyện Tranh",
+        "🎡 +1 Lượt Quay Thưởng",
+        "🌟 Huy Hiệu Xuất Sắc",
+        "🎡 +2 Lượt Quay Thưởng"
+      ]
+    };
+
+    function getActiveRewardItems() {
+      const targetId = currentKid ? currentKid.id : selectedRewardKidId;
+      if (rewardsMapByKid && rewardsMapByKid[targetId] && rewardsMapByKid[targetId].length > 0) {
+        return rewardsMapByKid[targetId];
+      }
+      if (rewardsMapByKid && rewardsMapByKid['default'] && rewardsMapByKid['default'].length > 0) {
+        return rewardsMapByKid['default'];
+      }
+      return [
+        "🎮 30 Phút Chơi Game",
+        "🍦 1 Cây Kem Ngon",
+        "📚 1 Cuốn Truyện Tranh",
+        "🎡 +1 Lượt Quay Thưởng",
+        "🌟 Huy Hiệu Xuất Sắc",
+        "🎡 +2 Lượt Quay Thưởng"
+      ];
+    }
+
+    function renderRewardKidTabs() {
+      const kids = getAllKids();
+      if (!kids.some(k => k.id === selectedRewardKidId) && kids.length > 0) {
+        selectedRewardKidId = kids[0].id;
+      }
+      const currentKidObj = kids.find(k => k.id === selectedRewardKidId) || kids[0];
+
+      // Update badge in Rewards view
+      const badgeEl = document.getElementById('rewards-active-kid-badge');
+      if (badgeEl && currentKidObj) {
+        badgeEl.textContent = `Bé ${currentKidObj.name} (Lớp ${currentKidObj.grade})`;
+      }
+
+      // Update badge in Wheel view
+      const wheelActiveEl = document.getElementById('admin-wheel-active-name');
+      if (wheelActiveEl && currentKidObj) {
+        wheelActiveEl.textContent = `Bé ${currentKidObj.name} (Lớp ${currentKidObj.grade})`;
+      }
+
+      // Render Tabs in Rewards Tab
+      const rewardsTabsContainer = document.getElementById('rewards-kid-selector-tabs');
+      if (rewardsTabsContainer) {
+        rewardsTabsContainer.innerHTML = kids.map(k => {
+          const isSelected = k.id === selectedRewardKidId;
+          const isG2 = k.grade === 2;
+          const count = (rewardsMapByKid[k.id] || rewardsMapByKid['default'] || []).length;
+          return `
+            <button onclick="selectRewardKidTab('${k.id}')" class="px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center space-x-2 shrink-0 cursor-pointer ${
+              isSelected 
+                ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-300' 
+                : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+            }">
+              <span>${isG2 ? '🌱' : '🚀'}</span>
+              <span>Bé ${k.name} (Lớp ${k.grade})</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-emerald-800 text-emerald-100' : 'bg-slate-100 text-slate-600'}">${count} quà</span>
+            </button>
+          `;
+        }).join('');
+      }
+
+      // Render Tabs in Wheel Admin Selector
+      const wheelTabsContainer = document.getElementById('admin-wheel-kid-tabs');
+      if (wheelTabsContainer) {
+        wheelTabsContainer.innerHTML = kids.map(k => {
+          const isSelected = k.id === selectedRewardKidId;
+          const isG2 = k.grade === 2;
+          return `
+            <button onclick="selectRewardKidTab('${k.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shrink-0 cursor-pointer ${
+              isSelected 
+                ? 'bg-amber-600 text-white shadow-sm ring-2 ring-amber-300' 
+                : 'bg-white/80 hover:bg-white text-amber-900 border border-amber-200'
+            }">
+              <span>${isG2 ? '🌱' : '🚀'}</span>
+              <span>${k.name} (Lớp ${k.grade})</span>
+            </button>
+          `;
+        }).join('');
+      }
+    }
+
+    function selectRewardKidTab(kidId) {
+      selectedRewardKidId = kidId;
+      renderRewardKidTabs();
+      renderRewardsTable();
+      drawWheel();
+    }
     let spinsMap = { 'kid_thoc': 1, 'kid_gau': 1 };
     let wonRewardsHistory = [];
 
@@ -4343,7 +4486,8 @@ const mathBankGrade5 = [
       const canvas = document.getElementById('wheel-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      const numSegments = rewardItems.length;
+      const items = getActiveRewardItems();
+      const numSegments = items.length;
       if (numSegments === 0) return;
       
       const arcSize = (2 * Math.PI) / numSegments;
@@ -4374,7 +4518,7 @@ const mathBankGrade5 = [
         ctx.font = 'bold 13px "Plus Jakarta Sans", sans-serif';
         ctx.shadowColor = 'rgba(0,0,0,0.4)';
         ctx.shadowBlur = 4;
-        ctx.fillText(rewardItems[i], radius - 20, 5);
+        ctx.fillText(items[i], radius - 20, 5);
         ctx.restore();
       }
     }
@@ -4394,7 +4538,8 @@ const mathBankGrade5 = [
       isSpinning = true;
       document.getElementById('reward-result-alert').classList.add('hidden');
 
-      const numSegments = rewardItems.length;
+      const items = getActiveRewardItems();
+      const numSegments = items.length;
       const arcSize = (2 * Math.PI) / numSegments;
       const winningIndex = Math.floor(Math.random() * numSegments);
 
@@ -4418,15 +4563,16 @@ const mathBankGrade5 = [
         } else {
           isSpinning = false;
           currentWheelAngle = currentWheelAngle % (2 * Math.PI);
-          const wonPrize = rewardItems[winningIndex];
+          const wonPrize = items[winningIndex];
           
           document.getElementById('won-reward-name').textContent = wonPrize;
           document.getElementById('reward-result-alert').classList.remove('hidden');
           soundWin();
           confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
 
+          const targetKidName = currentKid ? currentKid.name : (getAllKids().find(k => k.id === selectedRewardKidId)?.name || 'Bé');
           wonRewardsHistory.unshift({
-            kidName: currentKid ? currentKid.name : 'Bé',
+            kidName: targetKidName,
             reward: wonPrize,
             time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
           });
@@ -4739,12 +4885,20 @@ const mathBankGrade5 = [
       const tbody = document.getElementById('rewards-table-body');
       if (!tbody) return;
 
-      tbody.innerHTML = rewardItems.map((item, idx) => `
+      const targetId = selectedRewardKidId;
+      const items = rewardsMapByKid[targetId] || rewardsMapByKid['default'] || [];
+
+      if (items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 italic">Chưa có phần thưởng nào cho bé này. Nhập tên và bấm "Thêm quà" ở trên!</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = items.map((item, idx) => `
         <tr class="hover:bg-slate-50 transition">
-          <td class="p-3 font-mono text-slate-400 font-bold">${idx + 1}</td>
+          <td class="p-3 font-mono text-slate-400 font-bold text-center">${idx + 1}</td>
           <td class="p-3 font-semibold text-slate-800">${item}</td>
           <td class="p-3 text-right">
-            <button onclick="removeRewardItem(${idx})" class="text-rose-500 hover:text-rose-700 p-1 rounded hover:bg-rose-50 transition">
+            <button onclick="removeRewardItem(${idx})" class="text-rose-500 hover:text-rose-700 p-1.5 rounded hover:bg-rose-50 transition cursor-pointer" title="Xóa phần thưởng này">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
           </td>
@@ -4763,11 +4917,17 @@ const mathBankGrade5 = [
       const val = input.value.trim();
       if (!val) return;
 
-      rewardItems.push(val);
-      if (window.CloudSync) {
-        window.CloudSync.saveRewards(rewardItems);
+      const targetId = selectedRewardKidId;
+      if (!rewardsMapByKid[targetId]) {
+        rewardsMapByKid[targetId] = [...(rewardsMapByKid['default'] || [])];
+      }
+      rewardsMapByKid[targetId].push(val);
+      
+      if (window.CloudSync && window.CloudSync.saveRewardsByKid) {
+        window.CloudSync.saveRewardsByKid(rewardsMapByKid);
       }
       input.value = '';
+      renderRewardKidTabs();
       renderRewardsTable();
       drawWheel();
     }
@@ -4777,14 +4937,18 @@ const mathBankGrade5 = [
         alert('Chỉ Admin mới có quyền xóa phần thưởng!');
         return;
       }
-      if (rewardItems.length <= 2) {
-        alert('Vòng quay cần tối thiểu 2 phần thưởng!');
+      const targetId = selectedRewardKidId;
+      const items = rewardsMapByKid[targetId] || [];
+      if (items.length <= 2) {
+        alert('Vòng quay của mỗi bé cần tối thiểu 2 phần thưởng!');
         return;
       }
-      rewardItems.splice(index, 1);
-      if (window.CloudSync) {
-        window.CloudSync.saveRewards(rewardItems);
+      items.splice(index, 1);
+      rewardsMapByKid[targetId] = items;
+      if (window.CloudSync && window.CloudSync.saveRewardsByKid) {
+        window.CloudSync.saveRewardsByKid(rewardsMapByKid);
       }
+      renderRewardKidTabs();
       renderRewardsTable();
       drawWheel();
     }
@@ -4794,20 +4958,44 @@ const mathBankGrade5 = [
         alert('Chỉ Admin mới có quyền khôi phục quà mặc định!');
         return;
       }
-      if (confirm('Khôi phục danh mục quà tặng về mặc định ban đầu?')) {
-        rewardItems = [
-          "🍬 10 Viên Kẹo",
-          "✏️ 1 Cây Bút Chì Màu",
-          "🎮 30 Phút Chơi Game",
-          "🍦 1 Cây Kem Ngon",
-          "📚 1 Cuốn Truyện Tranh",
-          "🎡 +1 Lượt Quay Thưởng",
-          "🌟 Huy Hiệu Toán Học",
-          "🎡 +2 Lượt Quay Thưởng"
-        ];
-        if (window.CloudSync) {
-          window.CloudSync.saveRewards(rewardItems);
+      const targetId = selectedRewardKidId;
+      const kids = getAllKids();
+      const currentKidObj = kids.find(k => k.id === targetId);
+      const name = currentKidObj ? currentKidObj.name : targetId;
+
+      if (confirm(`Khôi phục danh mục quà tặng của bé ${name} về mặc định ban đầu?`)) {
+        if (targetId === 'kid_thoc') {
+          rewardsMapByKid[targetId] = [
+            "🎮 30 Phút Chơi Game",
+            "🍦 1 Cây Kem Bạc Hà",
+            "📚 1 Cuốn Truyện Doremon",
+            "🎡 +1 Lượt Quay Thưởng",
+            "⭐ 10 Điểm Thưởng Siêu Cấp",
+            "🎡 +2 Lượt Quay Thưởng"
+          ];
+        } else if (targetId === 'kid_gau') {
+          rewardsMapByKid[targetId] = [
+            "🎮 45 Phút Chơi Roblox",
+            "🥤 1 Ly Trà Sữa Trân Châu",
+            "📚 1 Mô Hình Lego Mini",
+            "🎡 +1 Lượt Quay Thưởng",
+            "🚀 1 Bộ Truyện Tranh Anime",
+            "🎡 +2 Lượt Quay Thưởng"
+          ];
+        } else {
+          rewardsMapByKid[targetId] = [
+            "🎮 30 Phút Chơi Game",
+            "🍦 1 Cây Kem Ngon",
+            "📚 1 Cuốn Truyện Tranh",
+            "🎡 +1 Lượt Quay Thưởng",
+            "🌟 Huy Hiệu Xuất Sắc",
+            "🎡 +2 Lượt Quay Thưởng"
+          ];
         }
+        if (window.CloudSync && window.CloudSync.saveRewardsByKid) {
+          window.CloudSync.saveRewardsByKid(rewardsMapByKid);
+        }
+        renderRewardKidTabs();
         renderRewardsTable();
         drawWheel();
       }
@@ -4849,6 +5037,7 @@ const mathBankGrade5 = [
       if (tab === 'arena') {
         calculateAndRenderStats();
       } else if (tab === 'wheel') {
+        renderRewardKidTabs();
         setTimeout(drawWheel, 50);
         renderRewardHistory();
         if (!currentKid) {
@@ -4857,6 +5046,7 @@ const mathBankGrade5 = [
       } else if (tab === 'teacher' && !currentKid) {
         renderTeacherSubmissions();
       } else if (tab === 'rewards' && !currentKid) {
+        renderRewardKidTabs();
         renderRewardsTable();
       }
 
@@ -5026,6 +5216,7 @@ const mathBankGrade5 = [
       const navRewards = document.getElementById('nav-rewards');
       const btnBackPortal = document.getElementById('btn-back-portal');
       const wheelSettings = document.getElementById('wheel-settings-link-wrapper');
+      const adminWheelSwitcher = document.getElementById('admin-wheel-kid-selector');
 
       if (currentKid) {
         const gNum = parseInt(currentKid.grade, 10);
@@ -5080,6 +5271,7 @@ const mathBankGrade5 = [
         if (navTeacher) navTeacher.classList.add('hidden');
         if (navRewards) navRewards.classList.add('hidden');
         if (wheelSettings) wheelSettings.classList.add('hidden');
+        if (adminWheelSwitcher) adminWheelSwitcher.classList.add('hidden');
 
       } else {
         // Admin / Parent Mode
@@ -5121,6 +5313,10 @@ const mathBankGrade5 = [
           wheelSettings.classList.remove('hidden');
           wheelSettings.classList.add('flex');
         }
+        if (adminWheelSwitcher) {
+          adminWheelSwitcher.classList.remove('hidden');
+        }
+        renderRewardKidTabs();
       }
     }
 
@@ -5151,6 +5347,8 @@ const mathBankGrade5 = [
     window.promptSetKidSpins = promptSetKidSpins;
     window.openReviewModal = openReviewModal;
     window.removeRewardItem = removeRewardItem;
+    window.renderRewardKidTabs = renderRewardKidTabs;
+    window.selectRewardKidTab = selectRewardKidTab;
 
     // ==========================================
     // 8. INITIALIZE & REALTIME CLOUD LISTENERS
@@ -5186,12 +5384,15 @@ const mathBankGrade5 = [
           calculateAndRenderStats();
         });
 
-        // Sync Rewards
-        window.CloudSync.getRewards((rewards) => {
-          rewardItems = rewards;
-          drawWheel();
-          if (!currentKid) renderRewardsTable();
-        });
+        // Sync Rewards by Kid
+        if (window.CloudSync.getRewardsByKid) {
+          window.CloudSync.getRewardsByKid((map) => {
+            rewardsMapByKid = map;
+            renderRewardKidTabs();
+            drawWheel();
+            if (!currentKid) renderRewardsTable();
+          });
+        }
       }
 
       applyUserRoleAndState();
