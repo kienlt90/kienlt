@@ -3,17 +3,21 @@ import Chart from 'chart.js/auto';
 
 let livePollInterval = null;
 let replayTimer = null;
-let currentSessionKey = 9662; // Default to 2024 Abu Dhabi Grand Prix Race (full complete data)
+let currentSessionKey = 9662; // Default to 2024 Abu Dhabi GP Race
 let currentMeetingKey = 1252;
 let currentYear = 2024;
 let activeLap = null;
 let maxLap = 58;
 let isPlayingReplay = false;
 let isLivePolling = false;
-let selectedDriverTelemetry = null;
+let currentTab = 'timing'; // 'timing' | 'telemetry' | 'weather' | 'sessions'
+let cachedMeetings = [];
+let cachedSessions = [];
+let currentTimingData = null;
+let selectedDriver = null;
 let telemetryChartInstance = null;
 
-// Preset famous races for instant testing
+// Famous preset meetings for fast instant 1-click loading
 const PRESET_MEETINGS = [
   { year: 2024, meeting_key: 1252, name: 'Abu Dhabi Grand Prix (Chung Kết)', session_name: 'Race', session_key: 9662, flag: '🇦🇪' },
   { year: 2024, meeting_key: 1240, name: 'British Grand Prix (Silverstone)', session_name: 'Race', session_key: 9554, flag: '🇬🇧' },
@@ -23,55 +27,65 @@ const PRESET_MEETINGS = [
   { year: 2024, meeting_key: 1244, name: 'Italian Grand Prix (Monza)', session_name: 'Race', session_key: 9586, flag: '🇮🇹' }
 ];
 
-export async function renderOpenF1Live(container) {
-  // Clear any existing polling/timers
+export async function renderOpenF1App(container) {
+  // Clear any existing timers
   if (livePollInterval) clearInterval(livePollInterval);
   if (replayTimer) clearInterval(replayTimer);
 
   container.innerHTML = `
     <div class="openf1-container">
-      <!-- Top Control Bar -->
-      <div class="openf1-header glass">
-        <div class="openf1-title-group">
+      <!-- Top Control Header -->
+      <header class="openf1-header glass">
+        <div class="openf1-brand">
           <div class="openf1-badge">
             <span class="live-dot" id="openf1-status-dot"></span>
             <span id="openf1-status-text">OPENF1 API ONLINE</span>
           </div>
-          <h2 class="openf1-heading">Dữ Liệu Thật F1 Real-Time & Replay</h2>
+          <h2 class="openf1-heading">Apex F1 · Hệ Thống Viễn Trắc & Live Timing</h2>
         </div>
 
         <div class="openf1-controls">
-          <!-- Preset Selector -->
-          <div class="control-group">
-            <label for="openf1-meeting-select">Chặng Đua:</label>
-            <select id="openf1-meeting-select" class="openf1-select">
+          <!-- Year Selector -->
+          <div class="control-item">
+            <label for="select-year">Năm:</label>
+            <select id="select-year" class="openf1-select">
+              <option value="2024" selected>2024</option>
+              <option value="2023">2023</option>
+              <option value="2026">2026</option>
+            </select>
+          </div>
+
+          <!-- Grand Prix Selector -->
+          <div class="control-item">
+            <label for="select-meeting">Chặng Đua:</label>
+            <select id="select-meeting" class="openf1-select" style="min-width: 220px;">
               ${PRESET_MEETINGS.map(m => `
                 <option value="${m.session_key}" ${m.session_key === currentSessionKey ? 'selected' : ''}>
-                  ${m.flag} ${m.name} (${m.year})
+                  ${m.flag} ${m.name}
                 </option>
               `).join('')}
               <option value="latest">⚡ Phiên đua Mới nhất (Live / Latest)</option>
             </select>
           </div>
 
-          <!-- Mode Toggle: Live vs Replay -->
-          <div class="control-group mode-toggle-group">
+          <!-- Mode buttons -->
+          <div class="control-item mode-actions">
             <button id="btn-toggle-live" class="openf1-btn ${isLivePolling ? 'active' : ''}">
               <span class="pulse-icon"></span>
               <span>Live Poll (5s)</span>
             </button>
-            <button id="btn-refresh-data" class="openf1-btn secondary" title="Làm mới ngay">
-              🔄 Cập Nhật
+            <button id="btn-refresh-data" class="openf1-btn secondary" title="Làm mới dữ liệu từ API">
+              🔄 Tải lại
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      <!-- Live Weather & Race Control Ribbon -->
+      <!-- Weather & Race Control Banner -->
       <div class="openf1-ribbon-grid">
         <!-- Weather Card -->
         <div class="openf1-weather-card glass" id="openf1-weather-box">
-          <div class="ribbon-label">TRẠM THỜI TIẾT ĐƯỜNG ĐUA</div>
+          <div class="ribbon-label">TRẠM THỜI TIẾT ĐƯỜNG ĐUA (OPENF1 METEO)</div>
           <div class="weather-metrics">
             <div class="weather-item">
               <span class="label">Mặt đường:</span>
@@ -87,7 +101,7 @@ export async function renderOpenF1Live(container) {
             </div>
             <div class="weather-item">
               <span class="label">Gió:</span>
-              <span class="value" id="weather-wind">-- km/h</span>
+              <span class="value" id="weather-wind">-- m/s</span>
             </div>
             <div class="weather-item">
               <span class="label">Mưa:</span>
@@ -96,11 +110,11 @@ export async function renderOpenF1Live(container) {
           </div>
         </div>
 
-        <!-- Race Control Ticker -->
+        <!-- Race Control Card -->
         <div class="openf1-rc-card glass" id="openf1-rc-box">
-          <div class="ribbon-label">THÔNG BÁO RACE CONTROL (FIA)</div>
+          <div class="ribbon-label">THÔNG BÁO TỔ ĐIỀU HÀNH CUỘC ĐUA (FIA RACE CONTROL)</div>
           <div class="rc-ticker" id="openf1-rc-ticker">
-            <div class="rc-msg info">Đang kết nối luồng dữ liệu OpenF1...</div>
+            <div class="rc-msg info">Đang đồng bộ luồng thông báo OpenF1...</div>
           </div>
         </div>
       </div>
@@ -109,7 +123,7 @@ export async function renderOpenF1Live(container) {
       <div class="openf1-replay-bar glass">
         <div class="replay-controls">
           <button id="btn-replay-prev" class="replay-btn" title="Vòng trước">⏮</button>
-          <button id="btn-replay-play" class="replay-btn play" title="Phát lại tự động">
+          <button id="btn-replay-play" class="replay-btn play" title="Tự động phát lại">
             ${isPlayingReplay ? '⏸ Tạm dừng' : '▶ Xem lại'}
           </button>
           <button id="btn-replay-next" class="replay-btn" title="Vòng kế">⏭</button>
@@ -134,7 +148,7 @@ export async function renderOpenF1Live(container) {
       <div class="openf1-tower-container glass">
         <div class="tower-header-grid">
           <div class="col-pos">POS</div>
-          <div class="col-driver">TAY ĐUA / ĐỘI</div>
+          <div class="col-driver">TAY ĐUA / ĐỘI ĐUA</div>
           <div class="col-gap">GAP</div>
           <div class="col-int">INT</div>
           <div class="col-tyre">LỐP</div>
@@ -150,12 +164,12 @@ export async function renderOpenF1Live(container) {
         <div class="tower-body" id="openf1-tower-rows">
           <div class="tower-loading">
             <div class="spinner"></div>
-            <span>Đang tải dữ liệu viễn trắc từ OpenF1 API...</span>
+            <span>Đang lấy dữ liệu viễn trắc thật từ máy chủ OpenF1...</span>
           </div>
         </div>
       </div>
 
-      <!-- Telemetry Drawer (Hidden by default, shows on driver click) -->
+      <!-- Telemetry Drawer Modal -->
       <div class="telemetry-drawer-backdrop" id="telemetry-backdrop">
         <div class="telemetry-drawer glass" id="telemetry-drawer">
           <div class="drawer-header">
@@ -165,7 +179,7 @@ export async function renderOpenF1Live(container) {
             <button class="drawer-close-btn" id="btn-close-drawer">✕</button>
           </div>
           <div class="drawer-body" id="drawer-content">
-            <!-- Dynamically populated -->
+            <!-- Populated on click -->
           </div>
         </div>
       </div>
@@ -175,12 +189,45 @@ export async function renderOpenF1Live(container) {
   // Attach event handlers
   setupEventListeners(container);
 
-  // Initial load
+  // Load meeting list for year & initial session data
+  await loadMeetingsForYear(currentYear, container);
   await loadSessionData();
 }
 
+async function loadMeetingsForYear(year, container) {
+  try {
+    const meetings = await OpenF1Service.getMeetings(year);
+    cachedMeetings = meetings;
+
+    const select = container.querySelector('#select-meeting');
+    if (select && meetings.length > 0) {
+      // Find race sessions for meetings
+      select.innerHTML = `
+        <optgroup label="Chặng Đua Nổi Bật">
+          ${PRESET_MEETINGS.filter(p => p.year === parseInt(year, 10)).map(m => `
+            <option value="${m.session_key}" ${m.session_key === currentSessionKey ? 'selected' : ''}>
+              ${m.flag} ${m.name}
+            </option>
+          `).join('')}
+        </optgroup>
+        <optgroup label="Tất Cả Chặng ${year}">
+          ${meetings.map(m => `
+            <option value="m_${m.meeting_key}" ${m.meeting_key === currentMeetingKey ? 'selected' : ''}>
+              🏁 ${m.meeting_name} (${m.location})
+            </option>
+          `).join('')}
+        </optgroup>
+        <option value="latest">⚡ Phiên đua Mới nhất (Live / Latest)</option>
+      `;
+    }
+  } catch (err) {
+    console.warn('Could not load meetings list, using presets fallback:', err);
+  }
+}
+
 function setupEventListeners(container) {
-  const selectMeeting = container.querySelector('#openf1-meeting-select');
+  const selectYear = container.querySelector('#select-year');
+  const selectMeeting = container.querySelector('#select-meeting');
   const btnToggleLive = container.querySelector('#btn-toggle-live');
   const btnRefresh = container.querySelector('#btn-refresh-data');
   const slider = container.querySelector('#openf1-lap-slider');
@@ -190,13 +237,29 @@ function setupEventListeners(container) {
   const btnCloseDrawer = container.querySelector('#btn-close-drawer');
   const backdrop = container.querySelector('#telemetry-backdrop');
 
-  // Change Session
+  // Year Change
+  selectYear.addEventListener('change', async (e) => {
+    currentYear = parseInt(e.target.value, 10);
+    await loadMeetingsForYear(currentYear, container);
+  });
+
+  // Meeting Change
   selectMeeting.addEventListener('change', async (e) => {
     const val = e.target.value;
     if (val === 'latest') {
       try {
         const latest = await OpenF1Service.getLatestSession();
         currentSessionKey = latest.session_key;
+      } catch (err) {
+        console.error(err);
+      }
+    } else if (val.startsWith('m_')) {
+      const meetingKey = parseInt(val.replace('m_', ''), 10);
+      currentMeetingKey = meetingKey;
+      try {
+        const sessions = await OpenF1Service.getSessions(meetingKey, currentYear);
+        const race = sessions.find(s => s.session_name.toLowerCase().includes('race')) || sessions[sessions.length - 1];
+        if (race) currentSessionKey = race.session_key;
       } catch (err) {
         console.error(err);
       }
@@ -207,7 +270,7 @@ function setupEventListeners(container) {
     await loadSessionData();
   });
 
-  // Toggle Live Polling
+  // Live Toggle
   btnToggleLive.addEventListener('click', () => {
     isLivePolling = !isLivePolling;
     btnToggleLive.classList.toggle('active', isLivePolling);
@@ -225,7 +288,7 @@ function setupEventListeners(container) {
     loadSessionData();
   });
 
-  // Slider change (Replay lap)
+  // Slider change
   slider.addEventListener('input', (e) => {
     activeLap = parseInt(e.target.value, 10);
     container.querySelector('#replay-current-lap-text').textContent = `Vòng ${activeLap} / ${maxLap}`;
@@ -259,7 +322,7 @@ function setupEventListeners(container) {
     }
   });
 
-  // Close Drawer
+  // Telemetry drawer close
   btnCloseDrawer.addEventListener('click', closeTelemetryDrawer);
   backdrop.addEventListener('click', (e) => {
     if (e.target === backdrop) closeTelemetryDrawer();
@@ -304,6 +367,7 @@ async function loadSessionData(targetLap = null) {
     if (statusDot) statusDot.style.background = '#FFD700';
 
     const timingData = await OpenF1Service.getFullLiveTiming(currentSessionKey, targetLap);
+    currentTimingData = timingData;
     
     if (statusText) statusText.textContent = `OPENF1 ONLINE (${timingData.drivers.length} TAY ĐUA)`;
     if (statusDot) statusDot.style.background = '#00FF66';
@@ -311,7 +375,7 @@ async function loadSessionData(targetLap = null) {
     maxLap = timingData.maxLap || 58;
     if (!activeLap) activeLap = maxLap;
 
-    // Update Slider limits
+    // Update Slider
     const slider = document.querySelector('#openf1-lap-slider');
     const lapText = document.querySelector('#replay-current-lap-text');
     if (slider) {
@@ -370,7 +434,7 @@ function updateRaceControl(messages) {
   if (!ticker) return;
 
   if (!messages || messages.length === 0) {
-    ticker.innerHTML = `<div class="rc-msg info">Không có sự cố nào cần xử lý. Track CLEAR.</div>`;
+    ticker.innerHTML = `<div class="rc-msg info">Không có sự cố nào cần xử lý. Đường đua BÌNH THƯỜNG (Track Clear).</div>`;
     return;
   }
 

@@ -5,7 +5,7 @@
 
 const BASE_URL = 'https://api.openf1.org/v1';
 
-// Cache memory to prevent spamming the API and provide fast snappy UX
+// In-Memory cache to prevent spamming the API and provide fast snappy UX
 const memoryCache = new Map();
 const CACHE_TTL_MS = 60 * 1000; // 1 minute for static data
 

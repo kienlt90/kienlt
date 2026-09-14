@@ -6,104 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- SEO Meta Tags -->
-    <title>Apex F1 - Grand Prix & Drivers Telemetry Dashboard</title>
-    <meta name="description" content="Khám phá chi tiết 24 chặng đua F1 mùa giải 2026 và bảng xếp hạng Top 10 tay đua xuất sắc nhất mùa giải 2025 với hệ thống đo lường viễn trắc high-tech độc đáo." />
-    <meta name="keywords" content="formula 1, f1 dashboard, f1 schedule 2026, lando norris, max verstappen, f1 standings, f1 telemetry, đua xe f1" />
-    <meta name="author" content="Antigravity Team" />
-    
-    <!-- Open Graph (Social Sharing) -->
-    <meta property="og:title" content="Apex F1 - Grand Prix & Drivers Telemetry Dashboard" />
-    <meta property="og:description" content="Theo dõi trực quan dữ liệu chặng đua và bảng xếp hạng F1 với thiết kế dark-mode công nghệ cao ấn tượng." />
-    <meta property="og:type" content="website" />
+    <title>Apex F1 - Live Timing & Real-Time Telemetry Feed</title>
+    <meta name="description" content="Hệ thống Live Timing & Viễn trắc trực tuyến thời gian thực lấy dữ liệu chính thức từ OpenF1 API & FIA Timing Feeds." />
+    <meta name="keywords" content="formula 1, f1 live timing, openf1, f1 telemetry, f1 replay, max verstappen, lewis hamilton" />
+    <meta name="author" content="Lê Trung Kiên (KIENLT90)" />
     
     <!-- Design system CSS -->
-    <script type="module" crossorigin src="./assets/index-8Ctzs5nG.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index--E94lWQD.css">
+    <script type="module" crossorigin src="./assets/index-54OFwKJJ.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Vvxk8VAN.css">
   </head>
   <body>
-    <div class="app-container">
-      
-      <!-- Left Sidebar Navigation Menu -->
-      <aside class="sidebar">
-        <div class="logo-container">
+    <div class="f1-app-wrapper">
+      <!-- Top Navigation & Status Bar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
           <div class="f1-stripes">
             <div class="stripe"></div>
             <div class="stripe"></div>
             <div class="stripe"></div>
           </div>
-          <span class="logo-text">APEX F1 <span class="logo-badge">PRO</span></span>
+          <span class="brand-title">APEX F1 <span class="brand-badge">LIVE API</span></span>
+          <span class="portal-back-link">
+            <a href="../main.html">← Quay lại Cổng KIENLT90</a>
+          </span>
         </div>
-        
-        <nav class="nav-menu">
-          <button class="nav-btn active" id="btn-dashboard">
-            <i data-lucide="gauge"></i>
-            <span>Tổng Quan Mùa Giải</span>
-          </button>
-          
-          <button class="nav-btn" id="btn-standings">
-            <i data-lucide="award"></i>
-            <span>Bảng Xếp Hạng</span>
-          </button>
-          
-          <button class="nav-btn" id="btn-circuits">
-            <i data-lucide="calendar"></i>
-            <span>Chi Tiết Chặng Đua</span>
-          </button>
-          
-          <button class="nav-btn" id="btn-live-map">
-            <i data-lucide="radio"></i>
-            <span>Bản Đồ Live GP</span>
-          </button>
-          
-          <button class="nav-btn" id="btn-openf1">
-            <i data-lucide="activity"></i>
-            <span>Dữ Liệu Thật OpenF1</span>
-          </button>
-        </nav>
-        
-        <div class="sidebar-footer">
-          <div>APEX TELEMETRY SYSTEM v3.5</div>
-          <div style="margin-top: 4px; font-size: 0.65rem;">© 2026 FORMULA ONE DATA</div>
+
+        <div class="topbar-right">
+          <div class="api-status-badge">
+            <span class="pulse-dot"></span>
+            <span>OPENF1 FEED: DIRECT FIA SIGNAL</span>
+          </div>
+          <div class="topbar-clock" id="header-real-clock">2026-09-14 00:00:00 UTC</div>
         </div>
-      </aside>
+      </header>
 
-      <!-- Main Application Space -->
-      <main class="main-content">
-        <!-- Top Status Bar -->
-        <header class="top-header">
-          <div class="header-title-sec">
-            <h1 id="header-panel-title">Tổng Quan Mùa Giải</h1>
-            <p id="header-panel-subtitle">HỆ THỐNG GIÁM SÁT VIỄN TRẮC TRỰC TUYẾN</p>
-          </div>
-          
-          <div class="header-status">
-            <div class="status-badge">
-              <div class="dot"></div>
-              <span>TELEMETRY ONLINE</span>
-            </div>
-            <div class="header-clock" id="header-real-clock">2026-05-27 14:55:00 UTC</div>
-          </div>
-        </header>
-
-        <!-- Dynamic Page Panels -->
-        <!-- Dashboard Panel -->
-        <section id="panel-dashboard" class="panel active"></section>
-
-        <!-- Driver Standings Panel -->
-        <section id="panel-standings" class="panel"></section>
-
-        <!-- Circuits/Calendar Panel -->
-        <section id="panel-circuits" class="panel"></section>
-
-        <!-- Live GP Simulator Panel -->
-        <section id="panel-live-map" class="panel"></section>
-
-        <!-- OpenF1 Real-Time Data & Replay Panel -->
-        <section id="panel-openf1" class="panel"></section>
-      </main>
-      
+      <!-- Main OpenF1 Root Application Container -->
+      <main class="app-main" id="openf1-app-root"></main>
     </div>
 
-    <!-- Main javascript bundle entry -->
+    <!-- Main JS entry -->
   </body>
 </html>
