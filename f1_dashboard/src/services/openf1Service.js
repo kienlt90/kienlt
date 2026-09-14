@@ -164,8 +164,8 @@ export const OpenF1Service = {
         s2Status: 'normal',
         s3Status: 'normal',
         miniSectors: [],
-        compound: 'UNKNOWN',
-        tyreAge: 0,
+        compound: 'MEDIUM',
+        tyreAge: 1,
         stintNumber: 1,
         pitCount: 0,
         inPit: false,
@@ -180,7 +180,7 @@ export const OpenF1Service = {
       if (l.lap_number > maxLapInSession) maxLapInSession = l.lap_number;
     });
 
-    const activeLap = targetLap || maxLapInSession;
+    const activeLap = targetLap || maxLapInSession || 1;
 
     // Filter laps up to activeLap
     const validLaps = targetLap ? laps.filter(l => l.lap_number <= targetLap) : laps;
@@ -265,16 +265,41 @@ export const OpenF1Service = {
       }
     });
 
-    // Attach latest stints (Tyres)
+    // Attach latest stints (Tyres) accurately
+    const driverStintsMap = new Map();
     stints.forEach(s => {
-      const driver = driverMap.get(s.driver_number);
+      if (!driverStintsMap.has(s.driver_number)) {
+        driverStintsMap.set(s.driver_number, []);
+      }
+      driverStintsMap.get(s.driver_number).push(s);
+    });
+
+    driverStintsMap.forEach((driverStints, driverNum) => {
+      const driver = driverMap.get(driverNum);
       if (!driver) return;
-      if (!targetLap || (s.lap_start <= targetLap)) {
-        driver.compound = s.compound || 'MEDIUM';
-        driver.tyreAge = (activeLap - s.lap_start) + (s.tyre_age_at_start || 0);
-        if (driver.tyreAge < 0) driver.tyreAge = 0;
-        driver.stintNumber = s.stint_number;
-        driver.pitCount = Math.max(0, s.stint_number - 1);
+
+      // Sort ascending by stint_number or lap_start
+      driverStints.sort((a, b) => (a.stint_number || 0) - (b.stint_number || 0));
+
+      // Find active stint for activeLap
+      let activeStint = null;
+      for (const s of driverStints) {
+        if (s.lap_start <= activeLap) {
+          activeStint = s;
+        }
+      }
+      if (!activeStint && driverStints.length > 0) {
+        activeStint = driverStints[driverStints.length - 1];
+      }
+
+      if (activeStint) {
+        const rawCompound = (activeStint.compound || 'MEDIUM').toUpperCase();
+        driver.compound = rawCompound;
+        const ageAtStart = activeStint.tyre_age_at_start || 0;
+        const lapsOnCurrentSet = Math.max(1, (activeLap - activeStint.lap_start + 1) + ageAtStart);
+        driver.tyreAge = lapsOnCurrentSet;
+        driver.stintNumber = activeStint.stint_number || 1;
+        driver.pitCount = Math.max(0, (activeStint.stint_number || 1) - 1);
       }
     });
 

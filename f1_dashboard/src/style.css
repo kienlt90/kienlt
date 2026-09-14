@@ -1694,27 +1694,89 @@ body {
 .col-tyre {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.tyre-badge {
+.f1-tyre-pill {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: var(--font-f1);
-  font-size: 0.75rem;
-  font-weight: 900;
-  font-style: italic;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 2px 8px 2px 4px;
+  border-radius: 20px;
+  transition: var(--transition-fast);
 }
 
-.tyre-soft { background: rgba(255, 30, 39, 0.25); border: 1px solid #FF1E27; color: #FF333D; }
-.tyre-medium { background: rgba(255, 215, 0, 0.25); border: 1px solid #FFD700; color: #FFD700; }
-.tyre-hard { background: rgba(255, 255, 255, 0.25); border: 1px solid #FFFFFF; color: #FFFFFF; }
-.tyre-inter { background: rgba(57, 255, 20, 0.25); border: 1px solid #39FF14; color: #39FF14; }
-.tyre-wet { background: rgba(0, 150, 255, 0.25); border: 1px solid #0096FF; color: #0096FF; }
+.f1-tyre-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.f1-tyre-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-family: var(--font-f1);
+  font-weight: 900;
+  font-size: 0.85rem;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.f1-tyre-circle.tyre-soft {
+  background: #FF1E27;
+  color: #FFFFFF;
+  box-shadow: 0 0 8px rgba(255, 30, 39, 0.6);
+}
+
+.f1-tyre-circle.tyre-medium {
+  background: #FFD700;
+  color: #000000;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  text-shadow: none;
+}
+
+.f1-tyre-circle.tyre-hard {
+  background: #FFFFFF;
+  color: #000000;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  text-shadow: none;
+}
+
+.f1-tyre-circle.tyre-inter {
+  background: #39FF14;
+  color: #000000;
+  box-shadow: 0 0 8px rgba(57, 255, 20, 0.6);
+  text-shadow: none;
+}
+
+.f1-tyre-circle.tyre-wet {
+  background: #0096FF;
+  color: #FFFFFF;
+  box-shadow: 0 0 8px rgba(0, 150, 255, 0.6);
+}
+
+.f1-tyre-laps {
+  font-family: var(--font-tech);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #FFF;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.f1-tyre-laps small {
+  font-size: 0.68rem;
+  font-family: var(--font-f1);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
 
 .pit-badge {
   background: #FF1E27;
@@ -1723,15 +1785,17 @@ body {
   font-size: 0.68rem;
   font-weight: 900;
   font-style: italic;
-  padding: 1px 5px;
-  border-radius: 3px;
+  padding: 2px 6px;
+  border-radius: 4px;
   animation: live-blink 0.8s infinite;
+  box-shadow: 0 0 8px var(--f1-red-glow);
 }
 
 .pit-count {
   font-size: 0.72rem;
   color: var(--text-muted);
   font-family: var(--font-tech);
+  font-weight: 700;
 }
 
 /* Lap Times & Sectors */

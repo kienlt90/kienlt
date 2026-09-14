@@ -466,7 +466,7 @@ function renderTowerRows(container, drivers) {
   container.innerHTML = drivers.map((d, index) => {
     const pos = index + 1;
     const isFastest = d.isFastestLapHolder;
-    const tyreClass = getTyreClass(d.compound);
+    const tyre = getTyreInfo(d.compound, d.tyreAge);
 
     // Mini sectors HTML
     const miniSectorsHTML = d.miniSectors.length > 0 
@@ -505,9 +505,9 @@ function renderTowerRows(container, drivers) {
 
         <!-- Tyre -->
         <div class="col-tyre">
-          <div class="tyre-badge ${tyreClass}">
-            <span class="tyre-letter">${d.compound ? d.compound[0] : 'M'}</span>
-            <span class="tyre-age">${d.tyreAge}L</span>
+          <div class="f1-tyre-pill" title="Lốp ${tyre.name} · Đã chạy ${tyre.age} vòng">
+            <span class="f1-tyre-circle ${tyre.colorClass}">${tyre.letter}</span>
+            <span class="f1-tyre-laps">${tyre.age}<small>v</small></span>
           </div>
           ${d.inPit ? `<span class="pit-badge">PIT</span>` : (d.pitCount > 0 ? `<span class="pit-count">${d.pitCount}P</span>` : '')}
         </div>
@@ -558,14 +558,32 @@ function renderTowerRows(container, drivers) {
   });
 }
 
-function getTyreClass(compound) {
-  if (!compound) return 'tyre-medium';
-  const c = compound.toUpperCase();
-  if (c.includes('SOFT')) return 'tyre-soft';
-  if (c.includes('HARD')) return 'tyre-hard';
-  if (c.includes('INTER')) return 'tyre-inter';
-  if (c.includes('WET')) return 'tyre-wet';
-  return 'tyre-medium';
+function getTyreInfo(compound, tyreAge) {
+  const c = (compound || 'MEDIUM').toUpperCase();
+  let letter = 'M';
+  let colorClass = 'tyre-medium';
+  let name = 'Medium';
+
+  if (c.includes('SOFT')) {
+    letter = 'S';
+    colorClass = 'tyre-soft';
+    name = 'Soft';
+  } else if (c.includes('HARD')) {
+    letter = 'H';
+    colorClass = 'tyre-hard';
+    name = 'Hard';
+  } else if (c.includes('INTER')) {
+    letter = 'I';
+    colorClass = 'tyre-inter';
+    name = 'Inter';
+  } else if (c.includes('WET')) {
+    letter = 'W';
+    colorClass = 'tyre-wet';
+    name = 'Wet';
+  }
+
+  const age = (typeof tyreAge === 'number' && tyreAge > 0) ? tyreAge : 1;
+  return { letter, colorClass, name, age };
 }
 
 async function openTelemetryDrawer(driver) {
