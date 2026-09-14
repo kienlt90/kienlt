@@ -98,6 +98,10 @@ window.loginDirectAsKid = function(kidId, subject = 'math') {
   } catch(e) {}
   const kid = kids.find(k => k.id === kidId) || kids[0];
 
+  try {
+    localStorage.removeItem('vnpt_his_session');
+    sessionStorage.removeItem('vnpt_his_session');
+  } catch(e) {}
   localStorage.setItem('kienlt_active_kid_session', JSON.stringify(kid));
   if (subject === 'english') {
     window.location.href = `english_game.html?kid=${kid.id}&grade=${kid.grade}`;
@@ -221,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (matchedKid && (matchedKid.pin === passwordVal || passwordVal === '1234' || passwordVal === 'admin')) {
           setLoadingState(true, `Chào mừng bé ${matchedKid.name} (Lớp ${matchedKid.grade})...`);
+          try {
+            localStorage.removeItem('vnpt_his_session');
+            sessionStorage.removeItem('vnpt_his_session');
+          } catch(e) {}
           localStorage.setItem('kienlt_active_kid_session', JSON.stringify(matchedKid));
           
           setTimeout(() => {

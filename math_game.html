@@ -3794,8 +3794,19 @@ const mathBankGrade5 = [
 
     if (kidParam) {
       if (kidParam === 'admin') {
-        currentKid = null;
-        try { localStorage.removeItem('kienlt_active_kid_session'); } catch(e) {}
+        const adminSession = localStorage.getItem('vnpt_his_session') || sessionStorage.getItem('vnpt_his_session');
+        if (adminSession) {
+          currentKid = null;
+          try { localStorage.removeItem('kienlt_active_kid_session'); } catch(e) {}
+        } else {
+          // If no admin session, do not grant admin mode automatically
+          const kidSession = localStorage.getItem('kienlt_active_kid_session');
+          if (kidSession) {
+            try { currentKid = JSON.parse(kidSession); } catch(e) { currentKid = null; }
+          } else {
+            currentKid = null;
+          }
+        }
       } else {
         const found = cachedKids.find(k => k.id === kidParam || k.username.toLowerCase() === kidParam.toLowerCase() || (kidParam.includes('thoc') && k.id === 'kid_thoc') || (kidParam.includes('gau') && k.id === 'kid_gau'));
         if (found) {
@@ -3921,6 +3932,10 @@ const mathBankGrade5 = [
     // ==========================================
     function startQuiz(grade) {
       const gNum = parseInt(grade, 10);
+      if (currentKid && parseInt(currentKid.grade, 10) !== gNum) {
+        alert(`Bé ${currentKid.name} đang học Lớp ${currentKid.grade}, chỉ được phép làm bài thi của Lớp ${currentKid.grade}!`);
+        return;
+      }
       currentGrade = gNum;
       currentQuestions = getSmartRandom10Questions(gNum);
       currentQuestionIndex = 0;
@@ -4271,6 +4286,8 @@ const mathBankGrade5 = [
       document.getElementById('quiz-result-box').classList.add('hidden');
       document.getElementById('quiz-box').classList.add('hidden');
       document.getElementById('level-selection').classList.remove('hidden');
+      applyUserRoleAndState();
+      calculateAndRenderStats();
     }
 
     function goToSpinWheel() {
@@ -4849,9 +4866,25 @@ const mathBankGrade5 = [
     // ==========================================
     function switchActiveKid(kidId) {
       if (kidId === 'admin') {
+        const adminSession = localStorage.getItem('vnpt_his_session') || sessionStorage.getItem('vnpt_his_session');
+        if (!adminSession) {
+          const pass = prompt('🔐 Vui lòng nhập mật khẩu Phụ huynh / Quản trị viên:');
+          if (pass !== 'admin' && pass !== '1234') {
+            alert('Mật khẩu không chính xác! Bé không có quyền truy cập khu vực Quản trị.');
+            return;
+          }
+        }
         currentKid = null;
         try { localStorage.removeItem('kienlt_active_kid_session'); } catch(e) {}
       } else {
+        const adminSession = localStorage.getItem('vnpt_his_session') || sessionStorage.getItem('vnpt_his_session');
+        if (currentKid && currentKid.id !== kidId && !adminSession) {
+          const pin = prompt(`🔐 Vui lòng nhập mã PIN bảo vệ của bé ${kidId === 'kid_thoc' ? 'THÓC' : 'Gấu'} (hoặc mã phụ huynh):`);
+          if (pin !== '1234' && pin !== 'admin') {
+            alert('Mã PIN không đúng! Bé chỉ được phép học đúng lớp của mình.');
+            return;
+          }
+        }
         const allK = getAllKids();
         const matched = allK.find(k => k.id === kidId) || (kidId === 'kid_thoc' ? allK[0] : allK[1]);
         currentKid = matched;
@@ -4869,6 +4902,31 @@ const mathBankGrade5 = [
       const container = document.getElementById('account-switcher-buttons');
       if (!container) return;
 
+      if (currentKid) {
+        // Strict Kid Session: Kid can only see their own identity and a Logout/Switch Account button.
+        // DO NOT show buttons to switch to Admin or other kids!
+        const icon = currentKid.id === 'kid_thoc' ? '🌱' : (currentKid.id === 'kid_gau' ? '🚀' : '⭐');
+        const badgeClass = currentKid.id === 'kid_thoc' 
+          ? 'bg-amber-500 text-white' 
+          : (currentKid.id === 'kid_gau' ? 'bg-sky-600 text-white' : 'bg-emerald-600 text-white');
+
+        container.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <span class="px-3 py-1.5 rounded-xl text-xs font-black shadow-sm flex items-center space-x-1.5 ${badgeClass}">
+              <span>${icon}</span>
+              <span>${currentKid.name} (Lớp ${currentKid.grade})</span>
+            </span>
+            <button onclick="logoutKid()" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 flex items-center space-x-1 transition whitespace-nowrap shrink-0" title="Thoát tài khoản bé">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+              <span>Đổi tài khoản</span>
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // Admin / Parent Mode: Show all kid buttons + Admin button
       const kidsButtons = kidsList.map(k => {
         const isActive = currentKid && (currentKid.id === k.id || currentKid.username === k.username);
         const gNum = parseInt(k.grade, 10);
@@ -4903,19 +4961,12 @@ const mathBankGrade5 = [
         : 'px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 bg-slate-800 text-white border-slate-800 hover:bg-slate-700 whitespace-nowrap shrink-0';
 
       container.innerHTML = kidsButtons + `<button onclick="switchActiveKid('admin')" class="${adminCls}"><span>👨‍💼 Phụ huynh / Admin</span></button>`;
+      lucide.createIcons();
     }
 
     function applyUserRoleAndState() {
       renderSwitcherButtons();
-      const swThoc = document.getElementById('btn-sw-thoc');
-      const swGau = document.getElementById('btn-sw-gau');
-      const swAdmin = document.getElementById('btn-sw-admin');
       const activeLabel = document.getElementById('current-active-kid-label');
-
-      // Reset button styles
-      if (swThoc) swThoc.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300 whitespace-nowrap shrink-0';
-      if (swGau) swGau.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 bg-sky-50 hover:bg-sky-100 text-sky-800 border-sky-300 whitespace-nowrap shrink-0';
-      if (swAdmin) swAdmin.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 bg-slate-800 text-white border-slate-800 hover:bg-slate-700 whitespace-nowrap shrink-0';
 
       const cardG2 = document.getElementById('card-grade-2');
       const cardG3 = document.getElementById('card-grade-3');
@@ -4935,12 +4986,6 @@ const mathBankGrade5 = [
 
         if (activeLabel) activeLabel.textContent = `${currentKid.name} (Lớp ${gNum})`;
 
-        if (currentKid.id === 'kid_thoc' && swThoc) {
-          swThoc.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1.5 bg-amber-500 text-white border-amber-500 shadow-sm ring-2 ring-amber-300 whitespace-nowrap shrink-0';
-        } else if (currentKid.id === 'kid_gau' && swGau) {
-          swGau.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1.5 bg-sky-600 text-white border-sky-600 shadow-sm ring-2 ring-sky-300 whitespace-nowrap shrink-0';
-        }
-
         // Header and banner
         document.getElementById('header-badge-title').textContent = `Toán Lớp ${gNum}`;
         document.getElementById('header-student-greeting').textContent = `Chào mừng bé: ${currentKid.name} (Lớp ${gNum})`;
@@ -4951,10 +4996,15 @@ const mathBankGrade5 = [
           document.getElementById('student-banner-grade').textContent = `Lớp ${gNum}`;
         }
 
+        if (btnBackPortal) {
+          btnBackPortal.title = 'Đổi tài khoản / Thoát';
+          btnBackPortal.onclick = (e) => { e.preventDefault(); logoutKid(); };
+        }
+
         if (kidStatsCard) kidStatsCard.classList.remove('hidden');
         if (adminStatsCard) adminStatsCard.classList.add('hidden');
 
-        // Isolate Grade Cards
+        // Strictly Isolate Grade Cards: kid only sees their grade
         if (gNum === 2) {
           if (cardG3) cardG3.classList.add('hidden');
           if (cardG5) cardG5.classList.add('hidden');
@@ -4987,18 +5037,22 @@ const mathBankGrade5 = [
       } else {
         // Admin / Parent Mode
         if (activeLabel) activeLabel.textContent = 'Phụ huynh / Quản trị viên (Toàn quyền)';
-        if (swAdmin) swAdmin.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1.5 bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-400 whitespace-nowrap shrink-0';
 
         document.getElementById('header-badge-title').textContent = `Quản Trị / Giáo Viên`;
         document.getElementById('header-student-greeting').textContent = `Đấu Trường Toán Học - Góc Phụ Huynh & Giáo Viên`;
         
         if (welcomeBanner) welcomeBanner.classList.add('hidden');
-        if (btnBackPortal) btnBackPortal.classList.remove('hidden');
+        if (btnBackPortal) {
+          btnBackPortal.title = 'Về Portal Quản trị';
+          btnBackPortal.onclick = null;
+          btnBackPortal.href = 'main.html';
+          btnBackPortal.classList.remove('hidden');
+        }
 
         if (kidStatsCard) kidStatsCard.classList.add('hidden');
         if (adminStatsCard) adminStatsCard.classList.remove('hidden');
 
-        // Show All Grade Cards
+        // Show All Grade Cards in Admin Mode
         if (cardG2) {
           cardG2.classList.remove('hidden');
           cardG2.className = 'group bg-gradient-to-br from-white to-amber-50/70 p-6 sm:p-7 rounded-3xl border-2 border-amber-200/80 shadow-md hover:border-amber-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
