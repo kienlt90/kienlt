@@ -76,56 +76,59 @@
 <body class="bg-gradient-to-br from-slate-100 via-sky-50 to-indigo-50 text-slate-800 antialiased min-h-full flex flex-col selection:bg-sky-200 selection:text-sky-900">
 
   <!-- Main Responsive Container -->
-  <div class="w-full max-w-6xl xl:max-w-7xl 2xl:max-w-[1400px] mx-auto min-h-screen flex flex-col px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+  <div class="w-full max-w-6xl xl:max-w-7xl 2xl:max-w-[1400px] mx-auto min-h-screen flex flex-col px-3 sm:px-6 lg:px-8 py-3 sm:py-6 pb-28 sm:pb-16">
 
     <!-- Top Navigation Header -->
-    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 mb-4 sm:mb-5">
-      <div class="flex items-center space-x-3">
-        <a href="main.html" id="btn-back-portal" class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-orange-500/20 text-lg hover:scale-105 transition shrink-0" title="Về Portal">
-          🧮
-        </a>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="text-xs font-bold tracking-wider text-amber-600 uppercase whitespace-nowrap">Đấu Trường Toán Học</h1>
-            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold whitespace-nowrap" id="header-badge-title">Toán Tư Duy</span>
-            <span id="cloud-sync-status" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-extrabold flex items-center space-x-1 whitespace-nowrap" title="Đã kết nối Google Firebase Realtime Cloud">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-              <span class="hidden sm:inline">Cloud Realtime</span>
-            </span>
+    <header class="bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl sm:rounded-3xl shadow-sm px-3.5 sm:px-6 py-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3 mb-3.5 sm:mb-5">
+      <div class="flex items-center justify-between sm:justify-start space-x-2.5 sm:space-x-3 min-w-0">
+        <div class="flex items-center space-x-2.5 min-w-0">
+          <a href="main.html" id="btn-back-portal" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-orange-500/20 text-base sm:text-lg hover:scale-105 transition shrink-0" title="Về Portal">
+            🧮
+          </a>
+          <div class="min-w-0">
+            <div class="flex items-center space-x-1.5 sm:space-x-2">
+              <h1 class="text-[11px] sm:text-xs font-black tracking-wider text-amber-600 uppercase truncate">Đấu Trường Toán Học</h1>
+              <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[9px] sm:text-[10px] font-black shrink-0" id="header-badge-title">Toán Lớp 2</span>
+              <span id="cloud-sync-status" class="px-1.5 sm:px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[9px] sm:text-[10px] font-extrabold flex items-center space-x-1 shrink-0" title="Đã kết nối Firebase Cloud">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="hidden sm:inline">Cloud Realtime</span>
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight truncate mt-0.5" id="header-student-greeting">
+              Chào mừng bé: Thóc (Lớp 2)
+            </p>
           </div>
-          <p class="text-sm sm:text-base font-extrabold text-slate-900 leading-tight" id="header-student-greeting">
-            Thử Thách 10 Bài Toán & Vòng Quay May Mắn
-          </p>
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-        <button onclick="switchTab('arena')" id="nav-arena" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-sm flex items-center space-x-1.5 transition whitespace-nowrap shrink-0">
-          <i data-lucide="gamepad-2" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">Làm bài</span>
+      <!-- Navigation Tabs (Symmetrical & aligned on both mobile & desktop) -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0 overflow-x-auto custom-scrollbar pt-1 md:pt-0">
+        <button onclick="switchTab('arena')" id="nav-arena" class="flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-sm flex items-center justify-center space-x-1.5 transition whitespace-nowrap shrink-0">
+          <i data-lucide="gamepad-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span>Đấu trường</span>
         </button>
-        <button onclick="switchTab('wheel')" id="nav-wheel" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative whitespace-nowrap shrink-0">
-          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+        <button onclick="switchTab('wheel')" id="nav-wheel" class="flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center justify-center space-x-1.5 transition relative whitespace-nowrap shrink-0">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500"></i>
           <span>Vòng quay</span>
           <span id="spin-badge" class="hidden px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-extrabold animate-pulse">1</span>
         </button>
         <!-- Teacher Tab (Admin / Teacher Only) -->
-        <button onclick="switchTab('teacher')" id="nav-teacher" class="hidden px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative whitespace-nowrap shrink-0">
-          <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
+        <button onclick="switchTab('teacher')" id="nav-teacher" class="hidden px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center justify-center space-x-1.5 transition relative whitespace-nowrap shrink-0">
+          <i data-lucide="user-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600"></i>
           <span id="nav-teacher-text">Chấm bài</span>
           <span id="pending-badge" class="hidden px-1.5 py-0.2 bg-indigo-600 text-white rounded-full text-[9px] font-extrabold">0</span>
         </button>
         <!-- Rewards Setting Tab (Admin Only) -->
-        <button onclick="switchTab('rewards')" id="nav-rewards" class="hidden px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition shrink-0" title="Cài đặt quà">
-          <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
+        <button onclick="switchTab('rewards')" id="nav-rewards" class="hidden px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center justify-center space-x-1 transition shrink-0" title="Cài đặt quà">
+          <i data-lucide="gift" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600"></i>
+          <span class="hidden sm:inline">Quà tặng</span>
         </button>
-        <a href="javascript:void(0)" onclick="switchSubject('english')" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 flex items-center space-x-1 transition whitespace-nowrap shrink-0" title="Đổi sang Đấu trường Tiếng Anh">
+        <a href="javascript:void(0)" onclick="switchSubject('english')" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 flex items-center justify-center space-x-1 transition whitespace-nowrap shrink-0" title="Đổi sang Đấu trường Tiếng Anh">
           <span>🇬🇧</span>
           <span class="hidden sm:inline">Tiếng Anh</span>
         </a>
-        <button onclick="logoutKid()" class="px-2.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0" title="Thoát tài khoản">
-          <i data-lucide="log-out" class="w-4 h-4"></i>
+        <button onclick="logoutKid()" class="px-2.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0" title="Thoát / Đổi tài khoản">
+          <i data-lucide="log-out" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
         </button>
       </div>
     </header>
@@ -159,21 +162,26 @@
     <!-- ============================================== -->
     <section id="view-arena" class="space-y-6">
 
-      <!-- Student Banner (Shown when kid logs in) -->
-      <div id="student-welcome-banner" class="hidden bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white p-4 sm:p-5 rounded-2xl shadow-md flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl">
-            🎓
+      <!-- Student Hero Banner (Shown when kid logs in) -->
+      <div id="student-welcome-banner" class="hidden bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white p-4 sm:p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative overflow-hidden">
+        <div class="flex items-center space-x-3 sm:space-x-3.5 z-10 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shrink-0 shadow-inner" id="student-banner-icon">
+            🌱
           </div>
-          <div>
-            <span class="px-2 py-0.5 bg-black/20 text-amber-100 rounded text-[10px] font-bold">Học sinh đăng nhập</span>
-            <h3 class="text-base sm:text-lg font-black" id="student-banner-name">Bé THÓC</h3>
-            <p class="text-xs text-amber-100/90" id="student-banner-desc">Sẵn sàng thử thách 10 bài toán tư duy hôm nay chưa nào?</p>
+          <div class="min-w-0">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 bg-black/20 text-amber-100 rounded-full text-[10px] font-extrabold uppercase tracking-wide">Học sinh đăng nhập</span>
+              <span class="text-xs font-black text-white/90 bg-white/20 px-2.5 py-0.5 rounded-full" id="student-banner-grade">Lớp 2</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-black text-white mt-0.5 truncate" id="student-banner-name">Bé THÓC</h3>
+            <p class="text-xs text-amber-100/90 truncate" id="student-banner-desc">Sẵn sàng thử thách 10 bài toán tư duy hôm nay chưa nào? 🎯</p>
           </div>
         </div>
-        <div class="text-right">
-          <span class="text-xs font-bold text-amber-100 block">Lớp đăng ký:</span>
-          <span class="text-base sm:text-lg font-black bg-white text-orange-600 px-3 py-1 rounded-xl shadow-sm inline-block" id="student-banner-grade">Lớp 2</span>
+        <div class="flex items-center justify-end space-x-2 z-10 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/20 shrink-0">
+          <button onclick="logoutKid()" class="px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 active:scale-95 text-white font-extrabold text-xs border border-white/30 backdrop-blur-md transition flex items-center space-x-1.5 shadow-sm cursor-pointer" title="Đổi tài khoản">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span>Đổi tài khoản</span>
+          </button>
         </div>
       </div>
 
@@ -5228,10 +5236,15 @@ const mathBankGrade5 = [
         document.getElementById('header-badge-title').textContent = `Toán Lớp ${gNum}`;
         document.getElementById('header-student-greeting').textContent = `Chào mừng bé: ${currentKid.name} (Lớp ${gNum})`;
         
+        const switcherBar = document.getElementById('account-switcher-bar');
+        if (switcherBar) switcherBar.classList.add('hidden');
+
         if (welcomeBanner) {
           welcomeBanner.classList.remove('hidden');
           document.getElementById('student-banner-name').textContent = currentKid.name;
           document.getElementById('student-banner-grade').textContent = `Lớp ${gNum}`;
+          const iconEl = document.getElementById('student-banner-icon');
+          if (iconEl) iconEl.textContent = gNum === 2 ? '🌱' : (gNum === 3 ? '⭐' : '🚀');
         }
 
         if (btnBackPortal) {
@@ -5280,6 +5293,8 @@ const mathBankGrade5 = [
         document.getElementById('header-badge-title').textContent = `Quản Trị / Giáo Viên`;
         document.getElementById('header-student-greeting').textContent = `Đấu Trường Toán Học - Góc Phụ Huynh & Giáo Viên`;
         
+        const switcherBar = document.getElementById('account-switcher-bar');
+        if (switcherBar) switcherBar.classList.remove('hidden');
         if (welcomeBanner) welcomeBanner.classList.add('hidden');
         if (btnBackPortal) {
           btnBackPortal.title = 'Về Portal Quản trị';
