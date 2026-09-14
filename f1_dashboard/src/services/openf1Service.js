@@ -52,6 +52,16 @@ export const OpenF1Service = {
   },
 
   /**
+   * Fetch single session details
+   */
+  async getSession(sessionKey) {
+    if (!sessionKey) return null;
+    const url = `${BASE_URL}/sessions?session_key=${sessionKey}`;
+    const data = await fetchJSON(url);
+    return Array.isArray(data) ? data[0] : data;
+  },
+
+  /**
    * Get latest active or most recent session
    */
   async getLatestSession() {
@@ -130,7 +140,8 @@ export const OpenF1Service = {
    * Combined fetch for complete Live Timing Board
    */
   async getFullLiveTiming(sessionKey, targetLap = null) {
-    const [drivers, laps, intervals, stints, weather, raceControl, positions] = await Promise.all([
+    const [sessionInfo, drivers, laps, intervals, stints, weather, raceControl, positions] = await Promise.all([
+      this.getSession(sessionKey).catch(() => null),
       this.getDrivers(sessionKey).catch(() => []),
       this.getLaps(sessionKey).catch(() => []),
       this.getIntervals(sessionKey).catch(() => []),
@@ -157,6 +168,7 @@ export const OpenF1Service = {
         interval: '+0.000',
         lastLapTime: '--:--',
         bestLapTime: '--:--',
+        personalBestLap: Infinity,
         s1: '--.---',
         s2: '--.---',
         s3: '--.---',
@@ -231,6 +243,8 @@ export const OpenF1Service = {
         if (l.lap_duration && l.lap_duration < personalBestLap) personalBestLap = l.lap_duration;
       });
 
+      driver.personalBestLap = personalBestLap;
+
       // Latest lap
       const latestLap = driverLaps[driverLaps.length - 1];
       if (latestLap) {
@@ -303,60 +317,97 @@ export const OpenF1Service = {
       }
     });
 
-    // Compute target timestamp for filtering positions and intervals to match activeLap
-    let targetTimestamp = null;
-    if (targetLap && maxLapInSession > 0) {
-      const activeLapDates = laps
-        .filter(l => l.lap_number === targetLap && l.date_start)
-        .map(l => new Date(l.date_start).getTime());
-      
-      if (activeLapDates.length > 0) {
-        targetTimestamp = Math.max(...activeLapDates) + 100000;
-      }
-    }
+    // Detect session type (Practice / Qualifying vs Race / Sprint)
+    const sessionType = (sessionInfo?.session_type || '').toLowerCase();
+    const sessionName = (sessionInfo?.session_name || '').toLowerCase();
+    const isTimedSession = sessionType === 'practice' || sessionType === 'qualifying' || sessionName.includes('practice') || sessionName.includes('qualifying') || sessionName.includes('shootout') || sessionName.includes('testing') || sessionName.includes('day');
 
-    // Filter positions and intervals by targetTimestamp
-    const validPositions = (targetTimestamp && positions)
-      ? positions.filter(p => !p.date || new Date(p.date).getTime() <= targetTimestamp)
-      : (positions || []);
+    let sortedDrivers = [];
 
-    const validIntervals = (targetTimestamp && intervals)
-      ? intervals.filter(i => !i.date || new Date(i.date).getTime() <= targetTimestamp)
-      : (intervals || []);
+    if (isTimedSession) {
+      // In Practice & Qualifying, rank drivers by their Personal Best Lap!
+      const driversWithTime = Array.from(driverMap.values()).filter(d => d.personalBestLap < Infinity);
+      driversWithTime.sort((a, b) => a.personalBestLap - b.personalBestLap);
 
-    // Attach latest positions
-    if (validPositions.length > 0) {
-      const driverLatestPos = new Map();
-      validPositions.forEach(p => {
-        driverLatestPos.set(p.driver_number, p.position);
-      });
-      driverLatestPos.forEach((pos, driverNum) => {
-        const driver = driverMap.get(driverNum);
-        if (driver) driver.position = pos;
-      });
-    }
+      const driversWithoutTime = Array.from(driverMap.values()).filter(d => d.personalBestLap === Infinity);
+      driversWithoutTime.sort((a, b) => (a.number || 0) - (b.number || 0));
 
-    // Attach latest intervals
-    if (validIntervals.length > 0) {
-      const driverLatestInterval = new Map();
-      validIntervals.forEach(i => {
-        driverLatestInterval.set(i.driver_number, i);
-      });
-      driverLatestInterval.forEach((data, driverNum) => {
-        const driver = driverMap.get(driverNum);
-        if (driver) {
-          driver.gap = data.gap_to_leader != null ? (typeof data.gap_to_leader === 'number' ? `+${data.gap_to_leader.toFixed(3)}` : data.gap_to_leader) : 'LEADER';
-          driver.interval = data.interval != null ? (typeof data.interval === 'number' ? `+${data.interval.toFixed(3)}` : data.interval) : '--';
-          if (driver.position === 1) {
-            driver.gap = 'LEADER';
-            driver.interval = '--';
-          }
+      driversWithTime.forEach((driver, idx) => {
+        driver.position = idx + 1;
+        if (idx === 0) {
+          driver.gap = 'FASTEST';
+          driver.interval = '--';
+        } else {
+          const gapVal = driver.personalBestLap - sessionFastestLap;
+          const prevDriver = driversWithTime[idx - 1];
+          const intVal = driver.personalBestLap - prevDriver.personalBestLap;
+          driver.gap = `+${gapVal.toFixed(3)}`;
+          driver.interval = `+${intVal.toFixed(3)}`;
         }
       });
-    }
 
-    // Sort drivers by position
-    const sortedDrivers = Array.from(driverMap.values()).sort((a, b) => a.position - b.position);
+      driversWithoutTime.forEach((driver, idx) => {
+        driver.position = driversWithTime.length + idx + 1;
+        driver.gap = 'NO TIME';
+        driver.interval = '--';
+      });
+
+      sortedDrivers = [...driversWithTime, ...driversWithoutTime];
+    } else {
+      // In Race & Sprint, compute target timestamp for filtering positions and intervals to match activeLap
+      let targetTimestamp = null;
+      if (targetLap && maxLapInSession > 0) {
+        const activeLapDates = laps
+          .filter(l => l.lap_number === targetLap && l.date_start)
+          .map(l => new Date(l.date_start).getTime());
+        
+        if (activeLapDates.length > 0) {
+          targetTimestamp = Math.max(...activeLapDates) + 100000;
+        }
+      }
+
+      // Filter positions and intervals by targetTimestamp
+      const validPositions = (targetTimestamp && positions)
+        ? positions.filter(p => !p.date || new Date(p.date).getTime() <= targetTimestamp)
+        : (positions || []);
+
+      const validIntervals = (targetTimestamp && intervals)
+        ? intervals.filter(i => !i.date || new Date(i.date).getTime() <= targetTimestamp)
+        : (intervals || []);
+
+      // Attach latest positions
+      if (validPositions.length > 0) {
+        const driverLatestPos = new Map();
+        validPositions.forEach(p => {
+          driverLatestPos.set(p.driver_number, p.position);
+        });
+        driverLatestPos.forEach((pos, driverNum) => {
+          const driver = driverMap.get(driverNum);
+          if (driver) driver.position = pos;
+        });
+      }
+
+      // Attach latest intervals
+      if (validIntervals.length > 0) {
+        const driverLatestInterval = new Map();
+        validIntervals.forEach(i => {
+          driverLatestInterval.set(i.driver_number, i);
+        });
+        driverLatestInterval.forEach((data, driverNum) => {
+          const driver = driverMap.get(driverNum);
+          if (driver) {
+            driver.gap = data.gap_to_leader != null ? (typeof data.gap_to_leader === 'number' ? `+${data.gap_to_leader.toFixed(3)}` : data.gap_to_leader) : 'LEADER';
+            driver.interval = data.interval != null ? (typeof data.interval === 'number' ? `+${data.interval.toFixed(3)}` : data.interval) : '--';
+            if (driver.position === 1) {
+              driver.gap = 'LEADER';
+              driver.interval = '--';
+            }
+          }
+        });
+      }
+
+      sortedDrivers = Array.from(driverMap.values()).sort((a, b) => a.position - b.position);
+    }
 
     // Latest Weather
     const latestWeather = weather.length > 0 ? weather[weather.length - 1] : null;
@@ -366,6 +417,10 @@ export const OpenF1Service = {
 
     return {
       sessionKey,
+      sessionInfo,
+      sessionType: sessionInfo?.session_type || (isTimedSession ? 'Practice' : 'Race'),
+      sessionName: sessionInfo?.session_name || 'Session',
+      isTimedSession,
       maxLap: maxLapInSession,
       activeLap,
       fastestLap: formatLapTime(sessionFastestLap),

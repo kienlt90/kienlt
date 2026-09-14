@@ -44,36 +44,39 @@ export async function renderOpenF1App(container) {
             <span class="live-dot" id="openf1-status-dot"></span>
             <span id="openf1-status-text">OPENF1 API ONLINE</span>
           </div>
-          <h2 class="openf1-heading">Apex F1 · Hệ Thống Viễn Trắc & Live Timing (Mùa Giải 2026)</h2>
+          <h2 class="openf1-heading" id="openf1-heading-title">Apex F1 · Hệ Thống Viễn Trắc & Live Timing (Mùa Giải 2026)</h2>
         </div>
 
         <div class="openf1-controls">
           <!-- Year Selector -->
-          <div class="control-item">
+          <div class="control-group">
             <label for="select-year">Mùa giải:</label>
             <select id="select-year" class="openf1-select">
-              <option value="2026" selected>2026 (Hiện Tại)</option>
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
-              <option value="2023">2023</option>
+              <option value="2026" ${currentYear === 2026 ? 'selected' : ''}>2026 (Hiện Tại)</option>
+              <option value="2025" ${currentYear === 2025 ? 'selected' : ''}>2025</option>
+              <option value="2024" ${currentYear === 2024 ? 'selected' : ''}>2024</option>
+              <option value="2023" ${currentYear === 2023 ? 'selected' : ''}>2023</option>
             </select>
           </div>
 
           <!-- Grand Prix Selector -->
-          <div class="control-item">
+          <div class="control-group">
             <label for="select-meeting">Chặng Đua:</label>
-            <select id="select-meeting" class="openf1-select" style="min-width: 220px;">
-              ${PRESET_MEETINGS.map(m => `
-                <option value="${m.session_key}" ${m.session_key === currentSessionKey ? 'selected' : ''}>
-                  ${m.flag} ${m.name}
-                </option>
-              `).join('')}
-              <option value="latest">⚡ Phiên đua Mới nhất (Live / Latest)</option>
+            <select id="select-meeting" class="openf1-select" style="min-width: 210px;">
+              <option value="">Đang tải chặng đua...</option>
+            </select>
+          </div>
+
+          <!-- Session Selector (FP1, FP2, FP3, Quali, Race) -->
+          <div class="control-group">
+            <label for="select-session">Phiên Đua:</label>
+            <select id="select-session" class="openf1-select" style="min-width: 200px;">
+              <option value="">Đang tải phiên...</option>
             </select>
           </div>
 
           <!-- Mode buttons -->
-          <div class="control-item mode-actions">
+          <div class="control-group mode-actions">
             <button id="btn-toggle-live" class="openf1-btn ${isLivePolling ? 'active' : ''}">
               <span class="pulse-icon"></span>
               <span>Live Poll (5s)</span>
@@ -142,7 +145,7 @@ export async function renderOpenF1App(container) {
         </div>
 
         <div class="fastest-lap-badge" id="openf1-fl-badge">
-          <span class="fl-tag">FASTEST LAP</span>
+          <span class="fl-tag" id="openf1-fl-tag">FASTEST LAP</span>
           <span class="fl-driver" id="openf1-fl-driver">--</span>
           <span class="fl-time" id="openf1-fl-time">--:--.---</span>
         </div>
@@ -200,38 +203,97 @@ export async function renderOpenF1App(container) {
 
 async function loadMeetingsForYear(year, container) {
   try {
-    const meetings = await OpenF1Service.getMeetings(year);
-    cachedMeetings = meetings;
+    const selectMeeting = container.querySelector('#select-meeting');
+    if (selectMeeting) selectMeeting.innerHTML = `<option value="">Đang tải danh sách chặng ${year}...</option>`;
 
-    const select = container.querySelector('#select-meeting');
-    if (select && meetings.length > 0) {
-      // Find race sessions for meetings
-      select.innerHTML = `
-        <optgroup label="Chặng Đua Nổi Bật">
-          ${PRESET_MEETINGS.filter(p => p.year === parseInt(year, 10)).map(m => `
-            <option value="${m.session_key}" ${m.session_key === currentSessionKey ? 'selected' : ''}>
-              ${m.flag} ${m.name}
-            </option>
-          `).join('')}
-        </optgroup>
-        <optgroup label="Tất Cả Chặng ${year}">
-          ${meetings.map(m => `
-            <option value="m_${m.meeting_key}" ${m.meeting_key === currentMeetingKey ? 'selected' : ''}>
-              🏁 ${m.meeting_name} (${m.location})
-            </option>
-          `).join('')}
-        </optgroup>
+    const meetings = await OpenF1Service.getMeetings(year);
+    cachedMeetings = meetings || [];
+
+    if (selectMeeting && cachedMeetings.length > 0) {
+      // Find default meeting
+      let defaultMeeting = cachedMeetings.find(m => m.meeting_key === currentMeetingKey);
+      if (!defaultMeeting) {
+        defaultMeeting = cachedMeetings[cachedMeetings.length - 1] || cachedMeetings[0];
+        currentMeetingKey = defaultMeeting.meeting_key;
+      }
+
+      selectMeeting.innerHTML = `
         <option value="latest">⚡ Phiên đua Mới nhất (Live / Latest)</option>
+        ${cachedMeetings.map(m => `
+          <option value="${m.meeting_key}" ${m.meeting_key === currentMeetingKey ? 'selected' : ''}>
+            🏁 ${m.meeting_name} (${m.location || m.circuit_short_name || ''})
+          </option>
+        `).join('')}
       `;
+
+      await loadSessionsForMeeting(currentMeetingKey, container);
     }
   } catch (err) {
-    console.warn('Could not load meetings list, using presets fallback:', err);
+    console.warn('Could not load meetings list:', err);
   }
+}
+
+async function loadSessionsForMeeting(meetingKey, container) {
+  const selectSession = container.querySelector('#select-session');
+  if (!selectSession) return;
+
+  if (meetingKey === 'latest') {
+    selectSession.innerHTML = `<option value="latest" selected>⚡ Live / Latest Session</option>`;
+    currentSessionKey = 'latest';
+    return;
+  }
+
+  try {
+    selectSession.innerHTML = `<option value="">Đang tải phiên đua...</option>`;
+    const sessions = await OpenF1Service.getSessions(meetingKey, currentYear);
+    cachedSessions = sessions || [];
+
+    if (cachedSessions.length > 0) {
+      // Prefer Race, or if not found, Qualifying, or latest session
+      let selectedSession = cachedSessions.find(s => s.session_key === currentSessionKey);
+      if (!selectedSession) {
+        selectedSession = cachedSessions.find(s => (s.session_name || '').toLowerCase().includes('race')) 
+          || cachedSessions.find(s => (s.session_name || '').toLowerCase().includes('qualifying'))
+          || cachedSessions[cachedSessions.length - 1];
+        if (selectedSession) currentSessionKey = selectedSession.session_key;
+      }
+
+      selectSession.innerHTML = cachedSessions.map(s => `
+        <option value="${s.session_key}" ${s.session_key === currentSessionKey ? 'selected' : ''}>
+          ${formatSessionLabel(s)}
+        </option>
+      `).join('');
+    } else {
+      selectSession.innerHTML = `<option value="${currentSessionKey}">🏁 Phiên Đua (${currentSessionKey})</option>`;
+    }
+  } catch (err) {
+    console.warn('Could not load sessions:', err);
+    selectSession.innerHTML = `<option value="${currentSessionKey}">🏁 Phiên Đua Hiện Tại</option>`;
+  }
+}
+
+function formatSessionLabel(session) {
+  if (!session) return 'Phiên Đua';
+  const name = session.session_name || '';
+  const nameLower = name.toLowerCase();
+
+  if (nameLower.includes('practice 1') || nameLower === 'fp1') return `🏎️ Practice 1 (FP1)`;
+  if (nameLower.includes('practice 2') || nameLower === 'fp2') return `🏎️ Practice 2 (FP2)`;
+  if (nameLower.includes('practice 3') || nameLower === 'fp3') return `🏎️ Practice 3 (FP3)`;
+  if (nameLower.includes('qualifying') && !nameLower.includes('sprint')) return `⚡ Qualifying (Phân hạng)`;
+  if (nameLower.includes('sprint qualifying') || nameLower.includes('sprint shootout')) return `⚡ Sprint Shootout`;
+  if (nameLower === 'sprint' || nameLower.includes('sprint race')) return `💨 Sprint Race`;
+  if (nameLower.includes('race')) return `🏁 Race (Chính thức)`;
+  if (nameLower.includes('day 1')) return `🧪 Testing Day 1`;
+  if (nameLower.includes('day 2')) return `🧪 Testing Day 2`;
+  if (nameLower.includes('day 3')) return `🧪 Testing Day 3`;
+  return `🏁 ${name}`;
 }
 
 function setupEventListeners(container) {
   const selectYear = container.querySelector('#select-year');
   const selectMeeting = container.querySelector('#select-meeting');
+  const selectSession = container.querySelector('#select-session');
   const btnToggleLive = container.querySelector('#btn-toggle-live');
   const btnRefresh = container.querySelector('#btn-refresh-data');
   const slider = container.querySelector('#openf1-lap-slider');
@@ -244,33 +306,39 @@ function setupEventListeners(container) {
   // Year Change
   selectYear.addEventListener('change', async (e) => {
     currentYear = parseInt(e.target.value, 10);
+    currentMeetingKey = null;
+    currentSessionKey = null;
+    activeLap = null;
     await loadMeetingsForYear(currentYear, container);
+    await loadSessionData();
   });
 
   // Meeting Change
   selectMeeting.addEventListener('change', async (e) => {
     const val = e.target.value;
+    activeLap = null;
     if (val === 'latest') {
-      try {
-        const latest = await OpenF1Service.getLatestSession();
-        currentSessionKey = latest.session_key;
-      } catch (err) {
-        console.error(err);
-      }
-    } else if (val.startsWith('m_')) {
-      const meetingKey = parseInt(val.replace('m_', ''), 10);
-      currentMeetingKey = meetingKey;
-      try {
-        const sessions = await OpenF1Service.getSessions(meetingKey, currentYear);
-        const race = sessions.find(s => s.session_name.toLowerCase().includes('race')) || sessions[sessions.length - 1];
-        if (race) currentSessionKey = race.session_key;
-      } catch (err) {
-        console.error(err);
-      }
+      currentMeetingKey = 'latest';
+      currentSessionKey = 'latest';
+      if (selectSession) selectSession.innerHTML = `<option value="latest" selected>⚡ Live / Latest Session</option>`;
+      await loadSessionData();
+    } else {
+      currentMeetingKey = parseInt(val, 10);
+      currentSessionKey = null;
+      await loadSessionsForMeeting(currentMeetingKey, container);
+      await loadSessionData();
+    }
+  });
+
+  // Session Change
+  selectSession.addEventListener('change', async (e) => {
+    const val = e.target.value;
+    activeLap = null;
+    if (val === 'latest') {
+      currentSessionKey = 'latest';
     } else {
       currentSessionKey = parseInt(val, 10);
     }
-    activeLap = null;
     await loadSessionData();
   });
 
@@ -365,16 +433,71 @@ async function loadSessionData(targetLap = null) {
   const rowsContainer = document.querySelector('#openf1-tower-rows');
   const statusText = document.querySelector('#openf1-status-text');
   const statusDot = document.querySelector('#openf1-status-dot');
+  const headingTitle = document.querySelector('#openf1-heading-title');
 
   try {
     if (statusText) statusText.textContent = 'ĐANG ĐỒNG BỘ DỮ LIỆU...';
     if (statusDot) statusDot.style.background = '#FFD700';
 
-    const timingData = await OpenF1Service.getFullLiveTiming(currentSessionKey, targetLap);
+    let sessionKeyToFetch = currentSessionKey;
+    if (!sessionKeyToFetch || sessionKeyToFetch === 'latest') {
+      const latest = await OpenF1Service.getLatestSession();
+      if (latest && latest.session_key) {
+        sessionKeyToFetch = latest.session_key;
+        currentSessionKey = latest.session_key;
+      } else {
+        sessionKeyToFetch = 11369; // Madrid 2026 fallback
+      }
+    }
+
+    const timingData = await OpenF1Service.getFullLiveTiming(sessionKeyToFetch, targetLap);
     currentTimingData = timingData;
     
     if (statusText) statusText.textContent = `OPENF1 ONLINE (${timingData.drivers.length} TAY ĐUA)`;
     if (statusDot) statusDot.style.background = '#00FF66';
+
+    // Update session title
+    if (headingTitle && timingData.sessionInfo) {
+      const mName = timingData.sessionInfo.meeting_name || timingData.sessionInfo.location || 'Chặng Đua';
+      const sLabel = formatSessionLabel(timingData.sessionInfo);
+      headingTitle.textContent = `Apex F1 · ${mName} · ${sLabel} (${timingData.sessionInfo.year || currentYear})`;
+    }
+
+    // Update Header grid columns based on session type
+    const towerHeader = document.querySelector('.tower-header-grid');
+    if (towerHeader) {
+      if (timingData.isTimedSession) {
+        towerHeader.innerHTML = `
+          <div class="col-pos">POS</div>
+          <div class="col-driver">TAY ĐUA / ĐỘI ĐUA</div>
+          <div class="col-gap">GAP (P1)</div>
+          <div class="col-int">INTERVAL</div>
+          <div class="col-tyre">LỐP</div>
+          <div class="col-last">VÒNG VỪA QUA</div>
+          <div class="col-best">VÒNG TỐT NHẤT</div>
+          <div class="col-s1">S1</div>
+          <div class="col-s2">S2</div>
+          <div class="col-s3">S3</div>
+          <div class="col-mini">MINI SECTORS (THỰC TẾ)</div>
+          <div class="col-st">TỐC ĐỘ MAX</div>
+        `;
+      } else {
+        towerHeader.innerHTML = `
+          <div class="col-pos">POS</div>
+          <div class="col-driver">TAY ĐUA / ĐỘI ĐUA</div>
+          <div class="col-gap">GAP</div>
+          <div class="col-int">INT</div>
+          <div class="col-tyre">LỐP</div>
+          <div class="col-last">VÒNG VỪA QUA</div>
+          <div class="col-best">VÒNG TỐT NHẤT</div>
+          <div class="col-s1">S1</div>
+          <div class="col-s2">S2</div>
+          <div class="col-s3">S3</div>
+          <div class="col-mini">MINI SECTORS (THỰC TẾ)</div>
+          <div class="col-st">TỐC ĐỘ MAX</div>
+        `;
+      }
+    }
 
     maxLap = timingData.maxLap || 58;
     if (!activeLap) activeLap = maxLap;
@@ -383,14 +506,16 @@ async function loadSessionData(targetLap = null) {
     const slider = document.querySelector('#openf1-lap-slider');
     const lapText = document.querySelector('#replay-current-lap-text');
     if (slider) {
-      slider.max = maxLap;
+      slider.max = Math.max(1, maxLap);
       slider.value = activeLap;
     }
     if (lapText) lapText.textContent = `Vòng ${activeLap} / ${maxLap}`;
 
-    // Update Fastest Lap
+    // Update Fastest Lap / Pole
+    const flTag = document.querySelector('#openf1-fl-tag');
     const flDriver = document.querySelector('#openf1-fl-driver');
     const flTime = document.querySelector('#openf1-fl-time');
+    if (flTag) flTag.textContent = timingData.isTimedSession ? 'BEST TIME' : 'FASTEST LAP';
     if (flDriver) flDriver.textContent = timingData.fastestLapHolder || '--';
     if (flTime) flTime.textContent = timingData.fastestLap || '--:--.---';
 
