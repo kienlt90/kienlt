@@ -74,19 +74,19 @@
 <body class="bg-gradient-to-br from-slate-100 via-sky-50 to-indigo-50 text-slate-800 antialiased min-h-full flex flex-col selection:bg-sky-200 selection:text-sky-900">
 
   <!-- Main Responsive Container -->
-  <div class="w-full max-w-5xl mx-auto min-h-screen flex flex-col px-3 sm:px-6 py-4 sm:py-6">
+  <div class="w-full max-w-6xl xl:max-w-7xl 2xl:max-w-[1400px] mx-auto min-h-screen flex flex-col px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
 
     <!-- Top Navigation Header -->
-    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex items-center justify-between mb-4 sm:mb-5">
+    <header class="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm px-4 sm:px-6 py-3.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 mb-4 sm:mb-5">
       <div class="flex items-center space-x-3">
-        <a href="main.html" id="btn-back-portal" class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-orange-500/20 text-lg hover:scale-105 transition" title="Về Portal">
+        <a href="main.html" id="btn-back-portal" class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-extrabold shadow-md shadow-orange-500/20 text-lg hover:scale-105 transition shrink-0" title="Về Portal">
           🧮
         </a>
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="text-xs font-bold tracking-wider text-amber-600 uppercase">Đấu Trường Toán Học</h1>
-            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold" id="header-badge-title">Toán Tư Duy</span>
-            <span id="cloud-sync-status" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-extrabold flex items-center space-x-1" title="Đã kết nối Google Firebase Realtime Cloud">
+            <h1 class="text-xs font-bold tracking-wider text-amber-600 uppercase whitespace-nowrap">Đấu Trường Toán Học</h1>
+            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold whitespace-nowrap" id="header-badge-title">Toán Tư Duy</span>
+            <span id="cloud-sync-status" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-extrabold flex items-center space-x-1 whitespace-nowrap" title="Đã kết nối Google Firebase Realtime Cloud">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
               <span class="hidden sm:inline">Cloud Realtime</span>
             </span>
@@ -98,31 +98,31 @@
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex items-center space-x-1.5 sm:space-x-2">
-        <button onclick="switchTab('arena')" id="nav-arena" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-sm flex items-center space-x-1.5 transition">
+      <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+        <button onclick="switchTab('arena')" id="nav-arena" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-sm flex items-center space-x-1.5 transition whitespace-nowrap shrink-0">
           <i data-lucide="gamepad-2" class="w-4 h-4"></i>
           <span class="hidden sm:inline">Làm bài</span>
         </button>
-        <button onclick="switchTab('wheel')" id="nav-wheel" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
+        <button onclick="switchTab('wheel')" id="nav-wheel" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative whitespace-nowrap shrink-0">
           <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
           <span>Vòng quay</span>
           <span id="spin-badge" class="hidden px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-extrabold animate-pulse">1</span>
         </button>
         <!-- Teacher Tab (Admin / Teacher Only) -->
-        <button onclick="switchTab('teacher')" id="nav-teacher" class="hidden px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative">
+        <button onclick="switchTab('teacher')" id="nav-teacher" class="hidden px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative whitespace-nowrap shrink-0">
           <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
           <span id="nav-teacher-text">Chấm bài</span>
           <span id="pending-badge" class="hidden px-1.5 py-0.2 bg-indigo-600 text-white rounded-full text-[9px] font-extrabold">0</span>
         </button>
         <!-- Rewards Setting Tab (Admin Only) -->
-        <button onclick="switchTab('rewards')" id="nav-rewards" class="hidden px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition" title="Cài đặt quà">
+        <button onclick="switchTab('rewards')" id="nav-rewards" class="hidden px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1 transition shrink-0" title="Cài đặt quà">
           <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
         </button>
-        <a href="javascript:void(0)" onclick="switchSubject('english')" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 flex items-center space-x-1 transition" title="Đổi sang Đấu trường Tiếng Anh">
+        <a href="javascript:void(0)" onclick="switchSubject('english')" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 flex items-center space-x-1 transition whitespace-nowrap shrink-0" title="Đổi sang Đấu trường Tiếng Anh">
           <span>🇬🇧</span>
           <span class="hidden sm:inline">Tiếng Anh</span>
         </a>
-        <button onclick="logoutKid()" class="px-2.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="Thoát tài khoản">
+        <button onclick="logoutKid()" class="px-2.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0" title="Thoát tài khoản">
           <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
       </div>
@@ -256,15 +256,15 @@
         </div>
       </div>
 
-      <!-- Level Selection (Grade 2 vs Grade 5) -->
-      <div id="level-selection" class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- Level Selection (Grade 2 vs Grade 3 vs Grade 5) -->
+      <div id="level-selection" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Grade 2 Card -->
-        <div id="card-grade-2" onclick="startQuiz(2)" class="group bg-gradient-to-br from-white to-amber-50/70 p-6 rounded-3xl border-2 border-amber-200/80 shadow-md hover:border-amber-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
+        <div id="card-grade-2" onclick="startQuiz(2)" class="group bg-gradient-to-br from-white to-amber-50/70 p-6 sm:p-7 rounded-3xl border-2 border-amber-200/80 shadow-md hover:border-amber-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
           <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-amber-200/40 rounded-full blur-2xl pointer-events-none"></div>
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="px-3 py-1 bg-amber-100 text-amber-800 font-extrabold text-xs rounded-full border border-amber-300">
+              <span class="px-3 py-1 bg-amber-100 text-amber-800 font-extrabold text-xs rounded-full border border-amber-300 whitespace-nowrap">
                 🌱 Dành cho Học sinh Lớp 2 (Bé THÓC)
               </span>
               <span class="text-3xl">🧩</span>
@@ -272,31 +272,29 @@
             <h2 class="text-xl font-extrabold text-slate-900 group-hover:text-amber-600 transition">
               Toán Tư Duy - Khám Phá Logic Nhí
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            <p class="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed">
               Ngân hàng <b>100 bài toán logic Lớp 2</b> (Quy luật dãy số, cân thăng bằng con vật, đếm hình học, bài toán cưa gỗ, đồng hồ, tuổi tác...). Mỗi lần thi rút <b>ngẫu nhiên 10 câu</b> chống lặp trong 3 lượt thi!
             </p>
           </div>
-          <div class="mt-6 pt-4 border-t border-amber-100 flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500">
-              <i data-lucide="shuffle" class="w-4 h-4 text-amber-500"></i>
-              <span>10 câu ngẫu nhiên</span>
+          <div class="mt-6 pt-4 border-t border-amber-100/90 flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-1.5 text-xs font-semibold text-slate-500">
+              <span class="inline-flex items-center space-x-1 whitespace-nowrap"><i data-lucide="shuffle" class="w-3.5 h-3.5 text-amber-500 shrink-0"></i><span>10 câu ngẫu nhiên</span></span>
               <span>•</span>
-              <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
-              <span>Thưởng 1-3 spin theo điểm</span>
+              <span class="inline-flex items-center space-x-1 whitespace-nowrap"><i data-lucide="award" class="w-3.5 h-3.5 text-amber-500 shrink-0"></i><span>Thưởng 1-3 spin</span></span>
             </div>
-            <button class="px-4 py-2 bg-amber-500 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-amber-600 flex items-center space-x-1.5 transition">
+            <button class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center space-x-1.5 transition whitespace-nowrap shrink-0 group-hover:scale-[1.02]">
               <span>Bắt đầu thi</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 shrink-0"></i>
             </button>
           </div>
         </div>
 
         <!-- Grade 3 Card -->
-        <div id="card-grade-3" onclick="startQuiz(3)" class="group bg-gradient-to-br from-white to-emerald-50/70 p-6 rounded-3xl border-2 border-emerald-200/80 shadow-md hover:border-emerald-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
+        <div id="card-grade-3" onclick="startQuiz(3)" class="group bg-gradient-to-br from-white to-emerald-50/70 p-6 sm:p-7 rounded-3xl border-2 border-emerald-200/80 shadow-md hover:border-emerald-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
           <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-emerald-200/40 rounded-full blur-2xl pointer-events-none"></div>
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="px-3 py-1 bg-emerald-100 text-emerald-800 font-extrabold text-xs rounded-full border border-emerald-300">
+              <span class="px-3 py-1 bg-emerald-100 text-emerald-800 font-extrabold text-xs rounded-full border border-emerald-300 whitespace-nowrap">
                 ⭐ Dành cho Học sinh Lớp 3
               </span>
               <span class="text-3xl">📐</span>
@@ -304,31 +302,29 @@
             <h2 class="text-xl font-extrabold text-slate-900 group-hover:text-emerald-600 transition">
               Toán Tư Duy - Bứt Phá Nhân Chia & Hình Học
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            <p class="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed">
               Ngân hàng <b>50 bài toán logic Lớp 3</b> (Bảng nhân chia 6-9, chia có dư, gấp/giảm số lần, chu vi diện tích hình chữ nhật/hình vuông, trung điểm đoạn thẳng, toán đố 2 bước tính...). Rút <b>ngẫu nhiên 10 câu</b> chống lặp!
             </p>
           </div>
-          <div class="mt-6 pt-4 border-t border-emerald-100 flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500">
-              <i data-lucide="shuffle" class="w-4 h-4 text-emerald-500"></i>
-              <span>10 câu ngẫu nhiên</span>
+          <div class="mt-6 pt-4 border-t border-emerald-100/90 flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-1.5 text-xs font-semibold text-slate-500">
+              <span class="inline-flex items-center space-x-1 whitespace-nowrap"><i data-lucide="shuffle" class="w-3.5 h-3.5 text-emerald-500 shrink-0"></i><span>10 câu ngẫu nhiên</span></span>
               <span>•</span>
-              <i data-lucide="award" class="w-4 h-4 text-emerald-500"></i>
-              <span>Thưởng 1-3 spin theo điểm</span>
+              <span class="inline-flex items-center space-x-1 whitespace-nowrap"><i data-lucide="award" class="w-3.5 h-3.5 text-emerald-500 shrink-0"></i><span>Thưởng 1-3 spin</span></span>
             </div>
-            <button class="px-4 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-emerald-700 flex items-center space-x-1.5 transition">
+            <button class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center space-x-1.5 transition whitespace-nowrap shrink-0 group-hover:scale-[1.02]">
               <span>Bắt đầu thi</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 shrink-0"></i>
             </button>
           </div>
         </div>
 
         <!-- Grade 5 Card -->
-        <div id="card-grade-5" onclick="startQuiz(5)" class="group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
+        <div id="card-grade-5" onclick="startQuiz(5)" class="group bg-gradient-to-br from-white to-sky-50/70 p-6 sm:p-7 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between">
           <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-sky-200/40 rounded-full blur-2xl pointer-events-none"></div>
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="px-3 py-1 bg-sky-100 text-sky-800 font-extrabold text-xs rounded-full border border-sky-300">
+              <span class="px-3 py-1 bg-sky-100 text-sky-800 font-extrabold text-xs rounded-full border border-sky-300 whitespace-nowrap">
                 🚀 Dành cho Học sinh Lớp 5 (Bé Gấu)
               </span>
               <span class="text-3xl">🏆</span>
@@ -336,21 +332,19 @@
             <h2 class="text-xl font-extrabold text-slate-900 group-hover:text-sky-600 transition">
               Toán Tư Duy - Chinh Phục Đỉnh Cao
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            <p class="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed">
               Ngân hàng <b>50 bài toán logic Lớp 5</b> (Fibonacci mở rộng, toán bắt tay tổ hợp, trồng cây 2 đầu, vận tốc đuổi bắt, giả thiết tạm gà chó, suy luận kẻ nói dối...). Rút <b>ngẫu nhiên 10 câu</b> chống lặp!
             </p>
           </div>
-          <div class="mt-6 pt-4 border-t border-sky-100 flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500">
-              <i data-lucide="shuffle" class="w-4 h-4 text-sky-500"></i>
-              <span>10 câu ngẫu nhiên</span>
+          <div class="mt-6 pt-4 border-t border-sky-100/90 flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-1.5 text-xs font-semibold text-slate-500">
+              <span class="inline-flex items-center space-x-1 whitespace-nowrap"><i data-lucide="shuffle" class="w-3.5 h-3.5 text-sky-500 shrink-0"></i><span>10 câu ngẫu nhiên</span></span>
               <span>•</span>
-              <i data-lucide="award" class="w-4 h-4 text-sky-500"></i>
-              <span>Thưởng 1-3 spin theo điểm</span>
+              <span class="inline-flex items-center space-x-1 whitespace-nowrap"><i data-lucide="award" class="w-3.5 h-3.5 text-sky-500 shrink-0"></i><span>Thưởng 1-3 spin</span></span>
             </div>
-            <button class="px-4 py-2 bg-sky-600 text-white font-bold text-xs rounded-xl shadow-md group-hover:bg-sky-700 flex items-center space-x-1.5 transition">
+            <button class="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center space-x-1.5 transition whitespace-nowrap shrink-0 group-hover:scale-[1.02]">
               <span>Bắt đầu thi</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 shrink-0"></i>
             </button>
           </div>
         </div>
@@ -4785,7 +4779,7 @@ const mathBankGrade5 = [
         const nav = document.getElementById(`nav-${t}`);
         if (view) view.classList.add('hidden');
         if (nav) {
-          nav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative';
+          nav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center space-x-1.5 transition relative whitespace-nowrap shrink-0';
         }
       });
 
@@ -4793,7 +4787,7 @@ const mathBankGrade5 = [
       const activeNav = document.getElementById(`nav-${tab}`);
       if (activeView) activeView.classList.remove('hidden');
       if (activeNav) {
-        activeNav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-sm flex items-center space-x-1.5 transition relative';
+        activeNav.className = 'px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-sm flex items-center space-x-1.5 transition relative whitespace-nowrap shrink-0';
       }
 
       if (tab === 'arena') {
@@ -4897,16 +4891,16 @@ const mathBankGrade5 = [
         }
 
         const cls = isActive 
-          ? `px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 ${activeClass}`
-          : `px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 ${inactiveClass}`;
+          ? `px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1.5 whitespace-nowrap shrink-0 ${activeClass}`
+          : `px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 whitespace-nowrap shrink-0 ${inactiveClass}`;
 
         return `<button onclick="switchActiveKid('${k.id}')" class="${cls}"><span>${icon} ${k.name} (Lớp ${k.grade})</span></button>`;
       }).join('');
 
       const adminActive = !currentKid;
       const adminCls = adminActive
-        ? 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-400'
-        : 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-slate-800 text-white border-slate-800 hover:bg-slate-700';
+        ? 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1.5 bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-400 whitespace-nowrap shrink-0'
+        : 'px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 bg-slate-800 text-white border-slate-800 hover:bg-slate-700 whitespace-nowrap shrink-0';
 
       container.innerHTML = kidsButtons + `<button onclick="switchActiveKid('admin')" class="${adminCls}"><span>👨‍💼 Phụ huynh / Admin</span></button>`;
     }
@@ -4919,9 +4913,9 @@ const mathBankGrade5 = [
       const activeLabel = document.getElementById('current-active-kid-label');
 
       // Reset button styles
-      if (swThoc) swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300';
-      if (swGau) swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-sky-50 hover:bg-sky-100 text-sky-800 border-sky-300';
-      if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1 bg-slate-800 text-white border-slate-800 hover:bg-slate-700';
+      if (swThoc) swThoc.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300 whitespace-nowrap shrink-0';
+      if (swGau) swGau.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 bg-sky-50 hover:bg-sky-100 text-sky-800 border-sky-300 whitespace-nowrap shrink-0';
+      if (swAdmin) swAdmin.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 bg-slate-800 text-white border-slate-800 hover:bg-slate-700 whitespace-nowrap shrink-0';
 
       const cardG2 = document.getElementById('card-grade-2');
       const cardG3 = document.getElementById('card-grade-3');
@@ -4942,9 +4936,9 @@ const mathBankGrade5 = [
         if (activeLabel) activeLabel.textContent = `${currentKid.name} (Lớp ${gNum})`;
 
         if (currentKid.id === 'kid_thoc' && swThoc) {
-          swThoc.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-amber-500 text-white border-amber-500 shadow-sm ring-2 ring-amber-300';
+          swThoc.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1.5 bg-amber-500 text-white border-amber-500 shadow-sm ring-2 ring-amber-300 whitespace-nowrap shrink-0';
         } else if (currentKid.id === 'kid_gau' && swGau) {
-          swGau.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-sky-600 text-white border-sky-600 shadow-sm ring-2 ring-sky-300';
+          swGau.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1.5 bg-sky-600 text-white border-sky-600 shadow-sm ring-2 ring-sky-300 whitespace-nowrap shrink-0';
         }
 
         // Header and banner
@@ -4993,7 +4987,7 @@ const mathBankGrade5 = [
       } else {
         // Admin / Parent Mode
         if (activeLabel) activeLabel.textContent = 'Phụ huynh / Quản trị viên (Toàn quyền)';
-        if (swAdmin) swAdmin.className = 'px-3 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1 bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-400';
+        if (swAdmin) swAdmin.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition flex items-center space-x-1.5 bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-400 whitespace-nowrap shrink-0';
 
         document.getElementById('header-badge-title').textContent = `Quản Trị / Giáo Viên`;
         document.getElementById('header-student-greeting').textContent = `Đấu Trường Toán Học - Góc Phụ Huynh & Giáo Viên`;
@@ -5007,15 +5001,15 @@ const mathBankGrade5 = [
         // Show All Grade Cards
         if (cardG2) {
           cardG2.classList.remove('hidden');
-          cardG2.className = 'group bg-gradient-to-br from-white to-amber-50/70 p-6 rounded-3xl border-2 border-amber-200/80 shadow-md hover:border-amber-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          cardG2.className = 'group bg-gradient-to-br from-white to-amber-50/70 p-6 sm:p-7 rounded-3xl border-2 border-amber-200/80 shadow-md hover:border-amber-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
         }
         if (cardG3) {
           cardG3.classList.remove('hidden');
-          cardG3.className = 'group bg-gradient-to-br from-white to-emerald-50/70 p-6 rounded-3xl border-2 border-emerald-200/80 shadow-md hover:border-emerald-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          cardG3.className = 'group bg-gradient-to-br from-white to-emerald-50/70 p-6 sm:p-7 rounded-3xl border-2 border-emerald-200/80 shadow-md hover:border-emerald-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
         }
         if (cardG5) {
           cardG5.classList.remove('hidden');
-          cardG5.className = 'group bg-gradient-to-br from-white to-sky-50/70 p-6 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
+          cardG5.className = 'group bg-gradient-to-br from-white to-sky-50/70 p-6 sm:p-7 rounded-3xl border-2 border-sky-200/80 shadow-md hover:border-sky-400 hover:shadow-xl transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between';
         }
 
         // Show Admin Tools
