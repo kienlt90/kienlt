@@ -18,6 +18,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script src="firebase_sync.js"></script>
+  <!-- Security Vault (AES-GCM 256-bit Encryption) -->
+  <script src="crypto_vault.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -3821,10 +3823,25 @@ const mathBankGrade5 = [
           } else if (adminSession) {
             currentKid = found;
           } else {
-            const enteredPin = prompt(`🔐 Vui lòng nhập mã PIN đăng nhập của bé ${found.name} (mặc định: 1234):`);
-            if (enteredPin && (enteredPin.trim() === (found.pin || '1234') || enteredPin.trim() === '1234' || enteredPin.trim() === 'admin')) {
-              currentKid = found;
-              try { localStorage.setItem('kienlt_active_kid_session', JSON.stringify(found)); } catch(e) {}
+            const enteredPin = prompt(`🔐 Vui lòng nhập mã PIN đăng nhập của bé ${found.name}:`);
+            if (enteredPin) {
+              const checkPin = async () => {
+                let ok = false;
+                if (window.SecurityVault) {
+                  ok = await window.SecurityVault.verifyPin(found.pin, enteredPin);
+                } else {
+                  ok = (enteredPin.trim() === (found.pin || '1234') || enteredPin.trim() === '1234' || enteredPin.trim() === 'admin');
+                }
+                if (ok) {
+                  currentKid = found;
+                  try { localStorage.setItem('kienlt_active_kid_session', JSON.stringify(found)); } catch(e) {}
+                  applyUserRoleAndState();
+                } else {
+                  alert('❌ Chưa xác thực tài khoản bé! Đang chuyển về trang đăng nhập.');
+                  window.location.href = 'index.html';
+                }
+              };
+              checkPin();
             } else {
               alert('❌ Chưa xác thực tài khoản bé! Đang chuyển về trang đăng nhập.');
               window.location.href = 'index.html';
@@ -4886,7 +4903,9 @@ const mathBankGrade5 = [
     // ==========================================
     // 0. KID ACCOUNT SWITCHER HANDLER
     // ==========================================
-    function switchActiveKid(kidId) {
+    // 6. ACCOUNT SWITCHER & STRICT RBAC ACCESS CONTROL
+    // ==========================================
+    async function switchActiveKid(kidId) {
       if (kidId === 'admin') {
         const adminSession = localStorage.getItem('vnpt_his_session') || sessionStorage.getItem('vnpt_his_session');
         if (!adminSession) {
@@ -4899,16 +4918,22 @@ const mathBankGrade5 = [
         currentKid = null;
         try { localStorage.removeItem('kienlt_active_kid_session'); } catch(e) {}
       } else {
+        const allK = getAllKids();
+        const matched = allK.find(k => k.id === kidId) || (kidId === 'kid_thoc' ? allK[0] : allK[1]);
         const adminSession = localStorage.getItem('vnpt_his_session') || sessionStorage.getItem('vnpt_his_session');
         if (currentKid && currentKid.id !== kidId && !adminSession) {
-          const pin = prompt(`🔐 Vui lòng nhập mã PIN bảo vệ của bé ${kidId === 'kid_thoc' ? 'THÓC' : 'Gấu'} (hoặc mã phụ huynh):`);
-          if (pin !== '1234' && pin !== 'admin') {
+          const pin = prompt(`🔐 Vui lòng nhập mã PIN bảo vệ của bé ${matched.name} (hoặc mã phụ huynh):`);
+          let isOk = false;
+          if (window.SecurityVault) {
+            isOk = await window.SecurityVault.verifyPin(matched.pin, pin);
+          } else {
+            isOk = (pin === '1234' || pin === 'admin');
+          }
+          if (!isOk) {
             alert('Mã PIN không đúng! Bé chỉ được phép học đúng lớp của mình.');
             return;
           }
         }
-        const allK = getAllKids();
-        const matched = allK.find(k => k.id === kidId) || (kidId === 'kid_thoc' ? allK[0] : allK[1]);
         currentKid = matched;
         try { localStorage.setItem('kienlt_active_kid_session', JSON.stringify(matched)); } catch(e) {}
       }

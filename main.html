@@ -605,11 +605,18 @@
     </div>
   </div>
 
+  <!-- Firebase Realtime Database SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="firebase_sync.js"></script>
+  <!-- Security Vault (AES-GCM 256-bit Encryption) -->
+  <script src="crypto_vault.js"></script>
+
   <script>
     // Kid Manager State & Functions
     const defaultKids = [
-      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
-      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
+      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: 'ENC:aae9de425f5eebdfbf1c914b:b420370f95f50b2c662b670508f13ac9ef73e20e' },
+      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: 'ENC:aae9de425f5eebdfbf1c914b:b420370f95f50b2c662b670508f13ac9ef73e20e' }
     ];
 
     function getKidsList() {
@@ -635,7 +642,10 @@
       return defaultKids;
     }
 
-    function saveKidsList(kids) {
+    async function saveKidsList(kids) {
+      if (window.SecurityVault) {
+        kids = await window.SecurityVault.sanitizeAndEncryptKids(kids);
+      }
       if (window.CloudSync) {
         window.CloudSync.saveKids(kids);
       } else {
@@ -658,15 +668,15 @@
         const theme = isGrade2 ? {
           bg: 'from-amber-50 to-white border-amber-300 hover:border-amber-400',
           name: 'text-amber-950',
-          badge: 'bg-amber-100 text-amber-800 border border-amber-200'
+          badge: 'bg-amber-200 text-amber-900'
         } : (isGrade3 ? {
           bg: 'from-emerald-50 to-white border-emerald-300 hover:border-emerald-400',
           name: 'text-emerald-950',
-          badge: 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+          badge: 'bg-emerald-200 text-emerald-900'
         } : {
           bg: 'from-sky-50 to-white border-sky-300 hover:border-sky-400',
-          name: 'text-slate-900',
-          badge: 'bg-sky-100 text-sky-800 border border-sky-200'
+          name: 'text-sky-950',
+          badge: 'bg-sky-200 text-sky-900'
         });
 
         return `
@@ -709,8 +719,13 @@
             <span class="text-xl">🎓</span>
             <div>
               <h5 class="font-extrabold text-slate-900">${k.name} <span class="px-2 py-0.5 ${badgeClass} rounded text-[10px] font-bold">Lớp ${k.grade}</span></h5>
-              <div class="text-[11px] text-slate-500 mt-0.5">
-                Username: <b>${k.username}</b> | PIN: <b>${k.pin}</b>
+              <div class="text-[11px] text-slate-500 mt-0.5 flex items-center space-x-2">
+                <span>Username: <b>${k.username}</b></span>
+                <span>•</span>
+                <span>PIN: <span id="pin-val-${k.id}" data-revealed="false" class="font-mono bg-slate-200 px-1.5 py-0.5 rounded text-slate-800 font-bold">••••</span></span>
+                <button onclick="toggleRevealPin('${k.id}')" id="btn-reveal-${k.id}" class="text-sky-600 hover:text-sky-800 font-bold text-[10px] underline ml-1 cursor-pointer">
+                  👁️ Xem PIN
+                </button>
               </div>
             </div>
           </div>
@@ -732,6 +747,27 @@
       lucide.createIcons();
     }
 
+    async function toggleRevealPin(kidId) {
+      const span = document.getElementById(`pin-val-${kidId}`);
+      const btn = document.getElementById(`btn-reveal-${kidId}`);
+      if (!span || !btn) return;
+
+      if (span.getAttribute('data-revealed') === 'true') {
+        span.textContent = '••••';
+        span.setAttribute('data-revealed', 'false');
+        btn.textContent = '👁️ Xem PIN';
+      } else {
+        const kids = getKidsList();
+        const kid = kids.find(k => k.id === kidId);
+        if (kid) {
+          const plain = window.SecurityVault ? await window.SecurityVault.decryptPin(kid.pin) : (kid.pin || '1234');
+          span.textContent = plain;
+          span.setAttribute('data-revealed', 'true');
+          btn.textContent = '🙈 Ẩn PIN';
+        }
+      }
+    }
+
     function openKidManagerModal() {
       renderModalKids();
       document.getElementById('kid-manager-modal').classList.remove('hidden');
@@ -742,7 +778,7 @@
       document.getElementById('kid-manager-modal').classList.add('hidden');
     }
 
-    function createNewKidAccount() {
+    async function createNewKidAccount() {
       const name = document.getElementById('new-kid-name').value.trim();
       const grade = parseInt(document.getElementById('new-kid-grade').value, 10);
       const username = document.getElementById('new-kid-username').value.trim();
@@ -753,19 +789,22 @@
         return;
       }
 
+      const encryptedPin = window.SecurityVault ? await window.SecurityVault.encryptPin(pin) : pin;
+
       const kids = getKidsList();
       kids.push({
         id: 'kid_' + Date.now(),
         name: name,
         grade: grade,
         username: username,
-        pin: pin
+        pin: encryptedPin
       });
 
-      saveKidsList(kids);
+      await saveKidsList(kids);
       document.getElementById('new-kid-name').value = '';
       document.getElementById('new-kid-username').value = '';
-      alert(`Đã tạo tài khoản cho bé ${name} (Lớp ${grade}) thành công và đồng bộ lên Cloud!`);
+      document.getElementById('new-kid-pin').value = '';
+      alert(`Đã tạo tài khoản cho bé ${name} (Lớp ${grade}) thành công với mã hóa AES-GCM!`);
     }
 
     function deleteKidAccount(kidId) {

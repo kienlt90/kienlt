@@ -143,7 +143,7 @@
         <div class="flex items-center space-x-1.5">
           <i data-lucide="award" class="w-4 h-4 text-amber-600"></i>
           <p class="text-xs font-bold text-amber-900">
-            Chọn bé và nhập mã PIN (1234) để vào Đấu trường:
+            Chọn tài khoản bé và nhập mã PIN để vào Đấu trường:
           </p>
         </div>
         <div id="kids-avatar-list" class="space-y-2.5">
@@ -161,15 +161,15 @@
                   </span>
                 </div>
                 <div class="text-[11px] font-bold mt-0.5" style="color: #92400e !important;">
-                  Tài khoản: <span class="font-semibold text-slate-500">#thoc</span> (PIN: <b>1234</b>)
+                  Tài khoản: <span class="font-semibold text-slate-500">#thoc</span> <span class="text-slate-400 font-normal">(Bảo mật AES-GCM)</span>
                 </div>
               </div>
             </div>
             <div class="flex items-center space-x-1.5 shrink-0">
-              <button type="button" onclick="loginDirectAsKid('kid_thoc', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp 2 (Yêu cầu nhập PIN)">
+              <button type="button" onclick="loginDirectAsKid('kid_thoc', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp 2 (Xác thực PIN)">
                 <span>🧮 Toán</span>
               </button>
-              <button type="button" onclick="loginDirectAsKid('kid_thoc', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp 2 (Yêu cầu nhập PIN)">
+              <button type="button" onclick="loginDirectAsKid('kid_thoc', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp 2 (Xác thực PIN)">
                 <span>🇬🇧 T.Anh</span>
               </button>
             </div>
@@ -189,15 +189,15 @@
                   </span>
                 </div>
                 <div class="text-[11px] font-bold mt-0.5" style="color: #0369a1 !important;">
-                  Tài khoản: <span class="font-semibold text-slate-500">#Gau</span> (PIN: <b>1234</b>)
+                  Tài khoản: <span class="font-semibold text-slate-500">#Gau</span> <span class="text-slate-400 font-normal">(Bảo mật AES-GCM)</span>
                 </div>
               </div>
             </div>
             <div class="flex items-center space-x-1.5 shrink-0">
-              <button type="button" onclick="loginDirectAsKid('kid_gau', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp 5 (Yêu cầu nhập PIN)">
+              <button type="button" onclick="loginDirectAsKid('kid_gau', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp 5 (Xác thực PIN)">
                 <span>🧮 Toán</span>
               </button>
-              <button type="button" onclick="loginDirectAsKid('kid_gau', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp 5 (Yêu cầu nhập PIN)">
+              <button type="button" onclick="loginDirectAsKid('kid_gau', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm hover:opacity-90 transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp 5 (Xác thực PIN)">
                 <span>🇬🇧 T.Anh</span>
               </button>
             </div>
@@ -283,6 +283,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script src="firebase_sync.js"></script>
+  <!-- Security Vault (AES-GCM 256-bit Encryption) -->
+  <script src="crypto_vault.js"></script>
   <!-- Main Script -->
   <script src="app.js"></script>
 </body>

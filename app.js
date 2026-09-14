@@ -53,15 +53,15 @@ window.renderKidsLoginList = function() {
                 </span>
               </div>
               <div class="text-[11px] font-bold mt-0.5" style="color: ${subColor} !important;">
-                Tài khoản: <span class="font-semibold text-slate-500">#${k.username}</span> (PIN: <b>${k.pin || '1234'}</b>)
+                Tài khoản: <span class="font-semibold text-slate-500">#${k.username}</span> <span class="text-[10px] text-emerald-600 font-bold ml-1">🔒 AES-GCM</span>
               </div>
             </div>
           </div>
           <div class="flex items-center space-x-1.5 shrink-0">
-            <button type="button" onclick="loginDirectAsKid('${k.id}', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp ${k.grade}">
+            <button type="button" onclick="loginDirectAsKid('${k.id}', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp ${k.grade} (Xác thực PIN)">
               <span>🧮 Toán</span>
             </button>
-            <button type="button" onclick="loginDirectAsKid('${k.id}', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp ${k.grade}">
+            <button type="button" onclick="loginDirectAsKid('${k.id}', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp ${k.grade} (Xác thực PIN)">
               <span>🇬🇧 T.Anh</span>
             </button>
           </div>
@@ -71,11 +71,16 @@ window.renderKidsLoginList = function() {
   }
 
   if (window.CloudSync) {
-    window.CloudSync.getKids(render);
+    window.CloudSync.getKids(async (kids) => {
+      if (window.SecurityVault) {
+        kids = await window.SecurityVault.sanitizeAndEncryptKids(kids);
+      }
+      render(kids);
+    });
   } else {
     const defaultKids = [
-      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
-      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
+      { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: 'ENC:aae9de425f5eebdfbf1c914b:b420370f95f50b2c662b670508f13ac9ef73e20e' },
+      { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: 'ENC:aae9de425f5eebdfbf1c914b:b420370f95f50b2c662b670508f13ac9ef73e20e' }
     ];
     let kids = defaultKids;
     try {
@@ -93,12 +98,12 @@ window.selectKidAccount = function(username) {
     uInput.value = username;
     if (pInput) {
       pInput.focus();
-      pInput.placeholder = 'Nhập mã PIN của bé (1234)...';
+      pInput.placeholder = 'Nhập mã PIN của bé...';
     }
   }
 };
 
-window.loginDirectAsKid = function(kidId, subject = 'math') {
+window.loginDirectAsKid = async function(kidId, subject = 'math') {
   const defaultKids = [
     { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
     { id: 'kid_gau', name: 'Gấu', grade: 5, username: 'Gau', pin: '1234' }
@@ -110,11 +115,17 @@ window.loginDirectAsKid = function(kidId, subject = 'math') {
   } catch(e) {}
   const kid = kids.find(k => k.id === kidId) || kids[0];
 
-  const inputPin = prompt(`🔐 Vui lòng nhập mã PIN đăng nhập của bé ${kid.name} (mặc định: 1234):`);
+  const inputPin = prompt(`🔐 Vui lòng nhập mã PIN đăng nhập của bé ${kid.name}:`);
   if (inputPin === null) return; // User pressed Cancel
 
-  const expectedPin = kid.pin || '1234';
-  if (inputPin.trim() !== expectedPin && inputPin.trim() !== '1234' && inputPin.trim() !== 'admin') {
+  let isValidPin = false;
+  if (window.SecurityVault) {
+    isValidPin = await window.SecurityVault.verifyPin(kid.pin || '1234', inputPin);
+  } else {
+    isValidPin = inputPin.trim() === (kid.pin || '1234') || inputPin.trim() === '1234' || inputPin.trim() === 'admin';
+  }
+
+  if (!isValidPin) {
     alert('❌ Mã PIN không chính xác! Vui lòng thử lại hoặc đăng nhập qua biểu mẫu.');
     return;
   }
@@ -244,7 +255,16 @@ document.addEventListener('DOMContentLoaded', () => {
           k.id.toLowerCase() === usernameVal.toLowerCase()
         );
 
-        if (matchedKid && (matchedKid.pin === passwordVal || passwordVal === '1234' || passwordVal === 'admin')) {
+        let isKidAuthenticated = false;
+        if (matchedKid) {
+          if (window.SecurityVault) {
+            isKidAuthenticated = await window.SecurityVault.verifyPin(matchedKid.pin, passwordVal);
+          } else {
+            isKidAuthenticated = (matchedKid.pin === passwordVal || passwordVal === '1234' || passwordVal === 'admin');
+          }
+        }
+
+        if (matchedKid && isKidAuthenticated) {
           setLoadingState(true, `Chào mừng bé ${matchedKid.name} (Lớp ${matchedKid.grade})...`);
           try {
             localStorage.removeItem('vnpt_his_session');
