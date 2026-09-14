@@ -305,6 +305,7 @@ function setupEventListeners(container) {
 
   // Year Change
   selectYear.addEventListener('change', async (e) => {
+    if (isPlayingReplay) stopReplay();
     currentYear = parseInt(e.target.value, 10);
     currentMeetingKey = null;
     currentSessionKey = null;
@@ -315,6 +316,7 @@ function setupEventListeners(container) {
 
   // Meeting Change
   selectMeeting.addEventListener('change', async (e) => {
+    if (isPlayingReplay) stopReplay();
     const val = e.target.value;
     activeLap = null;
     if (val === 'latest') {
@@ -332,6 +334,7 @@ function setupEventListeners(container) {
 
   // Session Change
   selectSession.addEventListener('change', async (e) => {
+    if (isPlayingReplay) stopReplay();
     const val = e.target.value;
     activeLap = null;
     if (val === 'latest') {
@@ -362,7 +365,9 @@ function setupEventListeners(container) {
 
   // Slider change
   slider.addEventListener('input', (e) => {
-    activeLap = parseInt(e.target.value, 10);
+    const val = parseInt(e.target.value, 10);
+    activeLap = Math.max(1, Math.min(val, maxLap || 1));
+    slider.value = activeLap;
     container.querySelector('#replay-current-lap-text').textContent = `Vòng ${activeLap} / ${maxLap}`;
     loadSessionData(activeLap);
   });
@@ -379,7 +384,8 @@ function setupEventListeners(container) {
   btnPrev.addEventListener('click', () => {
     if (activeLap > 1) {
       activeLap--;
-      slider.value = activeLap;
+      activeLap = Math.max(1, Math.min(activeLap, maxLap || 1));
+      if (slider) slider.value = activeLap;
       container.querySelector('#replay-current-lap-text').textContent = `Vòng ${activeLap} / ${maxLap}`;
       loadSessionData(activeLap);
     }
@@ -388,7 +394,8 @@ function setupEventListeners(container) {
   btnNext.addEventListener('click', () => {
     if (activeLap < maxLap) {
       activeLap++;
-      slider.value = activeLap;
+      activeLap = Math.max(1, Math.min(activeLap, maxLap || 1));
+      if (slider) slider.value = activeLap;
       container.querySelector('#replay-current-lap-text').textContent = `Vòng ${activeLap} / ${maxLap}`;
       loadSessionData(activeLap);
     }
@@ -408,12 +415,16 @@ function startReplay() {
   
   if (activeLap >= maxLap) activeLap = 1;
 
+  if (replayTimer) clearInterval(replayTimer);
   replayTimer = setInterval(() => {
     if (activeLap < maxLap) {
       activeLap++;
       const slider = document.querySelector('#openf1-lap-slider');
       const text = document.querySelector('#replay-current-lap-text');
-      if (slider) slider.value = activeLap;
+      if (slider) {
+        slider.max = maxLap;
+        slider.value = activeLap;
+      }
       if (text) text.textContent = `Vòng ${activeLap} / ${maxLap}`;
       loadSessionData(activeLap);
     } else {
@@ -499,14 +510,20 @@ async function loadSessionData(targetLap = null) {
       }
     }
 
-    maxLap = timingData.maxLap || 58;
-    if (!activeLap) activeLap = maxLap;
+    maxLap = Math.max(1, timingData.maxLap || 1);
+
+    if (targetLap !== null && typeof targetLap === 'number') {
+      activeLap = Math.max(1, Math.min(targetLap, maxLap));
+    } else {
+      activeLap = maxLap;
+    }
 
     // Update Slider
     const slider = document.querySelector('#openf1-lap-slider');
     const lapText = document.querySelector('#replay-current-lap-text');
     if (slider) {
-      slider.max = Math.max(1, maxLap);
+      slider.min = 1;
+      slider.max = maxLap;
       slider.value = activeLap;
     }
     if (lapText) lapText.textContent = `Vòng ${activeLap} / ${maxLap}`;
