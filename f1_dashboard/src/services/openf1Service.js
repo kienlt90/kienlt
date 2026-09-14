@@ -303,10 +303,31 @@ export const OpenF1Service = {
       }
     });
 
+    // Compute target timestamp for filtering positions and intervals to match activeLap
+    let targetTimestamp = null;
+    if (targetLap && maxLapInSession > 0) {
+      const activeLapDates = laps
+        .filter(l => l.lap_number === targetLap && l.date_start)
+        .map(l => new Date(l.date_start).getTime());
+      
+      if (activeLapDates.length > 0) {
+        targetTimestamp = Math.max(...activeLapDates) + 100000;
+      }
+    }
+
+    // Filter positions and intervals by targetTimestamp
+    const validPositions = (targetTimestamp && positions)
+      ? positions.filter(p => !p.date || new Date(p.date).getTime() <= targetTimestamp)
+      : (positions || []);
+
+    const validIntervals = (targetTimestamp && intervals)
+      ? intervals.filter(i => !i.date || new Date(i.date).getTime() <= targetTimestamp)
+      : (intervals || []);
+
     // Attach latest positions
-    if (positions && positions.length > 0) {
+    if (validPositions.length > 0) {
       const driverLatestPos = new Map();
-      positions.forEach(p => {
+      validPositions.forEach(p => {
         driverLatestPos.set(p.driver_number, p.position);
       });
       driverLatestPos.forEach((pos, driverNum) => {
@@ -316,9 +337,9 @@ export const OpenF1Service = {
     }
 
     // Attach latest intervals
-    if (intervals && intervals.length > 0) {
+    if (validIntervals.length > 0) {
       const driverLatestInterval = new Map();
-      intervals.forEach(i => {
+      validIntervals.forEach(i => {
         driverLatestInterval.set(i.driver_number, i);
       });
       driverLatestInterval.forEach((data, driverNum) => {

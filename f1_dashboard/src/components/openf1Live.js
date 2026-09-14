@@ -490,10 +490,12 @@ function renderTowerRows(container, drivers) {
             <div class="driver-color-bar" style="background-color: ${d.teamColor};"></div>
             ${d.headshot ? `<img src="${d.headshot}" class="driver-avatar" alt="${d.code}" />` : ''}
             <div class="driver-names">
-              <span class="driver-code">${d.code || 'DRV'}</span>
+              <div class="driver-code-row">
+                <span class="driver-code">${d.code || 'DRV'}</span>
+                <span class="driver-num-badge">#${d.number}</span>
+              </div>
               <span class="driver-fullname">${d.broadcastName || d.name}</span>
             </div>
-            <span class="driver-num">#${d.number}</span>
           </div>
         </div>
 
