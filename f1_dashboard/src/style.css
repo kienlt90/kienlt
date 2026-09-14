@@ -1556,13 +1556,16 @@ body {
 /* Tower Layout */
 .openf1-tower-container {
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--border-color);
 }
 
 .tower-header-grid {
   display: grid;
-  grid-template-columns: 50px 230px 85px 75px 85px 110px 110px 75px 75px 75px 1fr 95px;
+  grid-template-columns: 45px 250px 95px 85px 125px 115px 115px 75px 75px 75px minmax(130px, 1fr) 95px;
+  min-width: 1200px;
   padding: 10px 16px;
   background: rgba(10, 12, 16, 0.95);
   border-bottom: 1px solid var(--border-color);
@@ -1583,7 +1586,8 @@ body {
 
 .tower-row {
   display: grid;
-  grid-template-columns: 50px 230px 85px 75px 85px 110px 110px 75px 75px 75px 1fr 95px;
+  grid-template-columns: 45px 250px 95px 85px 125px 115px 115px 75px 75px 75px minmax(130px, 1fr) 95px;
+  min-width: 1200px;
   padding: 8px 16px;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -1624,6 +1628,8 @@ body {
   align-items: center;
   gap: 8px;
   position: relative;
+  overflow: hidden;
+  padding-right: 6px;
 }
 
 .driver-color-bar {
@@ -1631,6 +1637,7 @@ body {
   height: 26px;
   border-radius: 2px;
   transform: skewX(-6deg);
+  flex-shrink: 0;
 }
 
 .driver-avatar {
@@ -1639,11 +1646,14 @@ body {
   border-radius: 50%;
   object-fit: cover;
   background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
 .driver-names {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  flex-grow: 1;
 }
 
 .driver-code {
@@ -1664,16 +1674,16 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 130px;
 }
 
 .driver-num {
   font-family: var(--font-tech);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
   margin-left: auto;
-  margin-right: 6px;
+  margin-right: 4px;
+  flex-shrink: 0;
 }
 
 /* Gap / Int */
@@ -1694,7 +1704,9 @@ body {
 .col-tyre {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .f1-tyre-pill {
