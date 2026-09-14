@@ -3792,35 +3792,57 @@ const mathBankGrade5 = [
       if (storedK) cachedKids = JSON.parse(storedK);
     } catch(e) {}
 
+    const adminSession = localStorage.getItem('vnpt_his_session') || sessionStorage.getItem('vnpt_his_session');
+    let storedKid = null;
+    try {
+      const kidSession = localStorage.getItem('kienlt_active_kid_session');
+      if (kidSession) storedKid = JSON.parse(kidSession);
+    } catch(e) {}
+
     if (kidParam) {
       if (kidParam === 'admin') {
-        const adminSession = localStorage.getItem('vnpt_his_session') || sessionStorage.getItem('vnpt_his_session');
         if (adminSession) {
           currentKid = null;
           try { localStorage.removeItem('kienlt_active_kid_session'); } catch(e) {}
         } else {
-          // If no admin session, do not grant admin mode automatically
-          const kidSession = localStorage.getItem('kienlt_active_kid_session');
-          if (kidSession) {
-            try { currentKid = JSON.parse(kidSession); } catch(e) { currentKid = null; }
-          } else {
+          const pass = prompt('🔐 Vui lòng nhập mật khẩu Quản trị viên / Phụ huynh:');
+          if (pass === 'admin' || pass === '1234') {
             currentKid = null;
+          } else {
+            alert('❌ Mật khẩu không đúng hoặc chưa đăng nhập! Đang chuyển về trang đăng nhập.');
+            window.location.href = 'index.html';
           }
         }
       } else {
         const found = cachedKids.find(k => k.id === kidParam || k.username.toLowerCase() === kidParam.toLowerCase() || (kidParam.includes('thoc') && k.id === 'kid_thoc') || (kidParam.includes('gau') && k.id === 'kid_gau'));
         if (found) {
-          currentKid = found;
-          try { localStorage.setItem('kienlt_active_kid_session', JSON.stringify(found)); } catch(e) {}
+          if (storedKid && (storedKid.id === found.id || storedKid.username === found.username)) {
+            currentKid = storedKid;
+          } else if (adminSession) {
+            currentKid = found;
+          } else {
+            const enteredPin = prompt(`🔐 Vui lòng nhập mã PIN đăng nhập của bé ${found.name} (mặc định: 1234):`);
+            if (enteredPin && (enteredPin.trim() === (found.pin || '1234') || enteredPin.trim() === '1234' || enteredPin.trim() === 'admin')) {
+              currentKid = found;
+              try { localStorage.setItem('kienlt_active_kid_session', JSON.stringify(found)); } catch(e) {}
+            } else {
+              alert('❌ Chưa xác thực tài khoản bé! Đang chuyển về trang đăng nhập.');
+              window.location.href = 'index.html';
+            }
+          }
+        } else {
+          window.location.href = 'index.html';
         }
       }
     } else {
-      try {
-        const kidSession = localStorage.getItem('kienlt_active_kid_session');
-        if (kidSession) {
-          currentKid = JSON.parse(kidSession);
-        }
-      } catch(e) {}
+      if (storedKid) {
+        currentKid = storedKid;
+      } else if (adminSession) {
+        currentKid = null;
+      } else {
+        alert('🔐 Bạn cần đăng nhập trước khi vào Đấu trường!');
+        window.location.href = 'index.html';
+      }
     }
 
     // Submissions and Rewards state

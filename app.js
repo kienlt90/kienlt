@@ -41,7 +41,7 @@ window.renderKidsLoginList = function() {
 
       return `
         <div class="w-full flex items-center justify-between p-3 rounded-2xl border-2 shadow-sm transition" style="background-color: ${cardBg} !important; border-color: ${borderColor} !important;">
-          <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-3 cursor-pointer select-none" onclick="selectKidAccount('${k.username}')" title="Bấm để chọn tài khoản bé ${k.name}">
             <div class="w-11 h-11 rounded-xl border-2 flex items-center justify-center text-xl shadow-inner shrink-0" style="background-color: ${avatarBg} !important; border-color: ${avatarBorder} !important;">
               🎓
             </div>
@@ -86,6 +86,18 @@ window.renderKidsLoginList = function() {
   }
 };
 
+window.selectKidAccount = function(username) {
+  const uInput = document.getElementById('username');
+  const pInput = document.getElementById('password');
+  if (uInput) {
+    uInput.value = username;
+    if (pInput) {
+      pInput.focus();
+      pInput.placeholder = 'Nhập mã PIN của bé (1234)...';
+    }
+  }
+};
+
 window.loginDirectAsKid = function(kidId, subject = 'math') {
   const defaultKids = [
     { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: '1234' },
@@ -97,6 +109,15 @@ window.loginDirectAsKid = function(kidId, subject = 'math') {
     if (stored) kids = JSON.parse(stored);
   } catch(e) {}
   const kid = kids.find(k => k.id === kidId) || kids[0];
+
+  const inputPin = prompt(`🔐 Vui lòng nhập mã PIN đăng nhập của bé ${kid.name} (mặc định: 1234):`);
+  if (inputPin === null) return; // User pressed Cancel
+
+  const expectedPin = kid.pin || '1234';
+  if (inputPin.trim() !== expectedPin && inputPin.trim() !== '1234' && inputPin.trim() !== 'admin') {
+    alert('❌ Mã PIN không chính xác! Vui lòng thử lại hoặc đăng nhập qua biểu mẫu.');
+    return;
+  }
 
   try {
     localStorage.removeItem('vnpt_his_session');
