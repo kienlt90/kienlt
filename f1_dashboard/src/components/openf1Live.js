@@ -3,28 +3,31 @@ import Chart from 'chart.js/auto';
 
 let livePollInterval = null;
 let replayTimer = null;
-let currentSessionKey = 9662; // Default to 2024 Abu Dhabi GP Race
-let currentMeetingKey = 1252;
-let currentYear = 2024;
+let currentSessionKey = 11369; // Default to Madrid GP 2026 Race (Latest 2026 Grand Prix)
+let currentMeetingKey = 1294;
+let currentYear = 2026;
 let activeLap = null;
 let maxLap = 58;
 let isPlayingReplay = false;
 let isLivePolling = false;
-let currentTab = 'timing'; // 'timing' | 'telemetry' | 'weather' | 'sessions'
+let currentTab = 'timing';
 let cachedMeetings = [];
 let cachedSessions = [];
 let currentTimingData = null;
 let selectedDriver = null;
 let telemetryChartInstance = null;
 
-// Famous preset meetings for fast instant 1-click loading
+// Preset 2026 famous races for fast instant 1-click loading
 const PRESET_MEETINGS = [
-  { year: 2024, meeting_key: 1252, name: 'Abu Dhabi Grand Prix (Chung Kết)', session_name: 'Race', session_key: 9662, flag: '🇦🇪' },
-  { year: 2024, meeting_key: 1240, name: 'British Grand Prix (Silverstone)', session_name: 'Race', session_key: 9554, flag: '🇬🇧' },
-  { year: 2024, meeting_key: 1236, name: 'Monaco Grand Prix (Monte Carlo)', session_name: 'Race', session_key: 9522, flag: '🇲🇨' },
-  { year: 2024, meeting_key: 1242, name: 'Belgian Grand Prix (Spa-Francorchamps)', session_name: 'Race', session_key: 9570, flag: '🇧🇪' },
-  { year: 2024, meeting_key: 1238, name: 'Spanish Grand Prix (Barcelona)', session_name: 'Race', session_key: 9538, flag: '🇪🇸' },
-  { year: 2024, meeting_key: 1244, name: 'Italian Grand Prix (Monza)', session_name: 'Race', session_key: 9586, flag: '🇮🇹' }
+  { year: 2026, meeting_key: 1294, name: 'Madrid Grand Prix (Madrid GP 2026)', session_name: 'Race', session_key: 11369, flag: '🇪🇸' },
+  { year: 2026, meeting_key: 1293, name: 'Italian Grand Prix (Monza 2026)', session_name: 'Race', session_key: 11361, flag: '🇮🇹' },
+  { year: 2026, meeting_key: 1292, name: 'Dutch Grand Prix (Zandvoort 2026)', session_name: 'Race', session_key: 11353, flag: '🇳🇱' },
+  { year: 2026, meeting_key: 1291, name: 'Belgian Grand Prix (Spa 2026)', session_name: 'Race', session_key: 11334, flag: '🇧🇪' },
+  { year: 2026, meeting_key: 1289, name: 'British Grand Prix (Silverstone 2026)', session_name: 'Race', session_key: 11326, flag: '🇬🇧' },
+  { year: 2026, meeting_key: 1288, name: 'Austrian Grand Prix (Spielberg 2026)', session_name: 'Race', session_key: 11315, flag: '🇦🇹' },
+  { year: 2026, meeting_key: 1287, name: 'Spanish Grand Prix (Barcelona 2026)', session_name: 'Race', session_key: 11307, flag: '🇪🇸' },
+  { year: 2026, meeting_key: 1286, name: 'Monaco Grand Prix (Monte Carlo 2026)', session_name: 'Race', session_key: 11299, flag: '🇲🇨' },
+  { year: 2024, meeting_key: 1252, name: 'Abu Dhabi Grand Prix (Chung Kết 2024)', session_name: 'Race', session_key: 9662, flag: '🇦🇪' }
 ];
 
 export async function renderOpenF1App(container) {
@@ -41,17 +44,18 @@ export async function renderOpenF1App(container) {
             <span class="live-dot" id="openf1-status-dot"></span>
             <span id="openf1-status-text">OPENF1 API ONLINE</span>
           </div>
-          <h2 class="openf1-heading">Apex F1 · Hệ Thống Viễn Trắc & Live Timing</h2>
+          <h2 class="openf1-heading">Apex F1 · Hệ Thống Viễn Trắc & Live Timing (Mùa Giải 2026)</h2>
         </div>
 
         <div class="openf1-controls">
           <!-- Year Selector -->
           <div class="control-item">
-            <label for="select-year">Năm:</label>
+            <label for="select-year">Mùa giải:</label>
             <select id="select-year" class="openf1-select">
-              <option value="2024" selected>2024</option>
+              <option value="2026" selected>2026 (Hiện Tại)</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
               <option value="2023">2023</option>
-              <option value="2026">2026</option>
             </select>
           </div>
 

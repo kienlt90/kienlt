@@ -35,7 +35,7 @@ export const OpenF1Service = {
   /**
    * Fetch meetings for a given year
    */
-  async getMeetings(year = 2024) {
+  async getMeetings(year = 2026) {
     const url = `${BASE_URL}/meetings?year=${year}`;
     return fetchJSON(url);
   },
@@ -43,7 +43,7 @@ export const OpenF1Service = {
   /**
    * Fetch sessions for a meeting or year
    */
-  async getSessions(meetingKey = null, year = 2024) {
+  async getSessions(meetingKey = null, year = 2026) {
     let url = `${BASE_URL}/sessions?year=${year}`;
     if (meetingKey) {
       url += `&meeting_key=${meetingKey}`;
