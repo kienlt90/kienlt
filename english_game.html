@@ -406,6 +406,17 @@
             </div>
           </div>
 
+          <!-- Question Hint Card for Kid to Reason Out -->
+          <div id="question-hint-box" class="bg-gradient-to-r from-amber-50 to-orange-50/70 border border-amber-200/90 rounded-2xl p-3.5 sm:p-4 text-xs sm:text-sm text-amber-950 flex items-start space-x-3 shadow-2xs">
+            <div class="w-7 h-7 rounded-xl bg-amber-200/80 text-amber-900 flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+              💡
+            </div>
+            <div class="flex-1 leading-relaxed">
+              <span class="font-black text-amber-900 block text-[11px] sm:text-xs uppercase tracking-wider mb-0.5">Gợi ý tư duy & suy luận:</span>
+              <span id="question-hint-text" class="font-medium text-slate-700">...</span>
+            </div>
+          </div>
+
           <!-- Answers Options Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="options-container">
             <!-- Dynamically generated options -->
@@ -801,7 +812,8 @@ const englishBankGrade2 = [
       "A Bird"
     ],
     "correct": 1,
-    "explain": "Cat nghĩa là Con mèo, có 4 chân, đuôi dài và kêu 'Meow'."
+    "explain": "Cat nghĩa là Con mèo, có 4 chân, đuôi dài và kêu 'Meow'.",
+    "hint": "Con vật nuôi quen thuộc, có 4 chân (*four legs*), đuôi dài (*long tail*) và kêu 'Meow' bắt chuột rất tài!"
   },
   {
     "id": 102,
@@ -813,7 +825,8 @@ const englishBankGrade2 = [
       "Orange"
     ],
     "correct": 2,
-    "explain": "Apple, Banana, Orange là các loại trái cây. Pencil là bút chì (đồ dùng học tập)."
+    "explain": "Apple, Banana, Orange là các loại trái cây. Pencil là bút chì (đồ dùng học tập).",
+    "hint": "Hãy phân loại 4 từ: Xem 3 từ nào cùng thuộc một chủ đề (hoa quả, phương tiện, đồ dùng...), từ nào lạc loài nhé!"
   },
   {
     "id": 103,
@@ -825,7 +838,8 @@ const englishBankGrade2 = [
       "Seven (7)"
     ],
     "correct": 0,
-    "explain": "5 con chim bay mất 2 con: 5 - 2 = 3 (Three)."
+    "explain": "5 con chim bay mất 2 con: 5 - 2 = 3 (Three).",
+    "hint": "Làm phép trừ: Lấy số chim ban đầu trừ đi số chim đã bay đi (*fly away*) nhé!"
   },
   {
     "id": 104,
@@ -837,7 +851,8 @@ const englishBankGrade2 = [
       "Heavy"
     ],
     "correct": 0,
-    "explain": "Trái nghĩa với 'Big' (to lớn) là 'Small' (nhỏ bé)."
+    "explain": "Trái nghĩa với 'Big' (to lớn) là 'Small' (nhỏ bé).",
+    "hint": "Từ 'Big' = to lớn. Tìm từ tiếng Anh có nghĩa là 'nhỏ bé' nhé!"
   },
   {
     "id": 105,
@@ -849,7 +864,8 @@ const englishBankGrade2 = [
       "Blue"
     ],
     "correct": 1,
-    "explain": "Trộn màu Đỏ (Red) và Vàng (Yellow) sẽ tạo thành màu Cam (Orange)."
+    "explain": "Trộn màu Đỏ (Red) và Vàng (Yellow) sẽ tạo thành màu Cam (Orange).",
+    "hint": "Pha màu Đỏ (*Red*) và màu Vàng (*Yellow*) tạo ra màu Cam (*Orange*)."
   },
   {
     "id": 106,
@@ -861,7 +877,8 @@ const englishBankGrade2 = [
       "Eight"
     ],
     "correct": 2,
-    "explain": "Một tuần lễ có 7 ngày (Seven days)."
+    "explain": "Một tuần lễ có 7 ngày (Seven days).",
+    "hint": "Đọc kỹ các con số trong câu và làm phép tính toán học tương ứng."
   },
   {
     "id": 107,
@@ -873,7 +890,8 @@ const englishBankGrade2 = [
       "A Watermelon"
     ],
     "correct": 1,
-    "explain": "Quả chuối (Banana) màu vàng và là món yêu thích của loài khỉ."
+    "explain": "Quả chuối (Banana) màu vàng và là món yêu thích của loài khỉ.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 108,
@@ -885,7 +903,8 @@ const englishBankGrade2 = [
       "Elefant"
     ],
     "correct": 1,
-    "explain": "Từ đúng chính tả của con voi là 'Elephant'."
+    "explain": "Từ đúng chính tả của con voi là 'Elephant'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 109,
@@ -897,7 +916,8 @@ const englishBankGrade2 = [
       "On the road"
     ],
     "correct": 2,
-    "explain": "Cá sống dưới nước (In the water)."
+    "explain": "Cá sống dưới nước (In the water).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 110,
@@ -909,7 +929,8 @@ const englishBankGrade2 = [
       "A Tiger"
     ],
     "correct": 2,
-    "explain": "Con chim (Bird) có cánh và biết bay."
+    "explain": "Con chim (Bird) có cánh và biết bay.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 111,
@@ -921,7 +942,8 @@ const englishBankGrade2 = [
       "Mouth"
     ],
     "correct": 2,
-    "explain": "Biểu tượng 👁️ là Con mắt (Eye)."
+    "explain": "Biểu tượng 👁️ là Con mắt (Eye).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 112,
@@ -933,7 +955,8 @@ const englishBankGrade2 = [
       "Rice"
     ],
     "correct": 1,
-    "explain": "Kem (Ice cream) mát lạnh và ngọt ngào, rất thích hợp ăn vào mùa hè."
+    "explain": "Kem (Ice cream) mát lạnh và ngọt ngào, rất thích hợp ăn vào mùa hè.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 113,
@@ -945,7 +968,8 @@ const englishBankGrade2 = [
       "be"
     ],
     "correct": 1,
-    "explain": "Chủ ngữ 'She' (số ít) đi với động từ to-be là 'is'."
+    "explain": "Chủ ngữ 'She' (số ít) đi với động từ to-be là 'is'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 114,
@@ -957,7 +981,8 @@ const englishBankGrade2 = [
       "Eleven"
     ],
     "correct": 2,
-    "explain": "Số đứng liền sau số 9 (Nine) là số 10 (Ten)."
+    "explain": "Số đứng liền sau số 9 (Nine) là số 10 (Ten).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 115,
@@ -969,7 +994,8 @@ const englishBankGrade2 = [
       "Goodbye"
     ],
     "correct": 1,
-    "explain": "Chào buổi sáng tiếng Anh là 'Good morning'."
+    "explain": "Chào buổi sáng tiếng Anh là 'Good morning'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 116,
@@ -981,7 +1007,8 @@ const englishBankGrade2 = [
       "Twelve"
     ],
     "correct": 2,
-    "explain": "Hai bàn tay có tất cả 10 ngón tay (Ten fingers)."
+    "explain": "Hai bàn tay có tất cả 10 ngón tay (Ten fingers).",
+    "hint": "Đọc kỹ các con số trong câu và làm phép tính toán học tương ứng."
   },
   {
     "id": 117,
@@ -993,7 +1020,8 @@ const englishBankGrade2 = [
       "Black"
     ],
     "correct": 1,
-    "explain": "Mặt trời tỏa ánh sáng màu vàng (Yellow)."
+    "explain": "Mặt trời tỏa ánh sáng màu vàng (Yellow).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 118,
@@ -1005,7 +1033,8 @@ const englishBankGrade2 = [
       "A Truck"
     ],
     "correct": 2,
-    "explain": "Xe đạp (Bicycle) có 2 bánh xe."
+    "explain": "Xe đạp (Bicycle) có 2 bánh xe.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 119,
@@ -1017,7 +1046,8 @@ const englishBankGrade2 = [
       "Green"
     ],
     "correct": 2,
-    "explain": "Red, Blue, Green là các màu sắc. Cat là con mèo (động vật)."
+    "explain": "Red, Blue, Green là các màu sắc. Cat là con mèo (động vật).",
+    "hint": "Hãy phân loại 4 từ: Xem 3 từ nào cùng thuộc một chủ đề (hoa quả, phương tiện, đồ dùng...), từ nào lạc loài nhé!"
   },
   {
     "id": 120,
@@ -1029,7 +1059,8 @@ const englishBankGrade2 = [
       "Chick"
     ],
     "correct": 1,
-    "explain": "Chó con trong tiếng Anh gọi là 'Puppy'."
+    "explain": "Chó con trong tiếng Anh gọi là 'Puppy'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 121,
@@ -1041,7 +1072,8 @@ const englishBankGrade2 = [
       "at"
     ],
     "correct": 1,
-    "explain": "Ở trên mặt bàn dùng giới từ 'on'."
+    "explain": "Ở trên mặt bàn dùng giới từ 'on'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 122,
@@ -1053,7 +1085,8 @@ const englishBankGrade2 = [
       "Pizza"
     ],
     "correct": 1,
-    "explain": "Sữa (Milk) là đồ uống."
+    "explain": "Sữa (Milk) là đồ uống.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 123,
@@ -1065,7 +1098,8 @@ const englishBankGrade2 = [
       "Nine"
     ],
     "correct": 2,
-    "explain": "4 + 4 = 8 (Eight)."
+    "explain": "4 + 4 = 8 (Eight).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 124,
@@ -1077,7 +1111,8 @@ const englishBankGrade2 = [
       "Rectangle"
     ],
     "correct": 2,
-    "explain": "Hình tam giác (Triangle) có 3 góc và 3 cạnh."
+    "explain": "Hình tam giác (Triangle) có 3 góc và 3 cạnh.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 125,
@@ -1089,7 +1124,8 @@ const englishBankGrade2 = [
       "A Hat"
     ],
     "correct": 1,
-    "explain": "Cây bút (Pen/Pencil) dùng để viết lên giấy."
+    "explain": "Cây bút (Pen/Pencil) dùng để viết lên giấy.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 126,
@@ -1101,7 +1137,8 @@ const englishBankGrade2 = [
       "Sunny"
     ],
     "correct": 1,
-    "explain": "Trái nghĩa với 'Hot' (nóng) là 'Cold' (lạnh)."
+    "explain": "Trái nghĩa với 'Hot' (nóng) là 'Cold' (lạnh).",
+    "hint": "Từ 'Hot' = nóng bức. Tìm từ trái nghĩa mang nghĩa 'lạnh giá' nhé!"
   },
   {
     "id": 127,
@@ -1113,7 +1150,8 @@ const englishBankGrade2 = [
       "Garden"
     ],
     "correct": 2,
-    "explain": "Phòng ngủ là 'Bedroom'."
+    "explain": "Phòng ngủ là 'Bedroom'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 128,
@@ -1125,7 +1163,8 @@ const englishBankGrade2 = [
       "E"
     ],
     "correct": 2,
-    "explain": "Thứ tự bảng chữ cái: A, B, C, D $\\rightarrow$ Chữ cái đứng trước D là C."
+    "explain": "Thứ tự bảng chữ cái: A, B, C, D $\\rightarrow$ Chữ cái đứng trước D là C.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 129,
@@ -1137,7 +1176,8 @@ const englishBankGrade2 = [
       "Eyes"
     ],
     "correct": 0,
-    "explain": "Con thỏ có 2 chiếc tai dài (Long ears)."
+    "explain": "Con thỏ có 2 chiếc tai dài (Long ears).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 130,
@@ -1149,7 +1189,8 @@ const englishBankGrade2 = [
       "A Pig"
     ],
     "correct": 1,
-    "explain": "Con bò sữa (Cow) cho sữa và kêu 'Moo'."
+    "explain": "Con bò sữa (Cow) cho sữa và kêu 'Moo'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 131,
@@ -1161,7 +1202,8 @@ const englishBankGrade2 = [
       "redly"
     ],
     "correct": 0,
-    "explain": "Tính từ chỉ màu sắc đứng trước danh từ là 'red'."
+    "explain": "Tính từ chỉ màu sắc đứng trước danh từ là 'red'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 132,
@@ -1173,7 +1215,8 @@ const englishBankGrade2 = [
       "Refrigerator"
     ],
     "correct": 0,
-    "explain": "Thước kẻ (Ruler) là đồ dùng học tập tại trường."
+    "explain": "Thước kẻ (Ruler) là đồ dùng học tập tại trường.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 133,
@@ -1185,7 +1228,8 @@ const englishBankGrade2 = [
       "Purple"
     ],
     "correct": 1,
-    "explain": "Cỏ cây có màu xanh lá cây (Green)."
+    "explain": "Cỏ cây có màu xanh lá cây (Green).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 134,
@@ -1197,7 +1241,8 @@ const englishBankGrade2 = [
       "Hello"
     ],
     "correct": 2,
-    "explain": "'Cảm ơn' trong tiếng Anh là 'Thank you'."
+    "explain": "'Cảm ơn' trong tiếng Anh là 'Thank you'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 135,
@@ -1209,7 +1254,8 @@ const englishBankGrade2 = [
       "Read"
     ],
     "correct": 0,
-    "explain": "Vịt biết bơi dưới nước (Swim)."
+    "explain": "Vịt biết bơi dưới nước (Swim).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 136,
@@ -1221,7 +1267,8 @@ const englishBankGrade2 = [
       "Six (6)"
     ],
     "correct": 2,
-    "explain": "Số 7 (Seven) là số lẻ."
+    "explain": "Số 7 (Seven) là số lẻ.",
+    "hint": "Hãy phân loại 4 từ: Xem 3 từ nào cùng thuộc một chủ đề (hoa quả, phương tiện, đồ dùng...), từ nào lạc loài nhé!"
   },
   {
     "id": 137,
@@ -1233,7 +1280,8 @@ const englishBankGrade2 = [
       "Foot"
     ],
     "correct": 1,
-    "explain": "Biểu tượng 👂 là Cái tai (Ear)."
+    "explain": "Biểu tượng 👂 là Cái tai (Ear).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 138,
@@ -1245,7 +1293,8 @@ const englishBankGrade2 = [
       "Clouds only"
     ],
     "correct": 1,
-    "explain": "Ban đêm trên bầu trời có Mặt trăng và các vì sao (The Moon & Stars)."
+    "explain": "Ban đêm trên bầu trời có Mặt trăng và các vì sao (The Moon & Stars).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 139,
@@ -1257,7 +1306,8 @@ const englishBankGrade2 = [
       "Good"
     ],
     "correct": 0,
-    "explain": "Trái nghĩa với 'Happy' (vui vẻ) là 'Sad' (buồn bã)."
+    "explain": "Trái nghĩa với 'Happy' (vui vẻ) là 'Sad' (buồn bã).",
+    "hint": "Từ 'Happy' = vui vẻ. Tìm từ trái nghĩa mang nghĩa 'buồn bã' (*Sad*) nhé!"
   },
   {
     "id": 140,
@@ -1269,7 +1319,8 @@ const englishBankGrade2 = [
       "be"
     ],
     "correct": 2,
-    "explain": "Chủ ngữ 'They' (số nhiều) đi với 'are'."
+    "explain": "Chủ ngữ 'They' (số nhiều) đi với 'are'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 141,
@@ -1281,7 +1332,8 @@ const englishBankGrade2 = [
       "Rabbit"
     ],
     "correct": 0,
-    "explain": "Sư tử (Lion) được mệnh danh là chúa tể rừng xanh."
+    "explain": "Sư tử (Lion) được mệnh danh là chúa tể rừng xanh.",
+    "hint": "Loài động vật săn mồi dũng mãnh, có bờm đẹp và được mệnh danh là 'Chúa sơn lâm'."
   },
   {
     "id": 142,
@@ -1293,7 +1345,8 @@ const englishBankGrade2 = [
       "Gloves"
     ],
     "correct": 2,
-    "explain": "Đôi giày (Shoes) đi vào bàn chân."
+    "explain": "Đôi giày (Shoes) đi vào bàn chân.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 143,
@@ -1305,7 +1358,8 @@ const englishBankGrade2 = [
       "10"
     ],
     "correct": 2,
-    "explain": "Con nhện (Spider) có 8 chân."
+    "explain": "Con nhện (Spider) có 8 chân.",
+    "hint": "Nhớ lại mỗi con vật có mấy chân (ví dụ: Vịt = 2 chân, Chó/Bò/Mèo = 4 chân, Nhện = 8 chân) rồi nhân lên nhé!"
   },
   {
     "id": 144,
@@ -1317,7 +1371,8 @@ const englishBankGrade2 = [
       "Ice"
     ],
     "correct": 1,
-    "explain": "Thành ngữ tiếng Anh: 'An Apple a day keeps the doctor away' (Mỗi ngày ăn một quả táo giúp cơ thể khỏe mạnh)."
+    "explain": "Thành ngữ tiếng Anh: 'An Apple a day keeps the doctor away' (Mỗi ngày ăn một quả táo giúp cơ thể khỏe mạnh).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 145,
@@ -1329,7 +1384,8 @@ const englishBankGrade2 = [
       "Wear it"
     ],
     "correct": 1,
-    "explain": "Sách dùng để đọc (Read it)."
+    "explain": "Sách dùng để đọc (Read it).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 146,
@@ -1341,7 +1397,8 @@ const englishBankGrade2 = [
       "A Sloth"
     ],
     "correct": 2,
-    "explain": "Báo săn (Cheetah) là loài thú chạy nhanh nhất thế giới."
+    "explain": "Báo săn (Cheetah) là loài thú chạy nhanh nhất thế giới.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 147,
@@ -1353,7 +1410,8 @@ const englishBankGrade2 = [
       "December"
     ],
     "correct": 0,
-    "explain": "Tháng 1 là January."
+    "explain": "Tháng 1 là January.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 148,
@@ -1365,7 +1423,8 @@ const englishBankGrade2 = [
       "Night"
     ],
     "correct": 0,
-    "explain": "Dùng ô che khi trời mưa (Raining)."
+    "explain": "Dùng ô che khi trời mưa (Raining).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 149,
@@ -1377,7 +1436,8 @@ const englishBankGrade2 = [
       "Kangaroo"
     ],
     "correct": 1,
-    "explain": "Voi (Elephant) có vòi dài (trunk) và biết bơi rất giỏi."
+    "explain": "Voi (Elephant) có vòi dài (trunk) và biết bơi rất giỏi.",
+    "hint": "Loài động vật trên cạn lớn nhất, có chiếc vòi dài (*trunk*) và đôi tai to như cái quạt."
   },
   {
     "id": 150,
@@ -1389,7 +1449,8 @@ const englishBankGrade2 = [
       "Five"
     ],
     "correct": 1,
-    "explain": "10 - 3 = 7 (Seven)."
+    "explain": "10 - 3 = 7 (Seven).",
+    "hint": "Từ 'Minus' trong tiếng Anh nghĩa là phép trừ (-)."
   }
 ];
 
@@ -1404,7 +1465,8 @@ const englishBankGrade3 = [
       "English"
     ],
     "correct": 1,
-    "explain": "Môn học liên quan đến con số (numbers) và hình khối (shapes) là môn Toán (Maths)."
+    "explain": "Môn học liên quan đến con số (numbers) và hình khối (shapes) là môn Toán (Maths).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 302,
@@ -1416,7 +1478,8 @@ const englishBankGrade3 = [
       "A notebook"
     ],
     "correct": 1,
-    "explain": "Đồ dùng dùng để gọt bút chì là cái gọt bút chì (pencil sharpener)."
+    "explain": "Đồ dùng dùng để gọt bút chì là cái gọt bút chì (pencil sharpener).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 303,
@@ -1428,7 +1491,8 @@ const englishBankGrade3 = [
       "be"
     ],
     "correct": 2,
-    "explain": "Với danh từ số nhiều (three red apples), ta dùng \"There are\"."
+    "explain": "Với danh từ số nhiều (three red apples), ta dùng \"There are\".",
+    "hint": "Hành động đang diễn ra ngay bây giờ: Cần dùng cấu trúc 'am/is/are + V-ing'."
   },
   {
     "id": 304,
@@ -1440,7 +1504,8 @@ const englishBankGrade3 = [
       "were"
     ],
     "correct": 0,
-    "explain": "Với danh từ số ít (a cute kitten), ta dùng \"There is\"."
+    "explain": "Với danh từ số ít (a cute kitten), ta dùng \"There is\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 305,
@@ -1452,7 +1517,8 @@ const englishBankGrade3 = [
       "Who"
     ],
     "correct": 1,
-    "explain": "Hỏi số lượng đếm được dùng cấu trúc: \"How many + danh từ số nhiều...?\"."
+    "explain": "Hỏi số lượng đếm được dùng cấu trúc: \"How many + danh từ số nhiều...?\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 306,
@@ -1464,7 +1530,8 @@ const englishBankGrade3 = [
       "When"
     ],
     "correct": 2,
-    "explain": "Hỏi về người (ai đó) ta dùng từ để hỏi \"Who\" (Ai)."
+    "explain": "Hỏi về người (ai đó) ta dùng từ để hỏi \"Who\" (Ai).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 307,
@@ -1476,7 +1543,8 @@ const englishBankGrade3 = [
       "between"
     ],
     "correct": 1,
-    "explain": "Nằm trên chiếc thảm ta dùng giới từ \"on\" (ở trên bề mặt)."
+    "explain": "Nằm trên chiếc thảm ta dùng giới từ \"on\" (ở trên bề mặt).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 308,
@@ -1488,7 +1556,8 @@ const englishBankGrade3 = [
       "next"
     ],
     "correct": 0,
-    "explain": "\"Between ... and ...\" mang nghĩa ở giữa hai vật (the two wooden boxes)."
+    "explain": "\"Between ... and ...\" mang nghĩa ở giữa hai vật (the two wooden boxes).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 309,
@@ -1500,7 +1569,8 @@ const englishBankGrade3 = [
       "over"
     ],
     "correct": 1,
-    "explain": "\"Under\" nghĩa là ở dưới / gầm giường (under the bed)."
+    "explain": "\"Under\" nghĩa là ở dưới / gầm giường (under the bed).",
+    "hint": "Từ vựng: \"Under\" nghĩa là gì? Hãy đọc kỹ câu hỏi và chọn đáp án phù hợp nhất!"
   },
   {
     "id": 310,
@@ -1512,7 +1582,8 @@ const englishBankGrade3 = [
       "those"
     ],
     "correct": 3,
-    "explain": "Chỉ những vật ở xa (over there) và số nhiều (birds) dùng đại từ chỉ định \"those\"."
+    "explain": "Chỉ những vật ở xa (over there) và số nhiều (birds) dùng đại từ chỉ định \"those\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 311,
@@ -1524,7 +1595,8 @@ const englishBankGrade3 = [
       "those"
     ],
     "correct": 1,
-    "explain": "Chỉ một vật (your ruler) ở vị trí xa (over there) dùng đại từ chỉ định \"that\"."
+    "explain": "Chỉ một vật (your ruler) ở vị trí xa (over there) dùng đại từ chỉ định \"that\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 312,
@@ -1536,7 +1608,8 @@ const englishBankGrade3 = [
       "can't / can't"
     ],
     "correct": 1,
-    "explain": "Cá có thể bơi (can swim) nhưng không thể bay (can't fly)."
+    "explain": "Cá có thể bơi (can swim) nhưng không thể bay (can't fly).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 313,
@@ -1548,7 +1621,8 @@ const englishBankGrade3 = [
       "cut"
     ],
     "correct": 1,
-    "explain": "Cụm từ chỉ thói quen vệ sinh cá nhân: \"brush my teeth\" (đánh răng)."
+    "explain": "Cụm từ chỉ thói quen vệ sinh cá nhân: \"brush my teeth\" (đánh răng).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 314,
@@ -1560,7 +1634,8 @@ const englishBankGrade3 = [
       "went"
     ],
     "correct": 0,
-    "explain": "Trong câu hỏi thì hiện tại đơn với trợ động từ \"do you...\", động từ đi sau ở dạng nguyên thể: \"go\"."
+    "explain": "Trong câu hỏi thì hiện tại đơn với trợ động từ \"do you...\", động từ đi sau ở dạng nguyên thể: \"go\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 315,
@@ -1572,7 +1647,8 @@ const englishBankGrade3 = [
       "play"
     ],
     "correct": 1,
-    "explain": "Thì hiện tại tiếp diễn với chủ ngữ số nhiều \"The pupils\" dùng \"are playing\"."
+    "explain": "Thì hiện tại tiếp diễn với chủ ngữ số nhiều \"The pupils\" dùng \"are playing\".",
+    "hint": "Hành động đang diễn ra ngay bây giờ: Cần dùng cấu trúc 'am/is/are + V-ing'."
   },
   {
     "id": 316,
@@ -1584,7 +1660,8 @@ const englishBankGrade3 = [
       "are reading"
     ],
     "correct": 0,
-    "explain": "Chủ ngữ \"I\" đi với \"am + V-ing\": \"I am reading\"."
+    "explain": "Chủ ngữ \"I\" đi với \"am + V-ing\": \"I am reading\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 317,
@@ -1596,7 +1673,8 @@ const englishBankGrade3 = [
       "drank"
     ],
     "correct": 1,
-    "explain": "Thì hiện tại đơn diễn tả thói quen, chủ ngữ ngôi thứ 3 số ít (My father) thêm \"s\": \"drinks\"."
+    "explain": "Thì hiện tại đơn diễn tả thói quen, chủ ngữ ngôi thứ 3 số ít (My father) thêm \"s\": \"drinks\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 318,
@@ -1608,7 +1686,8 @@ const englishBankGrade3 = [
       "aren't"
     ],
     "correct": 1,
-    "explain": "Thể phủ định hiện tại đơn với chủ ngữ ngôi thứ 3 số ít (She) dùng \"doesn't like\"."
+    "explain": "Thể phủ định hiện tại đơn với chủ ngữ ngôi thứ 3 số ít (She) dùng \"doesn't like\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 319,
@@ -1620,7 +1699,8 @@ const englishBankGrade3 = [
       "grandfather"
     ],
     "correct": 1,
-    "explain": "Anh/em trai của mẹ (mother's brother) là bác/cậu/chú (uncle)."
+    "explain": "Anh/em trai của mẹ (mother's brother) là bác/cậu/chú (uncle).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 320,
@@ -1632,7 +1712,8 @@ const englishBankGrade3 = [
       "uncle"
     ],
     "correct": 0,
-    "explain": "Bố của bố (father's father) là ông nội (grandfather)."
+    "explain": "Bố của bố (father's father) là ông nội (grandfather).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 321,
@@ -1644,7 +1725,8 @@ const englishBankGrade3 = [
       "Hippo"
     ],
     "correct": 1,
-    "explain": "Hươu cao cổ (Giraffe) có cổ rất dài (long neck) và ăn lá cây trên cao."
+    "explain": "Hươu cao cổ (Giraffe) có cổ rất dài (long neck) và ăn lá cây trên cao.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 322,
@@ -1656,7 +1738,8 @@ const englishBankGrade3 = [
       "duckling"
     ],
     "correct": 1,
-    "explain": "Chó con trong tiếng Anh là \"puppy\" (mèo con là kitten, gà con là chick)."
+    "explain": "Chó con trong tiếng Anh là \"puppy\" (mèo con là kitten, gà con là chick).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 323,
@@ -1668,7 +1751,8 @@ const englishBankGrade3 = [
       "meat"
     ],
     "correct": 1,
-    "explain": "Loài khỉ rất thích ăn chuối (bananas)."
+    "explain": "Loài khỉ rất thích ăn chuối (bananas).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 324,
@@ -1680,7 +1764,8 @@ const englishBankGrade3 = [
       "Rice"
     ],
     "correct": 1,
-    "explain": "Quả cam (Orange) là loại hoa quả mọng nước (fruit)."
+    "explain": "Quả cam (Orange) là loại hoa quả mọng nước (fruit).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 325,
@@ -1692,7 +1777,8 @@ const englishBankGrade3 = [
       "an"
     ],
     "correct": 0,
-    "explain": "Trong lời mời lịch sự \"Would you like...?\" với danh từ không đếm được, ta dùng \"some\"."
+    "explain": "Trong lời mời lịch sự \"Would you like...?\" với danh từ không đếm được, ta dùng \"some\".",
+    "hint": "Quy tắc mạo từ: Đi với từ bắt đầu bằng nguyên âm (U, E, O, A, I - 'uể oải') thì dùng 'an', còn lại dùng 'a'."
   },
   {
     "id": 326,
@@ -1704,7 +1790,8 @@ const englishBankGrade3 = [
       "swimsuit"
     ],
     "correct": 1,
-    "explain": "Trời đang mưa to (raining heavily), cần mang theo ô/dù (umbrella)."
+    "explain": "Trời đang mưa to (raining heavily), cần mang theo ô/dù (umbrella).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 327,
@@ -1716,7 +1803,8 @@ const englishBankGrade3 = [
       "foggy"
     ],
     "correct": 2,
-    "explain": "Mặt trời chiếu sáng rực rỡ thì thời tiết nắng ráo (sunny)."
+    "explain": "Mặt trời chiếu sáng rực rỡ thì thời tiết nắng ráo (sunny).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 328,
@@ -1728,7 +1816,8 @@ const englishBankGrade3 = [
       "Glasses"
     ],
     "correct": 1,
-    "explain": "Tất/vớ (Socks) được mang vào bàn chân trước khi đi giày thể thao."
+    "explain": "Tất/vớ (Socks) được mang vào bàn chân trước khi đi giày thể thao.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 329,
@@ -1740,7 +1829,8 @@ const englishBankGrade3 = [
       "ring"
     ],
     "correct": 0,
-    "explain": "Khăn quàng cổ (scarf) dùng để quàng quanh cổ giữ ấm trong mùa đông."
+    "explain": "Khăn quàng cổ (scarf) dùng để quàng quanh cổ giữ ấm trong mùa đông.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 330,
@@ -1752,7 +1842,8 @@ const englishBankGrade3 = [
       "noses"
     ],
     "correct": 1,
-    "explain": "Đôi tai (ears) dùng để nghe (listen)."
+    "explain": "Đôi tai (ears) dùng để nghe (listen).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 331,
@@ -1764,7 +1855,8 @@ const englishBankGrade3 = [
       "tired"
     ],
     "correct": 2,
-    "explain": "Được nhận quà sinh nhật thì cảm thấy vui sướng (happy)."
+    "explain": "Được nhận quà sinh nhật thì cảm thấy vui sướng (happy).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 332,
@@ -1776,7 +1868,8 @@ const englishBankGrade3 = [
       "bored"
     ],
     "correct": 1,
-    "explain": "Cần uống nước nghĩa là cảm thấy khát nước (thirsty)."
+    "explain": "Cần uống nước nghĩa là cảm thấy khát nước (thirsty).",
+    "hint": "Từ vựng: Cần uống nước nghĩa là gì? Hãy đọc kỹ câu hỏi và chọn đáp án phù hợp nhất!"
   },
   {
     "id": 333,
@@ -1788,7 +1881,8 @@ const englishBankGrade3 = [
       "It's nine fifteen."
     ],
     "correct": 1,
-    "explain": "8:15 được đọc là \"It's eight fifteen\" (hoặc a quarter past eight)."
+    "explain": "8:15 được đọc là \"It's eight fifteen\" (hoặc a quarter past eight).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 334,
@@ -1800,7 +1894,8 @@ const englishBankGrade3 = [
       "Friday"
     ],
     "correct": 1,
-    "explain": "Thứ Ba (Tuesday) rồi đến Thứ Tư (Wednesday)."
+    "explain": "Thứ Ba (Tuesday) rồi đến Thứ Tư (Wednesday).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 335,
@@ -1812,7 +1907,8 @@ const englishBankGrade3 = [
       "March"
     ],
     "correct": 2,
-    "explain": "Tháng đầu tiên trong năm là Tháng Một (January)."
+    "explain": "Tháng đầu tiên trong năm là Tháng Một (January).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 336,
@@ -1824,7 +1920,8 @@ const englishBankGrade3 = [
       "thinner"
     ],
     "correct": 0,
-    "explain": "Cá voi to lớn hơn cá heo: dùng tính từ so sánh hơn \"bigger than\"."
+    "explain": "Cá voi to lớn hơn cá heo: dùng tính từ so sánh hơn \"bigger than\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 337,
@@ -1836,7 +1933,8 @@ const englishBankGrade3 = [
       "fatter"
     ],
     "correct": 1,
-    "explain": "Hươu cao cổ cao hơn (taller than) ngựa vằn."
+    "explain": "Hươu cao cổ cao hơn (taller than) ngựa vằn.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 338,
@@ -1848,7 +1946,8 @@ const englishBankGrade3 = [
       "its"
     ],
     "correct": 1,
-    "explain": "Nam là con trai, tính từ sở hữu tương ứng là \"his\" (của cậu ấy)."
+    "explain": "Nam là con trai, tính từ sở hữu tương ứng là \"his\" (của cậu ấy).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 339,
@@ -1860,7 +1959,8 @@ const englishBankGrade3 = [
       "my"
     ],
     "correct": 0,
-    "explain": "Hoa là nữ, tính từ sở hữu tương ứng là \"her\" (của cô ấy)."
+    "explain": "Hoa là nữ, tính từ sở hữu tương ứng là \"her\" (của cô ấy).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 340,
@@ -1872,7 +1972,8 @@ const englishBankGrade3 = [
       "your"
     ],
     "correct": 0,
-    "explain": "Chủ ngữ là \"We\" thì tính từ sở hữu tương ứng là \"our\" (của chúng tôi)."
+    "explain": "Chủ ngữ là \"We\" thì tính từ sở hữu tương ứng là \"our\" (của chúng tôi).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 341,
@@ -1884,7 +1985,8 @@ const englishBankGrade3 = [
       "Apple"
     ],
     "correct": 3,
-    "explain": "\"Apple\" là hoa quả, còn 3 từ kia là con vật (animals)."
+    "explain": "\"Apple\" là hoa quả, còn 3 từ kia là con vật (animals).",
+    "hint": "Hãy phân loại 4 từ: Xem 3 từ nào cùng thuộc một chủ đề (hoa quả, phương tiện, đồ dùng...), từ nào lạc loài nhé!"
   },
   {
     "id": 342,
@@ -1896,7 +1998,8 @@ const englishBankGrade3 = [
       "Sandwich"
     ],
     "correct": 3,
-    "explain": "\"Sandwich\" là đồ ăn, còn 3 từ kia là đồ dùng học tập (school supplies)."
+    "explain": "\"Sandwich\" là đồ ăn, còn 3 từ kia là đồ dùng học tập (school supplies).",
+    "hint": "Hãy phân loại 4 từ: Xem 3 từ nào cùng thuộc một chủ đề (hoa quả, phương tiện, đồ dùng...), từ nào lạc loài nhé!"
   },
   {
     "id": 343,
@@ -1908,7 +2011,8 @@ const englishBankGrade3 = [
       "Green"
     ],
     "correct": 2,
-    "explain": "\"Square\" là hình vuông (shape), còn 3 từ kia là màu sắc (colors)."
+    "explain": "\"Square\" là hình vuông (shape), còn 3 từ kia là màu sắc (colors).",
+    "hint": "Hãy phân loại 4 từ: Xem 3 từ nào cùng thuộc một chủ đề (hoa quả, phương tiện, đồ dùng...), từ nào lạc loài nhé!"
   },
   {
     "id": 344,
@@ -1920,7 +2024,8 @@ const englishBankGrade3 = [
       "A frog"
     ],
     "correct": 1,
-    "explain": "Con vật kêu \"Meow\" là con mèo (A cat)."
+    "explain": "Con vật kêu \"Meow\" là con mèo (A cat).",
+    "hint": "Con vật nuôi quen thuộc, có 4 chân (*four legs*), đuôi dài (*long tail*) và kêu 'Meow' bắt chuột rất tài!"
   },
   {
     "id": 345,
@@ -1932,7 +2037,8 @@ const englishBankGrade3 = [
       "A door"
     ],
     "correct": 1,
-    "explain": "Bảng viết phấn ở lớp học là chiếc bảng đen/bảng lớp (A blackboard)."
+    "explain": "Bảng viết phấn ở lớp học là chiếc bảng đen/bảng lớp (A blackboard).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 346,
@@ -1944,7 +2050,8 @@ const englishBankGrade3 = [
       "A ball"
     ],
     "correct": 1,
-    "explain": "Đồng hồ (clock) có mặt số (face) và kim giờ/phút (hands)."
+    "explain": "Đồng hồ (clock) có mặt số (face) và kim giờ/phút (hands).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 347,
@@ -1956,7 +2063,8 @@ const englishBankGrade3 = [
       "Friday"
     ],
     "correct": 1,
-    "explain": "Hôm qua là Thứ Bảy -> Hôm nay là Chủ Nhật -> Ngày mai (tomorrow) sẽ là Thứ Hai (Monday)."
+    "explain": "Hôm qua là Thứ Bảy -> Hôm nay là Chủ Nhật -> Ngày mai (tomorrow) sẽ là Thứ Hai (Monday).",
+    "hint": "Dấu hiệu quá khứ (*yesterday, last night...*): Hãy chọn động từ ở dạng quá khứ (V2 hoặc thêm đuôi -ed) nhé!"
   },
   {
     "id": 348,
@@ -1968,7 +2076,8 @@ const englishBankGrade3 = [
       "Catch"
     ],
     "correct": 1,
-    "explain": "Từ \"Ship\" có âm đầu /sh/ giống như âm cuối của \"fish\"."
+    "explain": "Từ \"Ship\" có âm đầu /sh/ giống như âm cuối của \"fish\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 349,
@@ -1980,7 +2089,8 @@ const englishBankGrade3 = [
       "Nice to see you."
     ],
     "correct": 1,
-    "explain": "Đáp lại câu hỏi thăm sức khỏe \"How are you today?\" là \"I'm fine, thank you\"."
+    "explain": "Đáp lại câu hỏi thăm sức khỏe \"How are you today?\" là \"I'm fine, thank you\".",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 350,
@@ -1992,7 +2102,8 @@ const englishBankGrade3 = [
       "No one"
     ],
     "correct": 1,
-    "explain": "Đoạn văn nêu rõ: \"Lucy has a red robot\". Vậy người có món đồ chơi màu đỏ là Lucy."
+    "explain": "Đoạn văn nêu rõ: \"Lucy has a red robot\". Vậy người có món đồ chơi màu đỏ là Lucy.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   }
 ];
 
@@ -2007,7 +2118,8 @@ const englishBankGrade5 = [
       "A Mirror"
     ],
     "correct": 1,
-    "explain": "Đồng hồ (Clock) có mặt số (face) và kim giờ/phút (hands) nhưng không biết vỗ tay hay cười."
+    "explain": "Đồng hồ (Clock) có mặt số (face) và kim giờ/phút (hands) nhưng không biết vỗ tay hay cười.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 202,
@@ -2019,7 +2131,8 @@ const englishBankGrade5 = [
       "The letter 'O'"
     ],
     "correct": 0,
-    "explain": "Chữ cái 'M' xuất hiện 1 lần trong từ 'minute', 2 lần trong 'moment' và 0 lần trong 'thousand years'."
+    "explain": "Chữ cái 'M' xuất hiện 1 lần trong từ 'minute', 2 lần trong 'moment' và 0 lần trong 'thousand years'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 203,
@@ -2031,7 +2144,8 @@ const englishBankGrade5 = [
       "Cannot tell"
     ],
     "correct": 2,
-    "explain": "Tom > Peter > John $\\rightarrow$ John là bạn thấp nhất (Shortest)."
+    "explain": "Tom > Peter > John $\\rightarrow$ John là bạn thấp nhất (Shortest).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 204,
@@ -2043,7 +2157,8 @@ const englishBankGrade5 = [
       "rained"
     ],
     "correct": 1,
-    "explain": "Có bằng chứng rõ ràng ở hiện tại (mây đen) $\\rightarrow$ Dùng cấu trúc 'be going to' diễn tả dự đoán."
+    "explain": "Có bằng chứng rõ ràng ở hiện tại (mây đen) $\\rightarrow$ Dùng cấu trúc 'be going to' diễn tả dự đoán.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 205,
@@ -2055,7 +2170,8 @@ const englishBankGrade5 = [
       "Saturn"
     ],
     "correct": 1,
-    "explain": "Sao Hỏa (Mars) được gọi là Hành tinh Đỏ."
+    "explain": "Sao Hỏa (Mars) được gọi là Hành tinh Đỏ.",
+    "hint": "Hành động đang diễn ra ngay bây giờ: Cần dùng cấu trúc 'am/is/are + V-ing'."
   },
   {
     "id": 206,
@@ -2067,7 +2183,8 @@ const englishBankGrade5 = [
       "Lava"
     ],
     "correct": 1,
-    "explain": "Nước đóng băng sẽ chuyển thành Đá lạnh (Ice)."
+    "explain": "Nước đóng băng sẽ chuyển thành Đá lạnh (Ice).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 207,
@@ -2079,7 +2196,8 @@ const englishBankGrade5 = [
       "Heavy"
     ],
     "correct": 1,
-    "explain": "'Quick' và 'Fast' đều có nghĩa là nhanh chóng."
+    "explain": "'Quick' và 'Fast' đều có nghĩa là nhanh chóng.",
+    "hint": "Từ vựng: 'Quick' và 'Fast' đều có nghĩa là gì? Hãy đọc kỹ câu hỏi và chọn đáp án phù hợp nhất!"
   },
   {
     "id": 208,
@@ -2091,7 +2209,8 @@ const englishBankGrade5 = [
       "A Phone"
     ],
     "correct": 1,
-    "explain": "Quả trứng (Egg) phải được đập vỡ vỏ trước khi chế biến/sử dụng."
+    "explain": "Quả trứng (Egg) phải được đập vỡ vỏ trước khi chế biến/sử dụng.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 209,
@@ -2103,7 +2222,8 @@ const englishBankGrade5 = [
       "Nina"
     ],
     "correct": 1,
-    "explain": "Bố của Mary (Mary's father) có 5 cô con gái $\\rightarrow$ Người con thứ 5 chính là Mary!"
+    "explain": "Bố của Mary (Mary's father) có 5 cô con gái $\\rightarrow$ Người con thứ 5 chính là Mary!",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 210,
@@ -2115,7 +2235,8 @@ const englishBankGrade5 = [
       "He isn't like apples."
     ],
     "correct": 2,
-    "explain": "Chủ ngữ 'He' phủ định thì hiện tại đơn: doesn't + động từ nguyên thể 'like'."
+    "explain": "Chủ ngữ 'He' phủ định thì hiện tại đơn: doesn't + động từ nguyên thể 'like'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 211,
@@ -2127,7 +2248,8 @@ const englishBankGrade5 = [
       "Italy"
     ],
     "correct": 1,
-    "explain": "Tháp Eiffel nằm ở thủ đô Paris, nước Pháp (France)."
+    "explain": "Tháp Eiffel nằm ở thủ đô Paris, nước Pháp (France).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 212,
@@ -2139,7 +2261,8 @@ const englishBankGrade5 = [
       "A Towel"
     ],
     "correct": 0,
-    "explain": "Miếng bọt biển (Sponge) có rất nhiều lỗ nhỏ nhưng lại thấm và giữ được nước."
+    "explain": "Miếng bọt biển (Sponge) có rất nhiều lỗ nhỏ nhưng lại thấm và giữ được nước.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 213,
@@ -2151,7 +2274,8 @@ const englishBankGrade5 = [
       "Going"
     ],
     "correct": 2,
-    "explain": "Quá khứ bất quy tắc của 'Go' là 'Went'."
+    "explain": "Quá khứ bất quy tắc của 'Go' là 'Went'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 214,
@@ -2163,7 +2287,8 @@ const englishBankGrade5 = [
       "8"
     ],
     "correct": 2,
-    "explain": "Trái Đất có 7 châu lục (Seven continents)."
+    "explain": "Trái Đất có 7 châu lục (Seven continents).",
+    "hint": "Đọc kỹ các con số trong câu và làm phép tính toán học tương ứng."
   },
   {
     "id": 215,
@@ -2175,7 +2300,8 @@ const englishBankGrade5 = [
       "Hippopotamus"
     ],
     "correct": 1,
-    "explain": "Cá voi xanh (Blue Whale) là loài động vật có vú lớn nhất hành tinh."
+    "explain": "Cá voi xanh (Blue Whale) là loài động vật có vú lớn nhất hành tinh.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 216,
@@ -2187,7 +2313,8 @@ const englishBankGrade5 = [
       "easiest"
     ],
     "correct": 1,
-    "explain": "So sánh hơn của tính từ ngắn đuôi -y: 'easy' $\\rightarrow$ 'easier'."
+    "explain": "So sánh hơn của tính từ ngắn đuôi -y: 'easy' $\\rightarrow$ 'easier'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 217,
@@ -2199,7 +2326,8 @@ const englishBankGrade5 = [
       "A Kite"
     ],
     "correct": 1,
-    "explain": "Tuổi tác của con người (Your Age) chỉ tăng lên theo năm tháng chứ không bao giờ giảm đi."
+    "explain": "Tuổi tác của con người (Your Age) chỉ tăng lên theo năm tháng chứ không bao giờ giảm đi.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 218,
@@ -2211,7 +2339,8 @@ const englishBankGrade5 = [
       "Why"
     ],
     "correct": 2,
-    "explain": "Hỏi về phương tiện đi lại dùng từ để hỏi 'How' (Bằng cách nào / Bằng phương tiện gì)."
+    "explain": "Hỏi về phương tiện đi lại dùng từ để hỏi 'How' (Bằng cách nào / Bằng phương tiện gì).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 219,
@@ -2223,7 +2352,8 @@ const englishBankGrade5 = [
       "A Sunbeam"
     ],
     "correct": 0,
-    "explain": "Chiếc khăn tắm (Towel) càng lau khô người cho bạn thì bản thân nó càng ướt."
+    "explain": "Chiếc khăn tắm (Towel) càng lau khô người cho bạn thì bản thân nó càng ướt.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 220,
@@ -2235,7 +2365,8 @@ const englishBankGrade5 = [
       "Hydrogen"
     ],
     "correct": 1,
-    "explain": "Cây xanh hấp thụ khí Carbon Dioxide ($CO_2$) để quang hợp và nhả ra khí Oxy."
+    "explain": "Cây xanh hấp thụ khí Carbon Dioxide ($CO_2$) để quang hợp và nhả ra khí Oxy.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 221,
@@ -2247,7 +2378,8 @@ const englishBankGrade5 = [
       "He early wakes up always."
     ],
     "correct": 1,
-    "explain": "Trạng từ chỉ tần suất 'always' đứng trước động từ thường 'wakes up'."
+    "explain": "Trạng từ chỉ tần suất 'always' đứng trước động từ thường 'wakes up'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 222,
@@ -2259,7 +2391,8 @@ const englishBankGrade5 = [
       "Bangkok"
     ],
     "correct": 2,
-    "explain": "Thủ đô của Nhật Bản là Tokyo."
+    "explain": "Thủ đô của Nhật Bản là Tokyo.",
+    "hint": "Thủ đô của đất nước mặt trời mọc Nhật Bản là Tokyo."
   },
   {
     "id": 223,
@@ -2271,7 +2404,8 @@ const englishBankGrade5 = [
       "Sunday"
     ],
     "correct": 1,
-    "explain": "Hôm qua là thứ Tư $\\rightarrow$ Hôm nay là thứ Năm $\\rightarrow$ Ngày mai là thứ Sáu (Friday)."
+    "explain": "Hôm qua là thứ Tư $\\rightarrow$ Hôm nay là thứ Năm $\\rightarrow$ Ngày mai là thứ Sáu (Friday).",
+    "hint": "Dấu hiệu quá khứ (*yesterday, last night...*): Hãy chọn động từ ở dạng quá khứ (V2 hoặc thêm đuôi -ed) nhé!"
   },
   {
     "id": 224,
@@ -2283,7 +2417,8 @@ const englishBankGrade5 = [
       "childrens"
     ],
     "correct": 2,
-    "explain": "Danh từ số nhiều bất quy tắc của 'child' là 'children'."
+    "explain": "Danh từ số nhiều bất quy tắc của 'child' là 'children'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 225,
@@ -2295,7 +2430,8 @@ const englishBankGrade5 = [
       "All of above"
     ],
     "correct": 3,
-    "explain": "Cổ chai (bottle neck), cổ áo (shirt neck), cần đàn (guitar neck) đều có từ 'neck' nhưng không có đầu."
+    "explain": "Cổ chai (bottle neck), cổ áo (shirt neck), cần đàn (guitar neck) đều có từ 'neck' nhưng không có đầu.",
+    "hint": "Trang phục bé mặc hàng ngày, có phần cổ áo (*neck*) nhưng không có đầu (*no head*)."
   },
   {
     "id": 226,
@@ -2307,7 +2443,8 @@ const englishBankGrade5 = [
       "Flute"
     ],
     "correct": 2,
-    "explain": "Đàn Piano tiêu chuẩn có 88 phím đen và trắng."
+    "explain": "Đàn Piano tiêu chuẩn có 88 phím đen và trắng.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 227,
@@ -2319,7 +2456,8 @@ const englishBankGrade5 = [
       "with"
     ],
     "correct": 2,
-    "explain": "Cụm tính từ đi kèm giới từ: 'be interested in' (thích thú, quan tâm đến điều gì)."
+    "explain": "Cụm tính từ đi kèm giới từ: 'be interested in' (thích thú, quan tâm đến điều gì).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 228,
@@ -2331,7 +2469,8 @@ const englishBankGrade5 = [
       "The Rain"
     ],
     "correct": 0,
-    "explain": "Đám mây (Cloud) bay lượn không cần cánh và 'khóc' tạo thành mưa."
+    "explain": "Đám mây (Cloud) bay lượn không cần cánh và 'khóc' tạo thành mưa.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 229,
@@ -2343,7 +2482,8 @@ const englishBankGrade5 = [
       "Traditional"
     ],
     "correct": 1,
-    "explain": "Trái nghĩa với 'Ancient' (cổ kính/cổ xưa) là 'Modern' (hiện đại)."
+    "explain": "Trái nghĩa với 'Ancient' (cổ kính/cổ xưa) là 'Modern' (hiện đại).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 230,
@@ -2355,7 +2495,8 @@ const englishBankGrade5 = [
       "360°"
     ],
     "correct": 3,
-    "explain": "Một hình tròn hoàn chỉnh có $360^\\circ$."
+    "explain": "Một hình tròn hoàn chỉnh có $360^\\circ$.",
+    "hint": "Đọc kỹ các con số trong câu và làm phép tính toán học tương ứng."
   },
   {
     "id": 231,
@@ -2367,7 +2508,8 @@ const englishBankGrade5 = [
       "A Lion"
     ],
     "correct": 1,
-    "explain": "Loài ngựa (Horse) có thể ngủ trong tư thế đứng nhờ cấu trúc khớp chân đặc biệt."
+    "explain": "Loài ngựa (Horse) có thể ngủ trong tư thế đứng nhờ cấu trúc khớp chân đặc biệt.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 232,
@@ -2379,7 +2521,8 @@ const englishBankGrade5 = [
       "The chef was cooked by dinner."
     ],
     "correct": 1,
-    "explain": "Câu bị động ở thì quá khứ đơn: S + was/were + V3/ed + by O $\\rightarrow$ 'The dinner was cooked by the chef.'"
+    "explain": "Câu bị động ở thì quá khứ đơn: S + was/were + V3/ed + by O $\\rightarrow$ 'The dinner was cooked by the chef.'",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 233,
@@ -2391,7 +2534,8 @@ const englishBankGrade5 = [
       "A Tree"
     ],
     "correct": 0,
-    "explain": "Chiếc găng tay (Glove) có ngón cái và 4 ngón tay nhưng không phải là vật sống."
+    "explain": "Chiếc găng tay (Glove) có ngón cái và 4 ngón tay nhưng không phải là vật sống.",
+    "hint": "Phụ kiện giữ ấm bàn tay mùa đông, có ngón cái (*thumb*) và 4 ngón tay (*fingers*)."
   },
   {
     "id": 234,
@@ -2403,7 +2547,8 @@ const englishBankGrade5 = [
       "Hydro energy"
     ],
     "correct": 2,
-    "explain": "Than đá (Coal) là nhiên liệu hóa thạch, không phải năng lượng tái tạo."
+    "explain": "Than đá (Coal) là nhiên liệu hóa thạch, không phải năng lượng tái tạo.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 235,
@@ -2415,7 +2560,8 @@ const englishBankGrade5 = [
       "staying"
     ],
     "correct": 1,
-    "explain": "Câu điều kiện loại 1: If + HTĐ, S + will + V-nguyên thể $\\rightarrow$ 'will stay'."
+    "explain": "Câu điều kiện loại 1: If + HTĐ, S + will + V-nguyên thể $\\rightarrow$ 'will stay'.",
+    "hint": "Dấu hiệu tương lai (*tomorrow, next week...*): Dùng 'will' + động từ nguyên mẫu."
   },
   {
     "id": 236,
@@ -2427,7 +2573,8 @@ const englishBankGrade5 = [
       "Your car"
     ],
     "correct": 1,
-    "explain": "Tên của bạn (Your name) là của bạn, nhưng người khác thường gọi nó nhiều hơn chính bạn."
+    "explain": "Tên của bạn (Your name) là của bạn, nhưng người khác thường gọi nó nhiều hơn chính bạn.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 237,
@@ -2439,7 +2586,8 @@ const englishBankGrade5 = [
       "Yangtze River"
     ],
     "correct": 1,
-    "explain": "Sông Nin (Nile River) ở Châu Phi là con sông dài nhất thế giới."
+    "explain": "Sông Nin (Nile River) ở Châu Phi là con sông dài nhất thế giới.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 238,
@@ -2451,7 +2599,8 @@ const englishBankGrade5 = [
       "by"
     ],
     "correct": 1,
-    "explain": "Đi kèm với ngày tháng cụ thể dùng giới từ 'on'."
+    "explain": "Đi kèm với ngày tháng cụ thể dùng giới từ 'on'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 239,
@@ -2463,7 +2612,8 @@ const englishBankGrade5 = [
       "A Zipper"
     ],
     "correct": 0,
-    "explain": "Cái lược chải đầu (Comb) có nhiều răng lược (teeth) nhưng không cắn được."
+    "explain": "Cái lược chải đầu (Comb) có nhiều răng lược (teeth) nhưng không cắn được.",
+    "hint": "Dụng cụ dùng để chải tóc mượt mà mỗi ngày, có nhiều răng (*teeth*) nhưng không cắn ai."
   },
   {
     "id": 240,
@@ -2475,7 +2625,8 @@ const englishBankGrade5 = [
       "Arctic Ocean"
     ],
     "correct": 2,
-    "explain": "Thái Bình Dương (Pacific Ocean) là đại dương lớn nhất thế giới."
+    "explain": "Thái Bình Dương (Pacific Ocean) là đại dương lớn nhất thế giới.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 241,
@@ -2487,7 +2638,8 @@ const englishBankGrade5 = [
       "during"
     ],
     "correct": 1,
-    "explain": "Đi kèm khoảng thời gian trong thì hiện tại hoàn thành dùng 'for' (for 5 years)."
+    "explain": "Đi kèm khoảng thời gian trong thì hiện tại hoàn thành dùng 'for' (for 5 years).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 242,
@@ -2499,7 +2651,8 @@ const englishBankGrade5 = [
       "The Hotel"
     ],
     "correct": 0,
-    "explain": "Câu đố chữ: 'Stories' vừa có nghĩa là tầng nhà, vừa có nghĩa là truyện $\\rightarrow$ Thư viện (Library) có nhiều truyện nhất!"
+    "explain": "Câu đố chữ: 'Stories' vừa có nghĩa là tầng nhà, vừa có nghĩa là truyện $\\rightarrow$ Thư viện (Library) có nhiều truyện nhất!",
+    "hint": "Từ vựng: Câu đố chữ: 'Stories' vừa có nghĩa là gì? Hãy đọc kỹ câu hỏi và chọn đáp án phù hợp nhất!"
   },
   {
     "id": 243,
@@ -2511,7 +2664,8 @@ const englishBankGrade5 = [
       "Beatiful"
     ],
     "correct": 1,
-    "explain": "Chính tả đúng là 'Beautiful'."
+    "explain": "Chính tả đúng là 'Beautiful'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 244,
@@ -2523,7 +2677,8 @@ const englishBankGrade5 = [
       "Lizard"
     ],
     "correct": 0,
-    "explain": "Tắc kè hoa (Chameleon) có khả năng đổi màu da ngoạn mục để ngụy trang."
+    "explain": "Tắc kè hoa (Chameleon) có khả năng đổi màu da ngoạn mục để ngụy trang.",
+    "hint": "Loài bò sát có khả năng biến đổi màu da (*change color*) theo môi trường để ẩn nấp."
   },
   {
     "id": 245,
@@ -2535,7 +2690,8 @@ const englishBankGrade5 = [
       "might"
     ],
     "correct": 0,
-    "explain": "Đưa ra lời khuyên nên làm gì dùng 'should'."
+    "explain": "Đưa ra lời khuyên nên làm gì dùng 'should'.",
+    "hint": "Khi muốn khuyên ai đó nên làm điều gì tốt cho sức khỏe hoặc học tập, ta dùng từ 'should'."
   },
   {
     "id": 246,
@@ -2547,7 +2703,8 @@ const englishBankGrade5 = [
       "A Target"
     ],
     "correct": 0,
-    "explain": "Ấm trà (Teapot) bắt đầu bằng chữ T, kết thúc bằng chữ T và bên trong chứa đầy trà (Tea)."
+    "explain": "Ấm trà (Teapot) bắt đầu bằng chữ T, kết thúc bằng chữ T và bên trong chứa đầy trà (Tea).",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 247,
@@ -2559,7 +2716,8 @@ const englishBankGrade5 = [
       "406"
     ],
     "correct": 1,
-    "explain": "Cơ thể người trưởng thành có 206 khúc xương."
+    "explain": "Cơ thể người trưởng thành có 206 khúc xương.",
+    "hint": "Đọc kỹ các con số trong câu và làm phép tính toán học tương ứng."
   },
   {
     "id": 248,
@@ -2571,7 +2729,8 @@ const englishBankGrade5 = [
       "Greece"
     ],
     "correct": 2,
-    "explain": "Trung Quốc (China) là nơi phát minh ra giấy viết và nghệ thuật trà đạo từ thời cổ đại."
+    "explain": "Trung Quốc (China) là nơi phát minh ra giấy viết và nghệ thuật trà đạo từ thời cổ đại.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 249,
@@ -2583,7 +2742,8 @@ const englishBankGrade5 = [
       "Best"
     ],
     "correct": 1,
-    "explain": "Trạng từ của tính từ 'Good' là 'Well'."
+    "explain": "Trạng từ của tính từ 'Good' là 'Well'.",
+    "hint": "Đọc kỹ từ khóa chính trong câu hỏi và liên hệ với kiến thức tiếng Anh đã học để chọn đáp án đúng nhé!"
   },
   {
     "id": 250,
@@ -2595,7 +2755,8 @@ const englishBankGrade5 = [
       "Water"
     ],
     "correct": 0,
-    "explain": "Hơi thở nhẹ như lông hồng nhưng không ai có thể nín thở liên tục quá 5 phút."
+    "explain": "Hơi thở nhẹ như lông hồng nhưng không ai có thể nín thở liên tục quá 5 phút.",
+    "hint": "Thứ này nhẹ như lông hồng (*light as a feather*), nhưng dù khỏe đến đâu bạn cũng không nín thở (*hold breath*) được 5 phút."
   }
 ];
 
@@ -3221,6 +3382,18 @@ const englishBankGrade5 = [
       document.getElementById('question-number').textContent = currentQuestionIdx + 1;
       document.getElementById('question-title').textContent = q.title;
       document.getElementById('quiz-progress-text').textContent = `Câu ${currentQuestionIdx + 1}/10`;
+
+      // Render Hint for Child
+      const hintEl = document.getElementById('question-hint-text');
+      const hintBox = document.getElementById('question-hint-box');
+      if (hintEl && hintBox) {
+        if (q.hint) {
+          hintEl.innerHTML = q.hint;
+          hintBox.classList.remove('hidden');
+        } else {
+          hintBox.classList.add('hidden');
+        }
+      }
       
       const pct = ((currentQuestionIdx + 1) / 10) * 100;
       document.getElementById('quiz-progress-bar').style.width = `${pct}%`;
