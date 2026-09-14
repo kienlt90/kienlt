@@ -1,5 +1,5 @@
-/* Import high-tech Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+/* Import Official F1 Typography (Titillium Web & Chakra Petch & Orbitron) */
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,600;1,700;1,900&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,600;1,700;1,800&family=Orbitron:wght@500;700;800;900&display=swap');
 
 :root {
   /* Colors */
@@ -19,9 +19,10 @@
   --text-secondary: #8E9AA8;
   --text-muted: #4F5E71;
   
-  /* Fonts */
-  --font-main: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-tech: 'Orbitron', monospace;
+  /* Authentic F1 Typography */
+  --font-f1: 'Titillium Web', 'Chakra Petch', sans-serif;
+  --font-main: 'Titillium Web', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-tech: 'Orbitron', 'Chakra Petch', monospace;
   
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1454,8 +1455,12 @@ body {
   color: #FFF;
   padding: 6px 12px;
   border-radius: 5px;
-  font-family: var(--font-tech);
-  font-size: 0.8rem;
+  font-family: var(--font-f1);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   cursor: pointer;
   transition: var(--transition-fast);
 }
@@ -1469,7 +1474,7 @@ body {
   background: rgba(0, 229, 255, 0.15);
   border-color: var(--neon-blue);
   color: var(--neon-blue);
-  font-weight: 700;
+  font-weight: 900;
 }
 
 .replay-btn.play:hover {
@@ -1486,15 +1491,20 @@ body {
 }
 
 .replay-label {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   white-space: nowrap;
-  font-family: var(--font-tech);
+  font-family: var(--font-f1);
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.5px;
 }
 
 .replay-label strong {
   color: #FFF;
   margin-left: 6px;
+  font-family: var(--font-tech);
+  font-style: normal;
 }
 
 .openf1-slider {
@@ -1518,25 +1528,29 @@ body {
 }
 
 .fl-tag {
-  font-family: var(--font-tech);
-  font-size: 0.65rem;
-  font-weight: 800;
+  font-family: var(--font-f1);
+  font-size: 0.72rem;
+  font-weight: 900;
+  font-style: italic;
   color: #E066FF;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .fl-driver {
-  font-family: var(--font-tech);
-  font-weight: 700;
-  font-size: 0.85rem;
+  font-family: var(--font-f1);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 0.95rem;
   color: #FFF;
+  letter-spacing: 0.5px;
 }
 
 .fl-time {
   font-family: var(--font-tech);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #E066FF;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Tower Layout */
@@ -1548,14 +1562,16 @@ body {
 
 .tower-header-grid {
   display: grid;
-  grid-template-columns: 50px 220px 85px 75px 85px 105px 105px 75px 75px 75px 1fr 90px;
+  grid-template-columns: 50px 230px 85px 75px 85px 110px 110px 75px 75px 75px 1fr 95px;
   padding: 10px 16px;
   background: rgba(10, 12, 16, 0.95);
   border-bottom: 1px solid var(--border-color);
-  font-family: var(--font-tech);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.8px;
+  font-family: var(--font-f1);
+  font-size: 0.76rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
   color: var(--text-secondary);
   align-items: center;
 }
@@ -1567,7 +1583,7 @@ body {
 
 .tower-row {
   display: grid;
-  grid-template-columns: 50px 220px 85px 75px 85px 105px 105px 75px 75px 75px 1fr 90px;
+  grid-template-columns: 50px 230px 85px 75px 85px 110px 110px 75px 75px 75px 1fr 95px;
   padding: 8px 16px;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -1590,13 +1606,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 24px;
+  width: 28px;
+  height: 25px;
   border-radius: 4px;
   color: #FFF;
-  font-family: var(--font-tech);
-  font-weight: 800;
-  font-size: 0.85rem;
+  font-family: var(--font-f1);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 0.95rem;
+  transform: skewX(-4deg);
   text-shadow: 0 1px 2px rgba(0,0,0,0.8);
 }
 
@@ -1609,14 +1627,15 @@ body {
 }
 
 .driver-color-bar {
-  width: 3px;
-  height: 24px;
+  width: 4px;
+  height: 26px;
   border-radius: 2px;
+  transform: skewX(-6deg);
 }
 
 .driver-avatar {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
   background: rgba(255, 255, 255, 0.1);
@@ -1628,25 +1647,30 @@ body {
 }
 
 .driver-code {
-  font-family: var(--font-tech);
-  font-weight: 800;
-  font-size: 0.9rem;
+  font-family: var(--font-f1);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
   color: #FFF;
-  line-height: 1.1;
+  line-height: 1;
 }
 
 .driver-fullname {
-  font-size: 0.72rem;
+  font-family: var(--font-f1);
+  font-weight: 600;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  max-width: 130px;
 }
 
 .driver-num {
   font-family: var(--font-tech);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--text-muted);
   margin-left: auto;
   margin-right: 6px;
@@ -1655,13 +1679,15 @@ body {
 /* Gap / Int */
 .gap-text, .int-text {
   font-family: var(--font-tech);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   color: #DDD;
 }
 
 .gap-text.leader {
   color: #FFD700;
-  font-weight: 700;
+  font-weight: 900;
 }
 
 /* Tyres */
@@ -1678,9 +1704,10 @@ body {
   gap: 2px;
   padding: 2px 6px;
   border-radius: 4px;
-  font-family: var(--font-tech);
-  font-size: 0.72rem;
-  font-weight: 800;
+  font-family: var(--font-f1);
+  font-size: 0.75rem;
+  font-weight: 900;
+  font-style: italic;
 }
 
 .tyre-soft { background: rgba(255, 30, 39, 0.25); border: 1px solid #FF1E27; color: #FF333D; }
@@ -1692,16 +1719,17 @@ body {
 .pit-badge {
   background: #FF1E27;
   color: #FFF;
-  font-family: var(--font-tech);
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 1px 4px;
+  font-family: var(--font-f1);
+  font-size: 0.68rem;
+  font-weight: 900;
+  font-style: italic;
+  padding: 1px 5px;
   border-radius: 3px;
   animation: live-blink 0.8s infinite;
 }
 
 .pit-count {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   font-family: var(--font-tech);
 }
@@ -1709,7 +1737,9 @@ body {
 /* Lap Times & Sectors */
 .lap-time {
   font-family: var(--font-tech);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   color: #FFF;
 }
 
@@ -1719,12 +1749,14 @@ body {
 
 .purple-text {
   color: #E066FF !important;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .sector-time {
   font-family: var(--font-tech);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   padding: 2px 4px;
   border-radius: 3px;
 }
@@ -1732,13 +1764,13 @@ body {
 .sector-time.purple {
   background: rgba(184, 0, 230, 0.25);
   color: #E066FF;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .sector-time.green {
   background: rgba(0, 255, 102, 0.2);
   color: #00FF66;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .sector-time.yellow {
