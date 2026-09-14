@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Meta Tags -->
+    <title>Apex F1 - Grand Prix & Drivers Telemetry Dashboard</title>
+    <meta name="description" content="Khám phá chi tiết 24 chặng đua F1 mùa giải 2026 và bảng xếp hạng Top 10 tay đua xuất sắc nhất mùa giải 2025 với hệ thống đo lường viễn trắc high-tech độc đáo." />
+    <meta name="keywords" content="formula 1, f1 dashboard, f1 schedule 2026, lando norris, max verstappen, f1 standings, f1 telemetry, đua xe f1" />
+    <meta name="author" content="Antigravity Team" />
+    
+    <!-- Open Graph (Social Sharing) -->
+    <meta property="og:title" content="Apex F1 - Grand Prix & Drivers Telemetry Dashboard" />
+    <meta property="og:description" content="Theo dõi trực quan dữ liệu chặng đua và bảng xếp hạng F1 với thiết kế dark-mode công nghệ cao ấn tượng." />
+    <meta property="og:type" content="website" />
+    
+    <!-- Design system CSS -->
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      
+      <!-- Left Sidebar Navigation Menu -->
+      <aside class="sidebar">
+        <div class="logo-container">
+          <div class="f1-stripes">
+            <div class="stripe"></div>
+            <div class="stripe"></div>
+            <div class="stripe"></div>
+          </div>
+          <span class="logo-text">APEX F1 <span class="logo-badge">PRO</span></span>
+        </div>
+        
+        <nav class="nav-menu">
+          <button class="nav-btn active" id="btn-dashboard">
+            <i data-lucide="gauge"></i>
+            <span>Tổng Quan Mùa Giải</span>
+          </button>
+          
+          <button class="nav-btn" id="btn-standings">
+            <i data-lucide="award"></i>
+            <span>Bảng Xếp Hạng</span>
+          </button>
+          
+          <button class="nav-btn" id="btn-circuits">
+            <i data-lucide="calendar"></i>
+            <span>Chi Tiết Chặng Đua</span>
+          </button>
+          
+          <button class="nav-btn" id="btn-live-map">
+            <i data-lucide="radio"></i>
+            <span>Bản Đồ Live GP</span>
+          </button>
+          
+          <button class="nav-btn" id="btn-openf1">
+            <i data-lucide="activity"></i>
+            <span>Dữ Liệu Thật OpenF1</span>
+          </button>
+        </nav>
+        
+        <div class="sidebar-footer">
+          <div>APEX TELEMETRY SYSTEM v3.5</div>
+          <div style="margin-top: 4px; font-size: 0.65rem;">© 2026 FORMULA ONE DATA</div>
+        </div>
+      </aside>
+
+      <!-- Main Application Space -->
+      <main class="main-content">
+        <!-- Top Status Bar -->
+        <header class="top-header">
+          <div class="header-title-sec">
+            <h1 id="header-panel-title">Tổng Quan Mùa Giải</h1>
+            <p id="header-panel-subtitle">HỆ THỐNG GIÁM SÁT VIỄN TRẮC TRỰC TUYẾN</p>
+          </div>
+          
+          <div class="header-status">
+            <div class="status-badge">
+              <div class="dot"></div>
+              <span>TELEMETRY ONLINE</span>
+            </div>
+            <div class="header-clock" id="header-real-clock">2026-05-27 14:55:00 UTC</div>
+          </div>
+        </header>
+
+        <!-- Dynamic Page Panels -->
+        <!-- Dashboard Panel -->
+        <section id="panel-dashboard" class="panel active"></section>
+
+        <!-- Driver Standings Panel -->
+        <section id="panel-standings" class="panel"></section>
+
+        <!-- Circuits/Calendar Panel -->
+        <section id="panel-circuits" class="panel"></section>
+
+        <!-- Live GP Simulator Panel -->
+        <section id="panel-live-map" class="panel"></section>
+
+        <!-- OpenF1 Real-Time Data & Replay Panel -->
+        <section id="panel-openf1" class="panel"></section>
+      </main>
+      
+    </div>
+
+    <!-- Main javascript bundle entry -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
