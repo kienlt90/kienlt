@@ -550,14 +550,21 @@
       <!-- Modal Body -->
       <div class="p-5 sm:p-6 overflow-y-auto space-y-6 custom-scrollbar flex-1 bg-slate-50/50">
         
-        <!-- Form Add New Kid -->
+        <!-- Form Add / Edit Kid -->
         <div class="bg-white p-5 rounded-2xl border-2 border-amber-200/80 shadow-xs space-y-4">
-          <h4 class="text-xs font-black text-amber-900 uppercase tracking-wider flex items-center space-x-2">
-            <div class="w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
-              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
-            </div>
-            <span>Tạo Tài Khoản Mới Cho Bé</span>
-          </h4>
+          <input type="hidden" id="editing-kid-id" value="">
+          
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-black text-amber-900 uppercase tracking-wider flex items-center space-x-2">
+              <div id="form-kid-icon" class="w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+                <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+              </div>
+              <span id="form-kid-title">Tạo Tài Khoản Mới Cho Bé</span>
+            </h4>
+            <span id="form-edit-badge" class="hidden text-[10px] font-black bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full border border-sky-200 animate-pulse">
+              Đang chỉnh sửa
+            </span>
+          </div>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
@@ -582,10 +589,16 @@
             </div>
           </div>
 
-          <button onclick="createNewKidAccount()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2 cursor-pointer">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>Lưu & Tạo Tài Khoản Bé (Mã hóa AES-GCM)</span>
-          </button>
+          <div class="flex items-center space-x-2">
+            <button id="btn-submit-kid" onclick="saveOrUpdateKidAccount()" class="flex-1 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2 cursor-pointer">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span id="btn-submit-kid-text">Lưu & Tạo Tài Khoản Bé (Mã hóa AES-GCM)</span>
+            </button>
+            <button id="btn-cancel-edit-kid" onclick="cancelEditKid()" class="hidden px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center space-x-1 cursor-pointer shrink-0">
+              <i data-lucide="x" class="w-4 h-4"></i>
+              <span>Hủy</span>
+            </button>
+          </div>
         </div>
 
         <!-- List of Created Kids -->
@@ -772,14 +785,17 @@
           </div>
 
           <!-- Right: Action Buttons (Strictly Aligned) -->
-          <div class="flex items-center space-x-2 shrink-0">
-            <button type="button" onclick="loginAsKidDirect('${k.id}', 'math')" class="px-3.5 py-2 rounded-xl text-white font-black text-xs shadow-xs hover:shadow transition flex items-center space-x-1.5 whitespace-nowrap cursor-pointer shrink-0" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp ${k.grade}">
+          <div class="flex items-center space-x-1.5 shrink-0">
+            <button type="button" onclick="loginAsKidDirect('${k.id}', 'math')" class="px-3 py-2 rounded-xl text-white font-black text-xs shadow-xs hover:shadow transition flex items-center space-x-1 whitespace-nowrap cursor-pointer shrink-0" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp ${k.grade}">
               <span>🧮</span>
               <span>Toán</span>
             </button>
-            <button type="button" onclick="loginAsKidDirect('${k.id}', 'english')" class="px-3.5 py-2 rounded-xl text-white font-black text-xs shadow-xs hover:shadow transition flex items-center space-x-1.5 whitespace-nowrap cursor-pointer shrink-0" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp ${k.grade}">
+            <button type="button" onclick="loginAsKidDirect('${k.id}', 'english')" class="px-3 py-2 rounded-xl text-white font-black text-xs shadow-xs hover:shadow transition flex items-center space-x-1 whitespace-nowrap cursor-pointer shrink-0" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp ${k.grade}">
               <span>🇬🇧</span>
-              <span>Tiếng Anh</span>
+              <span>T.Anh</span>
+            </button>
+            <button type="button" onclick="editKidAccount('${k.id}')" class="p-2 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 border border-slate-200 hover:border-amber-300 transition shrink-0 cursor-pointer" title="Chỉnh sửa thông tin bé ${k.name}">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
             </button>
             <button type="button" onclick="deleteKidAccount('${k.id}')" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition shrink-0 cursor-pointer" title="Xóa tài khoản bé">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -821,10 +837,66 @@
     }
 
     function closeKidManagerModal() {
+      cancelEditKid();
       document.getElementById('kid-manager-modal').classList.add('hidden');
     }
 
-    async function createNewKidAccount() {
+    async function editKidAccount(kidId) {
+      const kids = getKidsList();
+      const kid = kids.find(k => k.id === kidId);
+      if (!kid) return;
+
+      document.getElementById('editing-kid-id').value = kid.id;
+      document.getElementById('new-kid-name').value = kid.name;
+      document.getElementById('new-kid-grade').value = kid.grade;
+      document.getElementById('new-kid-username').value = kid.username;
+      
+      const plainPin = window.SecurityVault ? await window.SecurityVault.decryptPin(kid.pin) : (kid.pin || '1234');
+      document.getElementById('new-kid-pin').value = plainPin;
+
+      document.getElementById('form-kid-title').textContent = `Chỉnh Sửa Tài Khoản: ${kid.name}`;
+      const iconContainer = document.getElementById('form-kid-icon');
+      if (iconContainer) {
+        iconContainer.className = 'w-6 h-6 rounded-lg bg-sky-100 flex items-center justify-center text-sky-700';
+        iconContainer.innerHTML = '<i data-lucide="edit-3" class="w-3.5 h-3.5"></i>';
+      }
+      
+      const editBadge = document.getElementById('form-edit-badge');
+      if (editBadge) editBadge.classList.remove('hidden');
+
+      document.getElementById('btn-submit-kid-text').textContent = '💾 Lưu Thay Đổi Thông Tin Bé';
+      document.getElementById('btn-cancel-edit-kid').classList.remove('hidden');
+
+      const modalScroll = document.querySelector('#kid-manager-modal .custom-scrollbar');
+      if (modalScroll) modalScroll.scrollTo({ top: 0, behavior: 'smooth' });
+
+      lucide.createIcons();
+    }
+
+    function cancelEditKid() {
+      document.getElementById('editing-kid-id').value = '';
+      document.getElementById('new-kid-name').value = '';
+      document.getElementById('new-kid-username').value = '';
+      document.getElementById('new-kid-pin').value = '1234';
+      document.getElementById('new-kid-grade').value = '2';
+
+      document.getElementById('form-kid-title').textContent = 'Tạo Tài Khoản Mới Cho Bé';
+      const iconContainer = document.getElementById('form-kid-icon');
+      if (iconContainer) {
+        iconContainer.className = 'w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700';
+        iconContainer.innerHTML = '<i data-lucide="user-plus" class="w-3.5 h-3.5"></i>';
+      }
+
+      const editBadge = document.getElementById('form-edit-badge');
+      if (editBadge) editBadge.classList.add('hidden');
+
+      document.getElementById('btn-submit-kid-text').textContent = 'Lưu & Tạo Tài Khoản Bé (Mã hóa AES-GCM)';
+      document.getElementById('btn-cancel-edit-kid').classList.add('hidden');
+      lucide.createIcons();
+    }
+
+    async function saveOrUpdateKidAccount() {
+      const editId = document.getElementById('editing-kid-id').value;
       const name = document.getElementById('new-kid-name').value.trim();
       const grade = parseInt(document.getElementById('new-kid-grade').value, 10);
       const username = document.getElementById('new-kid-username').value.trim();
@@ -836,22 +908,40 @@
       }
 
       const encryptedPin = window.SecurityVault ? await window.SecurityVault.encryptPin(pin) : pin;
+      let kids = getKidsList();
 
-      const kids = getKidsList();
-      kids.push({
-        id: 'kid_' + Date.now(),
-        name: name,
-        grade: grade,
-        username: username,
-        pin: encryptedPin
-      });
-
-      await saveKidsList(kids);
-      document.getElementById('new-kid-name').value = '';
-      document.getElementById('new-kid-username').value = '';
-      document.getElementById('new-kid-pin').value = '';
-      alert(`Đã tạo tài khoản cho bé ${name} (Lớp ${grade}) thành công với mã hóa AES-GCM!`);
+      if (editId) {
+        // Update Existing Kid
+        const idx = kids.findIndex(k => k.id === editId);
+        if (idx !== -1) {
+          kids[idx] = {
+            ...kids[idx],
+            name: name,
+            grade: grade,
+            username: username,
+            pin: encryptedPin
+          };
+          await saveKidsList(kids);
+          cancelEditKid();
+          alert(`Đã cập nhật thông tin cho bé ${name} (Lớp ${grade}) thành công!`);
+        }
+      } else {
+        // Create New Kid
+        kids.push({
+          id: 'kid_' + Date.now(),
+          name: name,
+          grade: grade,
+          username: username,
+          pin: encryptedPin
+        });
+        await saveKidsList(kids);
+        cancelEditKid();
+        alert(`Đã tạo tài khoản cho bé ${name} (Lớp ${grade}) thành công với mã hóa AES-GCM!`);
+      }
     }
+
+    // Alias for compatibility
+    window.createNewKidAccount = saveOrUpdateKidAccount;
 
     function deleteKidAccount(kidId) {
       let kids = getKidsList();
