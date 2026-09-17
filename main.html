@@ -114,6 +114,10 @@
           <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-600"></i>
           <span>Check XML 3</span>
         </a>
+        <a href="javascript:void(0)" onclick="window.open('xml_all_validator.html', '_blank')" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 hover:text-indigo-900 hover:bg-indigo-50 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0 border border-indigo-200/80 bg-indigo-50/50">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i>
+          <span>Check Tổng XML</span>
+        </a>
       </nav>
 
       <!-- User Actions & Logout -->
@@ -400,7 +404,27 @@
                 <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition"></i>
               </div>
 
-                            <!-- Item XML 3: Kiểm tra tiến độ thời gian & Ngày ra viện -->
+                            <!-- Item XML ALL: Kiểm tra tổng hợp tất cả bảng XML QĐ 130 -->
+              <div onclick="window.open('xml_all_validator.html', '_blank')" class="module-item bg-gradient-to-r from-indigo-50/90 via-blue-50/60 to-white p-4 rounded-2xl border-2 border-indigo-400 shadow-sm hover:border-indigo-600 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-300 text-xl group-hover:scale-110 transition shadow-inner">
+                    🛡️
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-xs md:text-sm font-extrabold text-slate-900 group-hover:text-indigo-700 transition">Kiểm Tra Tổng Hợp Tất Cả Bảng XML (QĐ 130)</h4>
+                      <span class="text-[9px] font-extrabold px-2 py-0.5 bg-indigo-600 text-white rounded-full shadow-xs animate-pulse">XML 1 ➔ 14</span>
+                    </div>
+                    <p class="text-[11px] md:text-xs text-slate-600 line-clamp-1 mt-0.5">Kiểm tra từng bảng (XML 1-14) với rule riêng &amp; đối soát chéo tài chính, CLS, ngày ra viện từ file tổng hợp Excel/ZIP</p>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2 shrink-0">
+                  <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">MỚI PRO</span>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-indigo-500 group-hover:text-indigo-700 group-hover:translate-x-1 transition"></i>
+                </div>
+              </div>
+
+              <!-- Item XML 3: Kiểm tra tiến độ thời gian & Ngày ra viện -->
               <div onclick="window.open('xml3_checker.html', '_blank')" class="module-item bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
                 <div class="flex items-center space-x-3.5">
                   <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100 group-hover:scale-105 transition">

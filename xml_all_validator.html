@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIENLT90 - Hệ Thống Kiểm Tra Tổng Hợp Tất Cả Bảng XML BHYT QĐ 130</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SheetJS for Excel Reading and Exporting -->
+  <script src="xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');
+    }
+  </script>
+  <!-- JSZip for reading zip packages -->
+  <script src="jszip.min.js"></script>
+  <script>
+    if (typeof JSZip === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"><\/script>');
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .nav-tab-active {
+      background-color: #2563eb !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- Top Header -->
+  <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white shadow-lg border-b border-indigo-700/40 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <a id="lnkBackPortal" href="main.html" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold rounded-lg border border-white/20 transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Về Portal
+        </a>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 border border-blue-400/40 flex items-center justify-center text-white font-black text-xl shadow-md">
+          🛡️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">KIỂM TRA TỔNG HỢP CÁC BẢNG XML BHYT</h1>
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 rounded-full">QĐ 130/QĐ-BYT</span>
+          </div>
+          <p class="text-xs text-slate-300">Kiểm tra độc lập &amp; đối soát chéo: <span class="text-sky-300 font-medium">XML 1, 2, 3, 4, 5, 7, 8, 11, 13, 14</span></p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button id="btnSampleData" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg border border-indigo-400/40 transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Nạp Dữ Liệu Mẫu (XML 1-14)
+        </button>
+        <button id="btnExportExcel" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-md shadow-emerald-900/20 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Xuất Báo Cáo Lỗi (.xlsx)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- Upload & Quick Overview Box -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:border-blue-300 transition">
+      <div id="dropZone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl p-6 text-center cursor-pointer bg-slate-50 hover:bg-blue-50/40 transition flex flex-col items-center justify-center min-h-[140px]">
+        <div class="w-11 h-11 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2 shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        </div>
+        <p class="text-sm font-bold text-slate-800 mb-0.5">
+          Kéo thả file Excel tổng hợp <span class="text-blue-600 font-extrabold">XML_*.xlsx</span> (chứa nhiều sheet XML1-14), file <span class="text-indigo-600 font-extrabold">.ZIP</span> hoặc <span class="text-emerald-600 font-extrabold">.XML</span>
+        </p>
+        <p class="text-xs text-slate-400 mb-3">Tự động bóc tách và phân loại các bảng XML 1, XML 2, XML 3, XML 4, XML 5, XML 7, XML 8, XML 11, XML 13, XML 14</p>
+        <div class="flex items-center gap-3">
+          <label class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl cursor-pointer transition shadow-sm flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Chọn File Excel HIS / XML / ZIP
+            <input type="file" id="fileInput" multiple accept=".xlsx,.xls,.xml,.zip" class="hidden">
+          </label>
+          <label class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl cursor-pointer transition border border-slate-300">
+            Chọn Thư Mục Chứa XML
+            <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <div id="fileListSummary" class="mt-3 text-xs text-slate-500 flex justify-between items-center hidden pt-2 border-t border-slate-100">
+        <span id="txtFileLoaded" class="font-semibold text-slate-700">Đã nạp file thành công</span>
+        <button id="btnClearData" class="text-rose-600 hover:underline font-semibold">Xóa toàn bộ dữ liệu</button>
+      </div>
+    </div>
+
+    <!-- Overall KPI Summary -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+      <!-- Total Files / Dossiers -->
+      <div class="bg-white rounded-xl p-3.5 shadow-sm border border-slate-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase">Hồ sơ KCB (XML1)</p>
+          <p id="kpiDossiers" class="text-2xl font-bold text-slate-800 mt-0.5">0</p>
+          <p id="kpiTotalRows" class="text-[11px] text-slate-400">0 bản ghi tất cả bảng</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-lg">
+          📑
+        </div>
+      </div>
+
+      <!-- Detected Tables -->
+      <div class="bg-white rounded-xl p-3.5 shadow-sm border border-slate-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase">Bảng XML Tìm Thấy</p>
+          <p id="kpiTablesCount" class="text-2xl font-bold text-indigo-600 mt-0.5">0 / 10</p>
+          <p id="kpiTablesList" class="text-[10.5px] text-indigo-500 truncate max-w-[150px]">Chưa có dữ liệu</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg">
+          🗂️
+        </div>
+      </div>
+
+      <!-- Errors -->
+      <div class="bg-rose-50/80 rounded-xl p-3.5 shadow-sm border border-rose-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-rose-700 flex items-center gap-1 uppercase">
+            <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>
+            Tổng Lỗi Vi Phạm
+          </p>
+          <p id="kpiErrors" class="text-2xl font-bold text-rose-600 mt-0.5">0</p>
+          <p id="kpiErrorRate" class="text-[11px] text-rose-700 font-semibold">Tỷ lệ lỗi: 0%</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-lg">
+          ❌
+        </div>
+      </div>
+
+      <!-- Warnings -->
+      <div class="bg-amber-50/80 rounded-xl p-3.5 shadow-sm border border-amber-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-amber-700 uppercase">Cảnh Báo Giám Định</p>
+          <p id="kpiWarnings" class="text-2xl font-bold text-amber-600 mt-0.5">0</p>
+          <p class="text-[11px] text-amber-700">Cần kiểm tra lại</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-lg">
+          ⚠️
+        </div>
+      </div>
+
+      <!-- Compliance Rate -->
+      <div class="bg-emerald-50/80 rounded-xl p-3.5 shadow-sm border border-emerald-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-emerald-700 uppercase">Tỷ Lệ Đạt Chuẩn</p>
+          <p id="kpiCompliance" class="text-2xl font-bold text-emerald-600 mt-0.5">100%</p>
+          <p class="text-[11px] text-emerald-700">Hồ sơ sẵn sàng gửi</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg">
+          ✅
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-Table Status Cards Grid (Quick Jump to each XML Table) -->
+    <div>
+      <div class="flex items-center justify-between mb-2.5">
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <span>🎯</span> Tình trạng lỗi theo từng bảng XML
+        </h3>
+        <span class="text-[11px] text-slate-400">Nhấp vào thẻ để xem chi tiết bảng</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5" id="tableBadgesGrid">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+
+    <!-- Main Tab Navigation -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+      <div class="p-2.5 bg-slate-100/90 border-b border-slate-200 flex items-center gap-1.5 overflow-x-auto custom-scroll" id="tabsBar">
+        <button data-tab="CROSS" class="nav-tab nav-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 bg-blue-600 text-white shadow-sm">
+          <span>📊</span> TỔNG QUAN &amp; ĐỐI SOÁT CHÉO
+        </button>
+        <button data-tab="XML1" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 1: Tổng Hợp
+        </button>
+        <button data-tab="XML2" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 2: Thuốc
+        </button>
+        <button data-tab="XML3" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 3: DVKT &amp; VTYT
+        </button>
+        <button data-tab="XML4" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 4: Cận Lâm Sàng
+        </button>
+        <button data-tab="XML5" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 5: Diễn Biến LS
+        </button>
+        <button data-tab="XML7" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 7: Tóm Tắt HSBA
+        </button>
+        <button data-tab="XML8" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 8: Báo Tử
+        </button>
+        <button data-tab="XML11" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 11: Nghỉ Việc BHXH
+        </button>
+        <button data-tab="XML13" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 13: Chuyển Tuyến
+        </button>
+        <button data-tab="XML14" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 14: Hẹn Khám Lại
+        </button>
+      </div>
+
+      <!-- Controls Toolbar (Filters & Search) -->
+      <div class="p-3.5 bg-slate-50/60 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <!-- Status filter -->
+          <span class="text-xs text-slate-500 font-medium">Lọc:</span>
+          <div class="inline-flex rounded-lg border border-slate-300 p-0.5 bg-white text-xs">
+            <button data-status-filter="ALL" class="status-btn px-2.5 py-1 rounded-md font-bold bg-blue-50 text-blue-700">Tất cả</button>
+            <button data-status-filter="ERROR" class="status-btn px-2.5 py-1 rounded-md text-slate-600 hover:text-rose-600">❌ Chỉ lỗi</button>
+            <button data-status-filter="WARNING" class="status-btn px-2.5 py-1 rounded-md text-slate-600 hover:text-amber-600">⚠️ Cảnh báo</button>
+            <button data-status-filter="OK" class="status-btn px-2.5 py-1 rounded-md text-slate-600 hover:text-emerald-600">✅ Hợp lệ</button>
+          </div>
+
+          <span id="txtActiveTableRuleDesc" class="text-xs text-slate-500 italic ml-2 hidden sm:inline"></span>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <div class="relative">
+            <input type="text" id="searchInput" placeholder="Tìm Mã LK, Bệnh án, Mã DV, Tên, Lỗi..." class="w-64 pl-8 pr-3 py-1.5 bg-white text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="p-4" id="tabContentArea">
+        <!-- Dynamically rendered via renderCurrentTab() -->
+      </div>
+
+      <!-- Pagination / Bottom Status -->
+      <div class="p-3 border-t border-slate-200 bg-slate-50/60 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500" id="tablePaginationFooter">
+        <div id="pageInfo">Đang hiển thị 0 đến 0 trong tổng số 0 bản ghi</div>
+        <div class="flex items-center gap-1" id="paginationControls"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs border border-slate-700">
+    <span id="toastIcon">ℹ️</span>
+    <span id="toastMsg">Thông báo</span>
+  </div>
+
+  <script>
+    // Global Application State
+    const AppState = {
+      tablesData: {
+        XML1: [],
+        XML2: [],
+        XML3: [],
+        XML4: [],
+        XML5: [],
+        XML7: [],
+        XML8: [],
+        XML11: [],
+        XML13: [],
+        XML14: []
+      },
+      dossierMap: {}, // MA_LK -> XML1 Record
+      crossErrors: [],
+      currentTab: 'CROSS',
+      currentStatusFilter: 'ALL',
+      searchQuery: '',
+      currentPage: 1,
+      pageSize: 20
+    };
+
+    const TABLE_NAMES = {
+      XML1: 'XML 1 (Tổng Hợp KCB)',
+      XML2: 'XML 2 (Chi Tiết Thuốc)',
+      XML3: 'XML 3 (DVKT & VTYT)',
+      XML4: 'XML 4 (Kết Quả CLS)',
+      XML5: 'XML 5 (Diễn Biến LS)',
+      XML7: 'XML 7 (Tóm Tắt HSBA)',
+      XML8: 'XML 8 (Giấy Báo Tử)',
+      XML11: 'XML 11 (Nghỉ Việc BHXH)',
+      XML13: 'XML 13 (Chuyển Tuyến)',
+      XML14: 'XML 14 (Hẹn Khám Lại)'
+    };
+
+    const TABLE_RULES_DESC = {
+      XML1: 'Rules: Họ tên viết hoa; CCCD/Thẻ BHYT 10-15 ký tự; Hạn thẻ; Ngày vào <= Ngày ra; Mã bệnh ICD-10 viết hoa KHÔNG DẤU CHẤM; Cân đối tài chính BHYT; Miễn cùng chi trả < 15% lương CS.',
+      XML2: 'Rules: Mã thuốc & Thông tin thầu TT_THAU; SĐK, Hàm lượng, Đường dùng bắt buộc; Ngày y lệnh trong đợt điều trị; Cân đối Thành tiền = Số lượng x Đơn giá; Khớp nối MA_LK.',
+      XML3: 'Rules: Chuỗi tiến trình NGAY_YL <= NGAY_TH_YL <= NGAY_KQ <= NGAY_RA; Rule CROSS_02: Cận lâm sàng nhóm 1,2,3 bắt buộc có NGAY_KQ; PTTT có PTV & PP vô cảm.',
+      XML4: 'Rules: Bắt buộc có kết quả (GIA_TRI hoặc MO_TA/KET_LUAN); NGAY_KQ trong đợt điều trị; Bác sĩ đọc KQ; Khớp nối chỉ định CLS từ XML 3.',
+      XML5: 'Rules: Diễn biến lâm sàng bắt buộc; Thời điểm trong đợt KCB; Bệnh nhân có PTTT ở XML 3 phải có ghi nhận diễn biến mổ ở XML 5.',
+      XML7: 'Rules: Tóm tắt HSBA; Ngày vào <= Ngày ra; Số lưu trữ, Mã khoa, Mã bác sĩ, Chẩn đoán và PP điều trị không để trống.',
+      XML8: 'Rules: Giấy báo tử; Ngày giờ tử vong >= Ngày vào viện; Thông tin mẹ và con hợp lệ.',
+      XML11: 'Rules: Số ngày nghỉ = (Đến ngày - Từ ngày + 1); Tối đa 30 ngày/lần ngoại trú; Bắt buộc có Mã BHXH/Thẻ và Bác sĩ ký cấp.',
+      XML13: 'Rules: Giấy chuyển tuyến; Mã nơi đi/đến đủ 5 ký tự; Lý do chuyển tuyến; Ngày vào <= Ngày ra.',
+      XML14: 'Rules: Giấy hẹn khám lại; Ngày hẹn khám lại phải SAU Ngày ra viện; Bắt buộc có chẩn đoán khi ra viện.'
+    };
+
+    function showToast(msg, icon = 'ℹ️') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      document.getElementById('toastIcon').innerText = icon;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+
+    function parseDateTime(str) {
+      if (!str) return null;
+      const s = String(str).replace(/\D/g, '');
+      if (s.length >= 14) {
+        return new Date(Date.UTC(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8), +s.slice(8,10), +s.slice(10,12), +s.slice(12,14)));
+      } else if (s.length >= 12) {
+        return new Date(Date.UTC(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8), +s.slice(8,10), +s.slice(10,12)));
+      } else if (s.length >= 8) {
+        return new Date(Date.UTC(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8)));
+      }
+      return null;
+    }
+
+    function formatDTDisplay(raw) {
+      if (!raw) return '<span class="text-slate-300 italic">Trống</span>';
+      const s = String(raw).replace(/\D/g, '');
+      if (s.length >= 12) {
+        return `<span class="mono font-semibold">${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}</span> <span class="mono text-blue-700 font-bold">${s.slice(8,10)}:${s.slice(10,12)}</span>`;
+      } else if (s.length >= 8) {
+        return `<span class="mono font-semibold">${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}</span>`;
+      }
+      return raw;
+    }
+
+    function extractTimeOnly(raw) {
+      if (!raw) return '--:--';
+      const s = String(raw).replace(/\D/g, '');
+      if (s.length >= 12) return `${s.slice(8,10)}:${s.slice(10,12)}`;
+      if (s.length >= 8) return `${s.slice(6,8)}/${s.slice(4,6)}`;
+      return raw;
+    }
+
+    // Helper: Identify if service belongs to CLS / CDHA / TDCN (Nhóm 1, 2, 3)
+    function isClsService(rec) {
+      if (!rec) return false;
+      const maNhom = String(rec.MA_NHOM || rec.ma_nhom || '').trim();
+      if (['1', '2', '3', '01', '02', '03'].includes(maNhom)) return true;
+      
+      const tenNhom = String(rec.TEN_NHOM || rec.ten_nhom || '').toLowerCase();
+      if (tenNhom.includes('xét nghiệm') || tenNhom.includes('chẩn đoán hình ảnh') || 
+          tenNhom.includes('cđha') || tenNhom.includes('thăm dò chức năng') || tenNhom.includes('tdcn')) {
+        return true;
+      }
+      
+      const maDv = String(rec.MA_DICH_VU || rec.ma_dv || '').toUpperCase().trim();
+      if (maDv.startsWith('22.') || maDv.startsWith('23.') || maDv.startsWith('18.') ||
+          maDv.startsWith('XN') || maDv.startsWith('CDHA') || maDv.startsWith('TDCN') ||
+          maDv.startsWith('SA') || maDv.startsWith('XQ') || maDv.startsWith('CT') || maDv.startsWith('MRI')) {
+        return true;
+      }
+
+      const tenDv = String(rec.TEN_DICH_VU || rec.ten_dv || '').toLowerCase();
+      const clsKeywords = [
+        'xét nghiệm', 'định lượng', 'tổng phân tích', 'huyết học', 'sinh hóa', 'vi sinh', 
+        'miễn dịch', 'nước tiểu', 'đông máu', 'nhóm máu', 'kháng sinh đồ',
+        'chụp x-quang', 'chụp xquang', 'x-quang', 'xquang', 'siêu âm', 'chụp cắt lớp', 
+        'cắt lớp vi tính', 'chụp ct', 'cộng hưởng từ', 'mri', 'nội soi', 'điện tim', 
+        'điện tâm đồ', 'ecg', 'điện não', 'chức năng hô hấp', 'đo khúc xạ', 'đo thính lực'
+      ];
+      return clsKeywords.some(kw => tenDv.includes(kw));
+    }
+
+    // ==========================================
+    // VALIDATION ENGINE PER TABLE
+    // ==========================================
+
+    // 1. VALIDATE XML 1
+    function validateXML1(rec) {
+      const errors = [];
+      const warnings = [];
+
+      // 1.1 MA_LK
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK (Khóa định danh bắt buộc)");
+
+      // 1.2 HO_TEN uppercase
+      const hoten = String(rec.HO_TEN || '').trim();
+      if (!hoten) {
+        errors.push("Thiếu họ tên bệnh nhân (HO_TEN)");
+      } else if (hoten !== hoten.toUpperCase()) {
+        warnings.push(`Họ tên chưa viết hoa toàn bộ: "${hoten}"`);
+      }
+
+      // 1.3 NGAY_SINH
+      const ns = String(rec.NGAY_SINH || '').trim();
+      if (!ns || !/^\d{4,8}$/.test(ns)) {
+        errors.push(`Ngày sinh không đúng quy chuẩn QĐ 130: "${ns}" (Phải là YYYYMMDD hoặc YYYY)`);
+      }
+
+      // 1.4 GIOI_TINH
+      const gt = String(rec.GIOI_TINH || '').trim();
+      if (!['1', '2', '3'].includes(gt)) {
+        errors.push(`Mã giới tính không hợp lệ: "${gt}" (Quy định: 1-Nam, 2-Nữ, 3-Khác)`);
+      }
+
+      // 1.5 MA_THE_BHYT & SO_CCCD
+      const maThe = String(rec.MA_THE_BHYT || rec.MA_THE || '').trim();
+      const cccd = String(rec.SO_CCCD || '').trim();
+      if (!maThe && !cccd) {
+        errors.push("Bệnh nhân không có cả Mã thẻ BHYT lẫn Số CCCD/Định danh");
+      } else if (maThe && ![10, 15].includes(maThe.length)) {
+        warnings.push(`Độ dài thẻ BHYT khác thường (${maThe.length} ký tự): "${maThe}"`);
+      }
+
+      // 1.6 MA_DKBD
+      const dkbd = String(rec.MA_DKBD || '').trim();
+      if (dkbd && (dkbd.length !== 5 || dkbd.includes('-') || isNaN(dkbd))) {
+        errors.push(`Mã nơi ĐKKCB ban đầu sai quy chuẩn: "${dkbd}" (Phải đủ 5 số)`);
+      }
+
+      // 1.7 Hạn thẻ
+      const d_vao = parseDateTime(rec.NGAY_VAO);
+      const d_ra = parseDateTime(rec.NGAY_RA);
+      const d_the_tu = parseDateTime(rec.GT_THE_TU);
+      const d_the_den = parseDateTime(rec.GT_THE_DEN);
+
+      if (d_vao && d_the_den && d_vao > d_the_den) {
+        errors.push(`Thẻ BHYT hết hạn trước khi vào viện (Thẻ đến: ${rec.GT_THE_DEN} < Vào viện: ${rec.NGAY_VAO}) ❌ TỪ CHỐI`);
+      }
+
+      // 1.8 Ngày vào vs Ngày ra
+      if (d_vao && d_ra && d_ra < d_vao) {
+        errors.push(`Ngày ra viện trước ngày vào viện (Vào: ${rec.NGAY_VAO} > Ra: ${rec.NGAY_RA}) ❌ LỖI LOGIC`);
+      }
+
+      // 1.9 MA_BENH_CHINH (ICD-10 không có dấu chấm theo QĐ 1849)
+      const icdChinh = String(rec.MA_BENH_CHINH || rec.MA_BENH || '').trim();
+      if (!icdChinh) {
+        errors.push("Thiếu mã bệnh chính (MA_BENH_CHINH)");
+      } else if (icdChinh.includes('.')) {
+        errors.push(`Mã ICD-10 bệnh chính chứa dấu chấm: "${icdChinh}" ❌ Lỗi QĐ 1849/BYT (Cần bỏ dấu chấm, ví dụ: ${icdChinh.replace(/\./g, '')})`);
+      } else if (icdChinh !== icdChinh.toUpperCase()) {
+        errors.push(`Mã ICD-10 bệnh chính chưa viết hoa: "${icdChinh}"`);
+      }
+
+      // 1.10 MA_BENH_KT
+      const icdKt = String(rec.MA_BENH_KT || '').trim();
+      if (icdKt) {
+        if (icdKt.includes('.')) {
+          errors.push(`Mã ICD kèm theo chứa dấu chấm: "${icdKt}" (QĐ 1849 quy định không dấu chấm)`);
+        }
+      }
+
+      // 1.11 Cân đối tài chính BHYT
+      const t_tongchi_bh = parseFloat(rec.T_TONGCHI_BH) || 0;
+      const t_bhtt = parseFloat(rec.T_BHTT) || 0;
+      const t_bncct = parseFloat(rec.T_BNCCT) || 0;
+      const t_bntt = parseFloat(rec.T_BNTT) || 0;
+      const t_nguonkhac = parseFloat(rec.T_NGUONKHAC) || 0;
+      
+      const sumChiTiet = t_bhtt + t_bNCCT_plus(t_bncct, t_bntt, t_nguonkhac);
+      if (t_tongchi_bh > 0 && Math.abs(t_tongchi_bh - sumChiTiet) > 1) {
+        errors.push(`Lệch cân đối nguồn tiền BHYT: T_TONGCHI_BH (${t_tongchi_bh.toLocaleString()}) != BHTT + BNCCT + BNTT + Khác (${sumChiTiet.toLocaleString()})`);
+      }
+
+      // 1.12 Ngoại trú < 15% lương cơ sở (351.000đ)
+      const loaiKcb = String(rec.MA_LOAI_KCB || '').trim();
+      if ((loaiKcb === '01' || loaiKcb === '1') && t_tongchi_bh > 0 && t_tongchi_bh < 351000) {
+        if (t_bncct > 0) {
+          warnings.push(`Chi phí ngoại trú (${t_tongchi_bh.toLocaleString()}đ < 351.000đ) nhưng vẫn tính cùng chi trả BNCCT (${t_bncct.toLocaleString()}đ) [Được miễn theo quy định]`);
+        }
+      }
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    function t_bNCCT_plus(a, b, c) {
+      return (parseFloat(a)||0) + (parseFloat(b)||0) + (parseFloat(c)||0);
+    }
+
+    // 2. VALIDATE XML 2 (Thuốc)
+    function validateXML2(rec, dossierMap) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      if (!rec.MA_THUOC) errors.push("Thiếu mã thuốc (MA_THUOC)");
+      if (!rec.TEN_THUOC) errors.push("Thiếu tên thuốc (TEN_THUOC)");
+      if (!rec.HAM_LUONG) warnings.push("Thiếu thông tin hàm lượng thuốc (HAM_LUONG)");
+      if (!rec.DUONG_DUNG) warnings.push("Thiếu đường dùng (DUONG_DUNG)");
+      if (!rec.SO_DANG_KY) errors.push("Thiếu số đăng ký / GPNK (SO_DANG_KY)");
+      if (!rec.TT_THAU) errors.push("Thiếu thông tin quyết định trúng thầu (TT_THAU)");
+
+      // Thành tiền = Số lượng * Đơn giá
+      const sl = parseFloat(rec.SO_LUONG) || 0;
+      const dg = parseFloat(rec.DON_GIA) || 0;
+      const tt_bv = parseFloat(rec.THANH_TIEN_BV) || 0;
+      if (sl > 0 && dg > 0 && Math.abs((sl * dg) - tt_bv) > 1) {
+        errors.push(`Sai lệch thành tiền: SL (${sl}) x ĐG (${dg}) = ${(sl*dg).toLocaleString()} != THANH_TIEN_BV (${tt_bv.toLocaleString()})`);
+      }
+
+      // Check đối soát với XML 1
+      if (rec.MA_LK && dossierMap[rec.MA_LK]) {
+        const d1 = dossierMap[rec.MA_LK];
+        const d_yl = parseDateTime(rec.NGAY_YL);
+        const d_ra = parseDateTime(d1.NGAY_RA);
+        const d_vao = parseDateTime(d1.NGAY_VAO);
+        if (d_yl && d_ra && d_yl > d_ra) {
+          errors.push(`Ngày y lệnh thuốc sau ngày ra viện (YL: ${formatDTDisplay(rec.NGAY_YL)} > RA: ${formatDTDisplay(d1.NGAY_RA)}) ❌ XUẤT TOÁN`);
+        }
+        if (d_yl && d_vao && d_yl < d_vao) {
+          warnings.push(`Ngày y lệnh thuốc trước ngày vào viện`);
+        }
+      } else if (rec.MA_LK && Object.keys(dossierMap).length > 0) {
+        errors.push(`Không tìm thấy hồ sơ XML 1 tương ứng cho MA_LK: ${rec.MA_LK} (Bản ghi mồ côi)`);
+      }
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // 3. VALIDATE XML 3 (DVKT & VTYT)
+    function validateXML3(rec, dossierMap) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      if (!rec.MA_DICH_VU && !rec.MA_VAT_TU) errors.push("Thiếu mã dịch vụ / mã vật tư y tế");
+
+      const d_yl = parseDateTime(rec.NGAY_YL);
+      const d_th = parseDateTime(rec.NGAY_TH_YL);
+      const d_kq = parseDateTime(rec.NGAY_KQ);
+
+      // Chuỗi thời gian
+      if (d_yl && d_th && d_th < d_yl) {
+        errors.push(`Thực hiện trước Y lệnh (TH: ${extractTimeOnly(rec.NGAY_TH_YL)} < YL: ${extractTimeOnly(rec.NGAY_YL)})`);
+      }
+      if (d_th && d_kq && d_kq < d_th) {
+        errors.push(`Kết quả trước Thực hiện (KQ: ${extractTimeOnly(rec.NGAY_KQ)} < TH: ${extractTimeOnly(rec.NGAY_TH_YL)})`);
+      }
+      if (d_yl && d_kq && d_kq < d_yl) {
+        errors.push(`Kết quả trước Y lệnh (KQ: ${extractTimeOnly(rec.NGAY_KQ)} < YL: ${extractTimeOnly(rec.NGAY_YL)})`);
+      }
+
+      // Check với ngày ra viện
+      if (rec.MA_LK && dossierMap[rec.MA_LK]) {
+        const d1 = dossierMap[rec.MA_LK];
+        const d_ra = parseDateTime(d1.NGAY_RA);
+        if (d_ra) {
+          if (d_yl && d_yl > d_ra) errors.push(`Y lệnh sau ngày ra viện (${extractTimeOnly(rec.NGAY_YL)} > RA: ${extractTimeOnly(d1.NGAY_RA)}) ❌ XUẤT TOÁN`);
+          if (d_th && d_th > d_ra) errors.push(`Thực hiện sau ngày ra viện (${extractTimeOnly(rec.NGAY_TH_YL)} > RA: ${extractTimeOnly(d1.NGAY_RA)}) ❌ XUẤT TOÁN`);
+          if (d_kq && d_kq > d_ra) errors.push(`Kết quả sau ngày ra viện (${extractTimeOnly(rec.NGAY_KQ)} > RA: ${extractTimeOnly(d1.NGAY_RA)}) ❌ XUẤT TOÁN`);
+        }
+      }
+
+      // RULE CROSS_02: Cận lâm sàng nhóm 1, 2, 3 bắt buộc có NGAY_KQ
+      if (isClsService(rec) && !rec.NGAY_KQ) {
+        errors.push("THIẾU NGAY_KQ (Dịch vụ XN/CĐHA/TDCN bắt buộc phải có ngày giờ kết quả) ❌ CỔNG BHXH TỪ CHỐI TIẾP NHẬN [Rule CROSS_02]");
+      }
+
+      // PTTT check
+      const pttt = String(rec.MA_PTTT || '').trim();
+      if (['1', '2', '3', 'ĐB', 'DB'].includes(pttt)) {
+        if (!rec.NGUOI_THUC_HIEN) errors.push(`Phẫu thuật thủ thuật loại ${pttt} nhưng thiếu thông tin NGUOI_THUC_HIEN (PTV chính)`);
+        if (!rec.PP_VO_CAM) warnings.push(`Phẫu thuật thủ thuật thiếu thông tin phương pháp vô cảm (PP_VO_CAM)`);
+      }
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // 4. VALIDATE XML 4 (Kết quả CLS)
+    function validateXML4(rec, dossierMap) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      if (!rec.MA_DICH_VU) errors.push("Thiếu mã dịch vụ kỹ thuật liên kết (MA_DICH_VU)");
+      if (!rec.MA_CHI_SO && !rec.TEN_CHI_SO) errors.push("Thiếu thông tin chỉ số xét nghiệm (MA_CHI_SO / TEN_CHI_SO)");
+
+      const val = String(rec.GIA_TRI || '').trim();
+      const mota = String(rec.MO_TA || '').trim();
+      const ketluan = String(rec.KET_LUAN || '').trim();
+      if (!val && !mota && !ketluan) {
+        errors.push("Không có kết quả cận lâm sàng (Đồng thời trống cả GIA_TRI, MO_TA, KET_LUAN)");
+      }
+
+      if (!rec.NGAY_KQ) {
+        errors.push("Thiếu ngày giờ trả kết quả (NGAY_KQ)");
+      } else if (rec.MA_LK && dossierMap[rec.MA_LK]) {
+        const d_kq = parseDateTime(rec.NGAY_KQ);
+        const d_ra = parseDateTime(dossierMap[rec.MA_LK].NGAY_RA);
+        if (d_kq && d_ra && d_kq > d_ra) {
+          errors.push(`Ngày trả kết quả CLS sau ngày ra viện ❌ Lỗi tiếp nhận BHYT`);
+        }
+      }
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // 5. VALIDATE XML 5 (Diễn biến LS)
+    function validateXML5(rec, dossierMap) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      if (!rec.DIEN_BIEN_LS) errors.push("Thiếu nội dung ghi nhận diễn biến lâm sàng (DIEN_BIEN_LS)");
+      if (!rec.THOI_DIEM_DBLS) {
+        warnings.push("Thiếu thời điểm ghi nhận diễn biến lâm sàng (THOI_DIEM_DBLS)");
+      } else if (rec.MA_LK && dossierMap[rec.MA_LK]) {
+        const d_dbls = parseDateTime(rec.THOI_DIEM_DBLS);
+        const d_ra = parseDateTime(dossierMap[rec.MA_LK].NGAY_RA);
+        const d_vao = parseDateTime(dossierMap[rec.MA_LK].NGAY_VAO);
+        if (d_dbls && d_ra && d_dbls > d_ra) errors.push("Thời điểm diễn biến lâm sàng sau ngày ra viện");
+        if (d_dbls && d_vao && d_dbls < d_vao) warnings.push("Thời điểm diễn biến trước ngày vào viện");
+      }
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // 6. VALIDATE XML 7 (Tóm tắt HSBA)
+    function validateXML7(rec) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      if (!rec.SO_LUU_TRU) warnings.push("Thiếu số lưu trữ hồ sơ bệnh án (SO_LUU_TRU)");
+      if (!rec.MA_KHOA_RV) errors.push("Thiếu mã khoa ra viện (MA_KHOA_RV)");
+      if (!rec.MA_BS) warnings.push("Thiếu mã bác sĩ điều trị/ký tóm tắt (MA_BS)");
+
+      const d_vao = parseDateTime(rec.NGAY_VAO);
+      const d_ra = parseDateTime(rec.NGAY_RA);
+      if (d_vao && d_ra && d_ra < d_vao) errors.push("Ngày ra viện trước ngày vào viện trên tóm tắt HSBA");
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // 7. VALIDATE XML 8 (Báo tử)
+    function validateXML8(rec) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      const d_chet = parseDateTime(rec.NGAY_CONCHET || rec.NGAY_CHET);
+      const d_vao = parseDateTime(rec.NGAY_VAO);
+      if (d_chet && d_vao && d_chet < d_vao) {
+        errors.push("Thời gian tử vong trước thời gian vào viện ❌ Vô lý");
+      }
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // 8. VALIDATE XML 11 (Nghỉ việc BHXH)
+    function validateXML11(rec, dossierMap) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      if (!rec.SO_CT && !rec.SO_SERI) errors.push("Thiếu số chứng từ / số seri giấy chứng nhận nghỉ việc");
+      if (!rec.MA_BHXH && !rec.MA_THE_BHYT) errors.push("Thiếu mã định danh người lao động (MA_BHXH hoặc MA_THE_BHYT)");
+
+      const tuNgay = parseDateTime(rec.TU_NGAY);
+      const denNgay = parseDateTime(rec.DEN_NGAY);
+      const soNgayNghi = parseInt(rec.SO_NGAY_NGHI) || 0;
+
+      if (tuNgay && denNgay) {
+        if (denNgay < tuNgay) {
+          errors.push(`Đến ngày (${rec.DEN_NGAY}) trước Từ ngày (${rec.TU_NGAY})`);
+        } else {
+          const diffDays = Math.round((denNgay.getTime() - tuNgay.getTime()) / (24 * 3600 * 1000)) + 1;
+          if (soNgayNghi > 0 && soNgayNghi !== diffDays) {
+            warnings.push(`Số ngày nghỉ khai báo (${soNgayNghi}) không khớp khoảng ngày thực tế (${diffDays} ngày)`);
+          }
+        }
+      }
+
+      if (soNgayNghi > 30) {
+        errors.push(`Số ngày nghỉ vượt quá 30 ngày cho một lần cấp ngoại trú (${soNgayNghi} ngày) [Vi phạm quy định BHXH]`);
+      }
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // 9. VALIDATE XML 13 (Chuyển tuyến)
+    function validateXML13(rec) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      if (!rec.SO_CHUYENTUYEN) warnings.push("Thiếu số chuyển tuyến (SO_CHUYENTUYEN)");
+      if (!rec.MA_NOI_DI || String(rec.MA_NOI_DI).length !== 5) errors.push(`Mã cơ sở KCB nơi chuyển đi không đủ 5 số: "${rec.MA_NOI_DI}"`);
+      if (!rec.MA_NOI_DEN || String(rec.MA_NOI_DEN).length !== 5) errors.push(`Mã cơ sở KCB nơi đến không đủ 5 số: "${rec.MA_NOI_DEN}"`);
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // 10. VALIDATE XML 14 (Hẹn khám lại)
+    function validateXML14(rec, dossierMap) {
+      const errors = [];
+      const warnings = [];
+
+      if (!rec.MA_LK) errors.push("Thiếu MA_LK");
+      if (!rec.SO_GIAYHEN_KL) errors.push("Thiếu số giấy hẹn khám lại (SO_GIAYHEN_KL)");
+
+      const d_hen = parseDateTime(rec.NGAY_HEN_KL);
+      const d_ra = parseDateTime(rec.NGAY_RA) || (rec.MA_LK && dossierMap[rec.MA_LK] ? parseDateTime(dossierMap[rec.MA_LK].NGAY_RA) : null);
+
+      if (d_hen && d_ra && d_hen <= d_ra) {
+        errors.push(`Ngày hẹn khám lại (${rec.NGAY_HEN_KL}) phải sau ngày ra viện (${rec.NGAY_RA}) ❌ LỖI HẸN`);
+      }
+
+      rec._status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec._errors = errors;
+      rec._warnings = warnings;
+      return rec;
+    }
+
+    // ==========================================
+    // CROSS-TABLE CORRELATION AUDIT
+    // ==========================================
+    function performCrossValidation() {
+      const crossErrors = [];
+      const dMap = AppState.dossierMap;
+
+      // 1. Check orphan records in all tables
+      const checkTables = ['XML2', 'XML3', 'XML4', 'XML5', 'XML7', 'XML8', 'XML11', 'XML13', 'XML14'];
+      checkTables.forEach(tKey => {
+        const rows = AppState.tablesData[tKey];
+        if (rows && rows.length > 0 && Object.keys(dMap).length > 0) {
+          const orphanCount = rows.filter(r => r.MA_LK && !dMap[r.MA_LK]).length;
+          if (orphanCount > 0) {
+            crossErrors.push({
+              table: tKey,
+              type: 'ERROR',
+              title: `Bản ghi mồ côi (Orphan records) ở bảng ${tKey}`,
+              message: `Có ${orphanCount} dòng dữ liệu ở bảng ${tKey} có MA_LK không tồn tại trong bảng tổng hợp XML 1.`,
+              suggestion: 'Kiểm tra quy trình xuất dữ liệu từ phần mềm HIS, đảm bảo hồ sơ đã được đồng bộ lên XML 1.'
+            });
+          }
+        }
+      });
+
+      // 2. Cross Financial Matching (XML 1 vs XML 2 Thuốc)
+      if (AppState.tablesData.XML1.length > 0 && AppState.tablesData.XML2.length > 0) {
+        const drugTotalsByMalk = {};
+        AppState.tablesData.XML2.forEach(r => {
+          if (!r.MA_LK) return;
+          drugTotalsByMalk[r.MA_LK] = (drugTotalsByMalk[r.MA_LK] || 0) + (parseFloat(r.THANH_TIEN_BV) || 0);
+        });
+
+        let diffCount = 0;
+        AppState.tablesData.XML1.forEach(x1 => {
+          const mlk = x1.MA_LK;
+          const tThuocXml1 = parseFloat(x1.T_THUOC) || 0;
+          const tThuocXml2 = drugTotalsByMalk[mlk] || 0;
+          if (Math.abs(tThuocXml1 - tThuocXml2) > 1) {
+            diffCount++;
+          }
+        });
+
+        if (diffCount > 0) {
+          crossErrors.push({
+            table: 'XML1 ↔ XML2',
+            type: 'ERROR',
+            title: `Lệch tổng tiền Thuốc giữa XML 1 và XML 2`,
+            message: `Phát hiện ${diffCount} hồ sơ KCB có tổng tiền thuốc ở XML 1 (T_THUOC) không khớp với tổng tiền chi tiết các dòng ở XML 2.`,
+            suggestion: 'Chạy lại chức năng tổng hợp chi phí viện phí trên HIS trước khi kết xuất gói XML BHYT.'
+          });
+        }
+      }
+
+      // 3. Cross CLS Check (XML 3 vs XML 4)
+      if (AppState.tablesData.XML3.length > 0 && AppState.tablesData.XML4.length > 0) {
+        const xml4DvktSet = new Set();
+        AppState.tablesData.XML4.forEach(r => {
+          if (r.MA_LK && r.MA_DICH_VU) xml4DvktSet.add(`${r.MA_LK}_${r.MA_DICH_VU}`);
+        });
+
+        let missingResultCount = 0;
+        AppState.tablesData.XML3.forEach(r => {
+          if (r.MA_LK && r.MA_DICH_VU && isClsService(r)) {
+            if (!xml4DvktSet.has(`${r.MA_LK}_${r.MA_DICH_VU}`)) {
+              missingResultCount++;
+            }
+          }
+        });
+
+        if (missingResultCount > 0) {
+          crossErrors.push({
+            table: 'XML3 ↔ XML4',
+            type: 'WARNING',
+            title: `Chỉ định Cận lâm sàng ở XML 3 chưa có kết quả chi tiết ở XML 4`,
+            message: `Có ${missingResultCount} dịch vụ cận lâm sàng (XN/CĐHA/TDCN) ở XML 3 nhưng chưa tìm thấy dòng kết quả chi tiết tương ứng ở XML 4.`,
+            suggestion: 'Đảm bảo các khoa CĐHA/Xét nghiệm đã hoàn thành trả kết quả và duyệt chỉ số trên LIS/RIS trước khi đóng hồ sơ.'
+          });
+        }
+      }
+
+      AppState.crossErrors = crossErrors;
+    }
+
+    // ==========================================
+    // DATA INGESTION & WORKBOOK PARSER
+    // ==========================================
+    function clearAllData() {
+      Object.keys(AppState.tablesData).forEach(k => AppState.tablesData[k] = []);
+      AppState.dossierMap = {};
+      AppState.crossErrors = [];
+      document.getElementById('fileListSummary').classList.add('hidden');
+      document.getElementById('fileInput').value = '';
+      document.getElementById('folderInput').value = '';
+      refreshDashboard();
+      showToast('Đã xóa toàn bộ dữ liệu!', '🗑️');
+    }
+
+    async function handleFilesUpload(fileList) {
+      const files = Array.from(fileList);
+      if (files.length === 0) return;
+
+      showToast(`Đang phân tích ${files.length} file...`, '⏳');
+
+      for (const file of files) {
+        const fname = file.name.toLowerCase();
+        if (fname.endsWith('.xlsx') || fname.endsWith('.xls')) {
+          await parseExcelFile(file);
+        } else if (fname.endsWith('.zip')) {
+          await parseZipFile(file);
+        } else if (fname.endsWith('.xml')) {
+          const text = await file.text();
+          parseXmlText(text, file.name);
+        }
+      }
+
+      // Perform validation on all ingested tables
+      runAllValidators();
+      refreshDashboard();
+      showToast(`Hoàn tất nạp & kiểm tra ${countTotalRecords()} bản ghi!`, '🚀');
+    }
+
+    async function parseExcelFile(file) {
+      const data = await file.arrayBuffer();
+      const wb = XLSX.read(data, { type: 'array' });
+      
+      wb.SheetNames.forEach(sname => {
+        const normName = sname.toUpperCase().trim();
+        let targetKey = null;
+        for (const k of Object.keys(AppState.tablesData)) {
+          if (normName === k || normName.includes(k) || normName.endsWith(k)) {
+            targetKey = k;
+            break;
+          }
+        }
+        if (!targetKey) {
+          // Special fallback mappings
+          if (normName.includes('TONGHOP') || normName.includes('TONG_HOP')) targetKey = 'XML1';
+          else if (normName.includes('THUOC')) targetKey = 'XML2';
+          else if (normName.includes('DVKT') || normName.includes('DICHVU')) targetKey = 'XML3';
+          else if (normName.includes('CLS') || normName.includes('CANLAMSANG')) targetKey = 'XML4';
+          else if (normName.includes('DIENBIEN')) targetKey = 'XML5';
+          else if (normName.includes('TOMTAT')) targetKey = 'XML7';
+          else if (normName.includes('BAOTU')) targetKey = 'XML8';
+          else if (normName.includes('NGHIVIEC')) targetKey = 'XML11';
+          else if (normName.includes('CHUYENTUYEN')) targetKey = 'XML13';
+          else if (normName.includes('HENKHAM')) targetKey = 'XML14';
+        }
+
+        if (targetKey) {
+          const sheet = wb.Sheets[sname];
+          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          if (rows.length > 0) {
+            const normalizedRows = rows.map(r => {
+              const rowObj = {};
+              for (const [k, v] of Object.entries(r)) {
+                rowObj[k.toUpperCase().trim()] = v !== undefined && v !== null ? String(v).trim() : '';
+              }
+              rowObj._fileName = file.name;
+              return rowObj;
+            });
+            AppState.tablesData[targetKey].push(...normalizedRows);
+          }
+        }
+      });
+    }
+
+    async function parseZipFile(file) {
+      const zip = await JSZip.loadAsync(file);
+      for (const [zname, zentry] of Object.entries(zip.files)) {
+        if (!zentry.dir && zname.toLowerCase().endsWith('.xml')) {
+          const text = await zentry.async('text');
+          parseXmlText(text, `${file.name}/${zname}`);
+        }
+      }
+    }
+
+    function parseXmlText(xmlText, fileName) {
+      // Check if standard BHYT wrapped container with <LOAIHOSO>
+      const b64Regex = /<LOAIHOSO>\s*(XML\d+)\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/gi;
+      let m;
+      let matched = false;
+
+      while ((m = b64Regex.exec(xmlText)) !== null) {
+        matched = true;
+        const loaiHoSo = m[1].toUpperCase().trim();
+        const rawB64 = m[2].trim();
+        let decoded = rawB64;
+        try {
+          decoded = decodeURIComponent(escape(atob(rawB64)));
+        } catch(e) {
+          try { decoded = atob(rawB64); } catch(e2) {}
+        }
+        extractXmlNodesToTable(decoded, loaiHoSo, fileName);
+      }
+
+      if (!matched) {
+        // Direct single XML file detection
+        for (const k of Object.keys(AppState.tablesData)) {
+          if (xmlText.toUpperCase().includes(`<${k}>`) || fileName.toUpperCase().includes(k)) {
+            extractXmlNodesToTable(xmlText, k, fileName);
+            break;
+          }
+        }
+      }
+    }
+
+    function extractXmlNodesToTable(text, targetKey, fileName) {
+      if (!AppState.tablesData[targetKey]) return;
+
+      // Extract item nodes based on tag conventions
+      const tagMap = {
+        XML1: 'TONG_HOP',
+        XML2: 'CHI_TIET_THUOC',
+        XML3: 'CHI_TIET_DVKT',
+        XML4: 'CHI_TIET_CLS',
+        XML5: 'CHI_TIET_DIEN_BIEN_BENH',
+        XML7: 'TOM_TAT_HSBA',
+        XML8: 'GIAY_BAO_TU',
+        XML11: 'CHUNG_NHAN_NGHI_VIEC',
+        XML13: 'GIAY_CHUYEN_TUYEN',
+        XML14: 'GIAY_HEN_KHAM_LAI'
+      };
+
+      const itemTag = tagMap[targetKey] || targetKey;
+      const nodeRegex = new RegExp(`<${itemTag}>([\\s\\S]*?)<\\/${itemTag}>`, 'gi');
+      let m;
+      while ((m = nodeRegex.exec(text)) !== null) {
+        const block = m[1];
+        const rowObj = { _fileName: fileName };
+        const fieldRegex = /<([a-zA-Z0-9_]+)>(?:<!\[CDATA\[([\s\S]*?)\]\]>|([\s\S]*?))<\/\1>/gi;
+        let fm;
+        while ((fm = fieldRegex.exec(block)) !== null) {
+          const key = fm[1].toUpperCase().trim();
+          const val = fm[2] !== undefined ? fm[2] : (fm[3] || '');
+          rowObj[key] = val.trim();
+        }
+        AppState.tablesData[targetKey].push(rowObj);
+      }
+    }
+
+    function countTotalRecords() {
+      let sum = 0;
+      Object.keys(AppState.tablesData).forEach(k => sum += AppState.tablesData[k].length);
+      return sum;
+    }
+
+    function runAllValidators() {
+      // Step 1: Build XML 1 dossier map
+      AppState.dossierMap = {};
+      AppState.tablesData.XML1.forEach(rec => {
+        if (rec.MA_LK) {
+          AppState.dossierMap[rec.MA_LK] = rec;
+        }
+      });
+
+      // Step 2: Validate each table
+      AppState.tablesData.XML1 = AppState.tablesData.XML1.map(validateXML1);
+      AppState.tablesData.XML2 = AppState.tablesData.XML2.map(r => validateXML2(r, AppState.dossierMap));
+      AppState.tablesData.XML3 = AppState.tablesData.XML3.map(r => validateXML3(r, AppState.dossierMap));
+      AppState.tablesData.XML4 = AppState.tablesData.XML4.map(r => validateXML4(r, AppState.dossierMap));
+      AppState.tablesData.XML5 = AppState.tablesData.XML5.map(r => validateXML5(r, AppState.dossierMap));
+      AppState.tablesData.XML7 = AppState.tablesData.XML7.map(validateXML7);
+      AppState.tablesData.XML8 = AppState.tablesData.XML8.map(validateXML8);
+      AppState.tablesData.XML11 = AppState.tablesData.XML11.map(r => validateXML11(r, AppState.dossierMap));
+      AppState.tablesData.XML13 = AppState.tablesData.XML13.map(validateXML13);
+      AppState.tablesData.XML14 = AppState.tablesData.XML14.map(r => validateXML14(r, AppState.dossierMap));
+
+      // Step 3: Cross-validation
+      performCrossValidation();
+    }
+
+    // ==========================================
+    // UI DASHBOARD REFRESH & RENDER
+    // ==========================================
+    function refreshDashboard() {
+      const x1Count = AppState.tablesData.XML1.length;
+      const totalRecs = countTotalRecords();
+
+      // Detect active tables
+      const foundTables = Object.keys(AppState.tablesData).filter(k => AppState.tablesData[k].length > 0);
+      document.getElementById('kpiDossiers').innerText = x1Count.toLocaleString();
+      document.getElementById('kpiTotalRows').innerText = `${totalRecs.toLocaleString()} bản ghi tất cả bảng`;
+      document.getElementById('kpiTablesCount').innerText = `${foundTables.length} / 10`;
+      document.getElementById('kpiTablesList').innerText = foundTables.join(', ') || 'Chưa có';
+
+      // Aggregate errors and warnings
+      let totalErr = AppState.crossErrors.length;
+      let totalWarn = 0;
+      let totalOk = 0;
+
+      Object.keys(AppState.tablesData).forEach(k => {
+        AppState.tablesData[k].forEach(r => {
+          if (r._status === 'ERROR') totalErr++;
+          else if (r._status === 'WARNING') totalWarn++;
+          else if (r._status === 'OK') totalOk++;
+        });
+      });
+
+      const errRate = totalRecs > 0 ? ((totalErr / totalRecs) * 100).toFixed(1) : 0;
+      const compRate = totalRecs > 0 ? Math.max(0, 100 - parseFloat(errRate)).toFixed(1) : 100;
+
+      document.getElementById('kpiErrors').innerText = totalErr.toLocaleString();
+      document.getElementById('kpiErrorRate').innerText = `Tỷ lệ lỗi: ${errRate}%`;
+      document.getElementById('kpiWarnings').innerText = totalWarn.toLocaleString();
+      document.getElementById('kpiCompliance').innerText = `${compRate}%`;
+
+      if (totalRecs > 0) {
+        document.getElementById('fileListSummary').classList.remove('hidden');
+        document.getElementById('txtFileLoaded').innerText = `Đã nạp ${foundTables.length} bảng dữ liệu (${totalRecs.toLocaleString()} dòng). Phát hiện ${totalErr} lỗi và ${totalWarn} cảnh báo.`;
+      }
+
+      renderTableBadgesGrid();
+      renderCurrentTab();
+    }
+
+    function renderTableBadgesGrid() {
+      const grid = document.getElementById('tableBadgesGrid');
+      grid.innerHTML = '';
+
+      Object.keys(AppState.tablesData).forEach(k => {
+        const rows = AppState.tablesData[k];
+        const count = rows.length;
+        const errCount = rows.filter(r => r._status === 'ERROR').length;
+        const warnCount = rows.filter(r => r._status === 'WARNING').length;
+
+        let borderClass = 'border-slate-200 bg-white hover:border-blue-400';
+        let badgeColor = 'bg-slate-100 text-slate-600';
+
+        if (count > 0) {
+          if (errCount > 0) {
+            borderClass = 'border-rose-200 bg-rose-50/40 hover:border-rose-400';
+            badgeColor = 'bg-rose-100 text-rose-700 font-bold';
+          } else if (warnCount > 0) {
+            borderClass = 'border-amber-200 bg-amber-50/40 hover:border-amber-400';
+            badgeColor = 'bg-amber-100 text-amber-800 font-bold';
+          } else {
+            borderClass = 'border-emerald-200 bg-emerald-50/40 hover:border-emerald-400';
+            badgeColor = 'bg-emerald-100 text-emerald-800 font-bold';
+          }
+        }
+
+        const div = document.createElement('div');
+        div.className = `p-2.5 rounded-xl border ${borderClass} cursor-pointer transition shadow-2xs`;
+        div.onclick = () => switchTab(k);
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-extrabold text-xs text-slate-800">${k}</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full ${badgeColor}">
+              ${count > 0 ? (errCount > 0 ? `${errCount} Lỗi` : 'Sạch lỗi') : '0 dòng'}
+            </span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-1 flex justify-between">
+            <span>${count.toLocaleString()} dòng</span>
+            <span class="text-slate-400">${TABLE_NAMES[k].split('(')[1]?.replace(')','') || ''}</span>
+          </div>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    function switchTab(tabKey) {
+      AppState.currentTab = tabKey;
+      AppState.currentPage = 1;
+
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabKey) {
+          btn.classList.add('nav-tab-active');
+        } else {
+          btn.classList.remove('nav-tab-active');
+        }
+      });
+
+      const descEl = document.getElementById('txtActiveTableRuleDesc');
+      if (tabKey === 'CROSS') {
+        descEl.innerText = 'Đối soát toàn vẹn khóa ngoại MA_LK, cân đối tài chính hồ sơ & logic cận lâm sàng.';
+      } else {
+        descEl.innerText = TABLE_RULES_DESC[tabKey] || '';
+      }
+
+      renderCurrentTab();
+    }
+
+    function renderCurrentTab() {
+      const container = document.getElementById('tabContentArea');
+      const footer = document.getElementById('tablePaginationFooter');
+
+      if (AppState.currentTab === 'CROSS') {
+        footer.classList.add('hidden');
+        renderCrossTab(container);
+      } else {
+        footer.classList.remove('hidden');
+        renderTableListTab(container, AppState.currentTab);
+      }
+    }
+
+    // Render Tab 1: CROSS-TABLE SUMMARY
+    function renderCrossTab(container) {
+      let html = `
+        <div class="space-y-5">
+          
+          <!-- Top Alert Banner -->
+          <div class="p-4 rounded-xl ${AppState.crossErrors.length > 0 ? 'bg-rose-50 border border-rose-200' : 'bg-emerald-50 border border-emerald-200'} flex items-start gap-3">
+            <span class="text-2xl">${AppState.crossErrors.length > 0 ? '⚠️' : '🎉'}</span>
+            <div>
+              <h4 class="text-sm font-bold ${AppState.crossErrors.length > 0 ? 'text-rose-800' : 'text-emerald-800'}">
+                ${AppState.crossErrors.length > 0 ? `Phát hiện ${AppState.crossErrors.length} vấn đề đối soát chéo toàn bộ gói hồ sơ XML` : 'Bộ dữ liệu vượt qua kiểm tra đối soát chéo xuất sắc!'}
+              </h4>
+              <p class="text-xs ${AppState.crossErrors.length > 0 ? 'text-rose-600' : 'text-emerald-600'} mt-0.5">
+                ${AppState.crossErrors.length > 0 ? 'Các lỗi này có thể dẫn đến việc cổng Giám định BHYT từ chối tiếp nhận nguyên lô hồ sơ hoặc xuất toán tài chính.' : 'Không phát hiện bản ghi mồ côi hoặc sai lệch nguồn tiền giữa các bảng.'}
+              </p>
+            </div>
+          </div>
+
+          <!-- Cross Issues Table -->
+          ${AppState.crossErrors.length > 0 ? `
+            <div>
+              <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Chi tiết các vi phạm đối soát chéo</h4>
+              <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                    <tr>
+                      <th class="py-2.5 px-3 w-12 text-center">STT</th>
+                      <th class="py-2.5 px-3 w-28">BẢNG LIÊN QUAN</th>
+                      <th class="py-2.5 px-3 w-24 text-center">MỨC ĐỘ</th>
+                      <th class="py-2.5 px-3 min-w-[200px]">NỘI DUNG VẤN ĐỀ</th>
+                      <th class="py-2.5 px-3 min-w-[200px]">GỢI Ý XỬ LÝ TRÊN HIS</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200 bg-white">
+                    ${AppState.crossErrors.map((ce, idx) => `
+                      <tr class="hover:bg-slate-50 transition">
+                        <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${idx + 1}</td>
+                        <td class="py-2.5 px-3 font-bold text-indigo-700">${ce.table}</td>
+                        <td class="py-2.5 px-3 text-center">
+                          <span class="px-2 py-0.5 rounded text-[10.5px] font-bold ${ce.type === 'ERROR' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}">
+                            ${ce.type === 'ERROR' ? '❌ LỖI' : '⚠️ CẢNH BÁO'}
+                          </span>
+                        </td>
+                        <td class="py-2.5 px-3">
+                          <div class="font-bold text-slate-800">${ce.title}</div>
+                          <div class="text-[11.5px] text-slate-600 mt-0.5">${ce.message}</div>
+                        </td>
+                        <td class="py-2.5 px-3 text-slate-600 text-xs italic">💡 ${ce.suggestion}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Financial Reconciliation Card -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <span>💰</span> Nguyên tắc đối soát tài chính theo QĐ 130
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-600">
+              <div class="p-3 bg-white rounded-lg border border-slate-200">
+                <span class="font-bold text-slate-800 block mb-1">Khớp tiền Thuốc</span>
+                <code>XML1.T_THUOC = SUM(XML2.THANH_TIEN_BV)</code>
+                <p class="text-[11px] text-slate-400 mt-1">Tổng tiền thuốc ở bảng tổng hợp phải khớp từng đồng với chi tiết danh mục thuốc XML 2.</p>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-slate-200">
+                <span class="font-bold text-slate-800 block mb-1">Khớp tiền VTYT</span>
+                <code>XML1.T_VTYT = SUM(XML3.THANH_TIEN vật tư)</code>
+                <p class="text-[11px] text-slate-400 mt-1">Tổng tiền vật tư y tế tiêu hao phải khớp với chi tiết vật tư tại XML 3.</p>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-slate-200">
+                <span class="font-bold text-slate-800 block mb-1">Cân đối nguồn thanh toán</span>
+                <code>T_TONGCHI_BH = T_BHTT + T_BNCCT + T_BNTT</code>
+                <p class="text-[11px] text-slate-400 mt-1">Tổng chi bảo hiểm phải cân đối tuyệt đối giữa các nguồn quỹ và cùng chi trả.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    // Render Table Tab (XML1, XML2, XML3, ...)
+    function renderTableListTab(container, tableKey) {
+      let rawList = AppState.tablesData[tableKey] || [];
+
+      // Status filter
+      if (AppState.currentStatusFilter === 'ERROR') {
+        rawList = rawList.filter(r => r._status === 'ERROR');
+      } else if (AppState.currentStatusFilter === 'WARNING') {
+        rawList = rawList.filter(r => r._status === 'WARNING');
+      } else if (AppState.currentStatusFilter === 'OK') {
+        rawList = rawList.filter(r => r._status === 'OK');
+      }
+
+      // Search query filter
+      const q = AppState.searchQuery.trim().toLowerCase();
+      if (q) {
+        rawList = rawList.filter(r => {
+          return Object.values(r).some(v => String(v).toLowerCase().includes(q)) ||
+                 (r._errors && r._errors.some(e => e.toLowerCase().includes(q))) ||
+                 (r._warnings && r._warnings.some(w => w.toLowerCase().includes(q)));
+        });
+      }
+
+      const totalRows = rawList.length;
+      const totalPages = Math.ceil(totalRows / AppState.pageSize) || 1;
+      if (AppState.currentPage > totalPages) AppState.currentPage = totalPages;
+
+      const startIndex = (AppState.currentPage - 1) * AppState.pageSize;
+      const endIndex = Math.min(startIndex + AppState.pageSize, totalRows);
+      const currentRows = rawList.slice(startIndex, endIndex);
+
+      if (rawList.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-slate-400 space-y-2">
+            <div class="text-4xl">📭</div>
+            <p class="text-sm font-semibold text-slate-600">Không tìm thấy bản ghi nào ở bảng ${TABLE_NAMES[tableKey]}</p>
+            <p class="text-xs text-slate-400">${AppState.tablesData[tableKey]?.length === 0 ? 'Chưa nạp dữ liệu cho bảng này từ file Excel/XML.' : 'Thử chuyển sang bộ lọc khác hoặc xóa từ khóa tìm kiếm.'}</p>
+          </div>
+        `;
+        document.getElementById('pageInfo').innerText = `Hiển thị 0 bản ghi`;
+        document.getElementById('paginationControls').innerHTML = '';
+        return;
+      }
+
+      // Render Dynamic Table Headers depending on table
+      let headersHtml = '';
+      if (tableKey === 'XML1') {
+        headersHtml = `
+          <th class="py-2.5 px-3 w-12 text-center">STT</th>
+          <th class="py-2.5 px-3 w-28">MÃ LK</th>
+          <th class="py-2.5 px-3 min-w-[150px]">HỌ TÊN BỆNH NHÂN</th>
+          <th class="py-2.5 px-3 w-28">NGÀY SINH / GT</th>
+          <th class="py-2.5 px-3 w-36">MÃ THẺ BHYT</th>
+          <th class="py-2.5 px-3 w-28">ICD BỆNH CHÍNH</th>
+          <th class="py-2.5 px-3 w-32">VÀO / RA VIỆN</th>
+          <th class="py-2.5 px-3 w-32 text-right">TỔNG CHI BHYT</th>
+          <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
+          <th class="py-2.5 px-3 min-w-[220px]">CHI TIẾT VI PHẠM &amp; ĐIỀU CHỈNH</th>
+        `;
+      } else if (tableKey === 'XML2') {
+        headersHtml = `
+          <th class="py-2.5 px-3 w-12 text-center">STT</th>
+          <th class="py-2.5 px-3 w-28">MÃ LK</th>
+          <th class="py-2.5 px-3 w-28">MÃ THUOC</th>
+          <th class="py-2.5 px-3 min-w-[180px]">TÊN THUỐC / HÀM LƯỢNG</th>
+          <th class="py-2.5 px-3 w-28">SỐ ĐK / GPNK</th>
+          <th class="py-2.5 px-3 w-28">TT THẦU</th>
+          <th class="py-2.5 px-3 w-28 text-center">NGÀY Y LỆNH</th>
+          <th class="py-2.5 px-3 w-28 text-right">THÀNH TIỀN</th>
+          <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
+          <th class="py-2.5 px-3 min-w-[220px]">CHI TIẾT VI PHẠM</th>
+        `;
+      } else if (tableKey === 'XML3') {
+        headersHtml = `
+          <th class="py-2.5 px-3 w-12 text-center">STT</th>
+          <th class="py-2.5 px-3 w-28">MÃ LK</th>
+          <th class="py-2.5 px-3 w-28">MÃ DV / VT</th>
+          <th class="py-2.5 px-3 min-w-[180px]">TÊN DỊCH VỤ KỸ THUẬT / VẬT TƯ</th>
+          <th class="py-2.5 px-2.5 w-28 text-center bg-amber-50/50">NGÀY Y LỆNH</th>
+          <th class="py-2.5 px-2.5 w-28 text-center bg-sky-50/50">THỰC HIỆN</th>
+          <th class="py-2.5 px-2.5 w-28 text-center bg-emerald-50/50">KẾT QUẢ</th>
+          <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
+          <th class="py-2.5 px-3 min-w-[220px]">CHI TIẾT VI PHẠM [Rule CROSS_02]</th>
+        `;
+      } else {
+        headersHtml = `
+          <th class="py-2.5 px-3 w-12 text-center">STT</th>
+          <th class="py-2.5 px-3 w-28">MÃ LK</th>
+          <th class="py-2.5 px-3 min-w-[200px]">NỘI DUNG / MÃ BẢN GHI</th>
+          <th class="py-2.5 px-3 min-w-[200px]">THÔNG TIN THỜI GIAN / BÁC SĨ</th>
+          <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
+          <th class="py-2.5 px-3 min-w-[240px]">CHI TIẾT VI PHẠM &amp; ĐIỀU CHỈNH</th>
+        `;
+      }
+
+      let rowsHtml = '';
+      currentRows.forEach((r, idx) => {
+        const rowNum = startIndex + idx + 1;
+        const isError = r._status === 'ERROR';
+        const isWarn = r._status === 'WARNING';
+
+        let rowClass = "hover:bg-slate-50 transition";
+        if (isError) rowClass = "bg-rose-50/30 hover:bg-rose-50 transition border-l-4 border-l-rose-500";
+        else if (isWarn) rowClass = "bg-amber-50/20 hover:bg-amber-50 transition border-l-4 border-l-amber-400";
+
+        let badgeHtml = '';
+        if (isError) {
+          badgeHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-bold bg-rose-100 text-rose-800 border border-rose-300">❌ LỖI</span>';
+        } else if (isWarn) {
+          badgeHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-semibold bg-amber-100 text-amber-800 border border-amber-300">⚠️ CẢNH BÁO</span>';
+        } else {
+          badgeHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-medium bg-emerald-100 text-emerald-800 border border-emerald-300">✅ HỢP LỆ</span>';
+        }
+
+        let detailsHtml = '';
+        if (r._errors && r._errors.length > 0) {
+          detailsHtml = `<div class="text-rose-700 font-bold space-y-0.5">${r._errors.map(e => `<div>• ${e}</div>`).join('')}</div>`;
+        }
+        if (r._warnings && r._warnings.length > 0) {
+          detailsHtml += `<div class="text-amber-800 font-medium space-y-0.5 mt-0.5">${r._warnings.map(w => `<div>• ${w}</div>`).join('')}</div>`;
+        }
+        if (!detailsHtml) {
+          detailsHtml = `<span class="text-emerald-700 font-medium">Bản ghi hợp lệ theo quy chuẩn QĐ 130</span>`;
+        }
+
+        if (tableKey === 'XML1') {
+          rowsHtml += `
+            <tr class="${rowClass}">
+              <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
+              <td class="py-2.5 px-3 font-bold text-slate-800 font-mono">${r.MA_LK}</td>
+              <td class="py-2.5 px-3">
+                <div class="font-bold text-slate-900">${r.HO_TEN || '-'}</div>
+                <div class="text-[11px] text-slate-400 font-mono">BN: ${r.MA_BN || '-'} | CCCD: ${r.SO_CCCD || '-'}</div>
+              </td>
+              <td class="py-2.5 px-3">
+                <div class="font-mono text-slate-700">${formatDTDisplay(r.NGAY_SINH)}</div>
+                <div class="text-[11px] text-slate-500">${r.GIOI_TINH === '1' ? 'Nam' : (r.GIOI_TINH === '2' ? 'Nữ' : 'Khác')}</div>
+              </td>
+              <td class="py-2.5 px-3 font-mono text-indigo-700 font-bold text-xs">${r.MA_THE_BHYT || r.MA_THE || '-'}</td>
+              <td class="py-2.5 px-3 font-mono">
+                <span class="px-1.5 py-0.5 rounded font-bold ${r.MA_BENH_CHINH?.includes('.') ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-800'}">
+                  ${r.MA_BENH_CHINH || r.MA_BENH || '-'}
+                </span>
+              </td>
+              <td class="py-2.5 px-3 text-xs mono">
+                <div>${formatDTDisplay(r.NGAY_VAO)}</div>
+                <div class="text-slate-400 text-[10px]">➔ ${formatDTDisplay(r.NGAY_RA)}</div>
+              </td>
+              <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-800">
+                ${(parseFloat(r.T_TONGCHI_BH) || 0).toLocaleString()}đ
+              </td>
+              <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
+              <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
+            </tr>
+          `;
+        } else if (tableKey === 'XML2') {
+          rowsHtml += `
+            <tr class="${rowClass}">
+              <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
+              <td class="py-2.5 px-3 font-bold text-slate-800 font-mono">${r.MA_LK}</td>
+              <td class="py-2.5 px-3 font-mono text-blue-600 font-semibold">${r.MA_THUOC || '-'}</td>
+              <td class="py-2.5 px-3">
+                <div class="font-medium text-slate-800">${r.TEN_THUOC || '-'}</div>
+                <div class="text-[11px] text-slate-400">HL: ${r.HAM_LUONG || '-'} | ĐD: ${r.DUONG_DUNG || '-'}</div>
+              </td>
+              <td class="py-2.5 px-3 font-mono text-xs">${r.SO_DANG_KY || '-'}</td>
+              <td class="py-2.5 px-3 text-xs font-mono text-slate-600">${r.TT_THAU || '-'}</td>
+              <td class="py-2.5 px-3 text-center text-xs font-mono">${formatDTDisplay(r.NGAY_YL)}</td>
+              <td class="py-2.5 px-3 text-right font-mono font-bold">${(parseFloat(r.THANH_TIEN_BV) || 0).toLocaleString()}đ</td>
+              <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
+              <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
+            </tr>
+          `;
+        } else if (tableKey === 'XML3') {
+          rowsHtml += `
+            <tr class="${rowClass}">
+              <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
+              <td class="py-2.5 px-3 font-bold text-slate-800 font-mono">${r.MA_LK}</td>
+              <td class="py-2.5 px-3 font-mono text-blue-600 font-semibold">${r.MA_DICH_VU || r.MA_VAT_TU || '-'}</td>
+              <td class="py-2.5 px-3">
+                <div class="font-medium text-slate-800">${r.TEN_DICH_VU || r.TEN_VAT_TU || '-'}</div>
+                <div class="text-[11px] text-slate-400">Khoa: ${r.MA_KHOA || '-'} | BS: ${r.MA_BAC_SI || '-'}</div>
+              </td>
+              <td class="py-2.5 px-2.5 text-center text-xs font-mono bg-amber-50/30">${formatDTDisplay(r.NGAY_YL)}</td>
+              <td class="py-2.5 px-2.5 text-center text-xs font-mono bg-sky-50/30">${formatDTDisplay(r.NGAY_TH_YL)}</td>
+              <td class="py-2.5 px-2.5 text-center text-xs font-mono bg-emerald-50/30">${formatDTDisplay(r.NGAY_KQ)}</td>
+              <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
+              <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
+            </tr>
+          `;
+        } else {
+          // General template for XML 4, 5, 7, 8, 11, 13, 14
+          const colContent = r.TEN_CHI_SO || r.DIEN_BIEN_LS || r.CHAN_DOAN_RV || r.SO_CT || r.SO_CHUYENTUYEN || r.SO_GIAYHEN_KL || Object.values(r)[2] || '-';
+          const colMeta = r.NGAY_KQ || r.THOI_DIEM_DBLS || r.NGAY_VAO || r.TU_NGAY || r.NGAY_HEN_KL || r.MA_BS || '-';
+
+          rowsHtml += `
+            <tr class="${rowClass}">
+              <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
+              <td class="py-2.5 px-3 font-bold text-slate-800 font-mono">${r.MA_LK || '-'}</td>
+              <td class="py-2.5 px-3 text-slate-800 font-medium">${colContent}</td>
+              <td class="py-2.5 px-3 text-xs font-mono text-slate-600">${formatDTDisplay(colMeta)}</td>
+              <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
+              <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
+            </tr>
+          `;
+        }
+      });
+
+      container.innerHTML = `
+        <div class="overflow-x-auto rounded-xl border border-slate-200 custom-scroll max-h-[580px]">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0 z-20 border-b border-slate-300">
+              <tr>${headersHtml}</tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 bg-white">${rowsHtml}</tbody>
+          </table>
+        </div>
+      `;
+
+      document.getElementById('pageInfo').innerText = `Hiển thị ${startIndex + 1} - ${endIndex} trên ${totalRows.toLocaleString()} dòng (${TABLE_NAMES[tableKey]})`;
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      const c = document.getElementById('paginationControls');
+      if (totalPages <= 1) {
+        c.innerHTML = "";
+        return;
+      }
+
+      let btnHtml = `
+        <button onclick="changePage(${AppState.currentPage - 1})" ${AppState.currentPage === 1 ? 'disabled class="px-2 py-1 bg-slate-100 text-slate-400 rounded cursor-not-allowed"' : 'class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100"'}><</button>
+      `;
+
+      for (let p = 1; p <= totalPages; p++) {
+        if (p === 1 || p === totalPages || (p >= AppState.currentPage - 2 && p <= AppState.currentPage + 2)) {
+          btnHtml += `
+            <button onclick="changePage(${p})" class="px-2.5 py-1 rounded text-xs font-semibold ${p === AppState.currentPage ? 'bg-blue-600 text-white' : 'bg-white border border-slate-300 hover:bg-slate-100 text-slate-700'}">${p}</button>
+          `;
+        } else if (p === AppState.currentPage - 3 || p === AppState.currentPage + 3) {
+          btnHtml += `<span class="px-1 text-slate-400">...</span>`;
+        }
+      }
+
+      btnHtml += `
+        <button onclick="changePage(${AppState.currentPage + 1})" ${AppState.currentPage === totalPages ? 'disabled class="px-2 py-1 bg-slate-100 text-slate-400 rounded cursor-not-allowed"' : 'class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100"'}>></button>
+      `;
+
+      c.innerHTML = btnHtml;
+    }
+
+    function changePage(p) {
+      AppState.currentPage = p;
+      renderCurrentTab();
+    }
+
+    // ==========================================
+    // EXPORT COMPREHENSIVE AUDIT REPORT
+    // ==========================================
+    document.getElementById('btnExportExcel').addEventListener('click', () => {
+      if (countTotalRecords() === 0) {
+        showToast("Chưa có dữ liệu để xuất báo cáo!", "⚠️");
+        return;
+      }
+
+      const wb = XLSX.utils.book_new();
+
+      // Sheet 1: Cross Issues
+      const crossRows = [
+        ["STT", "BẢNG DỮ LIỆU", "MỨC ĐỘ", "VẤN ĐỀ VI PHẠM", "CHI TIẾT VÀ GỢI Ý XỬ LÝ TRÊN HIS"]
+      ];
+      AppState.crossErrors.forEach((ce, i) => {
+        crossRows.push([i + 1, ce.table, ce.type, ce.title, `${ce.message} -> Gợi ý: ${ce.suggestion}`]);
+      });
+      const wsCross = XLSX.utils.aoa_to_sheet(crossRows);
+      XLSX.utils.book_append_sheet(wb, wsCross, "Doi_Soat_Cheo");
+
+      // Sheet 2: All Errors & Warnings
+      const allErrRows = [
+        ["STT", "BẢNG XML", "MÃ LK", "TRẠNG THÁI", "LỖI VI PHẠM (ERRORS)", "CẢNH BÁO (WARNINGS)", "TÊN TỆP NGUỒN"]
+      ];
+      let rowIdx = 1;
+      Object.keys(AppState.tablesData).forEach(tKey => {
+        AppState.tablesData[tKey].forEach(r => {
+          if (r._status === 'ERROR' || r._status === 'WARNING') {
+            allErrRows.push([
+              rowIdx++,
+              tKey,
+              r.MA_LK || "",
+              r._status === 'ERROR' ? 'LỖI' : 'CẢNH BÁO',
+              (r._errors || []).join(" | "),
+              (r._warnings || []).join(" | "),
+              r._fileName || ""
+            ]);
+          }
+        });
+      });
+      const wsErr = XLSX.utils.aoa_to_sheet(allErrRows);
+      XLSX.utils.book_append_sheet(wb, wsErr, "Tong_Hop_Loi_XML");
+
+      XLSX.writeFile(wb, `Bao_Cao_Kiem_Tra_Tong_Hop_XML_QD130_${new Date().toISOString().slice(0,10)}.xlsx`);
+      showToast("Đã tải xuống file báo cáo Excel thành công!", "📥");
+    });
+
+    // ==========================================
+    // SAMPLE DEMO DATA LOADER (XML 1-14)
+    // ==========================================
+    document.getElementById('btnSampleData').addEventListener('click', () => {
+      clearAllData();
+
+      // Realistic XML 1
+      AppState.tablesData.XML1 = [
+        {
+          MA_LK: "1905316",
+          HO_TEN: "NGUYEN VAN A",
+          SO_CCCD: "079090001234",
+          NGAY_SINH: "19800512",
+          GIOI_TINH: "1",
+          MA_THE_BHYT: "DN4797912345678",
+          MA_DKBD: "74039",
+          GT_THE_TU: "20240101",
+          GT_THE_DEN: "20261231",
+          NGAY_VAO: "202609170730",
+          NGAY_RA: "202609171100",
+          MA_BENH_CHINH: "K80.0", // Has dot error!
+          MA_BENH_KT: "I10;I25.9",
+          T_TONGCHI_BH: "1250000",
+          T_BHTT: "1000000",
+          T_BNCCT: "250000",
+          T_BNTT: "0",
+          T_NGUONKHAC: "0",
+          T_THUOC: "350000",
+          T_VTYT: "150000",
+          MA_LOAI_KCB: "01",
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML1]"
+        },
+        {
+          MA_LK: "1913057",
+          HO_TEN: "tran thi b", // Lowercase warning
+          SO_CCCD: "079192005678",
+          NGAY_SINH: "19920820",
+          GIOI_TINH: "2",
+          MA_THE_BHYT: "GD4797998765432",
+          MA_DKBD: "74-039", // Dash error
+          GT_THE_TU: "20240101",
+          GT_THE_DEN: "20261231",
+          NGAY_VAO: "202609170800",
+          NGAY_RA: "202609171030",
+          MA_BENH_CHINH: "N201", // Valid ICD
+          MA_BENH_KT: "N133;N23",
+          T_TONGCHI_BH: "300000", // < 351k but still BNCCT
+          T_BHTT: "240000",
+          T_BNCCT: "60000",
+          T_BNTT: "0",
+          T_NGUONKHAC: "0",
+          T_THUOC: "120000",
+          T_VTYT: "0",
+          MA_LOAI_KCB: "01",
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML1]"
+        }
+      ];
+
+      // XML 2 (Thuốc)
+      AppState.tablesData.XML2 = [
+        {
+          MA_LK: "1905316",
+          MA_THUOC: "40.123",
+          TEN_THUOC: "Paracetamol 500mg",
+          HAM_LUONG: "500mg",
+          DUONG_DUNG: "Uống",
+          SO_DANG_KY: "VD-25412-16",
+          TT_THAU: "01/2026/QĐ-SYT",
+          SO_LUONG: "10",
+          DON_GIA: "1200",
+          THANH_TIEN_BV: "12000",
+          NGAY_YL: "202609170800",
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML2]"
+        },
+        {
+          MA_LK: "1905316",
+          MA_THUOC: "40.456",
+          TEN_THUOC: "Amoxicillin 500mg",
+          HAM_LUONG: "", // Missing
+          DUONG_DUNG: "Uống",
+          SO_DANG_KY: "", // Missing
+          TT_THAU: "", // Missing
+          SO_LUONG: "10",
+          DON_GIA: "2500",
+          THANH_TIEN_BV: "25000",
+          NGAY_YL: "202609171130", // After discharge!
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML2]"
+        }
+      ];
+
+      // XML 3 (DVKT & VTYT)
+      AppState.tablesData.XML3 = [
+        {
+          MA_LK: "1905316",
+          MA_DICH_VU: "22.0121.1369",
+          TEN_DICH_VU: "Tổng phân tích tế bào máu ngoại vi",
+          MA_NHOM: "1",
+          NGAY_YL: "202609170735",
+          NGAY_TH_YL: "202609170810",
+          NGAY_KQ: "", // Missing KQ on CLS (Rule CROSS_02)
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML3]"
+        },
+        {
+          MA_LK: "1905316",
+          MA_DICH_VU: "18.0015.0001",
+          TEN_DICH_VU: "Siêu âm ổ bụng tổng quát",
+          MA_NHOM: "2",
+          NGAY_YL: "202609170735",
+          NGAY_TH_YL: "202609170820",
+          NGAY_KQ: "202609170830",
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML3]"
+        }
+      ];
+
+      // XML 4 (Kết quả CLS)
+      AppState.tablesData.XML4 = [
+        {
+          MA_LK: "1905316",
+          MA_DICH_VU: "18.0015.0001",
+          MA_CHI_SO: "SA_OB",
+          TEN_CHI_SO: "Kết quả siêu âm ổ bụng",
+          GIA_TRI: "",
+          MO_TA: "Gan mật bình thường, không thấy sỏi túi mật",
+          KET_LUAN: "Hình ảnh siêu âm bình thường",
+          NGAY_KQ: "202609170830",
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML4]"
+        }
+      ];
+
+      // XML 5 (Diễn biến LS)
+      AppState.tablesData.XML5 = [
+        {
+          MA_LK: "1905316",
+          DIEN_BIEN_LS: "Bệnh nhân tỉnh táo, tiếp xúc tốt, hết đau bụng",
+          THOI_DIEM_DBLS: "202609170900",
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML5]"
+        }
+      ];
+
+      // XML 11 (Nghỉ việc BHXH)
+      AppState.tablesData.XML11 = [
+        {
+          MA_LK: "1905316",
+          SO_CT: "CT001",
+          SO_SERI: "SR202601",
+          MA_BHXH: "7912345678",
+          SO_NGAY_NGHI: "3",
+          TU_NGAY: "20260917",
+          DEN_NGAY: "20260919",
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML11]"
+        }
+      ];
+
+      // XML 14 (Hẹn khám lại)
+      AppState.tablesData.XML14 = [
+        {
+          MA_LK: "1905316",
+          SO_GIAYHEN_KL: "GH00984",
+          NGAY_HEN_KL: "20260924",
+          CHAN_DOAN_RV: "Theo dõi viêm túi mật",
+          MA_BENH_CHINH: "K800",
+          _fileName: "XML_20260917000000-20260917235959.xlsx [XML14]"
+        }
+      ];
+
+      runAllValidators();
+      refreshDashboard();
+      showToast("Đã nạp dữ liệu mẫu toàn diện XML 1-14 thành công!", "🚀");
+    });
+
+    // ==========================================
+    // LISTENERS & INITIALIZATION
+    // ==========================================
+    document.getElementById('dropZone').addEventListener('click', () => {
+      document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      handleFilesUpload(e.target.files);
+    });
+
+    document.getElementById('folderInput').addEventListener('change', (e) => {
+      handleFilesUpload(e.target.files);
+    });
+
+    document.getElementById('btnClearData').addEventListener('click', clearAllData);
+
+    const dropZone = document.getElementById('dropZone');
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-blue-500', 'bg-blue-50/60');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-blue-500', 'bg-blue-50/60');
+      });
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      if (dt && dt.files) {
+        handleFilesUpload(dt.files);
+      }
+    });
+
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchTab(btn.getAttribute('data-tab'));
+      });
+    });
+
+    document.querySelectorAll('.status-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.status-btn').forEach(b => {
+          b.classList.remove('font-bold', 'bg-blue-50', 'text-blue-700');
+          b.classList.add('text-slate-600');
+        });
+        btn.classList.add('font-bold', 'bg-blue-50', 'text-blue-700');
+        btn.classList.remove('text-slate-600');
+        AppState.currentStatusFilter = btn.getAttribute('data-status-filter');
+        AppState.currentPage = 1;
+        renderCurrentTab();
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      AppState.searchQuery = e.target.value;
+      AppState.currentPage = 1;
+      renderCurrentTab();
+    });
+
+    // Auto-init dashboard
+    refreshDashboard();
+  </script>
+</body>
+</html>
