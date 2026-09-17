@@ -79,12 +79,12 @@
           <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
           </div>
-          <p class="text-sm font-semibold text-slate-700 mb-0.5">Kéo thả file <span class="text-blue-600 font-bold">.XML</span> hoặc <span class="text-indigo-600 font-bold">.ZIP</span> vào đây</p>
-          <p class="text-xs text-slate-400 mb-2.5">Hỗ trợ tự động trích xuất XML 1 (lấy Ngày ra viện) liên kết với XML 3 theo Mã LK</p>
+          <p class="text-sm font-semibold text-slate-700 mb-0.5">Kéo thả file <span class="text-blue-600 font-bold">.XML</span>, <span class="text-indigo-600 font-bold">.ZIP</span> hoặc <span class="text-emerald-600 font-bold">.XLSX / .XLS (Excel HIS)</span> vào đây</p>
+          <p class="text-xs text-slate-400 mb-2.5">Hỗ trợ đọc trực tiếp bảng XML 3 từ Excel HIS (file XML3_*.xlsx), file XML 4210/130, nén ZIP</p>
           <div class="flex items-center gap-2.5">
             <label class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg cursor-pointer transition shadow-sm">
-              Chọn File XML / ZIP
-              <input type="file" id="fileInput" multiple accept=".xml,.zip" class="hidden">
+              Chọn File XML / ZIP / Excel
+              <input type="file" id="fileInput" multiple accept=".xml,.zip,.xlsx,.xls" class="hidden">
             </label>
             <label class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg cursor-pointer transition border border-slate-300">
               Chọn Thư Mục
@@ -924,6 +924,99 @@
       renderTable();
     }
 
+    
+    // Parse Excel Workbook (XLSX / XLS)
+    function parseExcelWorkbook(data, fileName = "") {
+      const records = [];
+      const workbook = XLSX.read(data, { type: 'array' });
+      const dossierMap = {};
+
+      // 1. Scan for XML 1 or TONG_HOP sheets / files to get NGAY_RA
+      for (const sname of workbook.SheetNames) {
+        const sheet = workbook.Sheets[sname];
+        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        if (rows.length > 0) {
+          const first = rows[0];
+          const keys = Object.keys(first).map(k => k.toUpperCase().trim());
+          if (keys.includes('NGAY_RA') || keys.includes('NGAY_VAO') || sname.toUpperCase().includes('XML1')) {
+            rows.forEach(r => {
+              let mlk = '', nv = '', nr = '';
+              for (const [k, v] of Object.entries(r)) {
+                const ku = k.toUpperCase().trim();
+                const valStr = v !== undefined && v !== null ? String(v).trim() : '';
+                if (ku === 'MA_LK') mlk = valStr;
+                else if (ku === 'NGAY_VAO') nv = valStr;
+                else if (ku === 'NGAY_RA') nr = valStr;
+              }
+              if (mlk) dossierMap[mlk] = { ngay_vao: nv, ngay_ra: nr };
+            });
+          }
+        }
+      }
+
+      // 2. Scan for XML 3 (DVKT) sheets
+      for (const sname of workbook.SheetNames) {
+        const sheet = workbook.Sheets[sname];
+        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        if (rows.length === 0) continue;
+
+        const keys = Object.keys(rows[0]).map(k => k.toUpperCase().trim());
+        const hasYl = keys.includes('NGAY_YL');
+        const hasDv = keys.includes('MA_DICH_VU') || keys.includes('TEN_DICH_VU');
+        const isXml3Sheet = sname.toUpperCase().includes('XML3') || sname.toUpperCase().includes('DVKT');
+
+        if (hasYl || hasDv || isXml3Sheet) {
+          rows.forEach((r, idx) => {
+            let ma_lk='', stt='', ma_dv='', ten_dv='', ma_khoa='', ma_bs='', nguoi_th='', ngay_yl='', ngay_th='', ngay_kq='', ngay_ra='', ngay_vao='';
+            for (const [k, v] of Object.entries(r)) {
+              const ku = k.toUpperCase().trim();
+              const valStr = v !== undefined && v !== null ? String(v).trim() : '';
+              if (ku === 'MA_LK') ma_lk = valStr;
+              else if (ku === 'STT') stt = valStr;
+              else if (ku === 'MA_DICH_VU') ma_dv = valStr;
+              else if (ku === 'TEN_DICH_VU') ten_dv = valStr;
+              else if (ku === 'MA_KHOA') ma_khoa = valStr;
+              else if (ku === 'MA_BAC_SI') ma_bs = valStr;
+              else if (ku === 'NGUOI_THUC_HIEN') nguoi_th = valStr;
+              else if (ku === 'NGAY_YL') ngay_yl = valStr;
+              else if (ku === 'NGAY_TH_YL') ngay_th = valStr;
+              else if (ku === 'NGAY_KQ') ngay_kq = valStr;
+              else if (ku === 'NGAY_RA') ngay_ra = valStr;
+              else if (ku === 'NGAY_VAO') ngay_vao = valStr;
+            }
+
+            if (!ma_lk && !ma_dv && !ngay_yl) return;
+
+            if (ma_lk && dossierMap[ma_lk]) {
+              if (!ngay_ra) ngay_ra = dossierMap[ma_lk].ngay_ra;
+              if (!ngay_vao) ngay_vao = dossierMap[ma_lk].ngay_vao;
+            }
+
+            const rec = {
+              fileName: workbook.SheetNames.length > 1 ? `${fileName} [${sname}]` : fileName,
+              ma_lk,
+              stt: stt || (idx + 1),
+              ma_dv,
+              ten_dv,
+              ma_khoa,
+              ma_bs,
+              nguoi_th,
+              ngay_yl_raw: ngay_yl,
+              ngay_th_yl_raw: ngay_th,
+              ngay_kq_raw: ngay_kq,
+              ngay_ra_raw: ngay_ra,
+              ngay_vao_raw: ngay_vao
+            };
+
+            evaluateRecord(rec);
+            records.push(rec);
+          });
+        }
+      }
+
+      return records;
+    }
+
     async function loadFiles(fileList) {
       const files = Array.from(fileList);
       if (files.length === 0) return;
@@ -948,6 +1041,16 @@
             }
           } catch (err) {
             console.error(err);
+          }
+                } else if (fname.toLowerCase().endsWith('.xlsx') || fname.toLowerCase().endsWith('.xls')) {
+          try {
+            const data = await file.arrayBuffer();
+            const recs = parseExcelWorkbook(data, fname);
+            rawRecords.push(...recs);
+            totalParsed += recs.length;
+          } catch (err) {
+            console.error('Lỗi đọc file Excel:', err);
+            showToast(`Lỗi đọc file Excel ${fname}`, '❌');
           }
         } else if (fname.toLowerCase().endsWith('.xml')) {
           try {
