@@ -110,6 +110,10 @@
           <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
           <span>XML 130</span>
         </a>
+        <a href="javascript:void(0)" onclick="window.open('xml3_checker.html', '_blank')" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-700 hover:text-amber-900 hover:bg-amber-50/80 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0 border border-amber-200/60 bg-amber-50/40">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-600"></i>
+          <span>Check XML 3</span>
+        </a>
       </nav>
 
       <!-- User Actions & Logout -->
@@ -271,6 +275,16 @@
                 </span>
                 <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
               </a>
+              <a href="xml3_checker.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition">
+                <span class="flex items-center space-x-2">
+                  <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
+                  <span>Kiểm tra tiến độ XML 3 & Ra viện</span>
+                </span>
+                <span class="flex items-center space-x-1.5">
+                  <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded-md">MỚI</span>
+                  <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+                </span>
+              </a>
               <a href="LIS-Parser-Tool.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
                 <span class="flex items-center space-x-2">
                   <i data-lucide="microscope" class="w-4 h-4 text-indigo-600"></i>
@@ -384,6 +398,26 @@
                   </div>
                 </div>
                 <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition"></i>
+              </div>
+
+                            <!-- Item XML 3: Kiểm tra tiến độ thời gian & Ngày ra viện -->
+              <div onclick="window.open('xml3_checker.html', '_blank')" class="module-item bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100 group-hover:scale-105 transition">
+                    <i data-lucide="clock" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-sm font-bold text-slate-800 group-hover:text-amber-700 transition">Kiểm Tra Tiến Độ Thời Gian XML 3</h4>
+                      <span class="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">MỚI PRO</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Logic: NGAY_YL &lt; NGAY_TH_YL &lt; NGAY_KQ &le; NGAY_RA (Chặn chỉ định/kết quả sau ra viện)</p>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2 shrink-0">
+                  <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">QĐ 130/4210</span>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-1 transition"></i>
+                </div>
               </div>
 
               <!-- Item 2: XML BHYT -->

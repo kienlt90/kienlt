@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIENLT90 Portal - Tool Kiểm Tra Thời Gian XML 3 & Ngày Ra Viện</title>
+  <!-- Tailwind CSS via CDN with fallback styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SheetJS for Excel export -->
+  <script src="xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');
+    }
+  </script>
+  <!-- JSZip for reading zip packages -->
+  <script src="jszip.min.js"></script>
+  <script>
+    if (typeof JSZip === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"><\/script>');
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .dropdown-content { display: none; }
+    .dropdown.active .dropdown-content { display: block; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white shadow-lg border-b border-indigo-700/40 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <!-- Back to portal link (visible when in portal) -->
+        <a id="lnkBackPortal" href="main.html" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold rounded-lg border border-white/20 transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Về Portal
+        </a>
+        <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300 font-bold text-xl shadow-inner">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">TOOL KIỂM TRA TIẾN ĐỘ THỜI GIAN XML 3 BHYT</h1>
+            <span class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full">v2.1 Pro</span>
+          </div>
+          <p class="text-xs text-slate-300">Logic: <span class="text-amber-300 font-semibold">NGAY_YL</span> ➔ <span class="text-sky-300 font-semibold">NGAY_TH_YL</span> ➔ <span class="text-emerald-300 font-semibold">NGAY_KQ</span> &le; <span class="text-rose-300 font-semibold">NGAY_RA (Ra viện)</span></p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button id="btnSampleData" class="px-3 py-1.5 bg-indigo-600/60 hover:bg-indigo-600 text-white text-xs font-medium rounded-lg border border-indigo-400/40 transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Nạp Dữ Liệu Mẫu
+        </button>
+        <button id="btnExportExcel" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-md shadow-emerald-900/20 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Xuất Báo Cáo Excel (.xlsx)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+
+    <!-- Upload & Options Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      
+      <!-- Drag Drop Box -->
+      <div class="lg:col-span-2 bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 hover:border-blue-300 transition">
+        <div id="dropZone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl p-5 text-center cursor-pointer bg-slate-50 hover:bg-blue-50/50 transition flex flex-col items-center justify-center min-h-[145px]">
+          <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-slate-700 mb-0.5">Kéo thả file <span class="text-blue-600 font-bold">.XML</span> hoặc <span class="text-indigo-600 font-bold">.ZIP</span> vào đây</p>
+          <p class="text-xs text-slate-400 mb-2.5">Hỗ trợ tự động trích xuất XML 1 (lấy Ngày ra viện) liên kết với XML 3 theo Mã LK</p>
+          <div class="flex items-center gap-2.5">
+            <label class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg cursor-pointer transition shadow-sm">
+              Chọn File XML / ZIP
+              <input type="file" id="fileInput" multiple accept=".xml,.zip" class="hidden">
+            </label>
+            <label class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg cursor-pointer transition border border-slate-300">
+              Chọn Thư Mục
+              <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden">
+            </label>
+          </div>
+        </div>
+        <div id="fileListSummary" class="mt-2.5 text-xs text-slate-500 flex justify-between items-center hidden">
+          <span id="txtFileLoaded" class="font-medium text-slate-700">Chưa nạp file nào</span>
+          <button id="btnClearData" class="text-rose-600 hover:underline font-medium">Xóa dữ liệu</button>
+        </div>
+      </div>
+
+      <!-- Settings / Rules -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+        <div>
+          <h2 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2.5 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+            Cấu Hình Quy Tắc Kiểm Tra
+          </h2>
+          <div class="space-y-2 text-xs">
+            <label class="flex items-start gap-2 p-2 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition">
+              <input type="radio" name="ruleMode" value="strict" checked class="mt-0.5 text-blue-600 focus:ring-blue-500">
+              <div>
+                <div class="font-bold text-slate-800">Quy tắc Nghiêm ngặt (&lt;)</div>
+                <div class="text-slate-500 text-[11px]"><span class="mono font-semibold text-rose-600">NGAY_YL &lt; NGAY_TH_YL &lt; NGAY_KQ</span>. Báo lỗi cả khi trùng giờ (=).</div>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-2 p-2 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition">
+              <input type="radio" name="ruleMode" value="standard" class="mt-0.5 text-blue-600 focus:ring-blue-500">
+              <div>
+                <div class="font-bold text-slate-800">Quy tắc Chuẩn BHYT (&le;)</div>
+                <div class="text-slate-500 text-[11px]"><span class="mono font-semibold text-blue-600">NGAY_YL &le; NGAY_TH_YL &le; NGAY_KQ</span>. Trùng giờ xem là Cảnh báo.</div>
+              </div>
+            </label>
+
+            <div class="pt-1.5 border-t border-slate-100 space-y-1.5">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkCheckNgayRa" checked class="rounded text-rose-600 focus:ring-rose-500">
+                <span class="text-slate-700 font-semibold text-[11.5px] text-rose-700">Kiểm tra với NGAY_RA (Chặn chỉ định/TH/KQ sau ngày ra viện)</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkMissingKQ" checked class="rounded text-blue-600 focus:ring-blue-500">
+                <span class="text-slate-600 text-[11.5px]">Cảnh báo nếu thiếu NGAY_KQ (xét nghiệm/CĐHA)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-2.5 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
+          <span>Tiêu chuẩn: QĐ 4210 / QĐ 130</span>
+          <span class="font-semibold text-blue-600">VNPT BHYT Validator</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KPI Dashboard Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <!-- Total -->
+      <div class="bg-white rounded-xl p-3.5 shadow-sm border border-slate-200/80 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500">Tổng Số DVKT</p>
+          <p id="kpiTotal" class="text-2xl font-bold text-slate-800 mt-0.5">0</p>
+          <p class="text-[11px] text-slate-400">Bản ghi XML 3</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-lg">
+          📋
+        </div>
+      </div>
+
+      <!-- Errors -->
+      <div class="bg-rose-50/70 rounded-xl p-3.5 shadow-sm border border-rose-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-rose-700 flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>
+            VI PHẠM (LỖI)
+          </p>
+          <p id="kpiErrors" class="text-2xl font-bold text-rose-600 mt-0.5">0</p>
+          <p id="kpiErrorRate" class="text-[11px] text-rose-600 font-semibold">Tỷ lệ: 0%</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-lg">
+          ❌
+        </div>
+      </div>
+
+      <!-- Warnings -->
+      <div class="bg-amber-50/70 rounded-xl p-3.5 shadow-sm border border-amber-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-amber-700">CẢNH BÁO</p>
+          <p id="kpiWarnings" class="text-2xl font-bold text-amber-600 mt-0.5">0</p>
+          <p class="text-[11px] text-amber-600 font-medium">Trùng mốc giờ (=)</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-lg">
+          ⚠️
+        </div>
+      </div>
+
+      <!-- Valid -->
+      <div class="bg-emerald-50/70 rounded-xl p-3.5 shadow-sm border border-emerald-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-bold text-emerald-700">HỢP LỆ</p>
+          <p id="kpiValid" class="text-2xl font-bold text-emerald-600 mt-0.5">0</p>
+          <p class="text-[11px] text-emerald-600 font-medium">Đúng tiến trình &amp; ra viện</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg">
+          ✅
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Table Toolbar -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+      
+      <!-- Toolbar Top -->
+      <div class="p-3.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
+        
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-1 p-1 bg-slate-200/70 rounded-xl text-xs font-medium">
+          <button data-filter="ALL" class="tab-btn px-3 py-1.5 rounded-lg transition active-tab bg-white text-slate-800 shadow-sm font-semibold">
+            Tất Cả (<span id="countTabAll">0</span>)
+          </button>
+          <button data-filter="ERROR" class="tab-btn px-3 py-1.5 rounded-lg text-rose-700 hover:bg-white/50 transition">
+            Chỉ Lỗi (<span id="countTabError">0</span>)
+          </button>
+          <button data-filter="WARNING" class="tab-btn px-3 py-1.5 rounded-lg text-amber-700 hover:bg-white/50 transition">
+            Cảnh Báo (<span id="countTabWarn">0</span>)
+          </button>
+          <button data-filter="OK" class="tab-btn px-3 py-1.5 rounded-lg text-emerald-700 hover:bg-white/50 transition">
+            Hợp Lệ (<span id="countTabOk">0</span>)
+          </button>
+        </div>
+
+        <!-- Search box -->
+        <div class="flex items-center gap-3 flex-1 max-w-md">
+          <div class="relative w-full">
+            <input type="text" id="searchInput" placeholder="Tìm theo Mã LK, Mã DV, Tên DVKT, Khoa, Bác sĩ, File..." class="w-full pl-8 pr-4 py-1.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+        </div>
+
+        <!-- Per page & stats -->
+        <div class="flex items-center gap-2 text-xs text-slate-500">
+          <span>Hiển thị:</span>
+          <select id="pageSizeSelect" class="border border-slate-300 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+            <option value="20">20 dòng</option>
+            <option value="50">50 dòng</option>
+            <option value="100">100 dòng</option>
+            <option value="all">Tất cả</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Data Table -->
+      <div class="overflow-x-auto custom-scroll max-h-[620px]">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="bg-slate-100/95 text-slate-700 font-bold sticky top-0 z-20 border-b border-slate-300">
+            <tr>
+              <th class="py-2.5 px-3 w-12 text-center">STT</th>
+              <th class="py-2.5 px-3 w-28">MÃ LK</th>
+              <th class="py-2.5 px-3 w-28">MÃ DV</th>
+              <th class="py-2.5 px-3 min-w-[200px]">TÊN DỊCH VỤ KỸ THUẬT</th>
+              
+              <!-- NGAY_YL with dropdown filter -->
+              <th class="py-2.5 px-2.5 w-32 bg-amber-50/70 border-l border-r border-amber-200/60 relative">
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-amber-900 font-bold">NGAY_YL</span>
+                  <div class="dropdown relative">
+                    <button class="dropdown-btn p-1 hover:bg-amber-200/60 rounded text-amber-800 transition" title="Lọc cột NGAY_YL">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="dropdown-content absolute right-0 mt-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-30 font-normal text-slate-700">
+                      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Lọc NGAY_YL</div>
+                      <button data-col-filter="yl-all" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Tất cả</button>
+                      <button data-col-filter="yl-after-ra" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-rose-600 font-medium">Lỗi: YL &gt; Ngày ra viện</button>
+                      <button data-col-filter="yl-empty" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-rose-600">Trống NGAY_YL</button>
+                      <button data-col-filter="yl-sort-asc" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Sắp xếp Tăng dần</button>
+                      <button data-col-filter="yl-sort-desc" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Sắp xếp Giảm dần</button>
+                    </div>
+                  </div>
+                </div>
+              </th>
+
+              <!-- NGAY_TH_YL with dropdown filter -->
+              <th class="py-2.5 px-2.5 w-32 bg-sky-50/70 border-r border-sky-200/60 relative">
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-sky-900 font-bold">NGAY_TH_YL</span>
+                  <div class="dropdown relative">
+                    <button class="dropdown-btn p-1 hover:bg-sky-200/60 rounded text-sky-800 transition" title="Lọc cột NGAY_TH_YL">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="dropdown-content absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-30 font-normal text-slate-700">
+                      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Lọc NGAY_TH_YL</div>
+                      <button data-col-filter="th-all" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Tất cả</button>
+                      <button data-col-filter="th-before-yl" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-rose-600 font-medium">Lỗi: TH &lt; YL (Thực hiện trước)</button>
+                      <button data-col-filter="th-after-ra" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-rose-600 font-medium">Lỗi: TH &gt; Ngày ra viện</button>
+                      <button data-col-filter="th-eq-yl" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-amber-600">Trùng giờ: TH == YL</button>
+                      <button data-col-filter="th-empty" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Trống NGAY_TH_YL</button>
+                    </div>
+                  </div>
+                </div>
+              </th>
+
+              <!-- NGAY_KQ with dropdown filter -->
+              <th class="py-2.5 px-2.5 w-32 bg-emerald-50/70 border-r border-emerald-200/60 relative">
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-emerald-900 font-bold">NGAY_KQ</span>
+                  <div class="dropdown relative">
+                    <button class="dropdown-btn p-1 hover:bg-emerald-200/60 rounded text-emerald-800 transition" title="Lọc cột NGAY_KQ">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="dropdown-content absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-30 font-normal text-slate-700">
+                      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Lọc NGAY_KQ</div>
+                      <button data-col-filter="kq-all" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Tất cả</button>
+                      <button data-col-filter="kq-before-th" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-rose-600 font-medium">Lỗi: KQ &lt; TH (Kết quả trước TH)</button>
+                      <button data-col-filter="kq-before-yl" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-rose-600 font-medium">Lỗi: KQ &lt; YL (Kết quả trước YL)</button>
+                      <button data-col-filter="kq-after-ra" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-rose-600 font-medium">Lỗi: KQ &gt; Ngày ra viện</button>
+                      <button data-col-filter="kq-eq-th" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-amber-600">Trùng giờ: KQ == TH</button>
+                      <button data-col-filter="kq-empty" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Trống NGAY_KQ</button>
+                    </div>
+                  </div>
+                </div>
+              </th>
+
+              <!-- NGAY_RA -->
+              <th class="py-2.5 px-2.5 w-32 bg-purple-50/70 border-r border-purple-200/60 relative">
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-purple-900 font-bold">NGÀY RA VIỆN</span>
+                  <div class="dropdown relative">
+                    <button class="dropdown-btn p-1 hover:bg-purple-200/60 rounded text-purple-800 transition" title="Lọc cột NGÀY RA VIỆN">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="dropdown-content absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-30 font-normal text-slate-700">
+                      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Lọc NGÀY RA VIỆN</div>
+                      <button data-col-filter="ra-all" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Tất cả</button>
+                      <button data-col-filter="ra-conflict" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs text-rose-600 font-semibold">Bản ghi vi phạm Ngày ra viện</button>
+                      <button data-col-filter="ra-has" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Có Ngày ra viện</button>
+                      <button data-col-filter="ra-empty" class="w-full text-left px-2 py-1.5 hover:bg-slate-100 rounded text-xs">Chưa có Ngày ra viện</button>
+                    </div>
+                  </div>
+                </div>
+              </th>
+
+              <th class="py-2.5 px-2.5 w-32 text-center">CHUỖI TIẾN TRÌNH</th>
+              <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
+              <th class="py-2.5 px-3 min-w-[220px]">CHI TIẾT VI PHẠM / GỢI Ý KHẮC PHỤC</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-slate-200">
+            <tr>
+              <td colspan="11" class="py-12 text-center text-slate-400">
+                <div class="flex flex-col items-center justify-center space-y-2">
+                  <span class="text-4xl">📂</span>
+                  <p class="font-medium text-slate-600 text-sm">Chưa có dữ liệu kiểm tra</p>
+                  <p class="text-xs">Vui lòng kéo thả file XML/ZIP vào khung trên hoặc bấm <strong class="text-blue-600 cursor-pointer" onclick="document.getElementById('btnSampleData').click()">Nạp Dữ Liệu Mẫu</strong></p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination & Bottom stats -->
+      <div class="p-3 border-t border-slate-200 bg-slate-50/60 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+        <div id="pageInfo">Đang hiển thị 0 đến 0 trong tổng số 0 bản ghi</div>
+        <div class="flex items-center gap-1" id="paginationControls">
+          <!-- Buttons dynamically created -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs border border-slate-700">
+    <span id="toastIcon">ℹ️</span>
+    <span id="toastMsg">Thông báo</span>
+  </div>
+
+  <script>
+    // App State
+    let rawRecords = [];
+    let filteredRecords = [];
+    let currentTab = 'ALL';
+    let currentRuleMode = 'strict';
+    let currentPage = 1;
+    let pageSize = 20;
+    let colFilter = null;
+
+    function showToast(msg, icon = 'ℹ️') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      document.getElementById('toastIcon').innerText = icon;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+
+    function parseDateTime(str) {
+      if (!str) return null;
+      const s = String(str).replace(/\D/g, '');
+      if (s.length >= 14) {
+        return new Date(Date.UTC(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8), +s.slice(8,10), +s.slice(10,12), +s.slice(12,14)));
+      } else if (s.length >= 12) {
+        return new Date(Date.UTC(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8), +s.slice(8,10), +s.slice(10,12)));
+      } else if (s.length >= 8) {
+        return new Date(Date.UTC(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8)));
+      }
+      return null;
+    }
+
+    function formatDTDisplay(raw) {
+      if (!raw) return '<span class="text-slate-300 italic">Trống</span>';
+      const s = String(raw).replace(/\D/g, '');
+      if (s.length >= 12) {
+        return `<span class="mono font-semibold">${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}</span> <span class="mono text-blue-700 font-bold">${s.slice(8,10)}:${s.slice(10,12)}</span>`;
+      } else if (s.length >= 8) {
+        return `<span class="mono font-semibold">${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}</span>`;
+      }
+      return raw;
+    }
+
+    function extractTimeOnly(raw) {
+      if (!raw) return '--:--';
+      const s = String(raw).replace(/\D/g, '');
+      if (s.length >= 12) return `${s.slice(8,10)}:${s.slice(10,12)}`;
+      if (s.length >= 8) return `${s.slice(6,8)}/${s.slice(4,6)}`;
+      return raw;
+    }
+
+    // Evaluate single record based on active rules including NGAY_RA
+    function evaluateRecord(rec) {
+      const d_yl = parseDateTime(rec.ngay_yl_raw);
+      const d_th = parseDateTime(rec.ngay_th_yl_raw);
+      const d_kq = parseDateTime(rec.ngay_kq_raw);
+      const d_ra = parseDateTime(rec.ngay_ra_raw);
+      const d_vao = parseDateTime(rec.ngay_vao_raw);
+
+      const errors = [];
+      const warnings = [];
+      const chkCheckNgayRa = document.getElementById('chkCheckNgayRa').checked;
+
+      // 1. Check TH vs YL
+      if (d_yl && d_th) {
+        const diffMins = Math.round((d_th.getTime() - d_yl.getTime()) / (60 * 1000));
+        if (d_th < d_yl) {
+          errors.push(`THỰC HIỆN TRƯỚC Y LỆNH ${Math.abs(diffMins)} phút (TH: ${extractTimeOnly(rec.ngay_th_yl_raw)} < YL: ${extractTimeOnly(rec.ngay_yl_raw)})`);
+        } else if (d_th.getTime() === d_yl.getTime()) {
+          if (currentRuleMode === 'strict') {
+            errors.push(`TRÙNG GIỜ Y LỆNH & THỰC HIỆN (${extractTimeOnly(rec.ngay_yl_raw)}) [Vi phạm rule <]`);
+          } else {
+            warnings.push(`Trùng giờ Y lệnh & Thực hiện (${extractTimeOnly(rec.ngay_yl_raw)})`);
+          }
+        }
+      }
+
+      // 2. Check KQ vs TH
+      if (d_th && d_kq) {
+        const diffMins = Math.round((d_kq.getTime() - d_th.getTime()) / (60 * 1000));
+        if (d_kq < d_th) {
+          errors.push(`KẾT QUẢ TRƯỚC THỰC HIỆN ${Math.abs(diffMins)} phút (KQ: ${extractTimeOnly(rec.ngay_kq_raw)} < TH: ${extractTimeOnly(rec.ngay_th_yl_raw)})`);
+        } else if (d_kq.getTime() === d_th.getTime()) {
+          if (currentRuleMode === 'strict') {
+            errors.push(`TRÙNG GIỜ THỰC HIỆN & KẾT QUẢ (${extractTimeOnly(rec.ngay_th_yl_raw)}) [Vi phạm rule <]`);
+          } else {
+            warnings.push(`Trùng giờ Thực hiện & Kết quả (${extractTimeOnly(rec.ngay_th_yl_raw)})`);
+          }
+        }
+      }
+
+      // 3. Check KQ vs YL
+      if (d_yl && d_kq) {
+        const diffMins = Math.round((d_kq.getTime() - d_yl.getTime()) / (60 * 1000));
+        if (d_kq < d_yl) {
+          errors.push(`KẾT QUẢ TRƯỚC Y LỆNH ${Math.abs(diffMins)} phút (KQ: ${extractTimeOnly(rec.ngay_kq_raw)} < YL: ${extractTimeOnly(rec.ngay_yl_raw)})`);
+        } else if (d_kq.getTime() === d_yl.getTime() && !d_th) {
+          if (currentRuleMode === 'strict') {
+            errors.push(`TRÙNG GIỜ Y LỆNH & KẾT QUẢ (${extractTimeOnly(rec.ngay_yl_raw)}) [Vi phạm rule <]`);
+          } else {
+            warnings.push(`Trùng giờ Y lệnh & Kết quả (${extractTimeOnly(rec.ngay_yl_raw)})`);
+          }
+        }
+      }
+
+      // 4. KIỂM TRA VỚI NGÀY RA VIỆN (NGAY_RA) & NGÀY VÀO VIỆN (NGAY_VAO)
+      let hasRaConflict = false;
+      if (chkCheckNgayRa && d_ra) {
+        if (d_yl && d_yl > d_ra) {
+          const diff = Math.round((d_yl.getTime() - d_ra.getTime()) / (60 * 1000));
+          errors.push(`Y LỆNH SAU NGÀY RA VIỆN ${diff} phút (YL: ${extractTimeOnly(rec.ngay_yl_raw)} > RA: ${extractTimeOnly(rec.ngay_ra_raw)}) ❌ XUẤT TOÁN`);
+          hasRaConflict = true;
+        }
+        if (d_th && d_th > d_ra) {
+          const diff = Math.round((d_th.getTime() - d_ra.getTime()) / (60 * 1000));
+          errors.push(`THỰC HIỆN SAU NGÀY RA VIỆN ${diff} phút (TH: ${extractTimeOnly(rec.ngay_th_yl_raw)} > RA: ${extractTimeOnly(rec.ngay_ra_raw)}) ❌ XUẤT TOÁN`);
+          hasRaConflict = true;
+        }
+        if (d_kq && d_kq > d_ra) {
+          const diff = Math.round((d_kq.getTime() - d_ra.getTime()) / (60 * 1000));
+          errors.push(`KẾT QUẢ SAU NGÀY RA VIỆN ${diff} phút (KQ: ${extractTimeOnly(rec.ngay_kq_raw)} > RA: ${extractTimeOnly(rec.ngay_ra_raw)}) ❌ XUẤT TOÁN`);
+          hasRaConflict = true;
+        }
+        if (d_vao && d_yl && d_yl < d_vao) {
+          warnings.push(`Y lệnh trước ngày vào viện (YL: ${extractTimeOnly(rec.ngay_yl_raw)} < VÀO: ${extractTimeOnly(rec.ngay_vao_raw)})`);
+        }
+      }
+      rec.hasRaConflict = hasRaConflict;
+
+      // 5. Missing required dates
+      if (!rec.ngay_yl_raw) {
+        errors.push("Thiếu thông tin NGAY_YL (Bắt buộc)");
+      }
+
+      const chkMissingKQ = document.getElementById('chkMissingKQ').checked;
+      if (chkMissingKQ && !rec.ngay_kq_raw && (rec.ma_dv.startsWith('22.') || rec.ma_dv.startsWith('23.') || rec.ma_dv.startsWith('18.'))) {
+        warnings.push("Dịch vụ CLS/CĐHA nhưng chưa có NGAY_KQ");
+      }
+
+      rec.status = errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK');
+      rec.errors = errors;
+      rec.warnings = warnings;
+
+      // Suggestions
+      if (hasRaConflict) {
+        rec.suggestion = `Cần lùi mốc thời gian trước ${extractTimeOnly(rec.ngay_ra_raw)} hoặc sửa NGAY_RA trên bệnh án viện phí`;
+      } else if (errors.length > 0) {
+        if (d_kq && d_th && d_kq < d_th) {
+          rec.suggestion = `Cần sửa NGAY_KQ sau ${extractTimeOnly(rec.ngay_th_yl_raw)} (VD: ${new Date(d_th.getTime() + 15*60000).toISOString().slice(11,16)})`;
+        } else if (d_th && d_yl && d_th < d_yl) {
+          rec.suggestion = `Cần sửa NGAY_TH_YL sau ${extractTimeOnly(rec.ngay_yl_raw)} (VD: ${new Date(d_yl.getTime() + 10*60000).toISOString().slice(11,16)})`;
+        } else {
+          rec.suggestion = "Điều chỉnh thứ tự thời gian trên phần mềm HIS/LIS trước khi xuất XML";
+        }
+      } else {
+        rec.suggestion = "Dữ liệu chuẩn, sẵn sàng gửi giám định BHXH";
+      }
+    }
+
+    // Parse XML String including extraction of XML 1 (TONG_HOP) to get NGAY_RA & NGAY_VAO
+    function parseXMLString(xmlText, fileName = "") {
+      const records = [];
+
+      // Step 1: Extract XML 1 (TONG_HOP) to map MA_LK -> {ngay_vao, ngay_ra}
+      const dossierMap = {};
+
+      const b64Xml1Regex = /<LOAIHOSO>\s*XML1\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/gi;
+      let mXml1;
+      const xml1Texts = [];
+      while ((mXml1 = b64Xml1Regex.exec(xmlText)) !== null) {
+        const raw = mXml1[1].trim();
+        try {
+          xml1Texts.push(decodeURIComponent(escape(atob(raw))));
+        } catch(e) {
+          try { xml1Texts.push(atob(raw)); } catch(e2) { xml1Texts.push(raw); }
+        }
+      }
+      if (xml1Texts.length === 0) xml1Texts.push(xmlText);
+
+      const tongHopRegex = /<TONG_HOP>([\s\S]*?)<\/TONG_HOP>/gi;
+      for (const t1 of xml1Texts) {
+        let m;
+        while ((m = tongHopRegex.exec(t1)) !== null) {
+          const block = m[1];
+          const getVal = (tag) => {
+            const r = new RegExp(`<${tag}>(?:<\\!\\[CDATA\\[([\\s\\S]*?)\\]\\]>|([\\s\\S]*?))<\\/${tag}>`, 'i');
+            const match = block.match(r);
+            return match ? (match[1] !== undefined ? match[1] : match[2] || '').trim() : '';
+          };
+          const ma_lk = getVal('MA_LK');
+          const ngay_vao = getVal('NGAY_VAO');
+          const ngay_ra = getVal('NGAY_RA');
+          if (ma_lk) {
+            dossierMap[ma_lk] = { ngay_vao, ngay_ra };
+          }
+        }
+      }
+
+      // Step 2: Extract XML 3 (CHI_TIET_DVKT)
+      const b64Regex = /<LOAIHOSO>\s*XML3\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/gi;
+      let b64Match;
+      const subTexts = [];
+
+      while ((b64Match = b64Regex.exec(xmlText)) !== null) {
+        const rawB64 = b64Match[1].trim();
+        try {
+          subTexts.push(decodeURIComponent(escape(atob(rawB64))));
+        } catch (e) {
+          try { subTexts.push(atob(rawB64)); } catch (e2) { subTexts.push(rawB64); }
+        }
+      }
+
+      if (subTexts.length === 0) {
+        subTexts.push(xmlText);
+      }
+
+      const itemRegex = /<CHI_TIET_DVKT>([\s\S]*?)<\/CHI_TIET_DVKT>/gi;
+
+      for (const text of subTexts) {
+        let m;
+        while ((m = itemRegex.exec(text)) !== null) {
+          const block = m[1];
+          const getVal = (tag) => {
+            const r = new RegExp(`<${tag}>(?:<\\!\\[CDATA\\[([\\s\\S]*?)\\]\\]>|([\\s\\S]*?))<\\/${tag}>`, 'i');
+            const match = block.match(r);
+            if (!match) return '';
+            return (match[1] !== undefined ? match[1] : match[2] || '').trim();
+          };
+
+          const ma_lk = getVal('MA_LK');
+          const stt = getVal('STT');
+          const ma_dv = getVal('MA_DICH_VU');
+          const ten_dv = getVal('TEN_DICH_VU');
+          const ma_khoa = getVal('MA_KHOA');
+          const ma_bs = getVal('MA_BAC_SI');
+          const nguoi_th = getVal('NGUOI_THUC_HIEN');
+          const ngay_yl_raw = getVal('NGAY_YL');
+          const ngay_th_yl_raw = getVal('NGAY_TH_YL');
+          const ngay_kq_raw = getVal('NGAY_KQ');
+
+          let ngay_ra_raw = getVal('NGAY_RA');
+          let ngay_vao_raw = getVal('NGAY_VAO');
+          if (ma_lk && dossierMap[ma_lk]) {
+            if (!ngay_ra_raw) ngay_ra_raw = dossierMap[ma_lk].ngay_ra;
+            if (!ngay_vao_raw) ngay_vao_raw = dossierMap[ma_lk].ngay_vao;
+          }
+
+          const rec = {
+            fileName,
+            ma_lk,
+            stt,
+            ma_dv,
+            ten_dv,
+            ma_khoa,
+            ma_bs,
+            nguoi_th,
+            ngay_yl_raw,
+            ngay_th_yl_raw,
+            ngay_kq_raw,
+            ngay_ra_raw,
+            ngay_vao_raw
+          };
+
+          evaluateRecord(rec);
+          records.push(rec);
+        }
+      }
+
+      return records;
+    }
+
+    // Refresh KPIs and Filter Table
+    function refreshData() {
+      rawRecords.forEach(evaluateRecord);
+
+      let list = rawRecords;
+      if (currentTab === 'ERROR') {
+        list = list.filter(r => r.status === 'ERROR');
+      } else if (currentTab === 'WARNING') {
+        list = list.filter(r => r.status === 'WARNING');
+      } else if (currentTab === 'OK') {
+        list = list.filter(r => r.status === 'OK');
+      }
+
+      // Column Filters
+      if (colFilter) {
+        if (colFilter === 'th-before-yl') {
+          list = list.filter(r => {
+            const d1 = parseDateTime(r.ngay_yl_raw);
+            const d2 = parseDateTime(r.ngay_th_yl_raw);
+            return d1 && d2 && d2 < d1;
+          });
+        } else if (colFilter === 'th-after-ra') {
+          list = list.filter(r => {
+            const d2 = parseDateTime(r.ngay_th_yl_raw);
+            const dra = parseDateTime(r.ngay_ra_raw);
+            return d2 && dra && d2 > dra;
+          });
+        } else if (colFilter === 'yl-after-ra') {
+          list = list.filter(r => {
+            const d1 = parseDateTime(r.ngay_yl_raw);
+            const dra = parseDateTime(r.ngay_ra_raw);
+            return d1 && dra && d1 > dra;
+          });
+        } else if (colFilter === 'kq-after-ra') {
+          list = list.filter(r => {
+            const d3 = parseDateTime(r.ngay_kq_raw);
+            const dra = parseDateTime(r.ngay_ra_raw);
+            return d3 && dra && d3 > dra;
+          });
+        } else if (colFilter === 'ra-conflict') {
+          list = list.filter(r => r.hasRaConflict);
+        } else if (colFilter === 'ra-has') {
+          list = list.filter(r => !!r.ngay_ra_raw);
+        } else if (colFilter === 'ra-empty') {
+          list = list.filter(r => !r.ngay_ra_raw);
+        } else if (colFilter === 'th-eq-yl') {
+          list = list.filter(r => {
+            const d1 = parseDateTime(r.ngay_yl_raw);
+            const d2 = parseDateTime(r.ngay_th_yl_raw);
+            return d1 && d2 && d1.getTime() === d2.getTime();
+          });
+        } else if (colFilter === 'kq-before-th') {
+          list = list.filter(r => {
+            const d2 = parseDateTime(r.ngay_th_yl_raw);
+            const d3 = parseDateTime(r.ngay_kq_raw);
+            return d2 && d3 && d3 < d2;
+          });
+        } else if (colFilter === 'kq-before-yl') {
+          list = list.filter(r => {
+            const d1 = parseDateTime(r.ngay_yl_raw);
+            const d3 = parseDateTime(r.ngay_kq_raw);
+            return d1 && d3 && d3 < d1;
+          });
+        } else if (colFilter === 'kq-eq-th') {
+          list = list.filter(r => {
+            const d2 = parseDateTime(r.ngay_th_yl_raw);
+            const d3 = parseDateTime(r.ngay_kq_raw);
+            return d2 && d3 && d2.getTime() === d3.getTime();
+          });
+        } else if (colFilter === 'kq-empty') {
+          list = list.filter(r => !r.ngay_kq_raw);
+        } else if (colFilter === 'th-empty') {
+          list = list.filter(r => !r.ngay_th_yl_raw);
+        } else if (colFilter === 'yl-empty') {
+          list = list.filter(r => !r.ngay_yl_raw);
+        } else if (colFilter === 'yl-sort-asc') {
+          list.sort((a,b) => (a.ngay_yl_raw || '').localeCompare(b.ngay_yl_raw || ''));
+        } else if (colFilter === 'yl-sort-desc') {
+          list.sort((a,b) => (b.ngay_yl_raw || '').localeCompare(a.ngay_yl_raw || ''));
+        }
+      }
+
+      // Search Filter
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (q) {
+        list = list.filter(r => 
+          (r.ma_lk && r.ma_lk.toLowerCase().includes(q)) ||
+          (r.ma_dv && r.ma_dv.toLowerCase().includes(q)) ||
+          (r.ten_dv && r.ten_dv.toLowerCase().includes(q)) ||
+          (r.ma_khoa && r.ma_khoa.toLowerCase().includes(q)) ||
+          (r.ma_bs && r.ma_bs.toLowerCase().includes(q)) ||
+          (r.fileName && r.fileName.toLowerCase().includes(q))
+        );
+      }
+
+      filteredRecords = list;
+
+      const total = rawRecords.length;
+      const errors = rawRecords.filter(r => r.status === 'ERROR').length;
+      const warnings = rawRecords.filter(r => r.status === 'WARNING').length;
+      const valids = rawRecords.filter(r => r.status === 'OK').length;
+      const errRate = total > 0 ? ((errors / total) * 100).toFixed(1) : 0;
+
+      document.getElementById('kpiTotal').innerText = total.toLocaleString();
+      document.getElementById('kpiErrors').innerText = errors.toLocaleString();
+      document.getElementById('kpiErrorRate').innerText = `Tỷ lệ lỗi: ${errRate}%`;
+      document.getElementById('kpiWarnings').innerText = warnings.toLocaleString();
+      document.getElementById('kpiValid').innerText = valids.toLocaleString();
+
+      document.getElementById('countTabAll').innerText = total;
+      document.getElementById('countTabError').innerText = errors;
+      document.getElementById('countTabWarn').innerText = warnings;
+      document.getElementById('countTabOk').innerText = valids;
+
+      currentPage = 1;
+      renderTable();
+    }
+
+    // Render Table Page
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      const totalRows = filteredRecords.length;
+
+      if (totalRows === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="py-12 text-center text-slate-400">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="text-3xl">🔍</span>
+                <p class="font-medium text-slate-600 text-sm">Không tìm thấy bản ghi nào khớp với điều kiện lọc</p>
+                <p class="text-xs">Thử chuyển tab hoặc xóa từ khóa tìm kiếm</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        document.getElementById('pageInfo').innerText = "0 bản ghi";
+        document.getElementById('paginationControls').innerHTML = "";
+        return;
+      }
+
+      const effectiveSize = pageSize === 'all' ? totalRows : parseInt(pageSize);
+      const totalPages = Math.ceil(totalRows / effectiveSize) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const startIndex = (currentPage - 1) * effectiveSize;
+      const endIndex = Math.min(startIndex + effectiveSize, totalRows);
+      const pageData = filteredRecords.slice(startIndex, endIndex);
+
+      let html = '';
+      pageData.forEach((r, idx) => {
+        const rowNum = startIndex + idx + 1;
+        const isError = r.status === 'ERROR';
+        const isWarn = r.status === 'WARNING';
+        
+        let rowClass = "hover:bg-slate-50/80 transition";
+        if (isError) rowClass = "bg-rose-50/40 hover:bg-rose-50 transition border-l-4 border-l-rose-500";
+        else if (isWarn) rowClass = "bg-amber-50/30 hover:bg-amber-50/60 transition border-l-4 border-l-amber-400";
+
+        let badgeHtml = '';
+        if (isError) {
+          badgeHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-300">❌ LỖI</span>';
+        } else if (isWarn) {
+          badgeHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-300">⚠️ CẢNH BÁO</span>';
+        } else {
+          badgeHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-100 text-emerald-800 border border-emerald-300">✅ HỢP LỆ</span>';
+        }
+
+        const t_yl = extractTimeOnly(r.ngay_yl_raw);
+        const t_th = extractTimeOnly(r.ngay_th_yl_raw);
+        const t_kq = extractTimeOnly(r.ngay_kq_raw);
+        const t_ra = extractTimeOnly(r.ngay_ra_raw);
+        
+        let timelineClass = "text-slate-600 bg-slate-100";
+        if (isError) timelineClass = "text-rose-700 bg-rose-100 font-bold border border-rose-300";
+        else if (isWarn) timelineClass = "text-amber-800 bg-amber-100 font-semibold border border-amber-300";
+
+        const timelineHtml = `
+          <div class="inline-flex items-center gap-1 px-2 py-1 rounded-lg ${timelineClass} text-[10.5px] mono">
+            <span>${t_yl}</span>
+            <span class="text-slate-400">➔</span>
+            <span>${t_th}</span>
+            <span class="text-slate-400">➔</span>
+            <span>${t_kq}</span>
+          </div>
+        `;
+
+        let detailsHtml = '';
+        if (r.errors.length > 0) {
+          detailsHtml = `<div class="text-rose-700 font-bold space-y-0.5">${r.errors.map(e => `<div>• ${e}</div>`).join('')}</div>
+                         <div class="text-[11px] text-slate-500 mt-1 italic font-sans">💡 ${r.suggestion}</div>`;
+        } else if (r.warnings.length > 0) {
+          detailsHtml = `<div class="text-amber-800 font-medium space-y-0.5">${r.warnings.map(w => `<div>• ${w}</div>`).join('')}</div>
+                         <div class="text-[11px] text-slate-500 mt-1 italic font-sans">💡 ${r.suggestion}</div>`;
+        } else {
+          detailsHtml = `<span class="text-emerald-700 font-medium">Hợp lệ: ${t_yl} &le; ${t_th} &le; ${t_kq} &le; ${t_ra}</span>`;
+        }
+
+        const d1 = parseDateTime(r.ngay_yl_raw);
+        const d2 = parseDateTime(r.ngay_th_yl_raw);
+        const d3 = parseDateTime(r.ngay_kq_raw);
+        const dra = parseDateTime(r.ngay_ra_raw);
+
+        const errTH = (d1 && d2 && d2 < d1) || (dra && d2 && d2 > dra);
+        const errKQ = (d2 && d3 && d3 < d2) || (d1 && d3 && d3 < d1) || (dra && d3 && d3 > dra);
+        const errYL = (dra && d1 && d1 > dra);
+
+        html += `
+          <tr class="${rowClass}">
+            <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
+            <td class="py-2.5 px-3 font-semibold text-slate-700 font-mono">${r.ma_lk || '-'}</td>
+            <td class="py-2.5 px-3 font-mono text-blue-600">${r.ma_dv || '-'}</td>
+            <td class="py-2.5 px-3">
+              <div class="font-medium text-slate-800">${r.ten_dv || '-'}</div>
+              <div class="text-[11px] text-slate-400">Khoa: ${r.ma_khoa || 'Chưa rõ'} | BS: ${r.ma_bs || 'Chưa rõ'} ${r.nguoi_th ? '| KTV: ' + r.nguoi_th : ''}</div>
+            </td>
+            
+            <!-- NGAY_YL -->
+            <td class="py-2.5 px-2.5 text-center ${errYL ? 'bg-rose-100 text-rose-800 font-bold' : 'bg-amber-50/30'}" title="Raw: ${r.ngay_yl_raw}">
+              ${formatDTDisplay(r.ngay_yl_raw)}
+              ${errYL ? '<div class="text-[10px] text-rose-600 font-sans font-bold">Chỉ định sau ra viện!</div>' : ''}
+            </td>
+
+            <!-- NGAY_TH_YL -->
+            <td class="py-2.5 px-2.5 text-center ${errTH ? 'bg-rose-100 text-rose-800 font-bold' : 'bg-sky-50/30'}" title="Raw: ${r.ngay_th_yl_raw}">
+              ${formatDTDisplay(r.ngay_th_yl_raw)}
+              ${errTH ? '<div class="text-[10px] text-rose-600 font-sans font-bold">Vi phạm TH!</div>' : ''}
+            </td>
+
+            <!-- NGAY_KQ -->
+            <td class="py-2.5 px-2.5 text-center ${errKQ ? 'bg-rose-100 text-rose-800 font-bold' : 'bg-emerald-50/30'}" title="Raw: ${r.ngay_kq_raw}">
+              ${formatDTDisplay(r.ngay_kq_raw)}
+              ${errKQ ? '<div class="text-[10px] text-rose-600 font-sans font-bold">Vi phạm KQ!</div>' : ''}
+            </td>
+
+            <!-- NGAY_RA -->
+            <td class="py-2.5 px-2.5 text-center bg-purple-50/40" title="Ngày ra viện: ${r.ngay_ra_raw || 'Chưa rõ'}">
+              ${formatDTDisplay(r.ngay_ra_raw)}
+              ${r.hasRaConflict ? '<div class="text-[10px] text-rose-600 font-sans font-bold">Có DV sau ra viện!</div>' : ''}
+            </td>
+
+            <td class="py-2.5 px-2.5 text-center">${timelineHtml}</td>
+            <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
+            <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+      document.getElementById('pageInfo').innerText = `Hiển thị ${startIndex + 1} - ${endIndex} trên ${totalRows.toLocaleString()} bản ghi (Lọc từ ${rawRecords.length.toLocaleString()} bản ghi gốc)`;
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      const c = document.getElementById('paginationControls');
+      if (totalPages <= 1) {
+        c.innerHTML = "";
+        return;
+      }
+
+      let btnHtml = `
+        <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled class="px-2 py-1 bg-slate-100 text-slate-400 rounded cursor-not-allowed"' : 'class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100"'}><</button>
+      `;
+
+      for (let p = 1; p <= totalPages; p++) {
+        if (p === 1 || p === totalPages || (p >= currentPage - 2 && p <= currentPage + 2)) {
+          btnHtml += `
+            <button onclick="changePage(${p})" class="px-2.5 py-1 rounded text-xs font-semibold ${p === currentPage ? 'bg-blue-600 text-white' : 'bg-white border border-slate-300 hover:bg-slate-100 text-slate-700'}">${p}</button>
+          `;
+        } else if (p === currentPage - 3 || p === currentPage + 3) {
+          btnHtml += `<span class="px-1 text-slate-400">...</span>`;
+        }
+      }
+
+      btnHtml += `
+        <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled class="px-2 py-1 bg-slate-100 text-slate-400 rounded cursor-not-allowed"' : 'class="px-2 py-1 bg-white border border-slate-300 rounded hover:bg-slate-100"'}>></button>
+      `;
+
+      c.innerHTML = btnHtml;
+    }
+
+    function changePage(p) {
+      currentPage = p;
+      renderTable();
+    }
+
+    async function loadFiles(fileList) {
+      const files = Array.from(fileList);
+      if (files.length === 0) return;
+
+      rawRecords = [];
+      let totalParsed = 0;
+
+      showToast(`Đang đọc ${files.length} file...`, '⏳');
+
+      for (const file of files) {
+        const fname = file.name;
+        if (fname.toLowerCase().endsWith('.zip')) {
+          try {
+            const zip = await JSZip.loadAsync(file);
+            for (const [zname, zentry] of Object.entries(zip.files)) {
+              if (zname.toLowerCase().endsWith('.xml') && !zentry.dir) {
+                const xmlText = await zentry.async('text');
+                const recs = parseXMLString(xmlText, `${fname}/${zname}`);
+                rawRecords.push(...recs);
+                totalParsed += recs.length;
+              }
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        } else if (fname.toLowerCase().endsWith('.xml')) {
+          try {
+            const xmlText = await file.text();
+            const recs = parseXMLString(xmlText, fname);
+            rawRecords.push(...recs);
+            totalParsed += recs.length;
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      }
+
+      document.getElementById('fileListSummary').classList.remove('hidden');
+      document.getElementById('txtFileLoaded').innerText = `Đã nạp ${files.length} tệp tin (${totalParsed.toLocaleString()} dịch vụ kỹ thuật)`;
+
+      showToast(`Đã kiểm tra xong ${totalParsed.toLocaleString()} bản ghi!`, '✅');
+      refreshData();
+    }
+
+    // Export to Excel
+    document.getElementById('btnExportExcel').addEventListener('click', () => {
+      if (rawRecords.length === 0) {
+        showToast("Chưa có dữ liệu để xuất Excel!", "⚠️");
+        return;
+      }
+
+      const rows = [
+        ["STT", "Tên File", "Mã LK", "Mã DV", "Tên Dịch Vụ Kỹ Thuật", "Khoa / Bác Sĩ", "NGAY_YL (Raw)", "NGAY_TH_YL (Raw)", "NGAY_KQ (Raw)", "NGAY_RA (Ra Viện)", "Trạng Thái", "Mô Tả Lỗi / Vi Phạm", "Gợi Ý Khắc Phục", "Chuỗi Thời Gian"]
+      ];
+
+      filteredRecords.forEach((r, idx) => {
+        const d_yl = extractTimeOnly(r.ngay_yl_raw);
+        const d_th = extractTimeOnly(r.ngay_th_yl_raw);
+        const d_kq = extractTimeOnly(r.ngay_kq_raw);
+        const d_ra = extractTimeOnly(r.ngay_ra_raw);
+        const timeline = `${d_yl} -> ${d_th} -> ${d_kq} (Ra viện: ${d_ra})`;
+
+        const errStr = [...r.errors, ...r.warnings].join(" | ");
+
+        rows.push([
+          idx + 1,
+          r.fileName,
+          r.ma_lk,
+          r.ma_dv,
+          r.ten_dv,
+          `${r.ma_khoa} - ${r.ma_bs}`,
+          r.ngay_yl_raw,
+          r.ngay_th_yl_raw,
+          r.ngay_kq_raw,
+          r.ngay_ra_raw || "",
+          r.status === 'ERROR' ? 'LỖI' : (r.status === 'WARNING' ? 'CẢNH BÁO' : 'HỢP LỆ'),
+          errStr || "Hợp lệ",
+          r.suggestion,
+          timeline
+        ]);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Kiem_Tra_XML3_Va_RaVien");
+      XLSX.writeFile(wb, `Bao_Cao_Kiem_Tra_XML3_RaVien_${new Date().toISOString().slice(0,10)}.xlsx`);
+      showToast("Đã tải xuống file Excel thành công!", "📥");
+    });
+
+    // Sample Test Data with NGAY_RA
+    document.getElementById('btnSampleData').addEventListener('click', () => {
+      const sampleXML = `
+      <GIAMDINHHS>
+        <THONGTINDONVI><MACSKCB>74039</MACSKCB></THONGTINDONVI>
+        <DANHSACHHOSO>
+          <HOSO>
+            <!-- XML 1: Thông tin tổng hợp có Ngày vào và Ngày ra viện -->
+            <FILEHOSO>
+              <LOAIHOSO>XML1</LOAIHOSO>
+              <NOIDUNGFILE>
+                <TONG_HOP>
+                  <MA_LK>2405685</MA_LK>
+                  <NGAY_VAO>202606170729</NGAY_VAO>
+                  <NGAY_RA>202606170951</NGAY_RA>
+                </TONG_HOP>
+                <TONG_HOP>
+                  <MA_LK>47246630</MA_LK>
+                  <NGAY_VAO>202606170800</NGAY_VAO>
+                  <NGAY_RA>202606171030</NGAY_RA>
+                </TONG_HOP>
+              </NOIDUNGFILE>
+            </FILEHOSO>
+
+            <!-- XML 3: Chi tiết dịch vụ kỹ thuật -->
+            <FILEHOSO>
+              <LOAIHOSO>XML3</LOAIHOSO>
+              <NOIDUNGFILE>
+                <DSACH_CHI_TIET_DVKT>
+                  <!-- Case 1: Lỗi NGAY_KQ < NGAY_TH_YL (Vi phạm điển hình) -->
+                  <CHI_TIET_DVKT>
+                    <MA_LK>2405685</MA_LK>
+                    <STT>1</STT>
+                    <MA_DICH_VU>22.0121.1369</MA_DICH_VU>
+                    <TEN_DICH_VU><![CDATA[Tổng phân tích tế bào máu ngoại vi (bằng máy đếm laser)]]></TEN_DICH_VU>
+                    <MA_KHOA>K01</MA_KHOA>
+                    <MA_BAC_SI>008577/ĐL-CCHN</MA_BAC_SI>
+                    <NGUOI_THUC_HIEN>004581/BD-CCHN</NGUOI_THUC_HIEN>
+                    <NGAY_YL>202606170732</NGAY_YL>
+                    <NGAY_TH_YL>202606170825</NGAY_TH_YL>
+                    <NGAY_KQ>202606170821</NGAY_KQ>
+                  </CHI_TIET_DVKT>
+
+                  <!-- Case 2: Hợp lệ chuẩn YL < TH < KQ < NGAY_RA -->
+                  <CHI_TIET_DVKT>
+                    <MA_LK>2405685</MA_LK>
+                    <STT>2</STT>
+                    <MA_DICH_VU>23.0075.1494</MA_DICH_VU>
+                    <TEN_DICH_VU><![CDATA[Định lượng Glucose [Máu]]]></TEN_DICH_VU>
+                    <MA_KHOA>K01</MA_KHOA>
+                    <MA_BAC_SI>008577/ĐL-CCHN</MA_BAC_SI>
+                    <NGUOI_THUC_HIEN>004581/BD-CCHN</NGUOI_THUC_HIEN>
+                    <NGAY_YL>202606170732</NGAY_YL>
+                    <NGAY_TH_YL>202606170825</NGAY_TH_YL>
+                    <NGAY_KQ>202606170856</NGAY_KQ>
+                  </CHI_TIET_DVKT>
+
+                  <!-- Case 3: Trùng giờ TH_YL == NGAY_YL -->
+                  <CHI_TIET_DVKT>
+                    <MA_LK>2405685</MA_LK>
+                    <STT>3</STT>
+                    <MA_DICH_VU>02.03</MA_DICH_VU>
+                    <TEN_DICH_VU><![CDATA[Khám Nội tổng hợp]]></TEN_DICH_VU>
+                    <MA_KHOA>K01</MA_KHOA>
+                    <MA_BAC_SI>008577/ĐL-CCHN</MA_BAC_SI>
+                    <NGAY_YL>202606170731</NGAY_YL>
+                    <NGAY_TH_YL>202606170731</NGAY_TH_YL>
+                    <NGAY_KQ>202606170951</NGAY_KQ>
+                  </CHI_TIET_DVKT>
+
+                  <!-- Case 4: Lỗi NGAY_TH_YL < NGAY_YL (Thực hiện trước khi có Y lệnh) -->
+                  <CHI_TIET_DVKT>
+                    <MA_LK>47246630</MA_LK>
+                    <STT>4</STT>
+                    <MA_DICH_VU>08.0009.0228</MA_DICH_VU>
+                    <TEN_DICH_VU><![CDATA[Cứu ngải điều trị đau cơ]]></TEN_DICH_VU>
+                    <MA_KHOA>K08</MA_KHOA>
+                    <MA_BAC_SI>008350/BD-CCHN</MA_BAC_SI>
+                    <NGAY_YL>202606171024</NGAY_YL>
+                    <NGAY_TH_YL>202606171015</NGAY_TH_YL>
+                    <NGAY_KQ></NGAY_KQ>
+                  </CHI_TIET_DVKT>
+
+                  <!-- Case 5: LỖI NGAY_RA: Trả kết quả sau ngày ra viện (NGAY_KQ: 10:15 > NGAY_RA: 09:51) -->
+                  <CHI_TIET_DVKT>
+                    <MA_LK>2405685</MA_LK>
+                    <STT>5</STT>
+                    <MA_DICH_VU>23.0158.1506</MA_DICH_VU>
+                    <TEN_DICH_VU><![CDATA[Định lượng Triglycerid (máu) [Máu]]]></TEN_DICH_VU>
+                    <MA_KHOA>K01</MA_KHOA>
+                    <MA_BAC_SI>008577/ĐL-CCHN</MA_BAC_SI>
+                    <NGAY_YL>202606170732</NGAY_YL>
+                    <NGAY_TH_YL>202606170825</NGAY_TH_YL>
+                    <NGAY_KQ>202606171015</NGAY_KQ>
+                  </CHI_TIET_DVKT>
+
+                  <!-- Case 6: Siêu âm hợp lệ -->
+                  <CHI_TIET_DVKT>
+                    <MA_LK>2405685</MA_LK>
+                    <STT>6</STT>
+                    <MA_DICH_VU>18.0015.0001</MA_DICH_VU>
+                    <TEN_DICH_VU><![CDATA[Siêu âm ổ bụng (gan mật, tụy, lách, thận, bàng quang)]]></TEN_DICH_VU>
+                    <MA_KHOA>K04</MA_KHOA>
+                    <MA_BAC_SI>008577/ĐL-CCHN</MA_BAC_SI>
+                    <NGAY_YL>202606170732</NGAY_YL>
+                    <NGAY_TH_YL>202606170751</NGAY_TH_YL>
+                    <NGAY_KQ>202606170753</NGAY_KQ>
+                  </CHI_TIET_DVKT>
+                </DSACH_CHI_TIET_DVKT>
+              </NOIDUNGFILE>
+            </FILEHOSO>
+          </HOSO>
+        </DANHSACHHOSO>
+      </GIAMDINHHS>
+      `;
+
+      rawRecords = parseXMLString(sampleXML, "KMH_Mau_Test_Check_RaVien.xml");
+      document.getElementById('fileListSummary').classList.remove('hidden');
+      document.getElementById('txtFileLoaded').innerText = `Đã nạp file mẫu: KMH_Mau_Test_Check_RaVien.xml (${rawRecords.length} DVKT)`;
+      showToast("Đã nạp dữ liệu mẫu (Gồm lỗi TH < YL, KQ < TH, trùng giờ và LỖI KẾT QUẢ SAU NGÀY RA VIỆN)!", "🚀");
+      refreshData();
+    });
+
+    document.getElementById('btnClearData').addEventListener('click', () => {
+      rawRecords = [];
+      filteredRecords = [];
+      document.getElementById('fileListSummary').classList.add('hidden');
+      document.getElementById('fileInput').value = '';
+      document.getElementById('folderInput').value = '';
+      refreshData();
+    });
+
+    document.querySelectorAll('input[name="ruleMode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        currentRuleMode = e.target.value;
+        refreshData();
+      });
+    });
+
+    document.getElementById('chkCheckNgayRa').addEventListener('change', refreshData);
+    document.getElementById('chkMissingKQ').addEventListener('change', refreshData);
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('active-tab', 'bg-white', 'text-slate-800', 'shadow-sm', 'font-semibold');
+        });
+        btn.classList.add('active-tab', 'bg-white', 'text-slate-800', 'shadow-sm', 'font-semibold');
+        currentTab = btn.getAttribute('data-filter');
+        refreshData();
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', refreshData);
+
+    document.getElementById('pageSizeSelect').addEventListener('change', (e) => {
+      pageSize = e.target.value;
+      currentPage = 1;
+      renderTable();
+    });
+
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-blue-500', 'bg-blue-50/50'); });
+    dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-blue-500', 'bg-blue-50/50'); });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-blue-500', 'bg-blue-50/50');
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        loadFiles(e.dataTransfer.files);
+      }
+    });
+
+    document.getElementById('fileInput').addEventListener('change', (e) => loadFiles(e.target.files));
+    document.getElementById('folderInput').addEventListener('change', (e) => loadFiles(e.target.files));
+
+    // Dropdown filters
+    document.querySelectorAll('.dropdown-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const parent = btn.closest('.dropdown');
+        document.querySelectorAll('.dropdown').forEach(d => { if (d !== parent) d.classList.remove('active'); });
+        parent.classList.toggle('active');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+    });
+
+    document.querySelectorAll('[data-col-filter]').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const filterType = e.target.getAttribute('data-col-filter');
+        if (filterType.endsWith('-all')) {
+          colFilter = null;
+        } else {
+          colFilter = filterType;
+        }
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+        refreshData();
+        showToast(`Đã áp dụng bộ lọc cột: ${filterType}`, '🔎');
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btnSampleData').click();
+    });
+  </script>
+</body>
+</html>
