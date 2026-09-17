@@ -247,6 +247,7 @@
             <tr>
               <th class="py-2.5 px-3 w-12 text-center">STT</th>
               <th class="py-2.5 px-3 w-28">MÃ LK</th>
+              <th class="py-2.5 px-3 w-32 text-indigo-900">MÃ BỆNH ÁN</th>
               <th class="py-2.5 px-3 w-28">MÃ DV</th>
               <th class="py-2.5 px-3 min-w-[200px]">TÊN DỊCH VỤ KỸ THUẬT</th>
               
@@ -337,7 +338,7 @@
           </thead>
           <tbody id="tableBody" class="divide-y divide-slate-200">
             <tr>
-              <td colspan="11" class="py-12 text-center text-slate-400">
+              <td colspan="12" class="py-12 text-center text-slate-400">
                 <div class="flex flex-col items-center justify-center space-y-2">
                   <span class="text-4xl">📂</span>
                   <p class="font-medium text-slate-600 text-sm">Chưa có dữ liệu kiểm tra</p>
@@ -560,8 +561,9 @@
           const ma_lk = getVal('MA_LK');
           const ngay_vao = getVal('NGAY_VAO');
           const ngay_ra = getVal('NGAY_RA');
+          const ma_ba = getVal('MA_BA') || getVal('MA_HSBA') || getVal('MA_BENH_AN') || getVal('SO_BENH_AN');
           if (ma_lk) {
-            dossierMap[ma_lk] = { ngay_vao, ngay_ra };
+            dossierMap[ma_lk] = { ngay_vao, ngay_ra, ma_ba };
           }
         }
       }
@@ -610,9 +612,11 @@
 
           let ngay_ra_raw = getVal('NGAY_RA');
           let ngay_vao_raw = getVal('NGAY_VAO');
+          let ma_ba = getVal('MA_BA') || getVal('MA_HSBA') || getVal('MA_BENH_AN') || getVal('SO_BENH_AN');
           if (ma_lk && dossierMap[ma_lk]) {
             if (!ngay_ra_raw) ngay_ra_raw = dossierMap[ma_lk].ngay_ra;
             if (!ngay_vao_raw) ngay_vao_raw = dossierMap[ma_lk].ngay_vao;
+            if (!ma_ba) ma_ba = dossierMap[ma_lk].ma_ba;
           }
 
           const rec = {
@@ -628,7 +632,8 @@
             ngay_th_yl_raw,
             ngay_kq_raw,
             ngay_ra_raw,
-            ngay_vao_raw
+            ngay_vao_raw,
+            ma_ba: ma_ba || ''
           };
 
           evaluateRecord(rec);
@@ -726,6 +731,7 @@
       if (q) {
         list = list.filter(r => 
           (r.ma_lk && r.ma_lk.toLowerCase().includes(q)) ||
+          (r.ma_ba && r.ma_ba.toLowerCase().includes(q)) ||
           (r.ma_dv && r.ma_dv.toLowerCase().includes(q)) ||
           (r.ten_dv && r.ten_dv.toLowerCase().includes(q)) ||
           (r.ma_khoa && r.ma_khoa.toLowerCase().includes(q)) ||
@@ -765,7 +771,7 @@
       if (totalRows === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="11" class="py-12 text-center text-slate-400">
+            <td colspan="12" class="py-12 text-center text-slate-400">
               <div class="flex flex-col items-center justify-center space-y-2">
                 <span class="text-3xl">🔍</span>
                 <p class="font-medium text-slate-600 text-sm">Không tìm thấy bản ghi nào khớp với điều kiện lọc</p>
@@ -849,6 +855,7 @@
           <tr class="${rowClass}">
             <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
             <td class="py-2.5 px-3 font-semibold text-slate-700 font-mono">${r.ma_lk || '-'}</td>
+            <td class="py-2.5 px-3 font-semibold text-indigo-700 font-mono text-[11.5px]">${r.ma_ba || '<span class="text-slate-300 font-normal italic">-</span>'}</td>
             <td class="py-2.5 px-3 font-mono text-blue-600">${r.ma_dv || '-'}</td>
             <td class="py-2.5 px-3">
               <div class="font-medium text-slate-800">${r.ten_dv || '-'}</div>
@@ -940,15 +947,16 @@
           const keys = Object.keys(first).map(k => k.toUpperCase().trim());
           if (keys.includes('NGAY_RA') || keys.includes('NGAY_VAO') || sname.toUpperCase().includes('XML1')) {
             rows.forEach(r => {
-              let mlk = '', nv = '', nr = '';
+              let mlk = '', nv = '', nr = '', mba = '';
               for (const [k, v] of Object.entries(r)) {
                 const ku = k.toUpperCase().trim();
                 const valStr = v !== undefined && v !== null ? String(v).trim() : '';
                 if (ku === 'MA_LK') mlk = valStr;
                 else if (ku === 'NGAY_VAO') nv = valStr;
                 else if (ku === 'NGAY_RA') nr = valStr;
+                else if (ku === 'MA_BA' || ku === 'MA_HSBA' || ku === 'MA_BENH_AN' || ku === 'SO_BENH_AN') mba = valStr;
               }
-              if (mlk) dossierMap[mlk] = { ngay_vao: nv, ngay_ra: nr };
+              if (mlk) dossierMap[mlk] = { ngay_vao: nv, ngay_ra: nr, ma_ba: mba };
             });
           }
         }
@@ -967,7 +975,7 @@
 
         if (hasYl || hasDv || isXml3Sheet) {
           rows.forEach((r, idx) => {
-            let ma_lk='', stt='', ma_dv='', ten_dv='', ma_khoa='', ma_bs='', nguoi_th='', ngay_yl='', ngay_th='', ngay_kq='', ngay_ra='', ngay_vao='';
+            let ma_lk='', stt='', ma_dv='', ten_dv='', ma_khoa='', ma_bs='', nguoi_th='', ngay_yl='', ngay_th='', ngay_kq='', ngay_ra='', ngay_vao='', ma_ba='';
             for (const [k, v] of Object.entries(r)) {
               const ku = k.toUpperCase().trim();
               const valStr = v !== undefined && v !== null ? String(v).trim() : '';
@@ -983,6 +991,7 @@
               else if (ku === 'NGAY_KQ') ngay_kq = valStr;
               else if (ku === 'NGAY_RA') ngay_ra = valStr;
               else if (ku === 'NGAY_VAO') ngay_vao = valStr;
+              else if (ku === 'MA_BA' || ku === 'MA_HSBA' || ku === 'MA_BENH_AN' || ku === 'SO_BENH_AN') ma_ba = valStr;
             }
 
             if (!ma_lk && !ma_dv && !ngay_yl) return;
@@ -990,6 +999,7 @@
             if (ma_lk && dossierMap[ma_lk]) {
               if (!ngay_ra) ngay_ra = dossierMap[ma_lk].ngay_ra;
               if (!ngay_vao) ngay_vao = dossierMap[ma_lk].ngay_vao;
+              if (!ma_ba) ma_ba = dossierMap[ma_lk].ma_ba;
             }
 
             const rec = {
@@ -1005,7 +1015,8 @@
               ngay_th_yl_raw: ngay_th,
               ngay_kq_raw: ngay_kq,
               ngay_ra_raw: ngay_ra,
-              ngay_vao_raw: ngay_vao
+              ngay_vao_raw: ngay_vao,
+              ma_ba: ma_ba || ''
             };
 
             evaluateRecord(rec);
@@ -1079,7 +1090,7 @@
       }
 
       const rows = [
-        ["STT", "Tên File", "Mã LK", "Mã DV", "Tên Dịch Vụ Kỹ Thuật", "Khoa / Bác Sĩ", "NGAY_YL (Raw)", "NGAY_TH_YL (Raw)", "NGAY_KQ (Raw)", "NGAY_RA (Ra Viện)", "Trạng Thái", "Mô Tả Lỗi / Vi Phạm", "Gợi Ý Khắc Phục", "Chuỗi Thời Gian"]
+        ["STT", "Tên File", "Mã LK", "Mã Bệnh Án", "Mã DV", "Tên Dịch Vụ Kỹ Thuật", "Khoa / Bác Sĩ", "NGAY_YL (Raw)", "NGAY_TH_YL (Raw)", "NGAY_KQ (Raw)", "NGAY_RA (Ra Viện)", "Trạng Thái", "Mô Tả Lỗi / Vi Phạm", "Gợi Ý Khắc Phục", "Chuỗi Thời Gian"]
       ];
 
       filteredRecords.forEach((r, idx) => {
@@ -1095,6 +1106,7 @@
           idx + 1,
           r.fileName,
           r.ma_lk,
+          r.ma_ba || "",
           r.ma_dv,
           r.ten_dv,
           `${r.ma_khoa} - ${r.ma_bs}`,
@@ -1129,11 +1141,13 @@
               <NOIDUNGFILE>
                 <TONG_HOP>
                   <MA_LK>2405685</MA_LK>
+                  <MA_BA>BA26000098482</MA_BA>
                   <NGAY_VAO>202606170729</NGAY_VAO>
                   <NGAY_RA>202606170951</NGAY_RA>
                 </TONG_HOP>
                 <TONG_HOP>
                   <MA_LK>47246630</MA_LK>
+                  <MA_BA>BA26000010966</MA_BA>
                   <NGAY_VAO>202606170800</NGAY_VAO>
                   <NGAY_RA>202606171030</NGAY_RA>
                 </TONG_HOP>
