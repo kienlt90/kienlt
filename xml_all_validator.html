@@ -301,7 +301,7 @@
     };
 
     const TABLE_RULES_DESC = {
-      XML1: 'Rules: Họ tên viết hoa; CCCD/Thẻ BHYT 10-15 ký tự; Hạn thẻ; Ngày vào <= Ngày ra; Mã bệnh ICD-10 viết hoa KHÔNG DẤU CHẤM; Cân đối tài chính BHYT; Miễn cùng chi trả < 15% lương CS.',
+      XML1: 'Rules: Họ tên viết hoa; CCCD/Thẻ BHYT 10-15 ký tự; Hạn thẻ; Ngày vào <= Ngày ra; Tra cứu mã ICD-10 Danh mục BYT; Cân đối tài chính BHYT; Miễn cùng chi trả < 15% lương CS.',
       XML2: 'Rules: Mã thuốc & Thông tin thầu TT_THAU; SĐK, Hàm lượng, Đường dùng bắt buộc; Ngày y lệnh trong đợt điều trị; Cân đối Thành tiền = Số lượng x Đơn giá; Khớp nối MA_LK.',
       XML3: 'Rules: Chuỗi tiến trình NGAY_YL <= NGAY_TH_YL <= NGAY_KQ <= NGAY_RA; Rule CROSS_02: Cận lâm sàng nhóm 1,2,3 bắt buộc có NGAY_KQ; PTTT có PTV & PP vô cảm.',
       XML4: 'Rules: Bắt buộc có kết quả (GIA_TRI hoặc MO_TA/KET_LUAN); NGAY_KQ trong đợt điều trị; Bác sĩ đọc KQ; Khớp nối chỉ định CLS từ XML 3.',
@@ -521,14 +521,6 @@
         } else {
           rec._icdChinhName = icdInfo.name;
           rec._icdChinhInfo = icdInfo;
-          
-          // Cảnh báo định dạng dấu chấm
-          if (icdInfo.hasDot) {
-            warnings.push(`Mã ICD-10 bệnh chính "${icdChinh}" [${icdInfo.name}] có chứa dấu chấm ⚠️ Chuẩn gửi cổng XML 130 quy định bỏ dấu chấm: "${icdInfo.noDotCode}"`);
-          }
-          if (icdChinh !== icdChinh.toUpperCase()) {
-            warnings.push(`Mã ICD-10 bệnh chính chưa viết hoa: "${icdChinh}"`);
-          }
 
           // Kiểm tra không được làm bệnh chính
           if (icdInfo.isNotMain) {
@@ -564,9 +556,6 @@
             errors.push(`Mã ICD kèm theo "${kt}" ❌ KHÔNG TỒN TẠI trong Danh mục ICD-10 Bộ Y tế`);
           } else {
             rec._icdKtList.push(ktInfo);
-            if (ktInfo.hasDot) {
-              warnings.push(`Mã ICD kèm theo "${kt}" [${ktInfo.name}] chứa dấu chấm ⚠️ Chuẩn XML 130 là "${ktInfo.noDotCode}"`);
-            }
             if (ktInfo.isCancelled) {
               errors.push(`Mã ICD kèm theo "${kt}" [${ktInfo.name}] ĐÃ BỊ BÃI BỎ/HỦY theo QĐ 1849/BYT ❌ TỪ CHỐI`);
             }
@@ -1490,10 +1479,9 @@
               <td class="py-2.5 px-3 font-mono text-indigo-700 font-bold text-xs">${r.MA_THE_BHYT || r.MA_THE || '-'}</td>
               <td class="py-2.5 px-3 min-w-[170px]">
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="px-1.5 py-0.5 rounded font-mono font-bold text-xs ${r.MA_BENH_CHINH?.includes('.') ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-blue-100 text-blue-900 border border-blue-200'}">
+                  <span class="px-1.5 py-0.5 rounded font-mono font-bold text-xs bg-blue-100 text-blue-900 border border-blue-200">
                     ${r.MA_BENH_CHINH || r.MA_BENH || '-'}
                   </span>
-                  ${r.MA_BENH_CHINH?.includes('.') ? '<span class="text-[9.5px] px-1 bg-amber-50 text-amber-700 border border-amber-200 rounded font-semibold" title="Mã chứa dấu chấm, cổng XML 130 yêu cầu bỏ dấu chấm">dấu .</span>' : ''}
                 </div>
                 <div class="text-[11px] text-slate-600 font-medium truncate max-w-[200px] mt-0.5" title="${r._icdChinhName || 'Chưa xác định tên'}">
                   ${r._icdChinhName || ''}
