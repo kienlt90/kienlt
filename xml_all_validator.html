@@ -19,7 +19,8 @@
     if (typeof JSZip === 'undefined') {
       document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"><\/script>');
     }
-  </script>
+  <!-- ICD-10 Dictionary Data (TT06/2026 - QĐ 1849/BYT) -->
+  <script src="data/icd10_dict.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -331,6 +332,8 @@
         return new Date(Date.UTC(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8), +s.slice(8,10), +s.slice(10,12)));
       } else if (s.length >= 8) {
         return new Date(Date.UTC(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8)));
+      } else if (s.length === 4) {
+        return new Date(Date.UTC(+s, 0, 1));
       }
       return null;
     }
@@ -339,12 +342,67 @@
       if (!raw) return '<span class="text-slate-300 italic">Trống</span>';
       const s = String(raw).replace(/\D/g, '');
       if (s.length >= 12) {
-        return `<span class="mono font-semibold">${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}</span> <span class="mono text-blue-700 font-bold">${s.slice(8,10)}:${s.slice(10,12)}</span>`;
+        const timePart = s.slice(8,12);
+        const timeDisplay = timePart === '0000' ? '<span class="mono text-slate-400 text-[11px]">(00:00)</span>' : `<span class="mono text-blue-700 font-bold">${s.slice(8,10)}:${s.slice(10,12)}</span>`;
+        return `<span class="mono font-semibold">${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}</span> ${timeDisplay}`;
       } else if (s.length >= 8) {
         return `<span class="mono font-semibold">${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}</span>`;
+      } else if (s.length === 4) {
+        return `<span class="mono font-semibold">${s}</span>`;
       }
       return raw;
     }
+
+    // ICD-10 Double-Check Engine (QĐ 1849/BYT & TT06/2026)
+    function lookupICD10(rawCode) {
+      if (!rawCode) return null;
+      const clean = String(rawCode).trim().toUpperCase();
+      const noDot = clean.replace(/[^A-Z0-9]/g, '');
+      const dict = window.ICD10_DICT;
+      if (!dict) return null;
+      const item = dict[noDot] || dict[clean];
+      if (!item) return null;
+      return {
+        rawCode: rawCode,
+        noDotCode: noDot,
+        dotCode: item[1] || noDot,
+        name: item[0] || '',
+        flags: item[2] || 0,
+        hasDot: clean.includes('.'),
+        isCancelled: (item[2] & 1) !== 0,
+        isNew: (item[2] & 2) !== 0,
+        isNotMain: (item[2] & 4) !== 0,
+        isNotRecommendedMain: (item[2] & 8) !== 0,
+        isNeedSpecific: (item[2] & 16) !== 0,
+        isDeathOnly: (item[2] & 32) !== 0,
+        isFemaleOnly: (item[2] & 64) !== 0,
+        isMaleOnly: (item[2] & 128) !== 0,
+        isDagger: (item[2] & 256) !== 0,
+        isStar: (item[2] & 512) !== 0
+      };
+    }
+
+    // Tự động tải thêm danh mục nếu mở qua server web mà chưa tải file script
+    async function tryLoadICDJson() {
+      if (window.ICD10_DICT && Object.keys(window.ICD10_DICT).length > 0) return;
+      try {
+        const res = await fetch('data/icd_rows.json');
+        if (res.ok) {
+          const rows = await res.json();
+          window.ICD10_DICT = window.ICD10_DICT || {};
+          for (let i = 0; i < rows.length; i++) {
+            const r = rows[i];
+            const c_dot = String(r[0] || '').trim().toUpperCase();
+            const c_nodot = String(r[1] || '').trim().toUpperCase();
+            const name = String(r[2] || '').trim();
+            const flags = r[9] || 0;
+            const key = c_nodot.replace(/[^A-Z0-9]/g, '');
+            window.ICD10_DICT[key] = [name, c_dot, flags];
+          }
+        }
+      } catch (e) {}
+    }
+    tryLoadICDJson();
 
     function extractTimeOnly(raw) {
       if (!raw) return '--:--';
@@ -404,10 +462,16 @@
         warnings.push(`Họ tên chưa viết hoa toàn bộ: "${hoten}"`);
       }
 
-      // 1.3 NGAY_SINH
+      // 1.3 NGAY_SINH (QĐ 130: YYYY 4 số, YYYYMMDD 8 số, YYYYMMDDHHmm 12 số, YYYYMMDDHHmmss 14 số)
       const ns = String(rec.NGAY_SINH || '').trim();
-      if (!ns || !/^\d{4,8}$/.test(ns)) {
-        errors.push(`Ngày sinh không đúng quy chuẩn QĐ 130: "${ns}" (Phải là YYYYMMDD hoặc YYYY)`);
+      if (!ns || !/^(\d{4}|\d{8}|\d{12}|\d{14})$/.test(ns)) {
+        errors.push(`Ngày sinh không đúng quy chuẩn QĐ 130: "${ns}" (Phải là YYYY, YYYYMMDD hoặc YYYYMMDDHHmm)`);
+      } else {
+        const d_ns = parseDateTime(ns);
+        const d_vao_chk = parseDateTime(rec.NGAY_VAO);
+        if (d_ns && d_vao_chk && d_ns > d_vao_chk) {
+          errors.push(`Ngày sinh sau ngày vào viện (NS: ${ns} > Vào: ${rec.NGAY_VAO}) ❌ Lỗi phi lý`);
+        }
       }
 
       // 1.4 GIOI_TINH
@@ -446,21 +510,72 @@
         errors.push(`Ngày ra viện trước ngày vào viện (Vào: ${rec.NGAY_VAO} > Ra: ${rec.NGAY_RA}) ❌ LỖI LOGIC`);
       }
 
-      // 1.9 MA_BENH_CHINH (ICD-10 không có dấu chấm theo QĐ 1849)
+      // 1.9 MA_BENH_CHINH (Double check Danh mục ICD-10 Bộ Y tế 2026 & QĐ 1849/BYT)
       const icdChinh = String(rec.MA_BENH_CHINH || rec.MA_BENH || '').trim();
       if (!icdChinh) {
         errors.push("Thiếu mã bệnh chính (MA_BENH_CHINH)");
-      } else if (icdChinh.includes('.')) {
-        errors.push(`Mã ICD-10 bệnh chính chứa dấu chấm: "${icdChinh}" ❌ Lỗi QĐ 1849/BYT (Cần bỏ dấu chấm, ví dụ: ${icdChinh.replace(/\./g, '')})`);
-      } else if (icdChinh !== icdChinh.toUpperCase()) {
-        errors.push(`Mã ICD-10 bệnh chính chưa viết hoa: "${icdChinh}"`);
+      } else {
+        const icdInfo = lookupICD10(icdChinh);
+        if (!icdInfo) {
+          errors.push(`Mã ICD-10 bệnh chính "${icdChinh}" ❌ KHÔNG TỒN TẠI trong Danh mục ICD-10 Bộ Y tế (QĐ 1849/BYT, TT06/2026)`);
+        } else {
+          rec._icdChinhName = icdInfo.name;
+          rec._icdChinhInfo = icdInfo;
+          
+          // Cảnh báo định dạng dấu chấm
+          if (icdInfo.hasDot) {
+            warnings.push(`Mã ICD-10 bệnh chính "${icdChinh}" [${icdInfo.name}] có chứa dấu chấm ⚠️ Chuẩn gửi cổng XML 130 quy định bỏ dấu chấm: "${icdInfo.noDotCode}"`);
+          }
+          if (icdChinh !== icdChinh.toUpperCase()) {
+            warnings.push(`Mã ICD-10 bệnh chính chưa viết hoa: "${icdChinh}"`);
+          }
+
+          // Kiểm tra không được làm bệnh chính
+          if (icdInfo.isNotMain) {
+            errors.push(`Mã ICD chính "${icdChinh}" [${icdInfo.name}] KHÔNG ĐƯỢC dùng làm bệnh chính theo QĐ 1849/BYT (chỉ dùng làm mã kèm theo) ❌ TỪ CHỐI`);
+          } else if (icdInfo.isNotRecommendedMain) {
+            warnings.push(`Mã ICD chính "${icdChinh}" [${icdInfo.name}] không khuyến khích làm bệnh chính theo QĐ 1849/BYT`);
+          } else if (icdInfo.isNeedSpecific) {
+            warnings.push(`Mã ICD chính "${icdChinh}" [${icdInfo.name}] là mã nhóm 3 ký tự (cần chi tiết hóa thành mã 4-5 ký tự)`);
+          }
+
+          // Kiểm tra mã bị bãi bỏ/hủy
+          if (icdInfo.isCancelled) {
+            errors.push(`Mã ICD chính "${icdChinh}" [${icdInfo.name}] ĐÃ BỊ BÃI BỎ/HỦY theo QĐ 1849/BYT ❌ TỪ CHỐI`);
+          }
+
+          // Kiểm tra giới tính
+          if (icdInfo.isFemaleOnly && gt === '1') {
+            errors.push(`Mã ICD chính "${icdChinh}" [${icdInfo.name}] chỉ áp dụng cho NỮ, bệnh nhân là NAM (GIOI_TINH=1) ❌ LỖI GIỚI TÍNH`);
+          } else if (icdInfo.isMaleOnly && gt === '2') {
+            errors.push(`Mã ICD chính "${icdChinh}" [${icdInfo.name}] chỉ áp dụng cho NAM, bệnh nhân là NỮ (GIOI_TINH=2) ❌ LỖI GIỚI TÍNH`);
+          }
+        }
       }
 
-      // 1.10 MA_BENH_KT
+      // 1.10 MA_BENH_KT (Mã ICD kèm theo - Double check)
       const icdKt = String(rec.MA_BENH_KT || '').trim();
       if (icdKt) {
-        if (icdKt.includes('.')) {
-          errors.push(`Mã ICD kèm theo chứa dấu chấm: "${icdKt}" (QĐ 1849 quy định không dấu chấm)`);
+        const ktCodes = icdKt.split(';').map(c => c.trim()).filter(Boolean);
+        rec._icdKtList = [];
+        for (const kt of ktCodes) {
+          const ktInfo = lookupICD10(kt);
+          if (!ktInfo) {
+            errors.push(`Mã ICD kèm theo "${kt}" ❌ KHÔNG TỒN TẠI trong Danh mục ICD-10 Bộ Y tế`);
+          } else {
+            rec._icdKtList.push(ktInfo);
+            if (ktInfo.hasDot) {
+              warnings.push(`Mã ICD kèm theo "${kt}" [${ktInfo.name}] chứa dấu chấm ⚠️ Chuẩn XML 130 là "${ktInfo.noDotCode}"`);
+            }
+            if (ktInfo.isCancelled) {
+              errors.push(`Mã ICD kèm theo "${kt}" [${ktInfo.name}] ĐÃ BỊ BÃI BỎ/HỦY theo QĐ 1849/BYT ❌ TỪ CHỐI`);
+            }
+            if (ktInfo.isFemaleOnly && gt === '1') {
+              errors.push(`Mã ICD kèm theo "${kt}" [${ktInfo.name}] chỉ áp dụng cho NỮ, bệnh nhân là NAM ❌ LỖI GIỚI TÍNH`);
+            } else if (ktInfo.isMaleOnly && gt === '2') {
+              errors.push(`Mã ICD kèm theo "${kt}" [${ktInfo.name}] chỉ áp dụng cho NAM, bệnh nhân là NỮ ❌ LỖI GIỚI TÍNH`);
+            }
+          }
         }
       }
 
@@ -1373,10 +1488,17 @@
                 <div class="text-[11px] text-slate-500">${r.GIOI_TINH === '1' ? 'Nam' : (r.GIOI_TINH === '2' ? 'Nữ' : 'Khác')}</div>
               </td>
               <td class="py-2.5 px-3 font-mono text-indigo-700 font-bold text-xs">${r.MA_THE_BHYT || r.MA_THE || '-'}</td>
-              <td class="py-2.5 px-3 font-mono">
-                <span class="px-1.5 py-0.5 rounded font-bold ${r.MA_BENH_CHINH?.includes('.') ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-800'}">
-                  ${r.MA_BENH_CHINH || r.MA_BENH || '-'}
-                </span>
+              <td class="py-2.5 px-3 min-w-[170px]">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="px-1.5 py-0.5 rounded font-mono font-bold text-xs ${r.MA_BENH_CHINH?.includes('.') ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-blue-100 text-blue-900 border border-blue-200'}">
+                    ${r.MA_BENH_CHINH || r.MA_BENH || '-'}
+                  </span>
+                  ${r.MA_BENH_CHINH?.includes('.') ? '<span class="text-[9.5px] px-1 bg-amber-50 text-amber-700 border border-amber-200 rounded font-semibold" title="Mã chứa dấu chấm, cổng XML 130 yêu cầu bỏ dấu chấm">dấu .</span>' : ''}
+                </div>
+                <div class="text-[11px] text-slate-600 font-medium truncate max-w-[200px] mt-0.5" title="${r._icdChinhName || 'Chưa xác định tên'}">
+                  ${r._icdChinhName || ''}
+                </div>
+                ${r.MA_BENH_KT ? `<div class="text-[10px] text-slate-400 font-mono truncate max-w-[200px] mt-0.5" title="Kèm theo: ${r.MA_BENH_KT}"><span class="font-semibold text-slate-500">KT:</span> ${r.MA_BENH_KT}</div>` : ''}
               </td>
               <td class="py-2.5 px-3 text-xs mono">
                 <div>${formatDTDisplay(r.NGAY_VAO)}</div>
