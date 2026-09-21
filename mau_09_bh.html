@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Công cụ tạo XML Mẫu 09/BH - Thông tư 12/2026/TT-BTC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: #e0f2fe;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: #f1f5f9; color: var(--gray-800); min-height: 100vh; padding: 20px; }
+    .container { max-width: 1480px; margin: 0 auto; }
+    
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%);
+      color: white;
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .header .subtitle { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+    .badge-tt12 {
+      background: #f59e0b; color: #78350f; font-weight: 700; font-size: 11px;
+      padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    
+    /* Card */
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--gray-200);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 12px 20px;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--gray-700);
+      font-size: 14px;
+    }
+    .card-body { padding: 18px; }
+
+    /* Grid Form */
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 11.5px; font-weight: 600; color: var(--gray-600); }
+    .form-control {
+      padding: 8px 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--gray-800);
+      transition: all 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .form-control.input-edit {
+      background-color: #f0fdf4;
+      border-color: #86efac;
+      font-weight: 600;
+      color: #15803d;
+    }
+    .form-control.input-edit:focus {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+    }
+
+    /* Drag Drop Area */
+    .upload-box {
+      border: 2px dashed var(--gray-300);
+      border-radius: var(--radius);
+      padding: 22px;
+      text-align: center;
+      background: var(--gray-50);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .upload-box:hover, .upload-box.dragover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .upload-icon { font-size: 30px; margin-bottom: 4px; color: var(--primary); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #15803d; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-outline {
+      background: white; border: 1px solid var(--gray-300); color: var(--gray-700);
+    }
+    .btn-outline:hover { background: var(--gray-100); }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+    /* Patient Info Banner */
+    .patient-bar {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: flex-end;
+      font-size: 13px;
+    }
+    .patient-item { display: flex; flex-direction: column; gap: 3px; }
+    .patient-item span:first-child { font-size: 11px; color: #1e40af; font-weight: 600; text-transform: uppercase; }
+    .patient-item span:last-child { font-weight: 700; color: #1e3a8a; }
+    .patient-input {
+      padding: 4px 8px;
+      font-size: 12.5px;
+      border: 1px solid #93c5fd;
+      border-radius: 4px;
+      background: #ffffff;
+      color: #0f172a;
+      transition: all 0.2s;
+    }
+    .patient-input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+    .val-goc-input {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 4px 8px;
+      width: 100%;
+      min-width: 120px;
+    }
+    .val-goc-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+    }
+
+    /* Card Bảng Cập Nhật 09/BH trên Main */
+    .card-main-09bh {
+      border: 2px solid #0284c7 !important;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
+      margin-bottom: 22px;
+    }
+    .card-main-09bh .card-header {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-bottom: 1px solid #bae6fd;
+    }
+
+    /* Nav Tabs: 5 BẢNG XML */
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 2px solid var(--gray-200);
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+    .nav-tab-btn {
+      padding: 11px 18px;
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .nav-tab-btn:hover { color: var(--primary); }
+    .nav-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: white;
+      border-radius: 6px 6px 0 0;
+    }
+    .tab-badge {
+      background: #e2e8f0; color: #334155; padding: 2px 7px; border-radius: 999px; font-size: 11px;
+    }
+    .nav-tab-btn.active .tab-badge {
+      background: var(--primary-light); color: var(--primary-dark); font-weight: 700;
+    }
+
+    /* Table Component */
+    .table-responsive {
+      max-height: 520px;
+      overflow-y: auto;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left; }
+    th {
+      background: var(--gray-100);
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--gray-700);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--gray-300);
+      white-space: nowrap;
+    }
+    td { padding: 8px 12px; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+    tr:hover td { background-color: #f8fafc; }
+    tr.row-adjusted td { background-color: #f0fdf4 !important; }
+
+    .val-goc {
+      font-family: 'JetBrains Mono', monospace;
+      color: #334155;
+      background: #f8fafc;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+      display: inline-block;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+    .val-goc.empty { color: #94a3b8; font-style: italic; }
+
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
+    }
+    .badge-xml1 { background: #dbeafe; color: #1e40af; }
+    .badge-xml2 { background: #e0e7ff; color: #3730a3; }
+    .badge-xml3 { background: #fef3c7; color: #92400e; }
+    .badge-xml4 { background: #ccfbf1; color: #115e59; }
+    .badge-xml5 { background: #f3e8ff; color: #6b21a8; }
+    .badge-cancel { background: #fee2e2; color: #991b1b; }
+    .badge-edit { background: #dcfce7; color: #166534; }
+
+    /* XML Preview */
+    pre {
+      background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 6px;
+      font-size: 12px; max-height: 420px; overflow: auto; line-height: 1.4;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .empty-state { text-align: center; padding: 36px; color: var(--gray-600); font-size: 13px; }
+
+    /* Search & Filter Bar */
+    .filter-bar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1>
+        <span>📋</span> Bộ Bảng Lập Hồ Sơ Điều Chỉnh Mẫu 09/BH (Đủ 5 Bảng XML)
+        <span class="badge-tt12">Thông tư 12/2026/TT-BTC</span>
+      </h1>
+      <div class="subtitle">Đưa toàn bộ trường dữ liệu của từng bảng XML lên: <b>Dữ liệu gốc ➜ Dữ liệu sửa</b> (Loại hồ sơ 73 - &lt;HOSO_DIEUCHINH_GD&gt;)</div>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-outline" style="color:#0f172a; background:#fef08a; border:none;" onclick="loadSampleData()">
+        <span>⚡</span> Nạp Dữ Liệu Mẫu
+      </button>
+      <button class="btn btn-success" onclick="exportXML()">
+        <span>💾</span> Xuất File XML 09/BH
+      </button>
+    </div>
+  </div>
+
+  <!-- Thông tin biểu mẫu (TT_MAU) -->
+  <div class="card">
+    <div class="card-header">
+      <span>⚙️ 1. Thông Tin Đơn Vị Lập Biểu (&lt;TT_MAU&gt;)</span>
+      <span style="font-size:12px; color:var(--gray-600); font-weight:normal;">Lưu tự động trên trình duyệt</span>
+    </div>
+    <div class="card-body">
+      <div class="grid-4">
+        <div class="form-group">
+          <label>MÃ CƠ SỞ KCB (MA_CSKCB) *</label>
+          <input type="text" id="cfg_ma_cskcb" class="form-control" value="51223" placeholder="vd: 51223">
+        </div>
+        <div class="form-group">
+          <label>NGƯỜI LẬP BIỂU (NGUOILAPBIEU) *</label>
+          <input type="text" id="cfg_nguoi_lap" class="form-control" value="Võ Thị Bích Liễu" placeholder="Họ tên người lập">
+        </div>
+        <div class="form-group">
+          <label>THỦ TRƯỞNG ĐƠN VỊ (THUTRUONG_DV) *</label>
+          <input type="text" id="cfg_thu_truong" class="form-control" value="Nguyễn Đình Tuyến" placeholder="Họ tên thủ trưởng">
+        </div>
+        <div class="form-group">
+          <label>NGÀY LẬP BIỂU (NGAYTHANGNAM) *</label>
+          <input type="text" id="cfg_ngay_lap" class="form-control" value="" placeholder="YYYYMMDD">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nạp File XML từ HIS -->
+  <div class="card">
+    <div class="card-header">
+      <span>📥 2. Nạp File XML Hồ Sơ KCB Gốc từ HIS (XML1 ➜ XML5)</span>
+      <span id="file_status" style="color:var(--primary); font-size:12px;">Chưa nạp dữ liệu</span>
+    </div>
+    <div class="card-body">
+      <div class="upload-box" id="drop_zone" onclick="document.getElementById('file_input').click()">
+        <input type="file" id="file_input" accept=".xml" style="display:none" onchange="handleFileSelect(event)">
+        <div class="upload-icon">📂</div>
+        <div style="font-weight:600; font-size:14px; margin-bottom:4px;">Kéo thả file XML của bệnh nhân vào đây hoặc nhấn để chọn file</div>
+        <div style="font-size:12px; color:var(--gray-600);">Hỗ trợ file XML gói KCB, file tổng hợp QĐ 130 / QĐ 4750 / QĐ 3176 (gồm XML1, XML2, XML3, XML4, XML5)</div>
+      </div>
+
+      <!-- Banner thông tin bệnh nhân sau khi parse (Có thể chỉnh sửa dữ liệu gốc) -->
+      <div id="patient_bar" class="patient-bar" style="display:none;">
+        <div class="patient-item">
+          <span>HỌ VÀ TÊN</span>
+          <input type="text" id="pb_ho_ten" class="patient-input" style="font-weight:700; width:170px;" placeholder="Họ và tên..." oninput="onPatientHeaderChange('hoTen', this.value)">
+        </div>
+        <div class="patient-item">
+          <span>MÃ BỆNH NHÂN (MA_BN)</span>
+          <input type="text" id="pb_ma_bn" class="patient-input" style="width:120px;" placeholder="Mã BN..." oninput="onPatientHeaderChange('maBn', this.value)">
+        </div>
+        <div class="patient-item">
+          <span>MÃ LIÊN KẾT (MA_LK)</span>
+          <input type="text" id="pb_ma_lk" class="patient-input" style="font-weight:700; width:120px;" placeholder="Mã LK..." oninput="onPatientHeaderChange('maLk', this.value)">
+        </div>
+        <div class="patient-item">
+          <span>MÃ THẺ BHYT</span>
+          <input type="text" id="pb_ma_the" class="patient-input" style="font-weight:700; width:160px;" placeholder="Nhập mã thẻ..." oninput="onPatientHeaderChange('maThe', this.value)">
+        </div>
+        <div class="patient-item">
+          <span>NGÀY VÀO</span>
+          <input type="text" id="pb_ngay_vao" class="patient-input" style="width:130px;" placeholder="YYYYMMDDHHmm..." oninput="onPatientHeaderChange('ngayVao', this.value)">
+        </div>
+        <div class="patient-item">
+          <span>NGÀY RA</span>
+          <input type="text" id="pb_ngay_ra" class="patient-input" style="width:130px;" placeholder="YYYYMMDDHHmm..." oninput="onPatientHeaderChange('ngayRa', this.value)">
+        </div>
+        <div class="patient-item">
+          <span>KỲ QUYẾT TOÁN</span>
+          <input type="text" id="pb_ky_qt" class="patient-input" style="font-weight:700; width:90px;" placeholder="YYYYMM..." oninput="onPatientHeaderChange('kyQt', this.value)">
+        </div>
+        <div class="patient-item">
+          <span>TRẠNG THÁI HỒ SƠ CHUNG</span>
+          <span>
+            <select id="xml1_trang_thai" class="form-control" style="padding:2px 8px; font-size:12px; font-weight:600;" onchange="updateXmlPreview()">
+              <option value="2" selected>2 - Đề nghị điều chỉnh</option>
+              <option value="1">1 - Đề nghị HỦY TOÀN BỘ hồ sơ (Thu hồi)</option>
+            </select>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BẢNG CẬP NHẬT ĐIỀU CHỈNH 09/BH (ĐƯA LÊN MÀN HÌNH CHÍNH) ================= -->
+  <div class="card card-main-09bh" id="card_main_09bh">
+    <div class="card-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:15px; font-weight:700; color:#0369a1;">📋 Bảng Cập Nhật Điều Chỉnh Mẫu 09/BH (Dữ Liệu Xuất XML)</span>
+        <span class="tab-badge" id="badge_total_adj" style="background:#dcfce7; color:#166534; font-weight:bold; font-size:12px;">0 mục sửa</span>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="toggleXmlPreviewBox()" id="btn_toggle_preview">👁️ Xem trước XML</button>
+        <button class="btn btn-outline btn-sm" onclick="copyXmlToClipboard()">📋 Sao Chép XML</button>
+        <button class="btn btn-success btn-sm" style="font-weight:700; padding:6px 14px;" onclick="exportXML()">💾 Tải Xuống File XML 09/BH</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive" style="max-height:280px;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px; text-align:center;">STT</th>
+              <th style="width:85px;">Bảng XML</th>
+              <th style="width:85px;">Dòng XML</th>
+              <th style="width:160px;">Mã Trường Sửa</th>
+              <th style="width:230px;">DỮ LIỆU GỐC (TT_GOC)</th>
+              <th style="width:230px;">DỮ LIỆU SỬA MỚI (TT_DIEUCHINH)</th>
+              <th>LÝ DO ĐIỀU CHỈNH (LYDO_DIEUCHINH)</th>
+              <th style="width:60px; text-align:center;">Xóa</th>
+            </tr>
+          </thead>
+          <tbody id="summary_table_body">
+            <tr><td colspan="8" class="empty-state" style="padding:18px;">Chưa có mục nào được điều chỉnh. Vui lòng chọn sửa ở các bảng XML 1 ➜ 5 bên dưới.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Khung xem trước XML có thể ẩn/hiện -->
+      <div id="xml_preview_container" style="display:none; margin-top:14px; border-top:1px dashed #cbd5e1; padding-top:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:12px; font-weight:700; color:#334155;">Cấu Trúc File XML Sinh Ra Chuẩn Thông Tư 12/2026/TT-BTC (&lt;HOSO_DIEUCHINH_GD&gt;):</span>
+          <span style="font-size:11px; color:#64748b;">(&lt;XML1_ID&gt;&lt;/XML1_ID&gt; để null, TRANGTHAI=2 Điều chỉnh / 1 Hủy)</span>
+        </div>
+        <pre><code id="xml_preview">&lt;!-- Nạp file XML hoặc nhấn "Nạp Dữ Liệu Mẫu" để xem nội dung XML --&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHẦN CHI TIẾT CÁC BẢNG DỮ LIỆU GỐC & ĐIỀU CHỈNH -->
+  <div style="margin: 18px 0 10px 0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+    <h2 style="font-size:14px; font-weight:700; color:#1e293b; margin:0;">
+      🔍 Chi Tiết Dữ Liệu Gốc & Chọn Chỉnh Sửa Từng Bảng XML (XML 1 ➜ XML 5):
+    </h2>
+    <span style="font-size:12px; color:#64748b;">Mọi sửa đổi ở các bảng dưới sẽ tự động cập nhật ngay lên <b>Bảng Cập Nhật 09/BH</b> ở trên</span>
+  </div>
+
+  <!-- NAVIGATION TABS ĐẦY ĐỦ CÁC BẢNG XML 1 -> 5 -->
+  <div class="nav-tabs">
+    <button class="nav-tab-btn active" onclick="switchMainTab('tab_xml1')">
+      <span>📄</span> Bảng XML 1: Tổng Hợp Hồ Sơ
+      <span class="tab-badge" id="badge_xml1_count">0 trường</span>
+    </button>
+    <button class="nav-tab-btn" onclick="switchMainTab('tab_xml2')">
+      <span>💊</span> Bảng XML 2: Thuốc & Hóa Chất
+      <span class="tab-badge badge-xml2" id="badge_xml2_count">0</span>
+    </button>
+    <button class="nav-tab-btn" onclick="switchMainTab('tab_xml3')">
+      <span>🩺</span> Bảng XML 3: DVKT, VTYT & Giường
+      <span class="tab-badge badge-xml3" id="badge_xml3_count">0</span>
+    </button>
+    <button class="nav-tab-btn" onclick="switchMainTab('tab_xml4')">
+      <span>🔬</span> Bảng XML 4: Kết Quả Cận Lâm Sàng
+      <span class="tab-badge badge-xml4" id="badge_xml4_count">0</span>
+    </button>
+    <button class="nav-tab-btn" onclick="switchMainTab('tab_xml5')">
+      <span>📝</span> Bảng XML 5: Diễn Biến Lâm Sàng
+      <span class="tab-badge badge-xml5" id="badge_xml5_count">0</span>
+    </button>
+  </div>
+
+  <!-- ================= TAB 1: BẢNG TOÀN BỘ TRƯỜNG XML1 ================= -->
+  <div id="tab_xml1" class="card tab-content">
+    <div class="card-header">
+      <span>📄 Bảng Toàn Bộ Trường Dữ Liệu XML 1 (Tổng Hợp Hồ Sơ)</span>
+      <span style="font-size:12px; color:var(--gray-600);">Gõ vào ô <b>"Dữ liệu sửa mới"</b> để hệ thống tự động đưa vào &lt;DS_XML1_DIEUCHINH&gt;</span>
+    </div>
+    <div class="card-body">
+      <div class="filter-bar">
+        <input type="text" id="search_xml1" class="form-control" style="width:320px;" placeholder="Tìm kiếm trường (mã bệnh, ngày, thẻ, tên...)" oninput="filterXml1Table()">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="font-size:12px; color:var(--gray-600);">Đang chọn sửa: <b id="lbl_xml1_adj_count" style="color:var(--success);">0</b> trường</span>
+          <button class="btn btn-outline btn-sm" onclick="clearAllXml1Adj()">Bỏ chọn tất cả</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px; text-align:center;">Sửa</th>
+              <th style="width:50px;">STT</th>
+              <th style="width:160px;">Mã Trường XML</th>
+              <th style="width:200px;">Ý Nghĩa / Tên Trường</th>
+              <th style="width:260px;">DỮ LIỆU GỐC (TT_GOC - Sửa được)</th>
+              <th style="width:260px;">DỮ LIỆU SỬA MỚI (TT_DIEUCHINH)</th>
+              <th>LÝ DO ĐIỀU CHỈNH (LYDO_DIEUCHINH)</th>
+            </tr>
+          </thead>
+          <tbody id="xml1_table_body">
+            <tr><td colspan="7" class="empty-state">Vui lòng nạp file XML để hiển thị toàn bộ trường dữ liệu XML 1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB 2: BẢNG XML 2 (THUỐC) ================= -->
+  <div id="tab_xml2" class="card tab-content" style="display:none;">
+    <div class="card-header">
+      <span>💊 Bảng Chi Tiết Thuốc & Hóa Chất (XML 2)</span>
+      <span style="font-size:12px; color:var(--gray-600);">Bấm <b>"Sửa dòng này"</b> để mở bảng điều chỉnh từng trường</span>
+    </div>
+    <div class="card-body">
+      <div class="filter-bar">
+        <input type="text" id="search_xml2" class="form-control" style="width:320px;" placeholder="Tìm theo mã thuốc, tên thuốc, bác sĩ kê đơn..." oninput="filterTableXml2()">
+        <span style="font-size:12px; color:var(--gray-600);">Tổng số dòng thuốc: <b id="lbl_cnt_xml2">0</b></span>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:50px;">STT XML</th>
+              <th style="width:120px;">Mã Thuốc</th>
+              <th style="width:240px;">Tên Thuốc / Hàm Lượng</th>
+              <th style="width:80px;">ĐVT</th>
+              <th style="width:130px;">Ngày Y Lệnh</th>
+              <th style="width:140px;">Bác Sĩ Kê Đơn</th>
+              <th style="width:80px; text-align:right;">Số Lượng</th>
+              <th style="width:90px; text-align:right;">Đơn Giá</th>
+              <th style="width:100px; text-align:right;">Thành Tiền</th>
+              <th style="width:110px; text-align:center;">Trạng Thái 09/BH</th>
+              <th style="width:110px; text-align:center;">Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody id="xml2_table_body">
+            <tr><td colspan="11" class="empty-state">Không có dữ liệu thuốc (XML 2)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB 3: BẢNG XML 3 (DVKT, VTYT, GIƯỜNG) ================= -->
+  <div id="tab_xml3" class="card tab-content" style="display:none;">
+    <div class="card-header">
+      <span>🩺 Bảng Chi Tiết Dịch Vụ Kỹ Thuật, Vật Tư Y Tế & Ngày Giường (XML 3)</span>
+      <span style="font-size:12px; color:var(--gray-600);">Bấm <b>"Sửa dòng này"</b> để mở bảng đối chiếu dữ liệu gốc ➜ sửa</span>
+    </div>
+    <div class="card-body">
+      <div class="filter-bar">
+        <input type="text" id="search_xml3" class="form-control" style="width:320px;" placeholder="Tìm theo mã DV, tên DVKT, VTYT, bác sĩ..." oninput="filterTableXml3()">
+        <span style="font-size:12px; color:var(--gray-600);">Tổng số dòng DVKT: <b id="lbl_cnt_xml3">0</b></span>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:50px;">STT XML</th>
+              <th style="width:120px;">Mã DVKT / VTYT</th>
+              <th style="width:260px;">Tên Dịch Vụ Kỹ Thuật / Vật Tư</th>
+              <th style="width:80px;">Mã Nhóm</th>
+              <th style="width:130px;">Ngày Y Lệnh</th>
+              <th style="width:140px;">Bác Sĩ Chỉ Định</th>
+              <th style="width:80px; text-align:right;">Số Lượng</th>
+              <th style="width:90px; text-align:right;">Đơn Giá</th>
+              <th style="width:100px; text-align:right;">Thành Tiền</th>
+              <th style="width:110px; text-align:center;">Trạng Thái 09/BH</th>
+              <th style="width:110px; text-align:center;">Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody id="xml3_table_body">
+            <tr><td colspan="11" class="empty-state">Không có dữ liệu DVKT / VTYT (XML 3)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB 4: BẢNG XML 4 (KẾT QUẢ CLS) ================= -->
+  <div id="tab_xml4" class="card tab-content" style="display:none;">
+    <div class="card-header">
+      <span>🔬 Bảng Chi Tiết Kết Quả Cận Lâm Sàng (XML 4)</span>
+      <span style="font-size:12px; color:var(--gray-600);">Xét nghiệm, Chẩn đoán hình ảnh, Thăm dò chức năng</span>
+    </div>
+    <div class="card-body">
+      <div class="filter-bar">
+        <input type="text" id="search_xml4" class="form-control" style="width:320px;" placeholder="Tìm theo mã DV, tên xét nghiệm..." oninput="filterTableXml4()">
+        <span style="font-size:12px; color:var(--gray-600);">Tổng số dòng CLS: <b id="lbl_cnt_xml4">0</b></span>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:50px;">STT XML</th>
+              <th style="width:120px;">Mã Dịch Vụ</th>
+              <th style="width:130px;">Mã Chỉ Số</th>
+              <th style="width:220px;">Tên Chỉ Số / Dịch Vụ</th>
+              <th style="width:180px;">Giá Trị Kết Quả</th>
+              <th style="width:120px;">Trị Số Bình Thường</th>
+              <th style="width:130px;">Ngày Có Kết Quả</th>
+              <th style="width:110px; text-align:center;">Trạng Thái 09/BH</th>
+              <th style="width:110px; text-align:center;">Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody id="xml4_table_body">
+            <tr><td colspan="9" class="empty-state">Không có dữ liệu kết quả CLS (XML 4)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB 5: BẢNG XML 5 (DIỄN BIẾN LÂM SÀNG) ================= -->
+  <div id="tab_xml5" class="card tab-content" style="display:none;">
+    <div class="card-header">
+      <span>📝 Bảng Diễn Biến Bệnh / Lâm Sàng (XML 5)</span>
+      <span style="font-size:12px; color:var(--gray-600);">Theo dõi tiến triển bệnh nhân qua các ngày</span>
+    </div>
+    <div class="card-body">
+      <div class="filter-bar">
+        <input type="text" id="search_xml5" class="form-control" style="width:320px;" placeholder="Tìm diễn biến, y lệnh..." oninput="filterTableXml5()">
+        <span style="font-size:12px; color:var(--gray-600);">Tổng số dòng diễn biến: <b id="lbl_cnt_xml5">0</b></span>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:50px;">STT XML</th>
+              <th style="width:140px;">Ngày Giờ Diễn Biến</th>
+              <th style="width:280px;">Diễn Biến Bệnh</th>
+              <th style="width:280px;">Y Lệnh Bác Sĩ</th>
+              <th style="width:140px;">Bác Sĩ Điều Trị</th>
+              <th style="width:110px; text-align:center;">Trạng Thái 09/BH</th>
+              <th style="width:110px; text-align:center;">Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody id="xml5_table_body">
+            <tr><td colspan="7" class="empty-state">Không có dữ liệu diễn biến lâm sàng (XML 5)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL SỬA DÒNG CHI PHÍ / DỊCH VỤ DẠNG BẢNG ================= -->
+<div class="modal-overlay" id="cp_modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:white; border-radius:var(--radius); width:100%; max-width:820px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); overflow:hidden;">
+    <div style="padding:14px 20px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center; font-weight:700;">
+      <span id="modal_cp_title">Bảng Điều Chỉnh Trường Dữ Liệu Dòng Chi Tiết</span>
+      <button onclick="closeModal('cp_modal')" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+    </div>
+    <div style="padding:18px; max-height:75vh; overflow-y:auto; display:flex; flex-direction:column; gap:14px;">
+      <!-- Thông tin tóm tắt dòng chi tiết -->
+      <div class="patient-bar" style="margin:0; background:#f8fafc; border-color:#e2e8f0;">
+        <div class="patient-item">
+          <span>DỊCH VỤ / THUỐC / NỘI DUNG</span>
+          <span id="m_cp_ten">---</span>
+        </div>
+        <div class="patient-item">
+          <span>STT DÒNG XML</span>
+          <span id="m_cp_stt">---</span>
+        </div>
+        <div class="patient-item">
+          <span>BẢNG DỮ LIỆU</span>
+          <span id="m_cp_bang">---</span>
+        </div>
+        <div class="patient-item">
+          <span>NGÀY Y LỆNH / NGÀY KẾT QUẢ</span>
+          <span id="m_cp_ngay_yl">---</span>
+        </div>
+      </div>
+
+      <!-- Trạng thái yêu cầu -->
+      <div class="grid-4" style="grid-template-columns:1fr 1fr; gap:15px;">
+        <div class="form-group">
+          <label>TRẠNG THÁI YÊU CẦU CHO DÒNG NÀY *</label>
+          <select id="m_cp_trang_thai" class="form-control" style="font-weight:600;" onchange="toggleCpCancelState()">
+            <option value="2" selected>2 - Đề nghị điều chỉnh trường dữ liệu</option>
+            <option value="1">1 - Đề nghị HỦY dòng chi phí này</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>LÝ DO TỪ CHỐI TỪ BHXH (LYDO / TUCHOI)</label>
+          <input type="text" id="m_cp_lydo_tuchoi" class="form-control" placeholder="vd: Kích nhầm mã bác sĩ (1)">
+        </div>
+      </div>
+
+      <!-- BẢNG TOÀN BỘ CÁC TRƯỜNG CỦA DÒNG NÀY: DỮ LIỆU GỐC -> DỮ LIỆU SỬA -->
+      <div id="m_cp_fields_area">
+        <div style="font-size:12px; font-weight:600; color:var(--gray-700); margin-bottom:6px;">
+          Bảng Trường Dữ Liệu: Gõ vào ô <b>"Dữ Liệu Sửa Mới"</b> của trường cần điều chỉnh:
+        </div>
+        <div class="table-responsive" style="max-height:280px;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:40px; text-align:center;">Sửa</th>
+                <th style="width:150px;">Mã Trường XML</th>
+                <th style="width:160px;">Ý Nghĩa</th>
+                <th style="width:200px;">DỮ LIỆU GỐC (Sửa được)</th>
+                <th style="width:200px;">DỮ LIỆU SỬA MỚI (TT_DIEUCHINH)</th>
+              </tr>
+            </thead>
+            <tbody id="m_cp_fields_tbody">
+              <!-- Render tự động -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>LÝ DO ĐIỀU CHỈNH / GIẢI TRÌNH (LYDO_DIEUCHINH) *</label>
+        <textarea id="m_cp_lydo_dc" class="form-control" rows="2" placeholder="Nhập lý do điều chỉnh hoặc giải trình..."></textarea>
+      </div>
+    </div>
+    <div style="padding:12px 20px; background:var(--gray-50); border-top:1px solid var(--gray-200); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn btn-outline" onclick="closeModal('cp_modal')">Đóng</button>
+      <button class="btn btn-primary" onclick="saveModalCpAdjustment()">Lưu Điều Chỉnh Vào Bảng</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================= DICTIONARIES =================
+const XML1_DICT = {
+  'MA_LK': 'Mã liên kết hồ sơ',
+  'MA_BN': 'Mã người bệnh',
+  'HO_TEN': 'Họ và tên người bệnh',
+  'NGAY_SINH': 'Ngày tháng năm sinh',
+  'GIOI_TINH': 'Giới tính (1: Nam, 2: Nữ)',
+  'QUOCTICH': 'Mã quốc tịch',
+  'MA_DANTOC': 'Mã dân tộc',
+  'MA_NGHE_NGHIEP': 'Mã nghề nghiệp',
+  'DIA_CHI': 'Địa chỉ cư trú',
+  'MATINH_CU_TRU': 'Mã tỉnh cư trú',
+  'MAHUYEN_CU_TRU': 'Mã huyện cư trú',
+  'MAXA_CU_TRU': 'Mã xã cư trú',
+  'MA_THE': 'Mã thẻ BHYT',
+  'MA_DKBD': 'Mã nơi ĐKKCB ban đầu',
+  'GT_THE_TU': 'Giá trị thẻ từ',
+  'GT_THE_DEN': 'Giá trị thẻ đến',
+  'MIEN_CUNG_CT': 'Ngày miễn cùng chi trả',
+  'MA_BENH': 'Mã bệnh chính (ICD-10)',
+  'MA_BENHKEM': 'Mã bệnh kèm theo (ICD-10)',
+  'MA_BENH_YHCT': 'Mã bệnh Y học cổ truyền',
+  'MA_LYDO_VVIEN': 'Lý do vào viện (1: Đúng tuyến, 2: Cấp cứu, 3: Trái tuyến)',
+  'MA_NOI_CHUYEN': 'Mã nơi chuyển viện',
+  'MA_TAI_NAN': 'Mã tai nạn',
+  'NGAY_VAO': 'Ngày giờ vào viện (YYYYMMDDhhmm)',
+  'NGAY_RA': 'Ngày giờ ra viện (YYYYMMDDhhmm)',
+  'SO_NGAY_DTRI': 'Số ngày điều trị',
+  'KET_QUA_DTRI': 'Kết quả điều trị (1: Khỏi, 2: Đỡ, 3: Không đổi, 4: Nặng, 5: Tử vong)',
+  'TINH_TRANG_RV': 'Tình trạng ra viện (1: Ra viện, 2: Chuyển viện, 3: Trốn viện, 4: Xin về)',
+  'NGAY_TTOAN': 'Ngày thanh toán chi phí',
+  'T_TONGCHI': 'Tổng chi phí KCB',
+  'T_CHUYENTIEN': 'Tiền chuyển viện',
+  'T_BNTT': 'Tiền bệnh nhân thanh toán',
+  'T_BHTT': 'Tiền BHXH thanh toán',
+  'T_BNCT': 'Tiền bệnh nhân cùng chi trả',
+  'T_NGOAIDS': 'Tiền ngoài phạm vi BHYT',
+  'NAM_QT': 'Năm quyết toán',
+  'THANG_QT': 'Tháng quyết toán',
+  'MA_LOAI_KCB': 'Loại KCB (1: Khám, 2: Ngoại trú, 3: Nội trú)',
+  'MA_KHOA': 'Mã khoa ra viện',
+  'MA_CSKCB': 'Mã cơ sở KCB',
+  'MA_KHUVUC': 'Mã khu vực sống (K1, K2, K3)',
+  'MA_PTTT_QT': 'Phương thức thanh toán quyết toán',
+  'CAN_NANG': 'Cân nặng (kg)'
+};
+
+const COMMON_FIELD_DICT = {
+  'MA_BAC_SI': 'Mã chứng chỉ hành nghề bác sĩ',
+  'DON_GIA': 'Đơn giá',
+  'SO_LUONG': 'Số lượng',
+  'TYLE_TT': 'Tỷ lệ thanh toán (%)',
+  'THANH_TIEN': 'Thành tiền',
+  'NGAY_YL': 'Ngày y lệnh (YYYYMMDDhhmm)',
+  'NGAY_KQ': 'Ngày có kết quả (YYYYMMDDhhmm)',
+  'MA_DICH_VU': 'Mã dịch vụ kỹ thuật',
+  'MA_THUOC': 'Mã thuốc',
+  'MA_VAT_TU': 'Mã vật tư y tế',
+  'TEN_DICH_VU': 'Tên dịch vụ kỹ thuật',
+  'TEN_THUOC': 'Tên thuốc',
+  'TEN_VAT_TU': 'Tên vật tư y tế',
+  'MA_KHOA': 'Mã khoa chỉ định / thực hiện',
+  'MA_GIUONG': 'Mã giường bệnh',
+  'MA_BENH': 'Mã bệnh chỉ định',
+  'MA_MAY': 'Mã máy thực hiện',
+  'DON_VI_TINH': 'Đơn vị tính',
+  'HAM_LUONG': 'Hàm lượng thuốc',
+  'DUONG_DUNG': 'Đường dùng thuốc',
+  'LIEU_DUNG': 'Liều dùng',
+  'SO_DANG_KY': 'Số đăng ký thuốc',
+  'MA_CHI_SO': 'Mã chỉ số cận lâm sàng',
+  'TEN_CHI_SO': 'Tên chỉ số xét nghiệm',
+  'GIA_TRI': 'Giá trị kết quả',
+  'TRI_SO_BT': 'Trị số bình thường',
+  'DIEN_BIEN': 'Nội dung diễn biến bệnh',
+  'HOI_CHAN': 'Nội dung hội chẩn',
+  'PHAU_THUAT': 'Phẫu thuật / thủ thuật'
+};
+
+// Global State
+let currentPatient = { xml1Id: '', maLk: '', maBn: '', hoTen: '', maThe: '', ngayVao: '', ngayRa: '', kyQt: '' };
+let listXml1Fields = []; // [{ name, desc, goc, dc, lydo, selected }]
+let listXml2 = []; // Thuốc
+let listXml3 = []; // DVKT
+let listXml4 = []; // Kết quả CLS
+let listXml5 = []; // Diễn biến bệnh
+let activeCostModalItem = null;
+
+// Init
+window.onload = function() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  document.getElementById('cfg_ngay_lap').value = `${yyyy}${mm}${dd}`;
+
+  if (localStorage.getItem('m09_ma_cskcb')) document.getElementById('cfg_ma_cskcb').value = localStorage.getItem('m09_ma_cskcb');
+  if (localStorage.getItem('m09_nguoi_lap')) document.getElementById('cfg_nguoi_lap').value = localStorage.getItem('m09_nguoi_lap');
+  if (localStorage.getItem('m09_thu_truong')) document.getElementById('cfg_thu_truong').value = localStorage.getItem('m09_thu_truong');
+};
+
+// Bật / tắt khung xem trước cấu trúc XML
+function toggleXmlPreviewBox() {
+  const box = document.getElementById('xml_preview_container');
+  const btn = document.getElementById('btn_toggle_preview');
+  if (box.style.display === 'none') {
+    box.style.display = 'block';
+    btn.innerHTML = '🙈 Ẩn trước XML';
+    updateXmlPreview();
+  } else {
+    box.style.display = 'none';
+    btn.innerHTML = '👁️ Xem trước XML';
+  }
+}
+
+// Chuyển Tab giữa các bảng chi tiết XML 1 -> 5
+function switchMainTab(tabId) {
+  document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+  
+  if (window.event && window.event.currentTarget) {
+    window.event.currentTarget.classList.add('active');
+  }
+  const el = document.getElementById(tabId);
+  if (el) el.style.display = 'block';
+}
+
+// Drag & Drop
+const dropZone = document.getElementById('drop_zone');
+['dragenter', 'dragover'].forEach(name => {
+  dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+});
+['dragleave', 'drop'].forEach(name => {
+  dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+});
+dropZone.addEventListener('drop', (e) => {
+  const dt = e.dataTransfer;
+  if (dt.files.length > 0) processFile(dt.files[0]);
+});
+
+function handleFileSelect(e) {
+  if (e.target.files.length > 0) processFile(e.target.files[0]);
+}
+
+function processFile(file) {
+  document.getElementById('file_status').textContent = `Đang đọc file: ${file.name}`;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    parseXmlString(e.target.result, file.name);
+  };
+  reader.readAsText(file);
+}
+
+// BÓC TÁCH XML TỪ HIS: ĐỦ TẤT CẢ CÁC BẢNG 1, 2, 3, 4, 5
+function parseXmlString(xmlText, fileName) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, 'text/xml');
+    if (doc.getElementsByTagName('parsererror').length > 0) {
+      alert('Lỗi đọc cú pháp XML! Vui lòng kiểm tra lại file.');
+      return;
+    }
+
+    const getVal = (node, tagList) => {
+      for (const t of tagList) {
+        const el = node.querySelector(t);
+        if (el && el.textContent.trim()) return el.textContent.trim();
+      }
+      return '';
+    };
+
+    // 1. BẢNG XML 1 (Tổng hợp)
+    let xml1Node = doc.querySelector('THONGTINBENHNHAN, TONG_HOP, TT_XML1, XML1');
+    if (!xml1Node) xml1Node = doc.documentElement;
+
+    currentPatient.maLk = getVal(xml1Node, ['MA_LK', 'maLk']);
+    currentPatient.maBn = getVal(xml1Node, ['MA_BN', 'maBn']);
+    currentPatient.hoTen = getVal(xml1Node, ['HO_TEN', 'hoTen', 'HOTEN']);
+    currentPatient.maThe = getVal(xml1Node, ['MA_THE', 'maThe']);
+    currentPatient.ngayVao = getVal(xml1Node, ['NGAY_VAO', 'ngayVao']);
+    currentPatient.ngayRa = getVal(xml1Node, ['NGAY_RA', 'ngayRa']);
+
+    let kyQt = getVal(xml1Node, ['KY_QT', 'KY_QUYET_TOAN', 'kyQt']);
+    if (!kyQt && currentPatient.ngayRa && currentPatient.ngayRa.length >= 6) {
+      kyQt = currentPatient.ngayRa.substring(0, 6);
+    }
+    currentPatient.kyQt = kyQt || '202607';
+    currentPatient.xml1Id = getVal(xml1Node, ['XML1_ID', 'ID_XML1', 'id']) || currentPatient.maLk || '123456789';
+
+    // Đưa toàn bộ trường XML1 lên
+    listXml1Fields = [];
+    const xml1Found = {};
+    xml1Node.querySelectorAll('*').forEach(el => {
+      if (el.children.length === 0) xml1Found[el.tagName] = el.textContent.trim();
+    });
+
+    let stt1 = 1;
+    for (const [fName, fDesc] of Object.entries(XML1_DICT)) {
+      const valGoc = xml1Found[fName] !== undefined ? xml1Found[fName] : (currentPatient[fName] || '');
+      listXml1Fields.push({
+        stt: stt1++, name: fName, desc: fDesc, goc: valGoc, dc: '', lydo: '', selected: false
+      });
+      delete xml1Found[fName];
+    }
+    for (const [extraK, extraV] of Object.entries(xml1Found)) {
+      listXml1Fields.push({
+        stt: stt1++, name: extraK, desc: 'Trường tùy chỉnh trong XML', goc: extraV, dc: '', lydo: '', selected: false
+      });
+    }
+
+    // 2. BẢNG XML 2 (Thuốc)
+    listXml2 = [];
+    let stt2 = 1;
+    const thuocNodes = doc.querySelectorAll('CHI_TIET_THUOC, THUOC, DSACH_CHI_TIET_THUOC > *');
+    thuocNodes.forEach(node => {
+      if (node.children.length === 0) return;
+      const ma = getVal(node, ['MA_THUOC', 'MA_THUOC_CS']);
+      const ten = getVal(node, ['TEN_THUOC']);
+      if (!ma && !ten) return;
+
+      const rawF = {};
+      node.querySelectorAll('*').forEach(el => { if (el.children.length === 0) rawF[el.tagName] = el.textContent.trim(); });
+
+      listXml2.push({
+        id: '2_' + stt2, sobangXml: '2', sttXml: getVal(node, ['STT']) || stt2, idCp: getVal(node, ['ID_CP', 'ID']) || '',
+        maDv: ma, tenDv: ten, dvt: getVal(node, ['DON_VI_TINH']), ngayYl: getVal(node, ['NGAY_YL', 'NGAY_VAO']) || currentPatient.ngayVao,
+        maBs: getVal(node, ['MA_BAC_SI', 'MA_BS']), donGia: getVal(node, ['DON_GIA', 'GIA']), soLuong: getVal(node, ['SO_LUONG', 'SL']),
+        thanhTien: getVal(node, ['THANH_TIEN']), rawFields: rawF, adjustments: [], trangThai: '2', lydoTuchoi: '', lydoDc: ''
+      });
+      stt2++;
+    });
+
+    // 3. BẢNG XML 3 (DVKT & VTYT & Giường)
+    listXml3 = [];
+    let stt3 = 1;
+    const dvktNodes = doc.querySelectorAll('CHI_TIET_DVKT, DVKT, DSACH_CHI_TIET_DVKT > *');
+    dvktNodes.forEach(node => {
+      if (node.children.length === 0) return;
+      const ma = getVal(node, ['MA_DICH_VU', 'MA_DV', 'MA_VAT_TU']);
+      const ten = getVal(node, ['TEN_DICH_VU', 'TEN_DV', 'TEN_VAT_TU']);
+      if (!ma && !ten) return;
+
+      const rawF = {};
+      node.querySelectorAll('*').forEach(el => { if (el.children.length === 0) rawF[el.tagName] = el.textContent.trim(); });
+
+      listXml3.push({
+        id: '3_' + stt3, sobangXml: '3', sttXml: getVal(node, ['STT']) || stt3, idCp: getVal(node, ['ID_CP', 'ID']) || '',
+        maDv: ma, tenDv: ten, maNhom: getVal(node, ['MA_NHOM']), ngayYl: getVal(node, ['NGAY_YL', 'NGAY_VAO']) || currentPatient.ngayVao,
+        maBs: getVal(node, ['MA_BAC_SI', 'MA_BS']), donGia: getVal(node, ['DON_GIA', 'GIA']), soLuong: getVal(node, ['SO_LUONG', 'SL']),
+        thanhTien: getVal(node, ['THANH_TIEN']), rawFields: rawF, adjustments: [], trangThai: '2', lydoTuchoi: '', lydoDc: ''
+      });
+      stt3++;
+    });
+
+    // 4. BẢNG XML 4 (Kết quả CLS)
+    listXml4 = [];
+    let stt4 = 1;
+    const clsNodes = doc.querySelectorAll('CHI_TIET_CLS, CLS, KET_QUA_CLS, DSACH_CHI_TIET_CLS > *');
+    clsNodes.forEach(node => {
+      if (node.children.length === 0) return;
+      const rawF = {};
+      node.querySelectorAll('*').forEach(el => { if (el.children.length === 0) rawF[el.tagName] = el.textContent.trim(); });
+
+      listXml4.push({
+        id: '4_' + stt4, sobangXml: '4', sttXml: getVal(node, ['STT']) || stt4, idCp: getVal(node, ['ID_CP', 'ID']) || '',
+        maDv: getVal(node, ['MA_DICH_VU', 'MA_DV']), maChiSo: getVal(node, ['MA_CHI_SO']), tenChiSo: getVal(node, ['TEN_CHI_SO', 'TEN_DICH_VU']),
+        giaTri: getVal(node, ['GIA_TRI']), triSoBt: getVal(node, ['TRI_SO_BT']), ngayKq: getVal(node, ['NGAY_KQ']) || currentPatient.ngayRa,
+        rawFields: rawF, adjustments: [], trangThai: '2', lydoTuchoi: '', lydoDc: ''
+      });
+      stt4++;
+    });
+
+    // 5. BẢNG XML 5 (Diễn biến bệnh)
+    listXml5 = [];
+    let stt5 = 1;
+    const dbNodes = doc.querySelectorAll('CHI_TIET_DIEN_BIEN_BENH, DIEN_BIEN_BENH, DSACH_CHI_TIET_DIEN_BIEN_BENH > *');
+    dbNodes.forEach(node => {
+      if (node.children.length === 0) return;
+      const rawF = {};
+      node.querySelectorAll('*').forEach(el => { if (el.children.length === 0) rawF[el.tagName] = el.textContent.trim(); });
+
+      listXml5.push({
+        id: '5_' + stt5, sobangXml: '5', sttXml: getVal(node, ['STT']) || stt5, idCp: getVal(node, ['ID_CP', 'ID']) || '',
+        ngayYl: getVal(node, ['NGAY_YL', 'NGAY_DIEN_BIEN']), dienBien: getVal(node, ['DIEN_BIEN', 'DIEN_BIEN_BENH']),
+        hoiChan: getVal(node, ['HOI_CHAN', 'Y_LENH']), maBs: getVal(node, ['MA_BAC_SI', 'MA_BS']),
+        rawFields: rawF, adjustments: [], trangThai: '2', lydoTuchoi: '', lydoDc: ''
+      });
+      stt5++;
+    });
+
+    // Cập nhật Banner (dạng input có thể sửa)
+    document.getElementById('patient_bar').style.display = 'flex';
+    document.getElementById('pb_ho_ten').value = currentPatient.hoTen || '';
+    document.getElementById('pb_ma_bn').value = currentPatient.maBn || '';
+    document.getElementById('pb_ma_lk').value = currentPatient.maLk || '';
+    document.getElementById('pb_ma_the').value = currentPatient.maThe || '';
+    document.getElementById('pb_ngay_vao').value = currentPatient.ngayVao || '';
+    document.getElementById('pb_ngay_ra').value = currentPatient.ngayRa || '';
+    document.getElementById('pb_ky_qt').value = currentPatient.kyQt || '';
+
+    // Badges đếm
+    document.getElementById('badge_xml1_count').textContent = `${listXml1Fields.length} trường`;
+    document.getElementById('badge_xml2_count').textContent = listXml2.length;
+    document.getElementById('badge_xml3_count').textContent = listXml3.length;
+    document.getElementById('badge_xml4_count').textContent = listXml4.length;
+    document.getElementById('badge_xml5_count').textContent = listXml5.length;
+
+    renderXml1Table(listXml1Fields);
+    renderTableXml2(listXml2);
+    renderTableXml3(listXml3);
+    renderTableXml4(listXml4);
+    renderTableXml5(listXml5);
+    updateTotalBadge();
+    renderSummaryTable();
+    updateXmlPreview();
+
+    document.getElementById('file_status').textContent = `Đã nạp ${fileName || 'dữ liệu'}: Đầy đủ XML 1 (${listXml1Fields.length}), XML 2 (${listXml2.length}), XML 3 (${listXml3.length}), XML 4 (${listXml4.length}), XML 5 (${listXml5.length}).`;
+  } catch (err) {
+    console.error(err);
+    alert('Lỗi nạp file XML: ' + err.message);
+  }
+}
+
+// Xử lý khi người dùng trực tiếp sửa thông tin bệnh nhân trên Header Banner
+function onPatientHeaderChange(prop, val) {
+  currentPatient[prop] = val;
+  let targetFieldName = '';
+  if (prop === 'maLk') targetFieldName = 'MA_LK';
+  else if (prop === 'maBn') targetFieldName = 'MA_BN';
+  else if (prop === 'hoTen') targetFieldName = 'HO_TEN';
+  else if (prop === 'maThe') targetFieldName = 'MA_THE';
+  else if (prop === 'ngayVao') targetFieldName = 'NGAY_VAO';
+  else if (prop === 'ngayRa') targetFieldName = 'NGAY_RA';
+  else if (prop === 'kyQt') targetFieldName = 'KY_QT';
+
+  if (targetFieldName) {
+    const f = listXml1Fields.find(x => x.name === targetFieldName || (targetFieldName === 'MA_THE' && x.name === 'MA_THE_BHYT'));
+    if (f) {
+      f.goc = val;
+      const inp = document.getElementById(`inp_x1_goc_${f.name}`);
+      if (inp) inp.value = val;
+    }
+  }
+  updateXmlPreview();
+}
+
+// ================= RENDER BẢNG XML 1 =================
+function renderXml1Table(fields) {
+  const tbody = document.getElementById('xml1_table_body');
+  tbody.innerHTML = '';
+  if (fields.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Chưa có dữ liệu XML 1</td></tr>';
+    return;
+  }
+  fields.forEach(f => {
+    const tr = document.createElement('tr');
+    if (f.selected) tr.classList.add('row-adjusted');
+
+    tr.innerHTML = `
+      <td style="text-align:center;">
+        <input type="checkbox" id="chk_x1_${f.name}" ${f.selected ? 'checked' : ''} onchange="toggleXml1Field('${f.name}')">
+      </td>
+      <td>${f.stt}</td>
+      <td style="font-weight:700; font-family:'JetBrains Mono', monospace; color:#0369a1;">${f.name}</td>
+      <td style="color:#475569;">${f.desc}</td>
+      <td>
+        <input type="text" id="inp_x1_goc_${f.name}" class="form-control val-goc-input" 
+          value="${escapeHtml(f.goc || '')}" placeholder="Dữ liệu gốc..." 
+          oninput="onXml1InputGoc('${f.name}')">
+      </td>
+      <td>
+        <input type="text" id="inp_x1_dc_${f.name}" class="form-control ${f.selected ? 'input-edit' : ''}" 
+          value="${escapeHtml(f.dc)}" placeholder="Nhập dữ liệu sửa mới..." 
+          oninput="onXml1InputEdit('${f.name}')">
+      </td>
+      <td>
+        <input type="text" id="inp_x1_lydo_${f.name}" class="form-control" 
+          value="${escapeHtml(f.lydo)}" placeholder="Lý do điều chỉnh..." 
+          oninput="onXml1InputLydo('${f.name}')">
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function onXml1InputGoc(fieldName) {
+  const item = listXml1Fields.find(f => f.name === fieldName);
+  if (!item) return;
+  const inp = document.getElementById(`inp_x1_goc_${fieldName}`);
+  item.goc = inp ? inp.value : '';
+
+  // Đồng bộ sang Banner nếu là các trường thông tin chung
+  if (fieldName === 'MA_LK') {
+    currentPatient.maLk = item.goc;
+    const pb = document.getElementById('pb_ma_lk');
+    if (pb) pb.value = item.goc;
+  } else if (fieldName === 'MA_BN') {
+    currentPatient.maBn = item.goc;
+    const pb = document.getElementById('pb_ma_bn');
+    if (pb) pb.value = item.goc;
+  } else if (fieldName === 'HO_TEN') {
+    currentPatient.hoTen = item.goc;
+    const pb = document.getElementById('pb_ho_ten');
+    if (pb) pb.value = item.goc;
+  } else if (fieldName === 'MA_THE' || fieldName === 'MA_THE_BHYT') {
+    currentPatient.maThe = item.goc;
+    const pb = document.getElementById('pb_ma_the');
+    if (pb) pb.value = item.goc;
+  } else if (fieldName === 'NGAY_VAO') {
+    currentPatient.ngayVao = item.goc;
+    const pb = document.getElementById('pb_ngay_vao');
+    if (pb) pb.value = item.goc;
+  } else if (fieldName === 'NGAY_RA') {
+    currentPatient.ngayRa = item.goc;
+    const pb = document.getElementById('pb_ngay_ra');
+    if (pb) pb.value = item.goc;
+  } else if (fieldName === 'KY_QT') {
+    currentPatient.kyQt = item.goc;
+    const pb = document.getElementById('pb_ky_qt');
+    if (pb) pb.value = item.goc;
+  }
+  renderSummaryTable();
+  updateXmlPreview();
+}
+
+function filterXml1Table() {
+  const q = document.getElementById('search_xml1').value.toLowerCase().trim();
+  const filtered = listXml1Fields.filter(f => 
+    f.name.toLowerCase().includes(q) || f.desc.toLowerCase().includes(q) || (f.goc && f.goc.toLowerCase().includes(q))
+  );
+  renderXml1Table(filtered);
+}
+
+function onXml1InputEdit(fieldName) {
+  const item = listXml1Fields.find(f => f.name === fieldName);
+  if (!item) return;
+
+  const inp = document.getElementById(`inp_x1_dc_${fieldName}`);
+  item.dc = inp.value;
+
+  if (item.dc.trim().length > 0) {
+    item.selected = true;
+    inp.classList.add('input-edit');
+    const chk = document.getElementById(`chk_x1_${fieldName}`);
+    if (chk) chk.checked = true;
+    if (!item.lydo) {
+      item.lydo = `Điều chỉnh trường ${fieldName} theo thực tế`;
+      const lydoInp = document.getElementById(`inp_x1_lydo_${fieldName}`);
+      if (lydoInp) lydoInp.value = item.lydo;
+    }
+  } else {
+    item.selected = false;
+    inp.classList.remove('input-edit');
+    const chk = document.getElementById(`chk_x1_${fieldName}`);
+    if (chk) chk.checked = false;
+  }
+  updateXml1Count();
+  updateTotalBadge();
+  renderSummaryTable();
+  updateXmlPreview();
+}
+
+function onXml1InputLydo(fieldName) {
+  const item = listXml1Fields.find(f => f.name === fieldName);
+  if (item) {
+    item.lydo = document.getElementById(`inp_x1_lydo_${fieldName}`).value;
+    renderSummaryTable();
+    updateXmlPreview();
+  }
+}
+
+function toggleXml1Field(fieldName) {
+  const item = listXml1Fields.find(f => f.name === fieldName);
+  if (!item) return;
+
+  const chk = document.getElementById(`chk_x1_${fieldName}`);
+  item.selected = chk.checked;
+  const inp = document.getElementById(`inp_x1_dc_${fieldName}`);
+
+  if (item.selected) {
+    inp.classList.add('input-edit');
+    inp.focus();
+    if (!item.lydo) {
+      item.lydo = `Điều chỉnh trường ${fieldName}`;
+      const lydoInp = document.getElementById(`inp_x1_lydo_${fieldName}`);
+      if (lydoInp) lydoInp.value = item.lydo;
+    }
+  } else {
+    inp.classList.remove('input-edit');
+  }
+  updateXml1Count();
+  updateTotalBadge();
+  renderSummaryTable();
+  updateXmlPreview();
+}
+
+function clearAllXml1Adj() {
+  listXml1Fields.forEach(f => { f.selected = false; f.dc = ''; f.lydo = ''; });
+  renderXml1Table(listXml1Fields);
+  updateXml1Count();
+  updateTotalBadge();
+  renderSummaryTable();
+  updateXmlPreview();
+}
+
+function updateXml1Count() {
+  const cnt = listXml1Fields.filter(f => f.selected && f.dc.trim().length > 0).length;
+  document.getElementById('lbl_xml1_adj_count').textContent = cnt;
+}
+
+// ================= RENDER BẢNG XML 2 (THUỐC) =================
+function renderTableXml2(list) {
+  const tbody = document.getElementById('xml2_table_body');
+  tbody.innerHTML = '';
+  document.getElementById('lbl_cnt_xml2').textContent = list.length;
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" class="empty-state">Không có dữ liệu thuốc (XML 2)</td></tr>';
+    return;
+  }
+  list.forEach(c => {
+    const tr = document.createElement('tr');
+    const isAdjusted = c.adjustments.length > 0 || c.trangThai === '1';
+    if (isAdjusted) tr.classList.add('row-adjusted');
+
+    let badgeStatus = '<span style="color:#94a3b8; font-size:11px;">Chưa sửa</span>';
+    if (c.trangThai === '1') badgeStatus = '<span class="badge badge-cancel">ĐỀ NGHỊ HỦY</span>';
+    else if (c.adjustments.length > 0) badgeStatus = `<span class="badge badge-edit">Sửa ${c.adjustments.length} trường</span>`;
+
+    tr.innerHTML = `
+      <td>${c.sttXml}</td>
+      <td style="font-weight:600; font-family:'JetBrains Mono', monospace;">${c.maDv || ''}</td>
+      <td>${c.tenDv || ''}</td>
+      <td>${c.dvt || ''}</td>
+      <td>${formatDateTime(c.ngayYl)}</td>
+      <td><span class="val-goc" style="font-size:11px;">${c.maBs || 'rỗng'}</span></td>
+      <td style="text-align:right;">${c.soLuong || ''}</td>
+      <td style="text-align:right;">${c.donGia ? Number(c.donGia).toLocaleString('vi-VN') : ''}</td>
+      <td style="text-align:right; font-weight:600;">${c.thanhTien ? Number(c.thanhTien).toLocaleString('vi-VN') : ''}</td>
+      <td style="text-align:center;">${badgeStatus}</td>
+      <td style="text-align:center;">
+        <button class="btn btn-primary btn-sm" onclick="openItemModal('${c.id}')">
+          <span>✏️</span> Sửa Dòng Này
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterTableXml2() {
+  const q = document.getElementById('search_xml2').value.toLowerCase().trim();
+  renderTableXml2(listXml2.filter(c => (c.maDv && c.maDv.toLowerCase().includes(q)) || (c.tenDv && c.tenDv.toLowerCase().includes(q)) || (c.maBs && c.maBs.toLowerCase().includes(q))));
+}
+
+// ================= RENDER BẢNG XML 3 (DVKT, VTYT, GIƯỜNG) =================
+function renderTableXml3(list) {
+  const tbody = document.getElementById('xml3_table_body');
+  tbody.innerHTML = '';
+  document.getElementById('lbl_cnt_xml3').textContent = list.length;
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" class="empty-state">Không có dữ liệu DVKT / VTYT (XML 3)</td></tr>';
+    return;
+  }
+  list.forEach(c => {
+    const tr = document.createElement('tr');
+    const isAdjusted = c.adjustments.length > 0 || c.trangThai === '1';
+    if (isAdjusted) tr.classList.add('row-adjusted');
+
+    let badgeStatus = '<span style="color:#94a3b8; font-size:11px;">Chưa sửa</span>';
+    if (c.trangThai === '1') badgeStatus = '<span class="badge badge-cancel">ĐỀ NGHỊ HỦY</span>';
+    else if (c.adjustments.length > 0) badgeStatus = `<span class="badge badge-edit">Sửa ${c.adjustments.length} trường</span>`;
+
+    tr.innerHTML = `
+      <td>${c.sttXml}</td>
+      <td style="font-weight:600; font-family:'JetBrains Mono', monospace;">${c.maDv || ''}</td>
+      <td>${c.tenDv || ''}</td>
+      <td><span class="badge" style="background:#e2e8f0;">${c.maNhom || ''}</span></td>
+      <td>${formatDateTime(c.ngayYl)}</td>
+      <td><span class="val-goc" style="font-size:11px;">${c.maBs || 'rỗng'}</span></td>
+      <td style="text-align:right;">${c.soLuong || ''}</td>
+      <td style="text-align:right;">${c.donGia ? Number(c.donGia).toLocaleString('vi-VN') : ''}</td>
+      <td style="text-align:right; font-weight:600;">${c.thanhTien ? Number(c.thanhTien).toLocaleString('vi-VN') : ''}</td>
+      <td style="text-align:center;">${badgeStatus}</td>
+      <td style="text-align:center;">
+        <button class="btn btn-primary btn-sm" onclick="openItemModal('${c.id}')">
+          <span>✏️</span> Sửa Dòng Này
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterTableXml3() {
+  const q = document.getElementById('search_xml3').value.toLowerCase().trim();
+  renderTableXml3(listXml3.filter(c => (c.maDv && c.maDv.toLowerCase().includes(q)) || (c.tenDv && c.tenDv.toLowerCase().includes(q)) || (c.maBs && c.maBs.toLowerCase().includes(q))));
+}
+
+// ================= RENDER BẢNG XML 4 (KẾT QUẢ CLS) =================
+function renderTableXml4(list) {
+  const tbody = document.getElementById('xml4_table_body');
+  tbody.innerHTML = '';
+  document.getElementById('lbl_cnt_xml4').textContent = list.length;
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Không có dữ liệu kết quả CLS (XML 4)</td></tr>';
+    return;
+  }
+  list.forEach(c => {
+    const tr = document.createElement('tr');
+    const isAdjusted = c.adjustments.length > 0 || c.trangThai === '1';
+    if (isAdjusted) tr.classList.add('row-adjusted');
+
+    let badgeStatus = '<span style="color:#94a3b8; font-size:11px;">Chưa sửa</span>';
+    if (c.trangThai === '1') badgeStatus = '<span class="badge badge-cancel">ĐỀ NGHỊ HỦY</span>';
+    else if (c.adjustments.length > 0) badgeStatus = `<span class="badge badge-edit">Sửa ${c.adjustments.length} trường</span>`;
+
+    tr.innerHTML = `
+      <td>${c.sttXml}</td>
+      <td style="font-weight:600; font-family:'JetBrains Mono', monospace;">${c.maDv || ''}</td>
+      <td>${c.maChiSo || ''}</td>
+      <td>${c.tenChiSo || ''}</td>
+      <td style="font-weight:600; color:#0369a1;">${c.giaTri || ''}</td>
+      <td>${c.triSoBt || ''}</td>
+      <td>${formatDateTime(c.ngayKq)}</td>
+      <td style="text-align:center;">${badgeStatus}</td>
+      <td style="text-align:center;">
+        <button class="btn btn-primary btn-sm" onclick="openItemModal('${c.id}')">
+          <span>✏️</span> Sửa Dòng Này
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterTableXml4() {
+  const q = document.getElementById('search_xml4').value.toLowerCase().trim();
+  renderTableXml4(listXml4.filter(c => (c.maDv && c.maDv.toLowerCase().includes(q)) || (c.tenChiSo && c.tenChiSo.toLowerCase().includes(q)) || (c.giaTri && c.giaTri.toLowerCase().includes(q))));
+}
+
+// ================= RENDER BẢNG XML 5 (DIỄN BIẾN LÂM SÀNG) =================
+function renderTableXml5(list) {
+  const tbody = document.getElementById('xml5_table_body');
+  tbody.innerHTML = '';
+  document.getElementById('lbl_cnt_xml5').textContent = list.length;
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Không có dữ liệu diễn biến lâm sàng (XML 5)</td></tr>';
+    return;
+  }
+  list.forEach(c => {
+    const tr = document.createElement('tr');
+    const isAdjusted = c.adjustments.length > 0 || c.trangThai === '1';
+    if (isAdjusted) tr.classList.add('row-adjusted');
+
+    let badgeStatus = '<span style="color:#94a3b8; font-size:11px;">Chưa sửa</span>';
+    if (c.trangThai === '1') badgeStatus = '<span class="badge badge-cancel">ĐỀ NGHỊ HỦY</span>';
+    else if (c.adjustments.length > 0) badgeStatus = `<span class="badge badge-edit">Sửa ${c.adjustments.length} trường</span>`;
+
+    tr.innerHTML = `
+      <td>${c.sttXml}</td>
+      <td>${formatDateTime(c.ngayYl)}</td>
+      <td>${c.dienBien || ''}</td>
+      <td>${c.hoiChan || ''}</td>
+      <td><span class="val-goc" style="font-size:11px;">${c.maBs || 'rỗng'}</span></td>
+      <td style="text-align:center;">${badgeStatus}</td>
+      <td style="text-align:center;">
+        <button class="btn btn-primary btn-sm" onclick="openItemModal('${c.id}')">
+          <span>✏️</span> Sửa Dòng Này
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterTableXml5() {
+  const q = document.getElementById('search_xml5').value.toLowerCase().trim();
+  renderTableXml5(listXml5.filter(c => (c.dienBien && c.dienBien.toLowerCase().includes(q)) || (c.hoiChan && c.hoiChan.toLowerCase().includes(q))));
+}
+
+// ================= MODAL SỬA DÒNG CHI TIẾT (ÁP DỤNG CHO XML 2, 3, 4, 5) =================
+function findItemById(id) {
+  let item = listXml2.find(c => c.id === id);
+  if (!item) item = listXml3.find(c => c.id === id);
+  if (!item) item = listXml4.find(c => c.id === id);
+  if (!item) item = listXml5.find(c => c.id === id);
+  return item;
+}
+
+function openItemModal(itemId) {
+  const item = findItemById(itemId);
+  if (!item) return;
+  activeCostModalItem = item;
+
+  document.getElementById('modal_cp_title').textContent = `Bảng Điều Chỉnh Dòng XML ${item.sobangXml} (Dòng ${item.sttXml})`;
+  document.getElementById('m_cp_ten').textContent = item.tenDv || item.tenChiSo || item.dienBien || item.maDv || '---';
+  document.getElementById('m_cp_stt').textContent = `Dòng ${item.sttXml}`;
+  document.getElementById('m_cp_bang').textContent = `XML ${item.sobangXml}`;
+  document.getElementById('m_cp_ngay_yl').textContent = formatDateTime(item.ngayYl || item.ngayKq);
+
+  document.getElementById('m_cp_trang_thai').value = item.trangThai || '2';
+  document.getElementById('m_cp_lydo_tuchoi').value = item.lydoTuchoi || 'Kích nhầm mã bác sĩ (1)';
+  document.getElementById('m_cp_lydo_dc').value = item.lydoDc || 'Điều chỉnh theo đúng dữ liệu y lệnh thực tế';
+
+  const tbody = document.getElementById('m_cp_fields_tbody');
+  tbody.innerHTML = '';
+
+  const fieldList = [];
+  for (const [fName, fDesc] of Object.entries(COMMON_FIELD_DICT)) {
+    if (item.rawFields[fName] !== undefined || ['MA_BAC_SI', 'DON_GIA', 'SO_LUONG', 'TYLE_TT', 'NGAY_YL', 'MA_KHOA', 'GIA_TRI'].includes(fName)) {
+      const existingAdj = item.adjustments.find(a => a.field === fName);
+      fieldList.push({
+        name: fName, desc: fDesc, goc: item.rawFields[fName] || (item[fName] || ''), dc: existingAdj ? existingAdj.dc : '', selected: existingAdj ? true : false
+      });
+    }
+  }
+
+  for (const [rK, rV] of Object.entries(item.rawFields)) {
+    if (!fieldList.some(f => f.name === rK)) {
+      const existingAdj = item.adjustments.find(a => a.field === rK);
+      fieldList.push({
+        name: rK, desc: 'Trường chi tiết XML', goc: rV, dc: existingAdj ? existingAdj.dc : '', selected: existingAdj ? true : false
+      });
+    }
+  }
+
+  fieldList.forEach(f => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:center;">
+        <input type="checkbox" id="chk_mcp_${f.name}" ${f.selected ? 'checked' : ''} onchange="toggleModalCpField('${f.name}')">
+      </td>
+      <td style="font-weight:700; font-family:'JetBrains Mono', monospace; color:#0369a1;">${f.name}</td>
+      <td style="color:#475569;">${f.desc}</td>
+      <td>
+        <input type="text" id="inp_mcp_goc_${f.name}" class="form-control val-goc-input" 
+          value="${escapeHtml(f.goc || '')}" placeholder="Dữ liệu gốc..." 
+          oninput="onModalCpInputGoc('${f.name}')">
+      </td>
+      <td>
+        <input type="text" id="inp_mcp_dc_${f.name}" class="form-control ${f.selected ? 'input-edit' : ''}" 
+          value="${escapeHtml(f.dc)}" placeholder="Gõ giá trị sửa..." 
+          oninput="onModalCpInputEdit('${f.name}')">
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  toggleCpCancelState();
+  document.getElementById('cp_modal').style.display = 'flex';
+}
+
+function onModalCpInputGoc(fieldName) {
+  // Cho phép người dùng chỉnh sửa dữ liệu gốc ngay trong modal
+}
+
+function toggleCpCancelState() {
+  const tt = document.getElementById('m_cp_trang_thai').value;
+  const fieldsArea = document.getElementById('m_cp_fields_area');
+  if (tt === '1') {
+    // 1 = ĐỀ NGHỊ HỦY DÒNG
+    fieldsArea.style.opacity = '0.5';
+    fieldsArea.style.pointerEvents = 'none';
+    if (!document.getElementById('m_cp_lydo_dc').value) {
+      document.getElementById('m_cp_lydo_dc').value = 'Đề nghị hủy dòng này do y lệnh nhầm';
+    }
+  } else {
+    // 2 = ĐỀ NGHỊ ĐIỀU CHỈNH
+    fieldsArea.style.opacity = '1';
+    fieldsArea.style.pointerEvents = 'auto';
+  }
+}
+
+function onModalCpInputEdit(fieldName) {
+  const val = document.getElementById(`inp_mcp_dc_${fieldName}`).value;
+  const chk = document.getElementById(`chk_mcp_${fieldName}`);
+  const inp = document.getElementById(`inp_mcp_dc_${fieldName}`);
+  if (val.trim().length > 0) {
+    chk.checked = true;
+    inp.classList.add('input-edit');
+  } else {
+    chk.checked = false;
+    inp.classList.remove('input-edit');
+  }
+}
+
+function toggleModalCpField(fieldName) {
+  const chk = document.getElementById(`chk_mcp_${fieldName}`);
+  const inp = document.getElementById(`inp_mcp_dc_${fieldName}`);
+  if (chk.checked) {
+    inp.classList.add('input-edit');
+    inp.focus();
+  } else {
+    inp.classList.remove('input-edit');
+  }
+}
+
+function saveModalCpAdjustment() {
+  if (!activeCostModalItem) return;
+
+  const tt = document.getElementById('m_cp_trang_thai').value;
+  const lydoTuchoi = document.getElementById('m_cp_lydo_tuchoi').value.trim();
+  const lydoDc = document.getElementById('m_cp_lydo_dc').value.trim();
+
+  if (!lydoDc) {
+    alert('Vui lòng nhập Lý do điều chỉnh / giải trình (LYDO_DIEUCHINH)!');
+    return;
+  }
+
+  activeCostModalItem.trangThai = tt;
+  activeCostModalItem.lydoTuchoi = lydoTuchoi;
+  activeCostModalItem.lydoDc = lydoDc;
+  activeCostModalItem.adjustments = [];
+
+  const tbody = document.getElementById('m_cp_fields_tbody');
+
+  // Cho phép lưu các giá trị dữ liệu gốc đã được sửa trực tiếp trong modal
+  tbody.querySelectorAll('tr').forEach(tr => {
+    const chk = tr.querySelector('input[type="checkbox"]');
+    if (!chk) return;
+    const fieldName = chk.id.replace('chk_mcp_', '');
+    const inpGoc = document.getElementById(`inp_mcp_goc_${fieldName}`);
+    const inpDc = document.getElementById(`inp_mcp_dc_${fieldName}`);
+
+    if (inpGoc) {
+      const gocVal = inpGoc.value;
+      activeCostModalItem.rawFields[fieldName] = gocVal;
+
+      // Cập nhật thuộc tính hiển thị chính trên bảng
+      if (fieldName === 'MA_DICH_VU' || fieldName === 'MA_THUOC') activeCostModalItem.maDv = gocVal;
+      if (fieldName === 'TEN_DICH_VU' || fieldName === 'TEN_THUOC') activeCostModalItem.tenDv = gocVal;
+      if (fieldName === 'DON_VI_TINH') activeCostModalItem.dvt = gocVal;
+      if (fieldName === 'NGAY_YL') activeCostModalItem.ngayYl = gocVal;
+      if (fieldName === 'MA_BAC_SI') activeCostModalItem.maBs = gocVal;
+      if (fieldName === 'SO_LUONG') activeCostModalItem.soLuong = gocVal;
+      if (fieldName === 'DON_GIA') activeCostModalItem.donGia = gocVal;
+      if (fieldName === 'THANH_TIEN') activeCostModalItem.thanhTien = gocVal;
+      if (fieldName === 'MA_CHI_SO') activeCostModalItem.maChiSo = gocVal;
+      if (fieldName === 'TEN_CHI_SO') activeCostModalItem.tenChiSo = gocVal;
+      if (fieldName === 'GIA_TRI') activeCostModalItem.giaTri = gocVal;
+      if (fieldName === 'TRI_SO_BT') activeCostModalItem.triSoBt = gocVal;
+      if (fieldName === 'NGAY_KQ') activeCostModalItem.ngayKq = gocVal;
+      if (fieldName === 'DIEN_BIEN') activeCostModalItem.dienBien = gocVal;
+      if (fieldName === 'HOI_CHAN') activeCostModalItem.hoiChan = gocVal;
+    }
+
+    if (tt === '2' && chk.checked) {
+      // 2 = ĐIỀU CHỈNH
+      const dcVal = inpDc ? inpDc.value.trim() : '';
+      const gocVal = inpGoc ? inpGoc.value : (activeCostModalItem.rawFields[fieldName] || '');
+      if (dcVal) {
+        activeCostModalItem.adjustments.push({
+          field: fieldName,
+          goc: gocVal,
+          dc: dcVal
+        });
+      }
+    }
+  });
+
+  if (tt === '2' && activeCostModalItem.adjustments.length === 0) {
+    alert('Bạn chưa chọn hoặc chưa nhập giá trị sửa mới cho trường nào!');
+    return;
+  }
+
+  closeModal('cp_modal');
+  if (activeCostModalItem.sobangXml === '2') renderTableXml2(listXml2);
+  else if (activeCostModalItem.sobangXml === '3') renderTableXml3(listXml3);
+  else if (activeCostModalItem.sobangXml === '4') renderTableXml4(listXml4);
+  else if (activeCostModalItem.sobangXml === '5') renderTableXml5(listXml5);
+
+  renderSummaryTable();
+  updateTotalBadge();
+  updateXmlPreview();
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function updateTotalBadge() {
+  const cntX1 = listXml1Fields.filter(f => f.selected && f.dc.trim().length > 0).length;
+  let cntOthers = 0;
+  const allList = [...listXml2, ...listXml3, ...listXml4, ...listXml5];
+  allList.forEach(c => {
+    if (c.trangThai === '1') cntOthers++;
+    else cntOthers += c.adjustments.length;
+  });
+  const total = cntX1 + cntOthers;
+  document.getElementById('badge_total_adj').textContent = `${total} mục sửa`;
+}
+  const total = cntX1 + cntOthers;
+  document.getElementById('badge_total_adj').textContent = `${total} mục sửa`;
+}
+
+// ================= TAB 6: TỔNG HỢP & XUẤT XML =================
+function renderSummaryTable() {
+  const tbody = document.getElementById('summary_table_body');
+  tbody.innerHTML = '';
+
+  let stt = 1;
+  const listItems = [];
+
+  // XML 1
+  listXml1Fields.filter(f => f.selected && f.dc.trim().length > 0).forEach(f => {
+    listItems.push({
+      stt: stt++, nhom: 'XML 1', dong: '-', truong: f.name, goc: f.goc, dc: f.dc, lydo: f.lydo || 'Điều chỉnh thông tin XML 1', type: 'xml1', key: f.name
+    });
+  });
+
+  // XML 2, 3, 4, 5
+  const allList = [...listXml2, ...listXml3, ...listXml4, ...listXml5];
+  allList.forEach(c => {
+    if (c.trangThai === '1') {
+      listItems.push({
+        stt: stt++, nhom: `XML ${c.sobangXml}`, dong: `Dòng ${c.sttXml}`, truong: 'TOÀN BỘ DÒNG',
+        goc: c.tenDv || c.tenChiSo || c.dienBien || c.maDv,
+        dc: '<b style="color:#dc2626;">ĐỀ NGHỊ HỦY DÒNG NÀY</b>',
+        lydo: c.lydoDc || 'Hủy dòng dữ liệu', type: 'cancel', itemId: c.id
+      });
+    } else {
+      c.adjustments.forEach(adj => {
+        listItems.push({
+          stt: stt++, nhom: `XML ${c.sobangXml}`, dong: `Dòng ${c.sttXml}`, truong: adj.field,
+          goc: adj.goc, dc: adj.dc, lydo: c.lydoDc || 'Điều chỉnh chi tiết', type: 'adj', itemId: c.id, fieldKey: adj.field
+        });
+      });
+    }
+  });
+
+  if (listItems.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty-state" style="padding:15px;">Chưa có mục nào được điều chỉnh</td></tr>';
+    return;
+  }
+
+  listItems.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.stt}</td>
+      <td><span class="badge ${item.nhom === 'XML 1' ? 'badge-xml1' : (item.nhom === 'XML 2' ? 'badge-xml2' : (item.nhom === 'XML 3' ? 'badge-xml3' : 'badge-xml4'))}">${item.nhom}</span></td>
+      <td>${item.dong}</td>
+      <td style="font-weight:700; font-family:'JetBrains Mono', monospace; color:#0369a1;">${item.truong}</td>
+      <td><del style="color:#ef4444;">${item.goc || 'Rỗng'}</del></td>
+      <td><span style="color:#15803d; font-weight:700;">${item.dc}</span></td>
+      <td>${item.lydo}</td>
+      <td style="text-align:center;">
+        <button class="btn btn-danger btn-sm" onclick="removeSummaryItem('${item.type}', '${item.itemId || ''}', '${item.key || item.fieldKey || ''}')">Xóa</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function removeSummaryItem(type, itemId, key) {
+  if (type === 'xml1') {
+    const f = listXml1Fields.find(x => x.name === key);
+    if (f) { f.selected = false; f.dc = ''; }
+    renderXml1Table(listXml1Fields);
+  } else {
+    const item = findItemById(itemId);
+    if (item) {
+      if (type === 'cancel') item.trangThai = '2';
+      else if (type === 'adj') item.adjustments = item.adjustments.filter(a => a.field !== key);
+      
+      if (item.sobangXml === '2') renderTableXml2(listXml2);
+      else if (item.sobangXml === '3') renderTableXml3(listXml3);
+      else if (item.sobangXml === '4') renderTableXml4(listXml4);
+      else if (item.sobangXml === '5') renderTableXml5(listXml5);
+    }
+  }
+  renderSummaryTable();
+  updateTotalBadge();
+  updateXmlPreview();
+}
+
+// SINH XML CHUẨN THÔNG TƯ 12/2026/TT-BTC
+function generateXml09String() {
+  const maCskcb = document.getElementById('cfg_ma_cskcb').value.trim();
+  const nguoiLap = document.getElementById('cfg_nguoi_lap').value.trim();
+  const thuTruong = document.getElementById('cfg_thu_truong').value.trim();
+  const ngayLap = document.getElementById('cfg_ngay_lap').value.trim();
+  const trangThaiXml1 = document.getElementById('xml1_trang_thai').value;
+
+  localStorage.setItem('m09_ma_cskcb', maCskcb);
+  localStorage.setItem('m09_nguoi_lap', nguoiLap);
+  localStorage.setItem('m09_thu_truong', thuTruong);
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+  xml += `<HOSO_DIEUCHINH_GD>\n`;
+  xml += `  <TT_HOSO Id="Id-${escapeXml(currentPatient.maLk || 'HOSO')}">\n`;
+  xml += `    <TT_MAU>\n`;
+  xml += `      <MAU_SO>09/BH</MAU_SO>\n`;
+  xml += `      <MA_CSKCB>${escapeXml(maCskcb)}</MA_CSKCB>\n`;
+  xml += `      <NGUOILAPBIEU>${escapeXml(nguoiLap)}</NGUOILAPBIEU>\n`;
+  xml += `      <THUTRUONG_DV>${escapeXml(thuTruong)}</THUTRUONG_DV>\n`;
+  xml += `      <NGAYTHANGNAM>${escapeXml(ngayLap)}</NGAYTHANGNAM>\n`;
+  xml += `    </TT_MAU>\n`;
+
+  xml += `    <TT_XML1>\n`;
+  xml += `      <XML1_ID></XML1_ID>\n`;
+  xml += `      <MA_LK>${escapeXml(currentPatient.maLk || '')}</MA_LK>\n`;
+  xml += `      <MA_BN>${escapeXml(currentPatient.maBn || '')}</MA_BN>\n`;
+  xml += `      <HO_TEN>${escapeXml(currentPatient.hoTen || '')}</HO_TEN>\n`;
+  xml += `      <MA_THE>${escapeXml(currentPatient.maThe || '')}</MA_THE>\n`;
+  xml += `      <NGAY_VAO>${escapeXml(currentPatient.ngayVao || '')}</NGAY_VAO>\n`;
+  xml += `      <NGAY_RA>${escapeXml(currentPatient.ngayRa || '')}</NGAY_RA>\n`;
+  xml += `      <KY_QT>${escapeXml(currentPatient.kyQt || '')}</KY_QT>\n`;
+  xml += `      <TRANGTHAI>${trangThaiXml1}</TRANGTHAI>\n`;
+  xml += `    </TT_XML1>\n`;
+
+  xml += `    <TT_DIEUCHINH>\n`;
+
+  // 1. DS_XML1_DIEUCHINH
+  const x1AdjList = listXml1Fields.filter(f => f.selected && f.dc.trim().length > 0);
+  if (x1AdjList.length === 0) {
+    xml += `      <DS_XML1_DIEUCHINH/>\n`;
+  } else {
+    xml += `      <DS_XML1_DIEUCHINH>\n`;
+    x1AdjList.forEach((a, idx) => {
+      xml += `        <TT_XML1_DC>\n`;
+      xml += `          <STT>${idx + 1}</STT>\n`;
+      xml += `          <TRUONG_TT_GOC>${escapeXml(a.name)}</TRUONG_TT_GOC>\n`;
+      xml += `          <TT_GOC>${escapeXml(a.goc)}</TT_GOC>\n`;
+      xml += `          <TRUONG_TT_DIEUCHINH>${escapeXml(a.name)}</TRUONG_TT_DIEUCHINH>\n`;
+      xml += `          <TT_DIEUCHINH>${escapeXml(a.dc)}</TT_DIEUCHINH>\n`;
+      xml += `          <LYDO_DIEUCHINH>${escapeXml(a.lydo || 'Điều chỉnh thông tin XML 1')}</LYDO_DIEUCHINH>\n`;
+      xml += `        </TT_XML1_DC>\n`;
+    });
+    xml += `      </DS_XML1_DIEUCHINH>\n`;
+  }
+
+  // 2. DSCP_DIEUCHINH (Áp dụng cho mọi bảng XML 2, 3, 4, 5)
+  const dscpList = [];
+  const allList = [...listXml2, ...listXml3, ...listXml4, ...listXml5];
+  allList.forEach(c => {
+    if (c.trangThai === '1') {
+      // 1 = HỦY DÒNG CHI PHÍ
+      dscpList.push({
+        sobangXml: c.sobangXml,
+        idCp: c.idCp || '',
+        sttXml: c.sttXml,
+        ngayYl: c.ngayYl || c.ngayKq || currentPatient.ngayVao,
+        trangThai: '1',
+        truongGoc: c.sobangXml === '2' ? 'MA_THUOC' : (c.sobangXml === '3' ? 'MA_DICH_VU' : 'MA_CHI_SO'),
+        ttGoc: c.maDv || c.maChiSo || '',
+        lydo: c.lydoTuchoi || '',
+        tuchoi: '1',
+        truongDc: c.sobangXml === '2' ? 'MA_THUOC' : (c.sobangXml === '3' ? 'MA_DICH_VU' : 'MA_CHI_SO'),
+        ttDc: '',
+        lydoDc: c.lydoDc || 'Đề nghị hủy dòng dữ liệu này'
+      });
+    } else {
+      // 2 = ĐIỀU CHỈNH DÒNG CHI PHÍ
+      c.adjustments.forEach(adj => {
+        dscpList.push({
+          sobangXml: c.sobangXml,
+          idCp: c.idCp || '',
+          sttXml: c.sttXml,
+          ngayYl: c.ngayYl || c.ngayKq || currentPatient.ngayVao,
+          trangThai: '2',
+          truongGoc: adj.field,
+          ttGoc: adj.goc,
+          lydo: c.lydoTuchoi || '',
+          tuchoi: '1',
+          truongDc: adj.field,
+          ttDc: adj.dc,
+          lydoDc: c.lydoDc || 'Điều chỉnh dữ liệu chi tiết'
+        });
+      });
+    }
+  });
+
+  if (dscpList.length === 0) {
+    xml += `      <DSCP_DIEUCHINH/>\n`;
+  } else {
+    xml += `      <DSCP_DIEUCHINH>\n`;
+    dscpList.forEach((c, idx) => {
+      xml += `        <CHIPHI>\n`;
+      xml += `          <STT>${idx + 1}</STT>\n`;
+      xml += `          <SOBANG_XML>${c.sobangXml}</SOBANG_XML>\n`;
+      xml += `          <ID_CP>${escapeXml(c.idCp)}</ID_CP>\n`;
+      xml += `          <STT_XML>${c.sttXml}</STT_XML>\n`;
+      xml += `          <NGAY_YL>${escapeXml(c.ngayYl)}</NGAY_YL>\n`;
+      xml += `          <TRANGTHAI>${c.trangThai}</TRANGTHAI>\n`;
+      xml += `          <TRUONG_TT_GOC>${escapeXml(c.truongGoc)}</TRUONG_TT_GOC>\n`;
+      xml += `          <TT_GOC>${escapeXml(c.ttGoc)}</TT_GOC>\n`;
+      xml += `          <LYDO>${escapeXml(c.lydo)}</LYDO>\n`;
+      xml += `          <TUCHOI>${escapeXml(c.tuchoi)}</TUCHOI>\n`;
+      xml += `          <TRUONG_TT_DIEUCHINH>${escapeXml(c.truongDc)}</TRUONG_TT_DIEUCHINH>\n`;
+      xml += `          <TT_DIEUCHINH>${escapeXml(c.ttDc)}</TT_DIEUCHINH>\n`;
+      xml += `          <LYDO_DIEUCHINH>${escapeXml(c.lydoDc)}</LYDO_DIEUCHINH>\n`;
+      xml += `        </CHIPHI>\n`;
+    });
+    xml += `      </DSCP_DIEUCHINH>\n`;
+  }
+
+  xml += `    </TT_DIEUCHINH>\n`;
+  xml += `  </TT_HOSO>\n`;
+  xml += `  <CHUKYDONVI></CHUKYDONVI>\n`;
+  xml += `</HOSO_DIEUCHINH_GD>\n`;
+
+  return xml;
+}
+
+function updateXmlPreview() {
+  if (!currentPatient.maLk) return;
+  const xmlStr = generateXml09String();
+  document.getElementById('xml_preview').textContent = xmlStr;
+}
+
+function exportXML() {
+  if (!currentPatient.maLk) {
+    alert('Chưa có dữ liệu hồ sơ! Vui lòng nạp file XML từ HIS hoặc nhấn "Nạp Dữ Liệu Mẫu".');
+    return;
+  }
+
+  const xmlContent = generateXml09String();
+  const blob = new Blob([xmlContent], { type: 'application/xml;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  
+  const now = new Date();
+  const timeStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+  const fileName = `MAU_09_BH_${currentPatient.maLk || 'HOSO'}_${timeStr}.xml`;
+
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  alert(`Đã xuất và tải xuống file: ${fileName}\n\nFile XML Mẫu 09/BH đã sẵn sàng để ký số và nộp lên Cổng BHXH!`);
+}
+
+function copyXmlToClipboard() {
+  const xmlContent = generateXml09String();
+  navigator.clipboard.writeText(xmlContent).then(() => {
+    alert('Đã sao chép toàn bộ XML Mẫu 09/BH vào Clipboard!');
+  }).catch(err => {
+    alert('Lỗi sao chép: ' + err);
+  });
+}
+
+function escapeXml(unsafe) {
+  if (unsafe === undefined || unsafe === null) return '';
+  return String(unsafe)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function formatDateTime(dtStr) {
+  if (!dtStr || dtStr.length < 8) return dtStr || '';
+  const y = dtStr.substring(0, 4);
+  const m = dtStr.substring(4, 6);
+  const d = dtStr.substring(6, 8);
+  const h = dtStr.length >= 10 ? dtStr.substring(8, 10) : '';
+  const mi = dtStr.length >= 12 ? dtStr.substring(10, 12) : '';
+  if (h && mi) return `${d}/${m}/${y} ${h}:${mi}`;
+  return `${d}/${m}/${y}`;
+}
+
+// NẠP DỮ LIỆU MẪU ĐẦY ĐỦ 5 BẢNG XML (XML1 -> XML5)
+function loadSampleData() {
+  const sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<HOSO>
+  <!-- BẢNG XML 1: TỔNG HỢP HỒ SƠ -->
+  <TONG_HOP>
+    <XML1_ID>3116573775</XML1_ID>
+    <MA_LK>260719212701638941</MA_LK>
+    <MA_BN>25105582</MA_BN>
+    <HO_TEN>NGUYỄN TUẤN</HO_TEN>
+    <NGAY_SINH>20180512</NGAY_SINH>
+    <GIOI_TINH>1</GIOI_TINH>
+    <DIA_CHI>184 Hùng Vương, TP Quảng Ngãi</DIA_CHI>
+    <MA_THE>TE1515121792153</MA_THE>
+    <MA_DKBD>51223</MA_DKBD>
+    <GT_THE_TU>20240101</GT_THE_TU>
+    <GT_THE_DEN>20281231</GT_THE_DEN>
+    <MA_BENH>J18.0</MA_BENH>
+    <MA_BENHKEM>R50;K29</MA_BENHKEM>
+    <MA_LYDO_VVIEN>1</MA_LYDO_VVIEN>
+    <NGAY_VAO>202607192125</NGAY_VAO>
+    <NGAY_RA>202607270800</NGAY_RA>
+    <SO_NGAY_DTRI>8</SO_NGAY_DTRI>
+    <KET_QUA_DTRI>1</KET_QUA_DTRI>
+    <TINH_TRANG_RV>1</TINH_TRANG_RV>
+    <NGAY_TTOAN>202607270930</NGAY_TTOAN>
+    <T_TONGCHI>1250000</T_TONGCHI>
+    <T_BHTT>1250000</T_BHTT>
+    <T_BNCT>0</T_BNCT>
+    <T_NGOAIDS>0</T_NGOAIDS>
+    <MA_LOAI_KCB>3</MA_LOAI_KCB>
+    <MA_KHOA>K01</MA_KHOA>
+    <MA_CSKCB>51223</MA_CSKCB>
+    <KY_QUYET_TOAN>202607</KY_QUYET_TOAN>
+  </TONG_HOP>
+
+  <!-- BẢNG XML 2: CHI TIẾT THUỐC -->
+  <DSACH_CHI_TIET_THUOC>
+    <THUOC>
+      <STT>1</STT>
+      <MA_THUOC>40.102</MA_THUOC>
+      <TEN_THUOC>Cefotaxim 1g</TEN_THUOC>
+      <DON_VI_TINH>Lọ</DON_VI_TINH>
+      <DON_GIA>15000</DON_GIA>
+      <SO_LUONG>14</SO_LUONG>
+      <THANH_TIEN>210000</THANH_TIEN>
+      <NGAY_YL>202607200830</NGAY_YL>
+      <MA_BAC_SI>000199/QNG-CCHN</MA_BAC_SI>
+      <MA_KHOA>K01</MA_KHOA>
+    </THUOC>
+    <THUOC>
+      <STT>2</STT>
+      <MA_THUOC>40.105</MA_THUOC>
+      <TEN_THUOC>Paracetamol 500mg</TEN_THUOC>
+      <DON_VI_TINH>Viên</DON_VI_TINH>
+      <DON_GIA>1200</DON_GIA>
+      <SO_LUONG>10</SO_LUONG>
+      <THANH_TIEN>12000</THANH_TIEN>
+      <NGAY_YL>202607200830</NGAY_YL>
+      <MA_BAC_SI>000199/QNG-CCHN</MA_BAC_SI>
+      <MA_KHOA>K01</MA_KHOA>
+    </THUOC>
+  </DSACH_CHI_TIET_THUOC>
+
+  <!-- BẢNG XML 3: CHI TIẾT DVKT & VTYT -->
+  <DSACH_CHI_TIET_DVKT>
+    <DVKT>
+      <STT>24</STT>
+      <MA_DICH_VU>03.001</MA_DICH_VU>
+      <TEN_DICH_VU>Chụp X-quang phổi thẳng</TEN_DICH_VU>
+      <MA_NHOM>2</MA_NHOM>
+      <DON_GIA>65000</DON_GIA>
+      <SO_LUONG>1</SO_LUONG>
+      <THANH_TIEN>65000</THANH_TIEN>
+      <NGAY_YL>202607262115</NGAY_YL>
+      <MA_BAC_SI>000199/QNG-CCHN</MA_BAC_SI>
+      <MA_KHOA>C01</MA_KHOA>
+    </DVKT>
+    <DVKT>
+      <STT>25</STT>
+      <MA_DICH_VU>01.002</MA_DICH_VU>
+      <TEN_DICH_VU>Tổng phân tích tế bào máu ngoại vi</TEN_DICH_VU>
+      <MA_NHOM>1</MA_NHOM>
+      <DON_GIA>42000</DON_GIA>
+      <SO_LUONG>1</SO_LUONG>
+      <THANH_TIEN>42000</THANH_TIEN>
+      <NGAY_YL>202607200900</NGAY_YL>
+      <MA_BAC_SI>000199/QNG-CCHN</MA_BAC_SI>
+      <MA_KHOA>XN01</MA_KHOA>
+    </DVKT>
+  </DSACH_CHI_TIET_DVKT>
+
+  <!-- BẢNG XML 4: KẾT QUẢ CẬN LÂM SÀNG -->
+  <DSACH_CHI_TIET_CLS>
+    <CLS>
+      <STT>1</STT>
+      <MA_DICH_VU>01.002</MA_DICH_VU>
+      <MA_CHI_SO>WBC</MA_CHI_SO>
+      <TEN_CHI_SO>Bạch cầu (WBC)</TEN_CHI_SO>
+      <GIA_TRI>12.5</GIA_TRI>
+      <TRI_SO_BT>4.0 - 10.0</TRI_SO_BT>
+      <NGAY_KQ>202607201015</NGAY_KQ>
+    </CLS>
+    <CLS>
+      <STT>2</STT>
+      <MA_DICH_VU>01.002</MA_DICH_VU>
+      <MA_CHI_SO>RBC</MA_CHI_SO>
+      <TEN_CHI_SO>Hồng cầu (RBC)</TEN_CHI_SO>
+      <GIA_TRI>4.2</GIA_TRI>
+      <TRI_SO_BT>3.8 - 5.5</TRI_SO_BT>
+      <NGAY_KQ>202607201015</NGAY_KQ>
+    </CLS>
+  </DSACH_CHI_TIET_CLS>
+
+  <!-- BẢNG XML 5: DIỄN BIẾN LÂM SÀNG -->
+  <DSACH_CHI_TIET_DIEN_BIEN_BENH>
+    <DIEN_BIEN_BENH>
+      <STT>1</STT>
+      <NGAY_YL>202607192200</NGAY_YL>
+      <DIEN_BIEN>Bệnh nhân sốt cao 39 độ, ho có đờm, khó thở nhẹ</DIEN_BIEN>
+      <HOI_CHAN>Kháng sinh Cefotaxim, hạ sốt Paracetamol</HOI_CHAN>
+      <MA_BAC_SI>000199/QNG-CCHN</MA_BAC_SI>
+    </DIEN_BIEN_BENH>
+    <DIEN_BIEN_BENH>
+      <STT>2</STT>
+      <NGAY_YL>202607210830</NGAY_YL>
+      <DIEN_BIEN>Bệnh nhân cắt sốt, thở êm, phổi còn ít ran ẩm</DIEN_BIEN>
+      <HOI_CHAN>Tiếp tục duy trì phác đồ điều trị</HOI_CHAN>
+      <MA_BAC_SI>000199/QNG-CCHN</MA_BAC_SI>
+    </DIEN_BIEN_BENH>
+  </DSACH_CHI_TIET_DIEN_BIEN_BENH>
+</HOSO>`;
+
+  parseXmlString(sampleXml, 'Sample_Full_XML1_to_XML5.xml');
+
+  // Thêm dữ liệu mẫu điều chỉnh XML 1
+  const benhField = listXml1Fields.find(f => f.name === 'MA_BENH');
+  if (benhField) {
+    benhField.selected = true;
+    benhField.dc = 'J18.9';
+    benhField.lydo = 'Điều chỉnh mã ICD-10 theo đúng chẩn đoán ra viện';
+  }
+
+  // Thêm dữ liệu mẫu điều chỉnh XML 3 (Dòng 24 DVKT)
+  const dv24 = listXml3.find(c => c.sttXml == '24');
+  if (dv24) {
+    dv24.lydoTuchoi = 'Kích nhầm mã bác sĩ (1)';
+    dv24.lydoDc = 'Điều chỉnh đúng mã CCHN của bác sĩ điều trị';
+    dv24.adjustments = [
+      { field: 'MA_BAC_SI', goc: '000199/QNG-CCHN', dc: '005367/QNG-CCHN' }
+    ];
+  }
+
+  renderXml1Table(listXml1Fields);
+  renderTableXml3(listXml3);
+  updateXml1Count();
+  updateTotalBadge();
+  renderSummaryTable();
+  updateXmlPreview();
+}
+</script>
+
+</body>
+</html>
