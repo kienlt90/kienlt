@@ -315,6 +315,9 @@
       <div class="subtitle">Đưa toàn bộ trường dữ liệu của từng bảng XML lên: <b>Dữ liệu gốc ➜ Dữ liệu sửa</b> (Loại hồ sơ 73 - &lt;HOSO_DIEUCHINH_GD&gt;)</div>
     </div>
     <div style="display:flex; gap:10px;">
+      <button class="btn btn-outline" style="color:#0f172a; background:#e0f2fe; border:1px solid #7dd3fc;" onclick="openPasteXmlModal()">
+        <span>📋</span> Dán Mã XML
+      </button>
       <button class="btn btn-outline" style="color:#0f172a; background:#fef08a; border:none;" onclick="loadSampleData()">
         <span>⚡</span> Nạp Dữ Liệu Mẫu
       </button>
@@ -884,26 +887,97 @@ function handleFileSelect(e) {
   if (e.target.files.length > 0) processFile(e.target.files[0]);
 }
 
-function processFile(file) {
-  document.getElementById('file_status').textContent = `Đang đọc file: ${file.name}`;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    parseXmlString(e.target.result, file.name);
-  };
-  reader.readAsText(file);
+
+// Helper giải mã Base64 chuẩn UTF-8 (Tiếng Việt)
+function decodeBase64Utf8(str) {
+  try {
+    const clean = str.replace(/\s+/g, '');
+    const binary = atob(clean);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return new TextDecoder('utf-8').decode(bytes);
+  } catch (e) {
+    try {
+      return decodeURIComponent(escape(atob(str.replace(/\s+/g, ''))));
+    } catch (e2) {
+      return atob(str.replace(/\s+/g, ''));
+    }
+  }
 }
 
-// BÓC TÁCH XML TỪ HIS: ĐỦ TẤT CẢ CÁC BẢNG 1, 2, 3, 4, 5
+function openPasteXmlModal() {
+  document.getElementById('paste_xml_modal').style.display = 'flex';
+  document.getElementById('txt_paste_xml').value = '';
+  document.getElementById('txt_paste_xml').focus();
+}
+
+function submitPasteXml() {
+  const txt = document.getElementById('txt_paste_xml').value.trim();
+  if (!txt) {
+    alert('Vui lòng dán nội dung XML!');
+    return;
+  }
+  closeModal('paste_xml_modal');
+  parseXmlString(txt, 'Nội dung dán trực tiếp');
+}
+
+function processFile(file) {
+  if (!file) return;
+  document.getElementById('file_status').textContent = `Đang đọc file: ${file.name} (${(file.size / 1024).toFixed(1)} KB)...`;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      parseXmlString(e.target.result, file.name);
+    } catch (err) {
+      console.error(err);
+      alert('Lỗi xử lý file XML: ' + err.message);
+      document.getElementById('file_status').textContent = 'Lỗi nạp file: ' + err.message;
+    }
+  };
+  reader.onerror = function() {
+    alert('Không thể đọc file từ thiết bị!');
+    document.getElementById('file_status').textContent = 'Lỗi đọc file từ đĩa.';
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+// BÓC TÁCH XML ĐA ĐỊNH DẠNG:
+// 1. File Giám định Cổng BHXH (GIAMDINHHS) chứa Base64 NOIDUNGFILE hoặc XML con
+// 2. File Mẫu 09/BH đã tạo (HOSO_DIEUCHINH_GD) có hoặc không có chữ ký số
+// 3. File XML trực tiếp từ HIS (XML1 -> XML5)
 function parseXmlString(xmlText, fileName) {
   try {
+    if (!xmlText) return;
+
+    // 1. Làm sạch ký tự BOM và khoảng trắng trước thẻ XML
+    xmlText = xmlText.replace(/^\uFEFF/, '').trim();
+    const xmlStart = xmlText.indexOf('<?xml');
+    if (xmlStart > 0) {
+      xmlText = xmlText.substring(xmlStart);
+    } else if (xmlStart === -1 && xmlText.indexOf('<') > 0) {
+      xmlText = xmlText.substring(xmlText.indexOf('<'));
+    }
+
     const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlText, 'text/xml');
+    let doc = parser.parseFromString(xmlText, 'text/xml');
+
+    // Tự động sửa lỗi dấu & trần nếu có parsererror
     if (doc.getElementsByTagName('parsererror').length > 0) {
-      alert('Lỗi đọc cú pháp XML! Vui lòng kiểm tra lại file.');
-      return;
+      const repaired = xmlText.replace(/&(?!(amp|lt|gt|quot|apos|#\d+|#x[a-fA-F0-9]+);)/g, '&amp;');
+      const docRepaired = parser.parseFromString(repaired, 'text/xml');
+      if (docRepaired.getElementsByTagName('parsererror').length === 0) {
+        doc = docRepaired;
+      } else {
+        const errMsg = doc.getElementsByTagName('parsererror')[0].textContent;
+        alert('Lỗi cú pháp XML trong file! Vui lòng kiểm tra lại file.\nChi tiết: ' + errMsg.substring(0, 180));
+        return;
+      }
     }
 
     const getVal = (node, tagList) => {
+      if (!node) return '';
       for (const t of tagList) {
         const el = node.querySelector(t);
         if (el && el.textContent.trim()) return el.textContent.trim();
@@ -911,14 +985,159 @@ function parseXmlString(xmlText, fileName) {
       return '';
     };
 
-    // 1. BẢNG XML 1 (Tổng hợp)
-    let xml1Node = doc.querySelector('THONGTINBENHNHAN, TONG_HOP, TT_XML1, XML1');
-    if (!xml1Node) xml1Node = doc.documentElement;
+    // ================= TRƯỜNG HỢP 1: FILE MẪU 09/BH ĐÃ CÓ (<HOSO_DIEUCHINH_GD>) =================
+    const isMau09 = doc.querySelector('HOSO_DIEUCHINH_GD, TT_HOSO') !== null;
+    if (isMau09) {
+      const ttMau = doc.querySelector('TT_MAU');
+      if (ttMau) {
+        const cskcb = getVal(ttMau, ['MA_CSKCB']);
+        if (cskcb) document.getElementById('cfg_ma_cskcb').value = cskcb;
+        const ngLap = getVal(ttMau, ['NGUOILAPBIEU']);
+        if (ngLap) document.getElementById('cfg_nguoi_lap').value = ngLap;
+        const thuTruong = getVal(ttMau, ['THUTRUONG_DV']);
+        if (thuTruong) document.getElementById('cfg_thu_truong').value = thuTruong;
+        const ngayLap = getVal(ttMau, ['NGAYTHANGNAM']);
+        if (ngayLap) document.getElementById('cfg_ngay_lap').value = ngayLap;
+      }
+
+      const ttXml1 = doc.querySelector('TT_XML1');
+      if (ttXml1) {
+        currentPatient.maLk = getVal(ttXml1, ['MA_LK', 'maLk']);
+        currentPatient.maBn = getVal(ttXml1, ['MA_BN', 'maBn']);
+        currentPatient.hoTen = getVal(ttXml1, ['HO_TEN', 'hoTen', 'HOTEN']);
+        currentPatient.maThe = getVal(ttXml1, ['MA_THE', 'MA_THE_BHYT', 'maThe']);
+        currentPatient.ngayVao = getVal(ttXml1, ['NGAY_VAO', 'ngayVao']);
+        currentPatient.ngayRa = getVal(ttXml1, ['NGAY_RA', 'ngayRa']);
+        currentPatient.kyQt = getVal(ttXml1, ['KY_QT', 'KY_QUYET_TOAN', 'kyQt']) || (currentPatient.ngayRa ? currentPatient.ngayRa.substring(0, 6) : '202609');
+        currentPatient.xml1Id = getVal(ttXml1, ['XML1_ID', 'ID_XML1']) || '';
+        const ttChung = getVal(ttXml1, ['TRANGTHAI']) || '2';
+        document.getElementById('xml1_trang_thai').value = ttChung;
+      }
+
+      // Xây dựng danh sách trường XML1
+      listXml1Fields = [];
+      let stt1 = 1;
+      for (const [fName, fDesc] of Object.entries(XML1_DICT)) {
+        listXml1Fields.push({
+          stt: stt1++, name: fName, desc: fDesc, goc: currentPatient[fName] || '', dc: '', lydo: '', selected: false
+        });
+      }
+
+      // Nạp các điều chỉnh XML1 từ <DS_XML1_DIEUCHINH>
+      const xml1DcNodes = doc.querySelectorAll('DS_XML1_DIEUCHINH > TT_XML1_DC');
+      xml1DcNodes.forEach(node => {
+        const truong = getVal(node, ['TRUONG_TT_DIEUCHINH', 'TRUONG_TT_GOC']);
+        const ttGoc = getVal(node, ['TT_GOC']);
+        const ttDc = getVal(node, ['TT_DIEUCHINH']);
+        const lyDo = getVal(node, ['LYDO_DIEUCHINH']);
+
+        let f = listXml1Fields.find(x => x.name === truong);
+        if (f) {
+          f.selected = true;
+          f.goc = ttGoc || f.goc;
+          f.dc = ttDc;
+          f.lydo = lyDo;
+        } else {
+          listXml1Fields.push({
+            stt: stt1++, name: truong, desc: 'Trường điều chỉnh', goc: ttGoc, dc: ttDc, lydo: lyDo, selected: true
+          });
+        }
+      });
+
+      // Nạp các điều chỉnh chi phí từ <DSCP_DIEUCHINH>
+      listXml2 = []; listXml3 = []; listXml4 = []; listXml5 = [];
+      const cpNodes = doc.querySelectorAll('DSCP_DIEUCHINH > CHIPHI_DIEUCHINH');
+      let idxCp = 1;
+      cpNodes.forEach(node => {
+        const soBang = getVal(node, ['SO_BANG_XML']) || '3';
+        const sttXml = getVal(node, ['STT_XML']) || idxCp;
+        const idCp = getVal(node, ['ID_CP']) || '';
+        const maDv = getVal(node, ['MA_DICH_VU']);
+        const tenDv = getVal(node, ['TEN_DICH_VU']);
+        const dvt = getVal(node, ['DON_VI_TINH']);
+        const ngayYl = getVal(node, ['NGAY_YL']);
+        const maBs = getVal(node, ['MA_BAC_SI']);
+        const donGia = getVal(node, ['DON_GIA']);
+        const soLuong = getVal(node, ['SO_LUONG']);
+        const thanhTien = getVal(node, ['THANH_TIEN']);
+        const trangThai = getVal(node, ['TRANG_THAI']) || '2';
+        const lyDoDc = getVal(node, ['LYDO_DIEUCHINH']);
+
+        const adjs = [];
+        node.querySelectorAll('DS_TRUONG_DIEUCHINH > TRUONG_DIEUCHINH').forEach(tdc => {
+          adjs.push({
+            field: getVal(tdc, ['TEN_TRUONG']),
+            goc: getVal(tdc, ['TT_GOC']),
+            dc: getVal(tdc, ['TT_DIEUCHINH'])
+          });
+        });
+
+        const item = {
+          id: `${soBang}_${idxCp}`, sobangXml: soBang, sttXml: sttXml, idCp: idCp,
+          maDv: maDv, tenDv: tenDv, dvt: dvt, ngayYl: ngayYl, maBs: maBs,
+          donGia: donGia, soLuong: soLuong, thanhTien: thanhTien, rawFields: {},
+          adjustments: adjs, trangThai: trangThai, lydoTuchoi: '', lydoDc: lyDoDc
+        };
+
+        if (soBang === '2') listXml2.push(item);
+        else if (soBang === '3') listXml3.push(item);
+        else if (soBang === '4') listXml4.push(item);
+        else if (soBang === '5') listXml5.push(item);
+        idxCp++;
+      });
+
+      finishLoading(fileName, `Đã nạp thành công Mẫu 09/BH: ${currentPatient.hoTen || currentPatient.maLk}`);
+      return;
+    }
+
+    // ================= TRƯỜNG HỢP 2 & 3: FILE GỐC TỪ HIS / CỔNG GIÁM ĐỊNH (GIAMDINHHS / XML1-5) =================
+    // 1. Kiểm tra mã CSKCB từ THONGTINDONVI
+    const maCskcbEl = doc.querySelector('THONGTINDONVI > MACSKCB, MACSKCB');
+    if (maCskcbEl && maCskcbEl.textContent.trim()) {
+      document.getElementById('cfg_ma_cskcb').value = maCskcbEl.textContent.trim();
+    }
+
+    // 2. Kiểm tra nếu có các thẻ <FILEHOSO> (Gói hồ sơ Cổng BHXH)
+    let xml1Doc = null, xml2Doc = null, xml3Doc = null, xml4Doc = null, xml5Doc = null;
+    const fileHosoList = doc.querySelectorAll('FILEHOSO');
+    if (fileHosoList.length > 0) {
+      fileHosoList.forEach(fh => {
+        const loai = (fh.querySelector('LOAIHOSO')?.textContent || '').trim().toUpperCase();
+        const noidungNode = fh.querySelector('NOIDUNGFILE');
+        if (!noidungNode) return;
+
+        let subDoc = null;
+        if (noidungNode.children.length > 0) {
+          subDoc = noidungNode;
+        } else {
+          let rawTxt = (noidungNode.textContent || '').trim();
+          if (rawTxt && !rawTxt.startsWith('<')) {
+            rawTxt = decodeBase64Utf8(rawTxt);
+          }
+          if (rawTxt) {
+            subDoc = parser.parseFromString(rawTxt, 'text/xml');
+          }
+        }
+
+        if (subDoc) {
+          if (loai === 'XML1') xml1Doc = subDoc;
+          else if (loai === 'XML2') xml2Doc = subDoc;
+          else if (loai === 'XML3') xml3Doc = subDoc;
+          else if (loai === 'XML4') xml4Doc = subDoc;
+          else if (loai === 'XML5') xml5Doc = subDoc;
+        }
+      });
+    }
+
+    // Nạp Bảng XML 1
+    const xml1Source = xml1Doc || doc;
+    let xml1Node = xml1Source.querySelector('THONGTINBENHNHAN, TONG_HOP, TT_XML1, XML1');
+    if (!xml1Node) xml1Node = xml1Source.documentElement;
 
     currentPatient.maLk = getVal(xml1Node, ['MA_LK', 'maLk']);
     currentPatient.maBn = getVal(xml1Node, ['MA_BN', 'maBn']);
     currentPatient.hoTen = getVal(xml1Node, ['HO_TEN', 'hoTen', 'HOTEN']);
-    currentPatient.maThe = getVal(xml1Node, ['MA_THE', 'maThe']);
+    currentPatient.maThe = getVal(xml1Node, ['MA_THE', 'MA_THE_BHYT', 'maThe', 'SO_THE_BHYT']);
     currentPatient.ngayVao = getVal(xml1Node, ['NGAY_VAO', 'ngayVao']);
     currentPatient.ngayRa = getVal(xml1Node, ['NGAY_RA', 'ngayRa']);
 
@@ -926,10 +1145,9 @@ function parseXmlString(xmlText, fileName) {
     if (!kyQt && currentPatient.ngayRa && currentPatient.ngayRa.length >= 6) {
       kyQt = currentPatient.ngayRa.substring(0, 6);
     }
-    currentPatient.kyQt = kyQt || '202607';
-    currentPatient.xml1Id = getVal(xml1Node, ['XML1_ID', 'ID_XML1', 'id']) || currentPatient.maLk || '123456789';
+    currentPatient.kyQt = kyQt || '202609';
+    currentPatient.xml1Id = getVal(xml1Node, ['XML1_ID', 'ID_XML1', 'id']) || currentPatient.maLk || '';
 
-    // Đưa toàn bộ trường XML1 lên
     listXml1Fields = [];
     const xml1Found = {};
     xml1Node.querySelectorAll('*').forEach(el => {
@@ -946,14 +1164,15 @@ function parseXmlString(xmlText, fileName) {
     }
     for (const [extraK, extraV] of Object.entries(xml1Found)) {
       listXml1Fields.push({
-        stt: stt1++, name: extraK, desc: 'Trường tùy chỉnh trong XML', goc: extraV, dc: '', lydo: '', selected: false
+        stt: stt1++, name: extraK, desc: 'Trường trong XML', goc: extraV, dc: '', lydo: '', selected: false
       });
     }
 
-    // 2. BẢNG XML 2 (Thuốc)
+    // Nạp Bảng XML 2 (Thuốc)
     listXml2 = [];
     let stt2 = 1;
-    const thuocNodes = doc.querySelectorAll('CHI_TIET_THUOC, THUOC, DSACH_CHI_TIET_THUOC > *');
+    const xml2Source = xml2Doc || doc;
+    const thuocNodes = xml2Source.querySelectorAll('CHI_TIET_THUOC, THUOC, DSACH_CHI_TIET_THUOC > *');
     thuocNodes.forEach(node => {
       if (node.children.length === 0) return;
       const ma = getVal(node, ['MA_THUOC', 'MA_THUOC_CS']);
@@ -972,10 +1191,11 @@ function parseXmlString(xmlText, fileName) {
       stt2++;
     });
 
-    // 3. BẢNG XML 3 (DVKT & VTYT & Giường)
+    // Nạp Bảng XML 3 (DVKT & VTYT)
     listXml3 = [];
     let stt3 = 1;
-    const dvktNodes = doc.querySelectorAll('CHI_TIET_DVKT, DVKT, DSACH_CHI_TIET_DVKT > *');
+    const xml3Source = xml3Doc || doc;
+    const dvktNodes = xml3Source.querySelectorAll('CHI_TIET_DVKT, DVKT, DSACH_CHI_TIET_DVKT > *');
     dvktNodes.forEach(node => {
       if (node.children.length === 0) return;
       const ma = getVal(node, ['MA_DICH_VU', 'MA_DV', 'MA_VAT_TU']);
@@ -994,10 +1214,11 @@ function parseXmlString(xmlText, fileName) {
       stt3++;
     });
 
-    // 4. BẢNG XML 4 (Kết quả CLS)
+    // Nạp Bảng XML 4 (Kết quả CLS)
     listXml4 = [];
     let stt4 = 1;
-    const clsNodes = doc.querySelectorAll('CHI_TIET_CLS, CLS, KET_QUA_CLS, DSACH_CHI_TIET_CLS > *');
+    const xml4Source = xml4Doc || doc;
+    const clsNodes = xml4Source.querySelectorAll('CHI_TIET_CLS, CLS, KET_QUA_CLS, DSACH_CHI_TIET_CLS > *');
     clsNodes.forEach(node => {
       if (node.children.length === 0) return;
       const rawF = {};
@@ -1012,10 +1233,11 @@ function parseXmlString(xmlText, fileName) {
       stt4++;
     });
 
-    // 5. BẢNG XML 5 (Diễn biến bệnh)
+    // Nạp Bảng XML 5 (Diễn biến bệnh)
     listXml5 = [];
     let stt5 = 1;
-    const dbNodes = doc.querySelectorAll('CHI_TIET_DIEN_BIEN_BENH, DIEN_BIEN_BENH, DSACH_CHI_TIET_DIEN_BIEN_BENH > *');
+    const xml5Source = xml5Doc || doc;
+    const dbNodes = xml5Source.querySelectorAll('CHI_TIET_DIEN_BIEN_BENH, DIEN_BIEN_BENH, DSACH_CHI_TIET_DIEN_BIEN_BENH > *');
     dbNodes.forEach(node => {
       if (node.children.length === 0) return;
       const rawF = {};
@@ -1030,40 +1252,44 @@ function parseXmlString(xmlText, fileName) {
       stt5++;
     });
 
-    // Cập nhật Banner (dạng input có thể sửa)
-    document.getElementById('patient_bar').style.display = 'flex';
-    document.getElementById('pb_ho_ten').value = currentPatient.hoTen || '';
-    document.getElementById('pb_ma_bn').value = currentPatient.maBn || '';
-    document.getElementById('pb_ma_lk').value = currentPatient.maLk || '';
-    document.getElementById('pb_ma_the').value = currentPatient.maThe || '';
-    document.getElementById('pb_ngay_vao').value = currentPatient.ngayVao || '';
-    document.getElementById('pb_ngay_ra').value = currentPatient.ngayRa || '';
-    document.getElementById('pb_ky_qt').value = currentPatient.kyQt || '';
-
-    // Badges đếm
-    document.getElementById('badge_xml1_count').textContent = `${listXml1Fields.length} trường`;
-    document.getElementById('badge_xml2_count').textContent = listXml2.length;
-    document.getElementById('badge_xml3_count').textContent = listXml3.length;
-    document.getElementById('badge_xml4_count').textContent = listXml4.length;
-    document.getElementById('badge_xml5_count').textContent = listXml5.length;
-
-    renderXml1Table(listXml1Fields);
-    renderTableXml2(listXml2);
-    renderTableXml3(listXml3);
-    renderTableXml4(listXml4);
-    renderTableXml5(listXml5);
-    updateTotalBadge();
-    renderSummaryTable();
-    updateXmlPreview();
-
-    document.getElementById('file_status').textContent = `Đã nạp ${fileName || 'dữ liệu'}: Đầy đủ XML 1 (${listXml1Fields.length}), XML 2 (${listXml2.length}), XML 3 (${listXml3.length}), XML 4 (${listXml4.length}), XML 5 (${listXml5.length}).`;
+    finishLoading(fileName, `Đã nạp file: ${currentPatient.hoTen || currentPatient.maLk || 'Hồ sơ KCB'}`);
   } catch (err) {
     console.error(err);
     alert('Lỗi nạp file XML: ' + err.message);
   }
 }
 
-// Xử lý khi người dùng trực tiếp sửa thông tin bệnh nhân trên Header Banner
+function finishLoading(fileName, msg) {
+  // Cập nhật Banner thông tin bệnh nhân
+  document.getElementById('patient_bar').style.display = 'flex';
+  document.getElementById('pb_ho_ten').value = currentPatient.hoTen || '';
+  document.getElementById('pb_ma_bn').value = currentPatient.maBn || '';
+  document.getElementById('pb_ma_lk').value = currentPatient.maLk || '';
+  document.getElementById('pb_ma_the').value = currentPatient.maThe || '';
+  document.getElementById('pb_ngay_vao').value = currentPatient.ngayVao || '';
+  document.getElementById('pb_ngay_ra').value = currentPatient.ngayRa || '';
+  document.getElementById('pb_ky_qt').value = currentPatient.kyQt || '';
+
+  // Badges đếm
+  document.getElementById('badge_xml1_count').textContent = `${listXml1Fields.length} trường`;
+  document.getElementById('badge_xml2_count').textContent = listXml2.length;
+  document.getElementById('badge_xml3_count').textContent = listXml3.length;
+  document.getElementById('badge_xml4_count').textContent = listXml4.length;
+  document.getElementById('badge_xml5_count').textContent = listXml5.length;
+
+  renderXml1Table(listXml1Fields);
+  renderTableXml2(listXml2);
+  renderTableXml3(listXml3);
+  renderTableXml4(listXml4);
+  renderTableXml5(listXml5);
+  updateTotalBadge();
+  renderSummaryTable();
+  updateXmlPreview();
+
+  document.getElementById('file_status').textContent = `${msg} [XML 1 (${listXml1Fields.length}), Thuốc (${listXml2.length}), DVKT (${listXml3.length}), CLS (${listXml4.length}), Diễn biến (${listXml5.length})]`;
+}
+
+
 function onPatientHeaderChange(prop, val) {
   currentPatient[prop] = val;
   let targetFieldName = '';
@@ -2071,6 +2297,27 @@ function loadSampleData() {
   updateXmlPreview();
 }
 </script>
+
+
+<!-- ================= MODAL DÁN NỘI DUNG XML ================= -->
+<div class="modal-overlay" id="paste_xml_modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:white; border-radius:var(--radius); width:100%; max-width:860px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); overflow:hidden;">
+    <div style="padding:14px 20px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center; font-weight:700;">
+      <span>📋 Dán Trực Tiếp Mã XML (File KCB hoặc File Mẫu 09/BH)</span>
+      <button onclick="closeModal('paste_xml_modal')" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+    </div>
+    <div style="padding:20px;">
+      <p style="font-size:12.5px; color:var(--gray-600); margin-bottom:10px;">
+        Dán toàn bộ nội dung file XML vào khung dưới đây rồi bấm <b>"Phân Tích & Nạp Dữ Liệu"</b>:
+      </p>
+      <textarea id="txt_paste_xml" class="form-control" style="font-family:'JetBrains Mono', monospace; font-size:12px; height:320px; width:100%;" placeholder="<?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?> ..."></textarea>
+    </div>
+    <div style="padding:12px 20px; background:var(--gray-50); border-top:1px solid var(--gray-200); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn btn-outline" onclick="closeModal('paste_xml_modal')">Hủy</button>
+      <button class="btn btn-primary" onclick="submitPasteXml()"><span>⚡</span> Phân Tích & Nạp Dữ Liệu</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
