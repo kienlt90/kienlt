@@ -885,6 +885,7 @@ dropZone.addEventListener('drop', (e) => {
 
 function handleFileSelect(e) {
   if (e.target.files.length > 0) processFile(e.target.files[0]);
+  e.target.value = '';
 }
 
 
@@ -1854,9 +1855,6 @@ function updateTotalBadge() {
     if (c.trangThai === '1') cntOthers++;
     else cntOthers += c.adjustments.length;
   });
-  const total = cntX1 + cntOthers;
-  document.getElementById('badge_total_adj').textContent = `${total} mục sửa`;
-}
   const total = cntX1 + cntOthers;
   document.getElementById('badge_total_adj').textContent = `${total} mục sửa`;
 }
