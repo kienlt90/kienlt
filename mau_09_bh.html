@@ -348,8 +348,8 @@
           <input type="text" id="cfg_thu_truong" class="form-control" value="Nguyễn Đình Tuyến" placeholder="Họ tên thủ trưởng">
         </div>
         <div class="form-group">
-          <label>NGÀY LẬP BIỂU (NGAYTHANGNAM) *</label>
-          <input type="text" id="cfg_ngay_lap" class="form-control" value="" placeholder="YYYYMMDD">
+          <label>NGÀY LẬP BIỂU (NGAYTHANGNAM) * (YYYYMM)</label>
+          <input type="text" id="cfg_ngay_lap" class="form-control" value="" placeholder="YYYYMM (ví dụ: 202609)" maxlength="6">
         </div>
       </div>
     </div>
@@ -836,8 +836,7 @@ window.onload = function() {
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  document.getElementById('cfg_ngay_lap').value = `${yyyy}${mm}${dd}`;
+  document.getElementById('cfg_ngay_lap').value = `${yyyy}${mm}`;
 
   if (localStorage.getItem('m09_ma_cskcb')) document.getElementById('cfg_ma_cskcb').value = localStorage.getItem('m09_ma_cskcb');
   if (localStorage.getItem('m09_nguoi_lap')) document.getElementById('cfg_nguoi_lap').value = localStorage.getItem('m09_nguoi_lap');
@@ -1944,7 +1943,13 @@ function generateXml09String() {
   const maCskcb = document.getElementById('cfg_ma_cskcb').value.trim();
   const nguoiLap = document.getElementById('cfg_nguoi_lap').value.trim();
   const thuTruong = document.getElementById('cfg_thu_truong').value.trim();
-  const ngayLap = document.getElementById('cfg_ngay_lap').value.trim();
+  let ngayLap = document.getElementById('cfg_ngay_lap').value.trim();
+  if (ngayLap.length > 6) ngayLap = ngayLap.substring(0, 6);
+  if (!ngayLap) {
+    const d = new Date();
+    ngayLap = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`;
+    document.getElementById('cfg_ngay_lap').value = ngayLap;
+  }
   const trangThaiXml1 = document.getElementById('xml1_trang_thai').value;
 
   localStorage.setItem('m09_ma_cskcb', maCskcb);
