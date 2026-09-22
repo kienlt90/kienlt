@@ -746,48 +746,87 @@
 // ================= DICTIONARIES =================
 const XML1_DICT = {
   'MA_LK': 'Mã liên kết hồ sơ',
+  'STT': 'Số thứ tự lượt KCB',
   'MA_BN': 'Mã người bệnh',
   'HO_TEN': 'Họ và tên người bệnh',
-  'NGAY_SINH': 'Ngày tháng năm sinh',
-  'GIOI_TINH': 'Giới tính (1: Nam, 2: Nữ)',
-  'QUOCTICH': 'Mã quốc tịch',
+  'SO_CCCD': 'Số CCCD / Định danh cá nhân',
+  'NGAY_SINH': 'Ngày tháng năm sinh (YYYYMMDD hoặc YYYY)',
+  'GIOI_TINH': 'Giới tính (1: Nam, 2: Nữ, 3: Chưa xác định)',
+  'NHOM_MAU': 'Nhóm máu (ABO / Rh)',
+  'MA_QUOCTICH': 'Mã quốc tịch',
   'MA_DANTOC': 'Mã dân tộc',
   'MA_NGHE_NGHIEP': 'Mã nghề nghiệp',
-  'DIA_CHI': 'Địa chỉ cư trú',
-  'MATINH_CU_TRU': 'Mã tỉnh cư trú',
-  'MAHUYEN_CU_TRU': 'Mã huyện cư trú',
-  'MAXA_CU_TRU': 'Mã xã cư trú',
-  'MA_THE': 'Mã thẻ BHYT',
+  'DIA_CHI': 'Địa chỉ nơi cư trú',
+  'MATINH_CU_TRU': 'Mã tỉnh/thành phố cư trú',
+  'MAHUYEN_CU_TRU': 'Mã quận/huyện/thị xã cư trú',
+  'MAXA_CU_TRU': 'Mã xã/phường/thị trấn cư trú',
+  'DIEN_THOAI': 'Số điện thoại liên lạc',
+  'MA_THE_BHYT': 'Mã thẻ BHYT',
   'MA_DKBD': 'Mã nơi ĐKKCB ban đầu',
-  'GT_THE_TU': 'Giá trị thẻ từ',
-  'GT_THE_DEN': 'Giá trị thẻ đến',
-  'MIEN_CUNG_CT': 'Ngày miễn cùng chi trả',
-  'MA_BENH': 'Mã bệnh chính (ICD-10)',
-  'MA_BENHKEM': 'Mã bệnh kèm theo (ICD-10)',
+  'GT_THE_TU': 'Giá trị thẻ BHYT từ ngày (YYYYMMDD)',
+  'GT_THE_DEN': 'Giá trị thẻ BHYT đến ngày (YYYYMMDD)',
+  'NGAY_MIEN_CCT': 'Ngày miễn cùng chi trả (YYYYMMDD)',
+  'LY_DO_VV': 'Lý do đến KBCB',
+  'LY_DO_VNT': 'Lý do vào điều trị nội trú',
+  'MA_LY_DO_VNT': 'Mã lý do vào nội trú',
+  'CHAN_DOAN_VAO': 'Chẩn đoán lúc vào viện',
+  'CHAN_DOAN_RV': 'Chẩn đoán lúc ra viện',
+  'MA_BENH_CHINH': 'Mã bệnh chính (ICD-10)',
+  'MA_BENH_KT': 'Mã bệnh kèm theo (ICD-10)',
   'MA_BENH_YHCT': 'Mã bệnh Y học cổ truyền',
-  'MA_LYDO_VVIEN': 'Lý do vào viện (1: Đúng tuyến, 2: Cấp cứu, 3: Trái tuyến)',
-  'MA_NOI_CHUYEN': 'Mã nơi chuyển viện',
-  'MA_TAI_NAN': 'Mã tai nạn',
-  'NGAY_VAO': 'Ngày giờ vào viện (YYYYMMDDhhmm)',
-  'NGAY_RA': 'Ngày giờ ra viện (YYYYMMDDhhmm)',
-  'SO_NGAY_DTRI': 'Số ngày điều trị',
+  'MA_PTTT_QT': 'Mã phẫu thuật thủ thuật quốc tế (ICD-9 CM)',
+  'MA_DOITUONG_KCB': 'Mã đối tượng đến KBCB',
+  'MA_NOI_DI': 'Mã CSKCB chuyển đi',
+  'MA_NOI_DEN': 'Mã CSKCB chuyển đến',
+  'MA_TAI_NAN': 'Mã tai nạn thương tích',
+  'NGAY_VAO': 'Thời điểm vào khám/nhập viện (YYYYMMDDHHMM)',
+  'NGAY_VAO_NOI_TRU': 'Thời điểm vào điều trị nội trú (YYYYMMDDHHMM)',
+  'NGAY_RA': 'Thời điểm kết thúc đợt KCB/ra viện (YYYYMMDDHHMM)',
+  'GIAY_CHUYEN_TUYEN': 'Số giấy chuyển tuyến / hẹn khám lại',
+  'SO_NGAY_DTRI': 'Số ngày điều trị thực tế',
+  'PP_DIEU_TRI': 'Phương pháp điều trị',
   'KET_QUA_DTRI': 'Kết quả điều trị (1: Khỏi, 2: Đỡ, 3: Không đổi, 4: Nặng, 5: Tử vong)',
-  'TINH_TRANG_RV': 'Tình trạng ra viện (1: Ra viện, 2: Chuyển viện, 3: Trốn viện, 4: Xin về)',
-  'NGAY_TTOAN': 'Ngày thanh toán chi phí',
-  'T_TONGCHI': 'Tổng chi phí KCB',
-  'T_CHUYENTIEN': 'Tiền chuyển viện',
-  'T_BNTT': 'Tiền bệnh nhân thanh toán',
-  'T_BHTT': 'Tiền BHXH thanh toán',
-  'T_BNCT': 'Tiền bệnh nhân cùng chi trả',
-  'T_NGOAIDS': 'Tiền ngoài phạm vi BHYT',
-  'NAM_QT': 'Năm quyết toán',
-  'THANG_QT': 'Tháng quyết toán',
+  'MA_LOAI_RV': 'Loại ra viện (1: Ra viện, 2: C.tuyến CM, 3: Trốn viện, 4: Xin về, 5: C.tuyến YC)',
+  'GHI_CHU': 'Lời dặn của bác sĩ / Ghi chú',
+  'NGAY_TTOAN': 'Thời điểm thanh toán chi phí (YYYYMMDDHHMM)',
+  'T_THUOC': 'Tổng tiền thuốc (XML2)',
+  'T_VTYT': 'Tổng tiền vật tư y tế (XML3)',
+  'T_TONGCHI_BV': 'Tổng chi phí KCB (BV)',
+  'T_TONGCHI_BH': 'Tổng chi phí KCB trong phạm vi BHYT',
+  'T_BNTT': 'Tổng tiền người bệnh tự trả ngoài BHYT',
+  'T_BNCCT': 'Tổng tiền người bệnh cùng chi trả BHYT',
+  'T_BHTT': 'Tổng tiền đề nghị BHYT thanh toán',
+  'T_NGUONKHAC': 'Tổng tiền nguồn khác chi trả',
+  'T_BHTT_GDV': 'Tiền BHYT thanh toán ngoài định suất/DRG (Gói DV)',
+  'NAM_QT': 'Năm quyết toán (YYYY)',
+  'THANG_QT': 'Tháng quyết toán (MM)',
   'MA_LOAI_KCB': 'Loại KCB (1: Khám, 2: Ngoại trú, 3: Nội trú)',
-  'MA_KHOA': 'Mã khoa ra viện',
+  'MA_KHOA': 'Mã khoa điều trị / kết thúc KCB',
   'MA_CSKCB': 'Mã cơ sở KCB',
   'MA_KHUVUC': 'Mã khu vực sống (K1, K2, K3)',
-  'MA_PTTT_QT': 'Phương thức thanh toán quyết toán',
-  'CAN_NANG': 'Cân nặng (kg)'
+  'CAN_NANG': 'Cân nặng người bệnh (kg)',
+  'CAN_NANG_CON': 'Cân nặng con mới sinh (gram)',
+  'NAM_NAM_LIEN_TUC': 'Thời điểm đủ 5 năm liên tục (YYYYMMDD)',
+  'NGAY_TAI_KHAM': 'Ngày hẹn tái khám (YYYYMMDD)',
+  'MA_HSBA': 'Mã hồ sơ bệnh án / số phiếu khám',
+  'MA_TTDV': 'Mã thủ trưởng đơn vị / người ký hồ sơ',
+  'DU_PHONG': 'Trường dữ liệu dự phòng'
+};
+
+// Bản đồ đối soát tương thích ngược (Legacy / QĐ 4210 -> QĐ 130/4750/3176)
+const XML1_ALIASES = {
+  'MA_THE_BHYT': ['MA_THE', 'SO_THE_BHYT', 'maThe'],
+  'MA_QUOCTICH': ['QUOCTICH'],
+  'NGAY_MIEN_CCT': ['MIEN_CUNG_CT', 'NGAY_MIEN_CUNG_CHI_TRA'],
+  'MA_BENH_CHINH': ['MA_BENH', 'MABENH_CHINH'],
+  'MA_BENH_KT': ['MA_BENHKEM', 'MA_BENH_PHU'],
+  'MA_NOI_DI': ['MA_NOI_CHUYEN'],
+  'MA_LOAI_RV': ['TINH_TRANG_RV', 'MA_LOAI_RA_VIEN'],
+  'T_TONGCHI_BV': ['T_TONGCHI', 'T_TONG_CHI'],
+  'T_BNCCT': ['T_BNCT', 'TIEN_BNCT'],
+  'MA_LK': ['maLk'],
+  'MA_BN': ['maBn'],
+  'HO_TEN': ['hoTen', 'HOTEN']
 };
 
 const COMMON_FIELD_DICT = {
@@ -1032,6 +1071,14 @@ function parseXmlString(xmlText, fileName) {
         const lyDo = getVal(node, ['LYDO_DIEUCHINH']);
 
         let f = listXml1Fields.find(x => x.name === truong);
+        if (!f && typeof XML1_ALIASES !== 'undefined') {
+          for (const [canon, alts] of Object.entries(XML1_ALIASES)) {
+            if (alts.includes(truong)) {
+              f = listXml1Fields.find(x => x.name === canon);
+              break;
+            }
+          }
+        }
         if (f) {
           f.selected = true;
           f.goc = ttGoc || f.goc;
@@ -1156,7 +1203,19 @@ function parseXmlString(xmlText, fileName) {
 
     let stt1 = 1;
     for (const [fName, fDesc] of Object.entries(XML1_DICT)) {
-      const valGoc = xml1Found[fName] !== undefined ? xml1Found[fName] : (currentPatient[fName] || '');
+      let valGoc = xml1Found[fName];
+      if (valGoc === undefined && typeof XML1_ALIASES !== 'undefined' && XML1_ALIASES[fName]) {
+        for (const alt of XML1_ALIASES[fName]) {
+          if (xml1Found[alt] !== undefined) {
+            valGoc = xml1Found[alt];
+            delete xml1Found[alt];
+            break;
+          }
+        }
+      }
+      if (valGoc === undefined) {
+        valGoc = currentPatient[fName] || '';
+      }
       listXml1Fields.push({
         stt: stt1++, name: fName, desc: fDesc, goc: valGoc, dc: '', lydo: '', selected: false
       });
@@ -1164,7 +1223,7 @@ function parseXmlString(xmlText, fileName) {
     }
     for (const [extraK, extraV] of Object.entries(xml1Found)) {
       listXml1Fields.push({
-        stt: stt1++, name: extraK, desc: 'Trường trong XML', goc: extraV, dc: '', lydo: '', selected: false
+        stt: stt1++, name: extraK, desc: 'Trường khác trong XML', goc: extraV, dc: '', lydo: '', selected: false
       });
     }
 
