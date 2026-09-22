@@ -840,9 +840,19 @@ const XML1_ALIASES = {
 const COMMON_FIELD_DICT = {
   'MA_BAC_SI': 'Mã chứng chỉ hành nghề bác sĩ',
   'DON_GIA': 'Đơn giá',
+  'DON_GIA_BV': 'Đơn giá bệnh viện',
+  'DON_GIA_BH': 'Đơn giá BHYT',
   'SO_LUONG': 'Số lượng',
   'TYLE_TT': 'Tỷ lệ thanh toán (%)',
+  'TYLE_TT_DV': 'Tỷ lệ thanh toán dịch vụ (%)',
+  'TYLE_TT_BH': 'Tỷ lệ thanh toán BHYT (%)',
   'THANH_TIEN': 'Thành tiền',
+  'THANH_TIEN_BV': 'Thành tiền bệnh viện',
+  'THANH_TIEN_BH': 'Thành tiền BHYT',
+  'T_BHTT': 'Tiền BHYT thanh toán',
+  'T_BNCCT': 'Tiền bệnh nhân cùng chi trả',
+  'T_BNTT': 'Tiền bệnh nhân tự trả',
+  'T_NGUONKHAC': 'Tiền nguồn khác chi trả',
   'NGAY_YL': 'Ngày y lệnh (YYYYMMDDhhmm)',
   'NGAY_KQ': 'Ngày có kết quả (YYYYMMDDhhmm)',
   'MA_DICH_VU': 'Mã dịch vụ kỹ thuật',
@@ -1099,46 +1109,111 @@ function parseXmlString(xmlText, fileName) {
         }
       });
 
+      const ttHosoEl = doc.querySelector('TT_HOSO');
+      if (ttHosoEl && ttHosoEl.getAttribute('Id')) {
+        currentPatient.hosoId = ttHosoEl.getAttribute('Id');
+      }
+
       // Nạp các điều chỉnh chi phí từ <DSCP_DIEUCHINH>
       listXml2 = []; listXml3 = []; listXml4 = []; listXml5 = [];
-      const cpNodes = doc.querySelectorAll('DSCP_DIEUCHINH > CHIPHI_DIEUCHINH');
-      let idxCp = 1;
-      cpNodes.forEach(node => {
-        const soBang = getVal(node, ['SO_BANG_XML']) || '3';
-        const sttXml = getVal(node, ['STT_XML']) || idxCp;
-        const idCp = getVal(node, ['ID_CP']) || '';
-        const maDv = getVal(node, ['MA_DICH_VU']);
-        const tenDv = getVal(node, ['TEN_DICH_VU']);
-        const dvt = getVal(node, ['DON_VI_TINH']);
-        const ngayYl = getVal(node, ['NGAY_YL']);
-        const maBs = getVal(node, ['MA_BAC_SI']);
-        const donGia = getVal(node, ['DON_GIA']);
-        const soLuong = getVal(node, ['SO_LUONG']);
-        const thanhTien = getVal(node, ['THANH_TIEN']);
-        const trangThai = getVal(node, ['TRANG_THAI']) || '2';
-        const lyDoDc = getVal(node, ['LYDO_DIEUCHINH']);
+      const cpNodes = doc.querySelectorAll('DSCP_DIEUCHINH > CHIPHI, DSCP_DIEUCHINH > CHIPHI_DIEUCHINH');
+      const itemsMap = {};
 
-        const adjs = [];
-        node.querySelectorAll('DS_TRUONG_DIEUCHINH > TRUONG_DIEUCHINH').forEach(tdc => {
-          adjs.push({
-            field: getVal(tdc, ['TEN_TRUONG']),
-            goc: getVal(tdc, ['TT_GOC']),
-            dc: getVal(tdc, ['TT_DIEUCHINH'])
+      cpNodes.forEach((node, nodeIdx) => {
+        if (node.tagName === 'CHIPHI' || !node.querySelector('DS_TRUONG_DIEUCHINH')) {
+          // Chuẩn file Mẫu 09/BH: Mỗi thẻ <CHIPHI> là một trường điều chỉnh
+          const soBang = getVal(node, ['SOBANG_XML', 'SO_BANG_XML']) || '3';
+          const sttXml = getVal(node, ['STT_XML']) || String(nodeIdx + 1);
+          const key = `${soBang}_${sttXml}`;
+
+          if (!itemsMap[key]) {
+            itemsMap[key] = {
+              id: key,
+              sobangXml: soBang,
+              sttXml: sttXml,
+              idCp: getVal(node, ['ID_CP']) || '',
+              maDv: '',
+              tenDv: '',
+              dvt: '',
+              ngayYl: getVal(node, ['NGAY_YL']),
+              maBs: '',
+              donGia: '',
+              soLuong: '',
+              thanhTien: '',
+              rawFields: {},
+              adjustments: [],
+              trangThai: getVal(node, ['TRANGTHAI', 'TRANG_THAI']) || '2',
+              tuchoi: getVal(node, ['TUCHOI']) || '0',
+              lydoTuchoi: getVal(node, ['LYDO']) || '',
+              lydoDc: getVal(node, ['LYDO_DIEUCHINH']) || ''
+            };
+          }
+
+          const item = itemsMap[key];
+          const trGoc = getVal(node, ['TRUONG_TT_GOC']);
+          const ttGoc = getVal(node, ['TT_GOC']);
+          const trDc = getVal(node, ['TRUONG_TT_DIEUCHINH']) || trGoc;
+          const ttDc = getVal(node, ['TT_DIEUCHINH']);
+          const lydoDc = getVal(node, ['LYDO_DIEUCHINH']);
+
+          if (trGoc) {
+            item.rawFields[trGoc] = ttGoc;
+            if (trGoc === 'MA_DICH_VU' || trGoc === 'MA_THUOC') item.maDv = ttGoc;
+            if (trGoc === 'TEN_DICH_VU' || trGoc === 'TEN_THUOC') item.tenDv = ttGoc;
+            if (trGoc === 'DON_GIA_BV' || trGoc === 'DON_GIA') item.donGia = ttGoc;
+            if (trGoc === 'THANH_TIEN_BV' || trGoc === 'THANH_TIEN') item.thanhTien = ttGoc;
+            if (trGoc === 'SO_LUONG') item.soLuong = ttGoc;
+            if (trGoc === 'MA_BAC_SI') item.maBs = ttGoc;
+            if (trGoc === 'DON_VI_TINH') item.dvt = ttGoc;
+            if (trGoc === 'MA_CHI_SO') item.maChiSo = ttGoc;
+            if (trGoc === 'TEN_CHI_SO') item.tenChiSo = ttGoc;
+          }
+
+          if (item.trangThai === '2' && trDc && ttDc) {
+            item.adjustments.push({
+              field: trDc,
+              goc: ttGoc,
+              dc: ttDc,
+              lydoDc: lydoDc || ''
+            });
+          }
+        } else {
+          // Định dạng lồng <CHIPHI_DIEUCHINH> cũ
+          const soBang = getVal(node, ['SO_BANG_XML']) || '3';
+          const sttXml = getVal(node, ['STT_XML']) || String(nodeIdx + 1);
+          const key = `${soBang}_${sttXml}`;
+
+          const adjs = [];
+          node.querySelectorAll('DS_TRUONG_DIEUCHINH > TRUONG_DIEUCHINH').forEach(tdc => {
+            adjs.push({
+              field: getVal(tdc, ['TEN_TRUONG']),
+              goc: getVal(tdc, ['TT_GOC']),
+              dc: getVal(tdc, ['TT_DIEUCHINH']),
+              lydoDc: getVal(tdc, ['LYDO_DIEUCHINH']) || getVal(node, ['LYDO_DIEUCHINH']) || ''
+            });
           });
-        });
 
-        const item = {
-          id: `${soBang}_${idxCp}`, sobangXml: soBang, sttXml: sttXml, idCp: idCp,
-          maDv: maDv, tenDv: tenDv, dvt: dvt, ngayYl: ngayYl, maBs: maBs,
-          donGia: donGia, soLuong: soLuong, thanhTien: thanhTien, rawFields: {},
-          adjustments: adjs, trangThai: trangThai, lydoTuchoi: '', lydoDc: lyDoDc
-        };
+          itemsMap[key] = {
+            id: key, sobangXml: soBang, sttXml: sttXml, idCp: getVal(node, ['ID_CP']) || '',
+            maDv: getVal(node, ['MA_DICH_VU']), tenDv: getVal(node, ['TEN_DICH_VU']),
+            dvt: getVal(node, ['DON_VI_TINH']), ngayYl: getVal(node, ['NGAY_YL']),
+            maBs: getVal(node, ['MA_BAC_SI']), donGia: getVal(node, ['DON_GIA']),
+            soLuong: getVal(node, ['SO_LUONG']), thanhTien: getVal(node, ['THANH_TIEN']),
+            rawFields: {}, adjustments: adjs, trangThai: getVal(node, ['TRANG_THAI', 'TRANGTHAI']) || '2',
+            tuchoi: getVal(node, ['TUCHOI']) || '0', lydoTuchoi: getVal(node, ['LYDO']) || '',
+            lydoDc: getVal(node, ['LYDO_DIEUCHINH']) || ''
+          };
+        }
+      });
 
-        if (soBang === '2') listXml2.push(item);
-        else if (soBang === '3') listXml3.push(item);
-        else if (soBang === '4') listXml4.push(item);
-        else if (soBang === '5') listXml5.push(item);
-        idxCp++;
+      Object.values(itemsMap).forEach(item => {
+        if (!item.tenDv && !item.maDv) {
+          item.tenDv = `Dòng chi phí ${item.sttXml}`;
+        }
+        if (item.sobangXml === '2') listXml2.push(item);
+        else if (item.sobangXml === '3') listXml3.push(item);
+        else if (item.sobangXml === '4') listXml4.push(item);
+        else if (item.sobangXml === '5') listXml5.push(item);
       });
 
       finishLoading(fileName, `Đã nạp thành công Mẫu 09/BH: ${currentPatient.hoTen || currentPatient.maLk}`);
@@ -2022,7 +2097,6 @@ function generateXml09String() {
   const nguoiLap = document.getElementById('cfg_nguoi_lap').value.trim();
   const thuTruong = document.getElementById('cfg_thu_truong').value.trim();
   let ngayLap = document.getElementById('cfg_ngay_lap').value.trim();
-  if (ngayLap.length > 6) ngayLap = ngayLap.substring(0, 6);
   if (!ngayLap) {
     const d = new Date();
     ngayLap = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -2034,9 +2108,17 @@ function generateXml09String() {
   localStorage.setItem('m09_nguoi_lap', nguoiLap);
   localStorage.setItem('m09_thu_truong', thuTruong);
 
+  if (!currentPatient.hosoId) {
+    currentPatient.hosoId = 'Id-' + 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
   xml += `<HOSO_DIEUCHINH_GD>\n`;
-  xml += `  <TT_HOSO Id="Id-${escapeXml(currentPatient.maLk || 'HOSO')}">\n`;
+  xml += `  <TT_HOSO Id="${escapeXml(currentPatient.hosoId)}">\n`;
   xml += `    <TT_MAU>\n`;
   xml += `      <MAU_SO>09/BH</MAU_SO>\n`;
   xml += `      <MA_CSKCB>${escapeXml(maCskcb)}</MA_CSKCB>\n`;
