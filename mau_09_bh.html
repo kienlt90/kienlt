@@ -703,7 +703,7 @@
         </div>
         <div class="form-group">
           <label>LÝ DO TỪ CHỐI TỪ BHXH (LYDO / TUCHOI)</label>
-          <input type="text" id="m_cp_lydo_tuchoi" class="form-control" placeholder="vd: Kích nhầm mã bác sĩ (1)">
+          <input type="text" id="m_cp_lydo_tuchoi" class="form-control" placeholder="Nhập lý do từ chối từ BHXH (nếu có)...">
         </div>
       </div>
 
@@ -731,8 +731,8 @@
       </div>
 
       <div class="form-group">
-        <label>LÝ DO ĐIỀU CHỈNH / GIẢI TRÌNH (LYDO_DIEUCHINH) *</label>
-        <textarea id="m_cp_lydo_dc" class="form-control" rows="2" placeholder="Nhập lý do điều chỉnh hoặc giải trình..."></textarea>
+        <label>LÝ DO ĐIỀU CHỈNH / GIẢI TRÌNH (LYDO_DIEUCHINH)</label>
+        <textarea id="m_cp_lydo_dc" class="form-control" rows="2" placeholder="Nhập lý do điều chỉnh hoặc giải trình (nếu có)..."></textarea>
       </div>
     </div>
     <div style="padding:12px 20px; background:var(--gray-50); border-top:1px solid var(--gray-200); display:flex; justify-content:flex-end; gap:10px;">
@@ -1726,8 +1726,8 @@ function openItemModal(itemId) {
   document.getElementById('m_cp_ngay_yl').textContent = formatDateTime(item.ngayYl || item.ngayKq);
 
   document.getElementById('m_cp_trang_thai').value = item.trangThai || '2';
-  document.getElementById('m_cp_lydo_tuchoi').value = item.lydoTuchoi || 'Kích nhầm mã bác sĩ (1)';
-  document.getElementById('m_cp_lydo_dc').value = item.lydoDc || 'Điều chỉnh theo đúng dữ liệu y lệnh thực tế';
+  document.getElementById('m_cp_lydo_tuchoi').value = item.lydoTuchoi || '';
+  document.getElementById('m_cp_lydo_dc').value = item.lydoDc || '';
 
   const tbody = document.getElementById('m_cp_fields_tbody');
   tbody.innerHTML = '';
@@ -1788,9 +1788,6 @@ function toggleCpCancelState() {
     // 1 = ĐỀ NGHỊ HỦY DÒNG
     fieldsArea.style.opacity = '0.5';
     fieldsArea.style.pointerEvents = 'none';
-    if (!document.getElementById('m_cp_lydo_dc').value) {
-      document.getElementById('m_cp_lydo_dc').value = 'Đề nghị hủy dòng này do y lệnh nhầm';
-    }
   } else {
     // 2 = ĐỀ NGHỊ ĐIỀU CHỈNH
     fieldsArea.style.opacity = '1';
@@ -1828,11 +1825,6 @@ function saveModalCpAdjustment() {
   const tt = document.getElementById('m_cp_trang_thai').value;
   const lydoTuchoi = document.getElementById('m_cp_lydo_tuchoi').value.trim();
   const lydoDc = document.getElementById('m_cp_lydo_dc').value.trim();
-
-  if (!lydoDc) {
-    alert('Vui lòng nhập Lý do điều chỉnh / giải trình (LYDO_DIEUCHINH)!');
-    return;
-  }
 
   activeCostModalItem.trangThai = tt;
   activeCostModalItem.lydoTuchoi = lydoTuchoi;
@@ -2053,7 +2045,7 @@ function generateXml09String() {
       xml += `          <TT_GOC>${escapeXml(a.goc)}</TT_GOC>\n`;
       xml += `          <TRUONG_TT_DIEUCHINH>${escapeXml(a.name)}</TRUONG_TT_DIEUCHINH>\n`;
       xml += `          <TT_DIEUCHINH>${escapeXml(a.dc)}</TT_DIEUCHINH>\n`;
-      xml += `          <LYDO_DIEUCHINH>${escapeXml(a.lydo || 'Điều chỉnh thông tin XML 1')}</LYDO_DIEUCHINH>\n`;
+      xml += `          <LYDO_DIEUCHINH>${escapeXml(a.lydo || '')}</LYDO_DIEUCHINH>\n`;
       xml += `        </TT_XML1_DC>\n`;
     });
     xml += `      </DS_XML1_DIEUCHINH>\n`;
@@ -2077,7 +2069,7 @@ function generateXml09String() {
         tuchoi: '1',
         truongDc: c.sobangXml === '2' ? 'MA_THUOC' : (c.sobangXml === '3' ? 'MA_DICH_VU' : 'MA_CHI_SO'),
         ttDc: '',
-        lydoDc: c.lydoDc || 'Đề nghị hủy dòng dữ liệu này'
+        lydoDc: c.lydoDc || ''
       });
     } else {
       // 2 = ĐIỀU CHỈNH DÒNG CHI PHÍ
@@ -2094,7 +2086,7 @@ function generateXml09String() {
           tuchoi: '1',
           truongDc: adj.field,
           ttDc: adj.dc,
-          lydoDc: c.lydoDc || 'Điều chỉnh dữ liệu chi tiết'
+          lydoDc: c.lydoDc || ''
         });
       });
     }
@@ -2338,14 +2330,14 @@ function loadSampleData() {
   if (benhField) {
     benhField.selected = true;
     benhField.dc = 'J18.9';
-    benhField.lydo = 'Điều chỉnh mã ICD-10 theo đúng chẩn đoán ra viện';
+    benhField.lydo = '';
   }
 
   // Thêm dữ liệu mẫu điều chỉnh XML 3 (Dòng 24 DVKT)
   const dv24 = listXml3.find(c => c.sttXml == '24');
   if (dv24) {
-    dv24.lydoTuchoi = 'Kích nhầm mã bác sĩ (1)';
-    dv24.lydoDc = 'Điều chỉnh đúng mã CCHN của bác sĩ điều trị';
+    dv24.lydoTuchoi = '';
+    dv24.lydoDc = '';
     dv24.adjustments = [
       { field: 'MA_BAC_SI', goc: '000199/QNG-CCHN', dc: '005367/QNG-CCHN' }
     ];
