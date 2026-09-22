@@ -666,7 +666,7 @@
 
 <!-- ================= MODAL SỬA DÒNG CHI PHÍ / DỊCH VỤ DẠNG BẢNG ================= -->
 <div class="modal-overlay" id="cp_modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:white; border-radius:var(--radius); width:100%; max-width:820px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); overflow:hidden;">
+  <div style="background:white; border-radius:var(--radius); width:100%; max-width:980px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); overflow:hidden;">
     <div style="padding:14px 20px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center; font-weight:700;">
       <span id="modal_cp_title">Bảng Điều Chỉnh Trường Dữ Liệu Dòng Chi Tiết</span>
       <button onclick="closeModal('cp_modal')" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
@@ -692,8 +692,8 @@
         </div>
       </div>
 
-      <!-- Trạng thái yêu cầu -->
-      <div class="grid-4" style="grid-template-columns:1fr 1fr; gap:15px;">
+      <!-- Trạng thái yêu cầu & Từ chối -->
+      <div class="grid-4" style="grid-template-columns:1.2fr 130px 1.5fr; gap:12px;">
         <div class="form-group">
           <label>TRẠNG THÁI YÊU CẦU CHO DÒNG NÀY *</label>
           <select id="m_cp_trang_thai" class="form-control" style="font-weight:600;" onchange="toggleCpCancelState()">
@@ -702,25 +702,33 @@
           </select>
         </div>
         <div class="form-group">
-          <label>LÝ DO TỪ CHỐI TỪ BHXH (LYDO / TUCHOI)</label>
-          <input type="text" id="m_cp_lydo_tuchoi" class="form-control" placeholder="Nhập lý do từ chối từ BHXH (nếu có)...">
+          <label>TỪ CHỐI (TUCHOI)</label>
+          <select id="m_cp_tuchoi" class="form-control" style="font-weight:600;">
+            <option value="0" selected>0 - Không</option>
+            <option value="1">1 - Có (Bị từ chối)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>LÝ DO TỪ CHỐI TỪ BHXH (LYDO)</label>
+          <input type="text" id="m_cp_lydo_tuchoi" class="form-control" placeholder="Nhập lý do từ chối nếu có...">
         </div>
       </div>
 
-      <!-- BẢNG TOÀN BỘ CÁC TRƯỜNG CỦA DÒNG NÀY: DỮ LIỆU GỐC -> DỮ LIỆU SỬA -->
+      <!-- BẢNG TOÀN BỘ CÁC TRƯỜNG CỦA DÒNG NÀY: DỮ LIỆU GỐC -> DỮ LIỆU SỬA -> LÝ DO ĐIỀU CHỈNH (NHƯ BẢNG XML 1) -->
       <div id="m_cp_fields_area">
         <div style="font-size:12px; font-weight:600; color:var(--gray-700); margin-bottom:6px;">
-          Bảng Trường Dữ Liệu: Gõ vào ô <b>"Dữ Liệu Sửa Mới"</b> của trường cần điều chỉnh:
+          Bảng Trường Dữ Liệu: Gõ vào ô <b>"Dữ Liệu Sửa Mới"</b> và <b>"Lý Do Điều Chỉnh"</b> của trường cần điều chỉnh (nhập như Bảng XML 1):
         </div>
-        <div class="table-responsive" style="max-height:280px;">
+        <div class="table-responsive" style="max-height:300px;">
           <table>
             <thead>
               <tr>
                 <th style="width:40px; text-align:center;">Sửa</th>
-                <th style="width:150px;">Mã Trường XML</th>
-                <th style="width:160px;">Ý Nghĩa</th>
-                <th style="width:200px;">DỮ LIỆU GỐC (Sửa được)</th>
-                <th style="width:200px;">DỮ LIỆU SỬA MỚI (TT_DIEUCHINH)</th>
+                <th style="width:130px;">Mã Trường XML</th>
+                <th style="width:150px;">Ý Nghĩa</th>
+                <th style="width:170px;">DỮ LIỆU GỐC (Sửa được)</th>
+                <th style="width:180px;">DỮ LIỆU SỬA MỚI (TT_DIEUCHINH)</th>
+                <th>LÝ DO ĐIỀU CHỈNH (LYDO_DIEUCHINH)</th>
               </tr>
             </thead>
             <tbody id="m_cp_fields_tbody">
@@ -730,9 +738,9 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>LÝ DO ĐIỀU CHỈNH / GIẢI TRÌNH (LYDO_DIEUCHINH)</label>
-        <textarea id="m_cp_lydo_dc" class="form-control" rows="2" placeholder="Nhập lý do điều chỉnh hoặc giải trình (nếu có)..."></textarea>
+      <div class="form-group" id="m_cp_cancel_reason_area" style="display:none;">
+        <label>LÝ DO HỦY DÒNG / GIẢI TRÌNH (LYDO_DIEUCHINH)</label>
+        <textarea id="m_cp_lydo_dc" class="form-control" rows="2" placeholder="Nhập lý do hủy dòng chi phí này (nếu có)..."></textarea>
       </div>
     </div>
     <div style="padding:12px 20px; background:var(--gray-50); border-top:1px solid var(--gray-200); display:flex; justify-content:flex-end; gap:10px;">
@@ -1470,11 +1478,6 @@ function onXml1InputEdit(fieldName) {
     inp.classList.add('input-edit');
     const chk = document.getElementById(`chk_x1_${fieldName}`);
     if (chk) chk.checked = true;
-    if (!item.lydo) {
-      item.lydo = `Điều chỉnh trường ${fieldName} theo thực tế`;
-      const lydoInp = document.getElementById(`inp_x1_lydo_${fieldName}`);
-      if (lydoInp) lydoInp.value = item.lydo;
-    }
   } else {
     item.selected = false;
     inp.classList.remove('input-edit');
@@ -1507,11 +1510,6 @@ function toggleXml1Field(fieldName) {
   if (item.selected) {
     inp.classList.add('input-edit');
     inp.focus();
-    if (!item.lydo) {
-      item.lydo = `Điều chỉnh trường ${fieldName}`;
-      const lydoInp = document.getElementById(`inp_x1_lydo_${fieldName}`);
-      if (lydoInp) lydoInp.value = item.lydo;
-    }
   } else {
     inp.classList.remove('input-edit');
   }
@@ -1726,6 +1724,8 @@ function openItemModal(itemId) {
   document.getElementById('m_cp_ngay_yl').textContent = formatDateTime(item.ngayYl || item.ngayKq);
 
   document.getElementById('m_cp_trang_thai').value = item.trangThai || '2';
+  const tuchoiEl = document.getElementById('m_cp_tuchoi');
+  if (tuchoiEl) tuchoiEl.value = (item.tuchoi !== undefined && item.tuchoi !== '') ? String(item.tuchoi) : '0';
   document.getElementById('m_cp_lydo_tuchoi').value = item.lydoTuchoi || '';
   document.getElementById('m_cp_lydo_dc').value = item.lydoDc || '';
 
@@ -1737,7 +1737,7 @@ function openItemModal(itemId) {
     if (item.rawFields[fName] !== undefined || ['MA_BAC_SI', 'DON_GIA', 'SO_LUONG', 'TYLE_TT', 'NGAY_YL', 'MA_KHOA', 'GIA_TRI'].includes(fName)) {
       const existingAdj = item.adjustments.find(a => a.field === fName);
       fieldList.push({
-        name: fName, desc: fDesc, goc: item.rawFields[fName] || (item[fName] || ''), dc: existingAdj ? existingAdj.dc : '', selected: existingAdj ? true : false
+        name: fName, desc: fDesc, goc: item.rawFields[fName] || (item[fName] || ''), dc: existingAdj ? existingAdj.dc : '', lydo: existingAdj ? (existingAdj.lydoDc || '') : '', selected: existingAdj ? true : false
       });
     }
   }
@@ -1746,7 +1746,7 @@ function openItemModal(itemId) {
     if (!fieldList.some(f => f.name === rK)) {
       const existingAdj = item.adjustments.find(a => a.field === rK);
       fieldList.push({
-        name: rK, desc: 'Trường chi tiết XML', goc: rV, dc: existingAdj ? existingAdj.dc : '', selected: existingAdj ? true : false
+        name: rK, desc: 'Trường chi tiết XML', goc: rV, dc: existingAdj ? existingAdj.dc : '', lydo: existingAdj ? (existingAdj.lydoDc || '') : '', selected: existingAdj ? true : false
       });
     }
   }
@@ -1769,6 +1769,11 @@ function openItemModal(itemId) {
           value="${escapeHtml(f.dc)}" placeholder="Gõ giá trị sửa..." 
           oninput="onModalCpInputEdit('${f.name}')">
       </td>
+      <td>
+        <input type="text" id="inp_mcp_lydo_${f.name}" class="form-control" 
+          value="${escapeHtml(f.lydo || '')}" placeholder="Lý do điều chỉnh..." 
+          oninput="onModalCpInputLydo('${f.name}')">
+      </td>
     `;
     tbody.appendChild(tr);
   });
@@ -1784,14 +1789,15 @@ function onModalCpInputGoc(fieldName) {
 function toggleCpCancelState() {
   const tt = document.getElementById('m_cp_trang_thai').value;
   const fieldsArea = document.getElementById('m_cp_fields_area');
+  const cancelArea = document.getElementById('m_cp_cancel_reason_area');
   if (tt === '1') {
     // 1 = ĐỀ NGHỊ HỦY DÒNG
-    fieldsArea.style.opacity = '0.5';
-    fieldsArea.style.pointerEvents = 'none';
+    if (fieldsArea) fieldsArea.style.display = 'none';
+    if (cancelArea) cancelArea.style.display = 'block';
   } else {
     // 2 = ĐỀ NGHỊ ĐIỀU CHỈNH
-    fieldsArea.style.opacity = '1';
-    fieldsArea.style.pointerEvents = 'auto';
+    if (fieldsArea) fieldsArea.style.display = 'block';
+    if (cancelArea) cancelArea.style.display = 'none';
   }
 }
 
@@ -1803,8 +1809,23 @@ function onModalCpInputEdit(fieldName) {
     chk.checked = true;
     inp.classList.add('input-edit');
   } else {
-    chk.checked = false;
-    inp.classList.remove('input-edit');
+    const lydoVal = document.getElementById(`inp_mcp_lydo_${fieldName}`)?.value.trim() || '';
+    if (!lydoVal) {
+      chk.checked = false;
+      inp.classList.remove('input-edit');
+    }
+  }
+}
+
+function onModalCpInputLydo(fieldName) {
+  const chk = document.getElementById(`chk_mcp_${fieldName}`);
+  const inpDc = document.getElementById(`inp_mcp_dc_${fieldName}`);
+  const valDc = inpDc ? inpDc.value.trim() : '';
+  const inpLydo = document.getElementById(`inp_mcp_lydo_${fieldName}`);
+  const valLydo = inpLydo ? inpLydo.value.trim() : '';
+  if (valDc || valLydo) {
+    if (chk) chk.checked = true;
+    if (inpDc && valDc) inpDc.classList.add('input-edit');
   }
 }
 
@@ -1823,10 +1844,13 @@ function saveModalCpAdjustment() {
   if (!activeCostModalItem) return;
 
   const tt = document.getElementById('m_cp_trang_thai').value;
+  const tuchoiEl = document.getElementById('m_cp_tuchoi');
+  const tuchoi = tuchoiEl ? tuchoiEl.value : '0';
   const lydoTuchoi = document.getElementById('m_cp_lydo_tuchoi').value.trim();
   const lydoDc = document.getElementById('m_cp_lydo_dc').value.trim();
 
   activeCostModalItem.trangThai = tt;
+  activeCostModalItem.tuchoi = tuchoi;
   activeCostModalItem.lydoTuchoi = lydoTuchoi;
   activeCostModalItem.lydoDc = lydoDc;
   activeCostModalItem.adjustments = [];
@@ -1840,6 +1864,7 @@ function saveModalCpAdjustment() {
     const fieldName = chk.id.replace('chk_mcp_', '');
     const inpGoc = document.getElementById(`inp_mcp_goc_${fieldName}`);
     const inpDc = document.getElementById(`inp_mcp_dc_${fieldName}`);
+    const inpLydo = document.getElementById(`inp_mcp_lydo_${fieldName}`);
 
     if (inpGoc) {
       const gocVal = inpGoc.value;
@@ -1867,11 +1892,13 @@ function saveModalCpAdjustment() {
       // 2 = ĐIỀU CHỈNH
       const dcVal = inpDc ? inpDc.value.trim() : '';
       const gocVal = inpGoc ? inpGoc.value : (activeCostModalItem.rawFields[fieldName] || '');
+      const lydoVal = inpLydo ? inpLydo.value.trim() : '';
       if (dcVal) {
         activeCostModalItem.adjustments.push({
           field: fieldName,
           goc: gocVal,
-          dc: dcVal
+          dc: dcVal,
+          lydoDc: lydoVal
         });
       }
     }
@@ -1920,7 +1947,7 @@ function renderSummaryTable() {
   // XML 1
   listXml1Fields.filter(f => f.selected && f.dc.trim().length > 0).forEach(f => {
     listItems.push({
-      stt: stt++, nhom: 'XML 1', dong: '-', truong: f.name, goc: f.goc, dc: f.dc, lydo: f.lydo || 'Điều chỉnh thông tin XML 1', type: 'xml1', key: f.name
+      stt: stt++, nhom: 'XML 1', dong: '-', truong: f.name, goc: f.goc, dc: f.dc, lydo: f.lydo || '', type: 'xml1', key: f.name
     });
   });
 
@@ -1932,13 +1959,13 @@ function renderSummaryTable() {
         stt: stt++, nhom: `XML ${c.sobangXml}`, dong: `Dòng ${c.sttXml}`, truong: 'TOÀN BỘ DÒNG',
         goc: c.tenDv || c.tenChiSo || c.dienBien || c.maDv,
         dc: '<b style="color:#dc2626;">ĐỀ NGHỊ HỦY DÒNG NÀY</b>',
-        lydo: c.lydoDc || 'Hủy dòng dữ liệu', type: 'cancel', itemId: c.id
+        lydo: c.lydoDc || '', type: 'cancel', itemId: c.id
       });
     } else {
       c.adjustments.forEach(adj => {
         listItems.push({
           stt: stt++, nhom: `XML ${c.sobangXml}`, dong: `Dòng ${c.sttXml}`, truong: adj.field,
-          goc: adj.goc, dc: adj.dc, lydo: c.lydoDc || 'Điều chỉnh chi tiết', type: 'adj', itemId: c.id, fieldKey: adj.field
+          goc: adj.goc, dc: adj.dc, lydo: adj.lydoDc || c.lydoDc || '', type: 'adj', itemId: c.id, fieldKey: adj.field
         });
       });
     }
@@ -2055,6 +2082,8 @@ function generateXml09String() {
   const dscpList = [];
   const allList = [...listXml2, ...listXml3, ...listXml4, ...listXml5];
   allList.forEach(c => {
+    const tuChoiVal = (c.tuchoi !== undefined && c.tuchoi !== '') ? String(c.tuchoi) : '0';
+
     if (c.trangThai === '1') {
       // 1 = HỦY DÒNG CHI PHÍ
       dscpList.push({
@@ -2066,7 +2095,7 @@ function generateXml09String() {
         truongGoc: c.sobangXml === '2' ? 'MA_THUOC' : (c.sobangXml === '3' ? 'MA_DICH_VU' : 'MA_CHI_SO'),
         ttGoc: c.maDv || c.maChiSo || '',
         lydo: c.lydoTuchoi || '',
-        tuchoi: '1',
+        tuchoi: tuChoiVal,
         truongDc: c.sobangXml === '2' ? 'MA_THUOC' : (c.sobangXml === '3' ? 'MA_DICH_VU' : 'MA_CHI_SO'),
         ttDc: '',
         lydoDc: c.lydoDc || ''
@@ -2083,10 +2112,10 @@ function generateXml09String() {
           truongGoc: adj.field,
           ttGoc: adj.goc,
           lydo: c.lydoTuchoi || '',
-          tuchoi: '1',
+          tuchoi: tuChoiVal,
           truongDc: adj.field,
           ttDc: adj.dc,
-          lydoDc: c.lydoDc || ''
+          lydoDc: adj.lydoDc || c.lydoDc || ''
         });
       });
     }
