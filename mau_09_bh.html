@@ -287,6 +287,23 @@
     .badge-xml5 { background: #f3e8ff; color: #6b21a8; }
     .badge-cancel { background: #fee2e2; color: #991b1b; }
     .badge-edit { background: #dcfce7; color: #166534; }
+    .reason-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .reason-tag:hover {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0284c7;
+    }
 
     /* XML Preview */
     pre {
@@ -420,6 +437,7 @@
         <span class="tab-badge" id="badge_total_adj" style="background:#dcfce7; color:#166534; font-weight:bold; font-size:12px;">0 mục sửa</span>
       </div>
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="autoGenerateAllMissingLydo()" title="Tự động sinh lý do điều chỉnh cho tất cả các mục đang sửa">⚡ Tự Động Sinh Lý Do</button>
         <button class="btn btn-outline btn-sm" onclick="toggleXmlPreviewBox()" id="btn_toggle_preview">👁️ Xem trước XML</button>
         <button class="btn btn-outline btn-sm" onclick="copyXmlToClipboard()">📋 Sao Chép XML</button>
         <button class="btn btn-success btn-sm" style="font-weight:700; padding:6px 14px;" onclick="exportXML()">💾 Tải Xuống File XML 09/BH</button>
@@ -500,6 +518,7 @@
         <input type="text" id="search_xml1" class="form-control" style="width:320px;" placeholder="Tìm kiếm trường (mã bệnh, ngày, thẻ, tên...)" oninput="filterXml1Table()">
         <div style="display:flex; gap:10px; align-items:center;">
           <span style="font-size:12px; color:var(--gray-600);">Đang chọn sửa: <b id="lbl_xml1_adj_count" style="color:var(--success);">0</b> trường</span>
+          <button class="btn btn-primary btn-sm" onclick="autoGenerateAllXml1Lydo()" title="Tự động sinh lý do cho tất cả trường XML 1 đã sửa">⚡ Tự động sinh lý do</button>
           <button class="btn btn-outline btn-sm" onclick="clearAllXml1Adj()">Bỏ chọn tất cả</button>
         </div>
       </div>
@@ -716,8 +735,19 @@
 
       <!-- BẢNG TOÀN BỘ CÁC TRƯỜNG CỦA DÒNG NÀY: DỮ LIỆU GỐC -> DỮ LIỆU SỬA -> LÝ DO ĐIỀU CHỈNH (NHƯ BẢNG XML 1) -->
       <div id="m_cp_fields_area">
-        <div style="font-size:12px; font-weight:600; color:var(--gray-700); margin-bottom:6px;">
-          Bảng Trường Dữ Liệu: Gõ vào ô <b>"Dữ Liệu Sửa Mới"</b> và <b>"Lý Do Điều Chỉnh"</b> của trường cần điều chỉnh (nhập như Bảng XML 1):
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+          <div style="font-size:12px; font-weight:600; color:var(--gray-700);">
+            Bảng Trường Dữ Liệu: Gõ vào ô <b>"Dữ Liệu Sửa Mới"</b> và <b>"Lý Do Điều Chỉnh"</b> của trường cần điều chỉnh:
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" style="font-size:11px; padding:3px 10px;" onclick="autoGenerateModalCpLydo()" title="Tự động sinh lý do điều chỉnh cho các trường đã nhập giá trị sửa">⚡ Tự động sinh lý do</button>
+        </div>
+        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:8px; font-size:11px;">
+          <span style="color:#64748b; font-weight:600;">Gợi ý mẫu nhanh:</span>
+          <span class="reason-tag" onclick="applyQuickReasonToModal('DVKT sai giá')">DVKT sai giá</span>
+          <span class="reason-tag" onclick="applyQuickReasonToModal('Điều chỉnh đúng mã CCHN của bác sĩ điều trị')">Mã CCHN bác sĩ</span>
+          <span class="reason-tag" onclick="applyQuickReasonToModal('Điều chỉnh số lượng theo đúng y lệnh thực tế')">Số lượng y lệnh</span>
+          <span class="reason-tag" onclick="applyQuickReasonToModal('Điều chỉnh theo đúng hồ sơ bệnh án')">Hồ sơ bệnh án</span>
+          <span class="reason-tag" onclick="applyQuickReasonToModal('Điều chỉnh thông tin hành chính')">Thông tin hành chính</span>
         </div>
         <div class="table-responsive" style="max-height:300px;">
           <table>
@@ -739,7 +769,10 @@
       </div>
 
       <div class="form-group" id="m_cp_cancel_reason_area" style="display:none;">
-        <label>LÝ DO HỦY DÒNG / GIẢI TRÌNH (LYDO_DIEUCHINH)</label>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <label style="margin:0;">LÝ DO HỦY DÒNG / GIẢI TRÌNH (LYDO_DIEUCHINH)</label>
+          <button type="button" class="btn btn-outline btn-sm" style="font-size:11px; padding:2px 8px;" onclick="autoFillCancelReason()">⚡ Sinh lý do hủy</button>
+        </div>
         <textarea id="m_cp_lydo_dc" class="form-control" rows="2" placeholder="Nhập lý do hủy dòng chi phí này (nếu có)..."></textarea>
       </div>
     </div>
@@ -1541,23 +1574,169 @@ function filterXml1Table() {
   renderXml1Table(filtered);
 }
 
+// ================= HÀM SINH TỰ ĐỘNG LÝ DO ĐIỀU CHỈNH =================
+function suggestLydoDieuChinh(fieldName, valGoc, valDc, sobangXml = '1', trangThai = '2') {
+  if (String(trangThai) === '1') {
+    return 'Đề nghị hủy dòng chi phí do chỉ định/y lệnh nhầm';
+  }
+
+  const f = (fieldName || '').toUpperCase();
+  const b = String(sobangXml || '1');
+
+  // Giá và thành tiền
+  if (f.includes('DON_GIA') || f.includes('THANH_TIEN') || f.includes('GIA_') || f === 'T_BHTT' || f === 'T_BNTT' || f === 'T_BNCCT') {
+    if (b === '3' || b === '2') {
+      return 'DVKT sai giá';
+    }
+    return 'Điều chỉnh đúng chi phí theo quy định';
+  }
+
+  // Bác sĩ, người hành nghề, chứng chỉ hành nghề
+  if (f.includes('BAC_SI') || f.includes('MA_BS') || f.includes('CCHN') || f.includes('NGUOI_THUC_HIEN')) {
+    return 'Điều chỉnh đúng mã CCHN của bác sĩ điều trị';
+  }
+
+  // Số lượng, liều dùng, số ngày
+  if (f.includes('SO_LUONG') || f.includes('LIEU_DUNG') || f.includes('SO_NGAY')) {
+    return 'Điều chỉnh số lượng theo đúng y lệnh thực tế';
+  }
+
+  // Bệnh, ICD, chẩn đoán
+  if (f.includes('BENH') || f.includes('ICD') || f.includes('CHAN_DOAN') || f.includes('BENHKEM')) {
+    return 'Điều chỉnh mã bệnh theo đúng hồ sơ bệnh án';
+  }
+
+  // Thông tin hành chính người bệnh
+  if (['HO_TEN', 'NGAY_SINH', 'GIOI_TINH', 'DIA_CHI', 'SO_CCCD', 'MA_THE', 'MA_THE_BHYT', 'MA_DKBD', 'GT_THE_TU', 'GT_THE_DEN', 'MA_QUOCTICH', 'MA_DANTOC', 'MA_NGHE_NGHIEP', 'MA_NOI_DI', 'MA_NOI_DEN'].includes(f)) {
+    return 'Điều chỉnh thông tin hành chính';
+  }
+
+  // Thời gian điều trị, vào viện, ra viện
+  if (f.includes('NGAY_VAO') || f.includes('NGAY_RA') || f.includes('NGAY_YL') || f.includes('NGAY_KQ') || f.includes('KY_QT')) {
+    return 'Điều chỉnh thời gian theo hồ sơ bệnh án';
+  }
+
+  // Tỷ lệ thanh toán
+  if (f.includes('TYLE')) {
+    return 'Điều chỉnh tỷ lệ thanh toán theo quy định BHYT';
+  }
+
+  // Khoa phòng, giường
+  if (f.includes('KHOA') || f.includes('GIUONG') || f.includes('PHONG')) {
+    return 'Điều chỉnh khoa phòng theo thực tế điều trị';
+  }
+
+  // Thuốc (XML 2)
+  if (b === '2' || f.includes('THUOC') || f.includes('HAM_LUONG') || f.includes('DUONG_DUNG')) {
+    return 'Điều chỉnh danh mục thuốc theo quy định';
+  }
+
+  // Dịch vụ kỹ thuật (XML 3)
+  if (b === '3' || f.includes('DICH_VU') || f.includes('DVKT')) {
+    return 'Điều chỉnh thông tin DVKT theo danh mục';
+  }
+
+  // Chỉ số cận lâm sàng (XML 4)
+  if (b === '4' || f.includes('CHI_SO') || f.includes('GIA_TRI')) {
+    return 'Điều chỉnh chỉ số theo phiếu kết quả xét nghiệm';
+  }
+
+  // Diễn biến lâm sàng (XML 5)
+  if (b === '5' || f.includes('DIEN_BIEN') || f.includes('HOI_CHAN')) {
+    return 'Cập nhật diễn biến điều trị theo hồ sơ bệnh án';
+  }
+
+  // Chi phí tổng hợp XML 1
+  if (f.startsWith('T_')) {
+    return 'Điều chỉnh thông tin hành chính';
+  }
+
+  return 'Điều chỉnh theo đúng hồ sơ bệnh án và y lệnh thực tế';
+}
+
+function autoGenerateAllXml1Lydo() {
+  const adjusted = listXml1Fields.filter(f => f.selected && f.dc.trim().length > 0);
+  if (adjusted.length === 0) {
+    alert('Chưa có trường XML 1 nào được nhập dữ liệu sửa mới!');
+    return;
+  }
+  let count = 0;
+  adjusted.forEach(f => {
+    const autoReason = suggestLydoDieuChinh(f.name, f.goc, f.dc, '1', '2');
+    f.lydo = autoReason;
+    const inp = document.getElementById(`inp_x1_lydo_${f.name}`);
+    if (inp) inp.value = autoReason;
+    count++;
+  });
+  renderSummaryTable();
+  updateXmlPreview();
+  alert(`Đã tự động sinh lý do điều chỉnh cho ${count} trường XML 1!`);
+}
+
+function autoGenerateAllMissingLydo() {
+  let count = 0;
+  // XML 1
+  listXml1Fields.filter(f => f.selected && f.dc.trim().length > 0).forEach(f => {
+    if (!f.lydo || !f.lydo.trim()) {
+      f.lydo = suggestLydoDieuChinh(f.name, f.goc, f.dc, '1', '2');
+      const inp = document.getElementById(`inp_x1_lydo_${f.name}`);
+      if (inp) inp.value = f.lydo;
+      count++;
+    }
+  });
+
+  // XML 2, 3, 4, 5
+  const allList = [...listXml2, ...listXml3, ...listXml4, ...listXml5];
+  allList.forEach(c => {
+    if (c.trangThai === '1') {
+      if (!c.lydoDc || !c.lydoDc.trim()) {
+        c.lydoDc = 'Đề nghị hủy dòng chi phí do chỉ định/y lệnh nhầm';
+        count++;
+      }
+    } else {
+      c.adjustments.forEach(adj => {
+        if (!adj.lydoDc || !adj.lydoDc.trim()) {
+          adj.lydoDc = suggestLydoDieuChinh(adj.field, adj.goc, adj.dc, c.sobangXml, '2');
+          count++;
+        }
+      });
+    }
+  });
+
+  renderSummaryTable();
+  updateXmlPreview();
+  alert(count > 0 ? `Đã tự động sinh lý do điều chỉnh cho ${count} mục còn thiếu!` : 'Tất cả các mục điều chỉnh đều đã có đầy đủ lý do!');
+}
+
 function onXml1InputEdit(fieldName) {
   const item = listXml1Fields.find(f => f.name === fieldName);
   if (!item) return;
 
   const inp = document.getElementById(`inp_x1_dc_${fieldName}`);
   item.dc = inp.value;
+  const inpLydo = document.getElementById(`inp_x1_lydo_${fieldName}`);
 
   if (item.dc.trim().length > 0) {
     item.selected = true;
     inp.classList.add('input-edit');
     const chk = document.getElementById(`chk_x1_${fieldName}`);
     if (chk) chk.checked = true;
+
+    // Tự động sinh lý do nếu ô lý do đang trống
+    if (inpLydo && !inpLydo.value.trim()) {
+      const autoReason = suggestLydoDieuChinh(fieldName, item.goc, item.dc, '1', '2');
+      inpLydo.value = autoReason;
+      item.lydo = autoReason;
+    }
   } else {
     item.selected = false;
     inp.classList.remove('input-edit');
     const chk = document.getElementById(`chk_x1_${fieldName}`);
     if (chk) chk.checked = false;
+    if (inpLydo) {
+      inpLydo.value = '';
+      item.lydo = '';
+    }
   }
   updateXml1Count();
   updateTotalBadge();
@@ -1869,6 +2048,10 @@ function toggleCpCancelState() {
     // 1 = ĐỀ NGHỊ HỦY DÒNG
     if (fieldsArea) fieldsArea.style.display = 'none';
     if (cancelArea) cancelArea.style.display = 'block';
+    const inpDc = document.getElementById('m_cp_lydo_dc');
+    if (inpDc && !inpDc.value.trim()) {
+      inpDc.value = 'Đề nghị hủy dòng chi phí do chỉ định/y lệnh nhầm';
+    }
   } else {
     // 2 = ĐỀ NGHỊ ĐIỀU CHỈNH
     if (fieldsArea) fieldsArea.style.display = 'block';
@@ -1876,18 +2059,89 @@ function toggleCpCancelState() {
   }
 }
 
+function autoFillCancelReason() {
+  const inpDc = document.getElementById('m_cp_lydo_dc');
+  if (inpDc) inpDc.value = 'Đề nghị hủy dòng chi phí do chỉ định/y lệnh nhầm';
+}
+
 function onModalCpInputEdit(fieldName) {
-  const val = document.getElementById(`inp_mcp_dc_${fieldName}`).value;
+  const inpDc = document.getElementById(`inp_mcp_dc_${fieldName}`);
+  const val = inpDc ? inpDc.value : '';
   const chk = document.getElementById(`chk_mcp_${fieldName}`);
-  const inp = document.getElementById(`inp_mcp_dc_${fieldName}`);
+  const inpLydo = document.getElementById(`inp_mcp_lydo_${fieldName}`);
+  const inpGoc = document.getElementById(`inp_mcp_goc_${fieldName}`);
+  const gocVal = inpGoc ? inpGoc.value : (activeCostModalItem?.rawFields?.[fieldName] || '');
+
   if (val.trim().length > 0) {
-    chk.checked = true;
-    inp.classList.add('input-edit');
+    if (chk) chk.checked = true;
+    if (inpDc) inpDc.classList.add('input-edit');
+    // Tự động sinh lý do nếu ô lý do đang trống
+    if (inpLydo && !inpLydo.value.trim()) {
+      inpLydo.value = suggestLydoDieuChinh(fieldName, gocVal, val, activeCostModalItem ? activeCostModalItem.sobangXml : '3', '2');
+    }
   } else {
-    const lydoVal = document.getElementById(`inp_mcp_lydo_${fieldName}`)?.value.trim() || '';
+    const lydoVal = inpLydo?.value.trim() || '';
     if (!lydoVal) {
-      chk.checked = false;
-      inp.classList.remove('input-edit');
+      if (chk) chk.checked = false;
+      if (inpDc) inpDc.classList.remove('input-edit');
+    }
+    if (inpLydo) {
+      inpLydo.value = '';
+    }
+  }
+}
+
+function autoGenerateModalCpLydo() {
+  if (!activeCostModalItem) return;
+  const tbody = document.getElementById('m_cp_fields_tbody');
+  let count = 0;
+  tbody.querySelectorAll('tr').forEach(tr => {
+    const chk = tr.querySelector('input[type="checkbox"]');
+    if (!chk) return;
+    const fieldName = chk.id.replace('chk_mcp_', '');
+    const inpDc = document.getElementById(`inp_mcp_dc_${fieldName}`);
+    const inpGoc = document.getElementById(`inp_mcp_goc_${fieldName}`);
+    const inpLydo = document.getElementById(`inp_mcp_lydo_${fieldName}`);
+    const dcVal = inpDc ? inpDc.value.trim() : '';
+    const gocVal = inpGoc ? inpGoc.value : (activeCostModalItem.rawFields[fieldName] || '');
+
+    if (dcVal || chk.checked) {
+      const autoReason = suggestLydoDieuChinh(fieldName, gocVal, dcVal, activeCostModalItem.sobangXml, '2');
+      if (inpLydo) inpLydo.value = autoReason;
+      chk.checked = true;
+      if (inpDc) inpDc.classList.add('input-edit');
+      count++;
+    }
+  });
+  if (count === 0) {
+    alert('Vui lòng nhập giá trị sửa mới hoặc tích chọn trường cần sửa trước khi bấm sinh lý do!');
+  }
+}
+
+function applyQuickReasonToModal(reasonText) {
+  if (!activeCostModalItem) return;
+  const tbody = document.getElementById('m_cp_fields_tbody');
+  let applied = false;
+  tbody.querySelectorAll('tr').forEach(tr => {
+    const chk = tr.querySelector('input[type="checkbox"]');
+    if (!chk) return;
+    const fieldName = chk.id.replace('chk_mcp_', '');
+    const inpDc = document.getElementById(`inp_mcp_dc_${fieldName}`);
+    const inpLydo = document.getElementById(`inp_mcp_lydo_${fieldName}`);
+    if (chk.checked || (inpDc && inpDc.value.trim())) {
+      if (inpLydo) inpLydo.value = reasonText;
+      chk.checked = true;
+      if (inpDc) inpDc.classList.add('input-edit');
+      applied = true;
+    }
+  });
+
+  if (!applied) {
+    const cancelReason = document.getElementById('m_cp_lydo_dc');
+    if (cancelReason && document.getElementById('m_cp_trang_thai').value === '1') {
+      cancelReason.value = reasonText;
+    } else {
+      alert('Vui lòng gõ giá trị sửa mới hoặc tích chọn trường muốn gán lý do: "' + reasonText + '"');
     }
   }
 }
@@ -1922,7 +2176,10 @@ function saveModalCpAdjustment() {
   const tuchoiEl = document.getElementById('m_cp_tuchoi');
   const tuchoi = tuchoiEl ? tuchoiEl.value : '0';
   const lydoTuchoi = document.getElementById('m_cp_lydo_tuchoi').value.trim();
-  const lydoDc = document.getElementById('m_cp_lydo_dc').value.trim();
+  let lydoDc = document.getElementById('m_cp_lydo_dc').value.trim();
+  if (tt === '1' && !lydoDc) {
+    lydoDc = 'Đề nghị hủy dòng chi phí do chỉ định/y lệnh nhầm';
+  }
 
   activeCostModalItem.trangThai = tt;
   activeCostModalItem.tuchoi = tuchoi;
@@ -1967,8 +2224,11 @@ function saveModalCpAdjustment() {
       // 2 = ĐIỀU CHỈNH
       const dcVal = inpDc ? inpDc.value.trim() : '';
       const gocVal = inpGoc ? inpGoc.value : (activeCostModalItem.rawFields[fieldName] || '');
-      const lydoVal = inpLydo ? inpLydo.value.trim() : '';
+      let lydoVal = inpLydo ? inpLydo.value.trim() : '';
       if (dcVal) {
+        if (!lydoVal) {
+          lydoVal = suggestLydoDieuChinh(fieldName, gocVal, dcVal, activeCostModalItem.sobangXml, '2');
+        }
         activeCostModalItem.adjustments.push({
           field: fieldName,
           goc: gocVal,
@@ -2021,8 +2281,9 @@ function renderSummaryTable() {
 
   // XML 1
   listXml1Fields.filter(f => f.selected && f.dc.trim().length > 0).forEach(f => {
+    const lydoDisplay = (f.lydo && f.lydo.trim()) ? f.lydo : suggestLydoDieuChinh(f.name, f.goc, f.dc, '1', '2');
     listItems.push({
-      stt: stt++, nhom: 'XML 1', dong: '-', truong: f.name, goc: f.goc, dc: f.dc, lydo: f.lydo || '', type: 'xml1', key: f.name
+      stt: stt++, nhom: 'XML 1', dong: '-', truong: f.name, goc: f.goc, dc: f.dc, lydo: lydoDisplay, type: 'xml1', key: f.name
     });
   });
 
@@ -2030,17 +2291,19 @@ function renderSummaryTable() {
   const allList = [...listXml2, ...listXml3, ...listXml4, ...listXml5];
   allList.forEach(c => {
     if (c.trangThai === '1') {
+      const lydoDisplay = (c.lydoDc && c.lydoDc.trim()) ? c.lydoDc : 'Đề nghị hủy dòng chi phí do chỉ định/y lệnh nhầm';
       listItems.push({
         stt: stt++, nhom: `XML ${c.sobangXml}`, dong: `Dòng ${c.sttXml}`, truong: 'TOÀN BỘ DÒNG',
         goc: c.tenDv || c.tenChiSo || c.dienBien || c.maDv,
         dc: '<b style="color:#dc2626;">ĐỀ NGHỊ HỦY DÒNG NÀY</b>',
-        lydo: c.lydoDc || '', type: 'cancel', itemId: c.id
+        lydo: lydoDisplay, type: 'cancel', itemId: c.id
       });
     } else {
       c.adjustments.forEach(adj => {
+        const lydoDisplay = (adj.lydoDc && adj.lydoDc.trim()) ? adj.lydoDc : ((c.lydoDc && c.lydoDc.trim()) ? c.lydoDc.trim() : suggestLydoDieuChinh(adj.field, adj.goc, adj.dc, c.sobangXml, '2'));
         listItems.push({
           stt: stt++, nhom: `XML ${c.sobangXml}`, dong: `Dòng ${c.sttXml}`, truong: adj.field,
-          goc: adj.goc, dc: adj.dc, lydo: adj.lydoDc || c.lydoDc || '', type: 'adj', itemId: c.id, fieldKey: adj.field
+          goc: adj.goc, dc: adj.dc, lydo: lydoDisplay, type: 'adj', itemId: c.id, fieldKey: adj.field
         });
       });
     }
@@ -2148,13 +2411,14 @@ function generateXml09String() {
   } else {
     xml += `      <DS_XML1_DIEUCHINH>\n`;
     x1AdjList.forEach((a, idx) => {
+      const finalLydo = (a.lydo && a.lydo.trim()) ? a.lydo.trim() : suggestLydoDieuChinh(a.name, a.goc, a.dc, '1', '2');
       xml += `        <TT_XML1_DC>\n`;
       xml += `          <STT>${idx + 1}</STT>\n`;
       xml += `          <TRUONG_TT_GOC>${escapeXml(a.name)}</TRUONG_TT_GOC>\n`;
       xml += `          <TT_GOC>${escapeXml(a.goc)}</TT_GOC>\n`;
       xml += `          <TRUONG_TT_DIEUCHINH>${escapeXml(a.name)}</TRUONG_TT_DIEUCHINH>\n`;
       xml += `          <TT_DIEUCHINH>${escapeXml(a.dc)}</TT_DIEUCHINH>\n`;
-      xml += `          <LYDO_DIEUCHINH>${escapeXml(a.lydo || '')}</LYDO_DIEUCHINH>\n`;
+      xml += `          <LYDO_DIEUCHINH>${escapeXml(finalLydo)}</LYDO_DIEUCHINH>\n`;
       xml += `        </TT_XML1_DC>\n`;
     });
     xml += `      </DS_XML1_DIEUCHINH>\n`;
@@ -2168,6 +2432,7 @@ function generateXml09String() {
 
     if (c.trangThai === '1') {
       // 1 = HỦY DÒNG CHI PHÍ
+      const finalLydoDc = (c.lydoDc && c.lydoDc.trim()) ? c.lydoDc.trim() : 'Đề nghị hủy dòng chi phí do chỉ định/y lệnh nhầm';
       dscpList.push({
         sobangXml: c.sobangXml,
         idCp: c.idCp || '',
@@ -2180,11 +2445,12 @@ function generateXml09String() {
         tuchoi: tuChoiVal,
         truongDc: c.sobangXml === '2' ? 'MA_THUOC' : (c.sobangXml === '3' ? 'MA_DICH_VU' : 'MA_CHI_SO'),
         ttDc: '',
-        lydoDc: c.lydoDc || ''
+        lydoDc: finalLydoDc
       });
     } else {
       // 2 = ĐIỀU CHỈNH DÒNG CHI PHÍ
       c.adjustments.forEach(adj => {
+        const finalLydoDc = (adj.lydoDc && adj.lydoDc.trim()) ? adj.lydoDc.trim() : ((c.lydoDc && c.lydoDc.trim()) ? c.lydoDc.trim() : suggestLydoDieuChinh(adj.field, adj.goc, adj.dc, c.sobangXml, '2'));
         dscpList.push({
           sobangXml: c.sobangXml,
           idCp: c.idCp || '',
@@ -2197,7 +2463,7 @@ function generateXml09String() {
           tuchoi: tuChoiVal,
           truongDc: adj.field,
           ttDc: adj.dc,
-          lydoDc: adj.lydoDc || c.lydoDc || ''
+          lydoDc: finalLydoDc
         });
       });
     }
@@ -2440,16 +2706,16 @@ function loadSampleData() {
   if (benhField) {
     benhField.selected = true;
     benhField.dc = 'J18.9';
-    benhField.lydo = '';
+    benhField.lydo = 'Điều chỉnh mã bệnh theo đúng hồ sơ bệnh án';
   }
 
   // Thêm dữ liệu mẫu điều chỉnh XML 3 (Dòng 24 DVKT)
   const dv24 = listXml3.find(c => c.sttXml == '24');
   if (dv24) {
     dv24.lydoTuchoi = '';
-    dv24.lydoDc = '';
+    dv24.lydoDc = 'Điều chỉnh đúng mã CCHN của bác sĩ điều trị';
     dv24.adjustments = [
-      { field: 'MA_BAC_SI', goc: '000199/QNG-CCHN', dc: '005367/QNG-CCHN' }
+      { field: 'MA_BAC_SI', goc: '000199/QNG-CCHN', dc: '005367/QNG-CCHN', lydoDc: 'Điều chỉnh đúng mã CCHN của bác sĩ điều trị' }
     ];
   }
 
