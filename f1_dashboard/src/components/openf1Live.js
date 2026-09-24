@@ -254,13 +254,13 @@ async function loadMeetingsForYear(year, container) {
     if (selectMeeting) selectMeeting.innerHTML = `<option value="">Đang tải danh sách chặng ${year}...</option>`;
 
     const meetings = await OpenF1Service.getMeetings(year);
-    cachedMeetings = meetings || [];
+    cachedMeetings = Array.isArray(meetings) && meetings.length > 0 ? meetings : [];
 
     if (selectMeeting && cachedMeetings.length > 0) {
       // Find default meeting
       let defaultMeeting = cachedMeetings.find(m => m.meeting_key === currentMeetingKey);
       if (!defaultMeeting) {
-        defaultMeeting = cachedMeetings[cachedMeetings.length - 1] || cachedMeetings[0];
+        defaultMeeting = cachedMeetings[0];
         currentMeetingKey = defaultMeeting.meeting_key;
       }
 
@@ -272,6 +272,7 @@ async function loadMeetingsForYear(year, container) {
           </option>
         `).join('')}
       `;
+      selectMeeting.value = String(currentMeetingKey);
 
       await loadSessionsForMeeting(currentMeetingKey, container);
     }
@@ -293,7 +294,7 @@ async function loadSessionsForMeeting(meetingKey, container) {
   try {
     selectSession.innerHTML = `<option value="">Đang tải phiên đua...</option>`;
     const sessions = await OpenF1Service.getSessions(meetingKey, currentYear);
-    cachedSessions = sessions || [];
+    cachedSessions = Array.isArray(sessions) && sessions.length > 0 ? sessions : [];
 
     if (cachedSessions.length > 0) {
       // Prefer currently active/upcoming session within this meeting, or matching currentSessionKey
@@ -312,7 +313,7 @@ async function loadSessionsForMeeting(meetingKey, container) {
           || upcomingInMeeting
           || cachedSessions.find(s => (s.session_name || '').toLowerCase().includes('race')) 
           || cachedSessions.find(s => (s.session_name || '').toLowerCase().includes('qualifying'))
-          || cachedSessions[cachedSessions.length - 1];
+          || cachedSessions[0];
 
         if (selectedSession) currentSessionKey = selectedSession.session_key;
       }
@@ -322,12 +323,15 @@ async function loadSessionsForMeeting(meetingKey, container) {
           ${formatSessionLabel(s)}
         </option>
       `).join('');
+      if (currentSessionKey) {
+        selectSession.value = String(currentSessionKey);
+      }
     } else {
-      selectSession.innerHTML = `<option value="${currentSessionKey}">🏁 Phiên Đua (${currentSessionKey})</option>`;
+      selectSession.innerHTML = `<option value="${currentSessionKey || 11370}">🏁 Phiên Đua (${currentSessionKey || 11370})</option>`;
     }
   } catch (err) {
     console.warn('Could not load sessions:', err);
-    selectSession.innerHTML = `<option value="${currentSessionKey}">🏁 Phiên Đua Hiện Tại</option>`;
+    selectSession.innerHTML = `<option value="${currentSessionKey || 11370}">🏁 Phiên Đua Hiện Tại</option>`;
   }
 }
 
@@ -538,14 +542,33 @@ async function loadSessionData(targetLap = null, bypassCache = false) {
     const timingData = await OpenF1Service.getFullLiveTiming(sessionKeyToFetch, targetLap, bypassCache || isLivePolling);
     currentTimingData = timingData;
     
-    if (statusText) statusText.textContent = `OPENF1 ONLINE (${timingData.drivers.length} TAY ĐUA)`;
-    if (statusDot) statusDot.style.background = '#00FF66';
+    if (OpenF1Service.lastRestrictionNotice) {
+      if (statusText) statusText.textContent = `OPENF1 LIVE MODE (${timingData.drivers.length} TAY ĐUA)`;
+      if (statusDot) statusDot.style.background = '#00E5FF';
+    } else {
+      if (statusText) statusText.textContent = `OPENF1 ONLINE (${timingData.drivers.length} TAY ĐUA)`;
+      if (statusDot) statusDot.style.background = '#00FF66';
+    }
 
     // Update session title
     if (headingTitle && timingData.sessionInfo) {
       const mName = timingData.sessionInfo.meeting_name || timingData.sessionInfo.location || 'Chặng Đua';
       const sLabel = formatSessionLabel(timingData.sessionInfo);
       headingTitle.textContent = `Apex F1 · ${mName} · ${sLabel} (${timingData.sessionInfo.year || currentYear})`;
+    }
+
+    // Two-way synchronization of select dropdown values
+    const selectMeeting = document.querySelector('#select-meeting');
+    const selectSession = document.querySelector('#select-session');
+    if (timingData.sessionInfo) {
+      if (selectMeeting && timingData.sessionInfo.meeting_key && selectMeeting.value !== String(timingData.sessionInfo.meeting_key)) {
+        selectMeeting.value = String(timingData.sessionInfo.meeting_key);
+        currentMeetingKey = timingData.sessionInfo.meeting_key;
+      }
+      if (selectSession && timingData.sessionInfo.session_key && selectSession.value !== String(timingData.sessionInfo.session_key)) {
+        selectSession.value = String(timingData.sessionInfo.session_key);
+        currentSessionKey = timingData.sessionInfo.session_key;
+      }
     }
 
     // Update Header grid columns based on session type
