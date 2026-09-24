@@ -487,6 +487,11 @@ export const OpenF1Service = {
       }
 
       sortedDrivers = Array.from(driverMap.values()).sort((a, b) => a.position - b.position);
+      sortedDrivers.forEach((d, idx) => {
+        if (d.position === 99 || !d.position) {
+          d.position = idx + 1;
+        }
+      });
     }
 
     // Latest Weather
@@ -601,7 +606,9 @@ const FALLBACK_DRIVERS = [
   { driver_number: 27, full_name: 'Nico HULKENBERG', broadcast_name: 'N HULKENBERG', name_acronym: 'HUL', team_name: 'Kick Sauber', team_colour: '52E252', country_code: 'GER' },
   { driver_number: 5, full_name: 'Gabriel BORTOLETO', broadcast_name: 'G BORTOLETO', name_acronym: 'BOR', team_name: 'Kick Sauber', team_colour: '52E252', country_code: 'BRA' },
   { driver_number: 31, full_name: 'Esteban OCON', broadcast_name: 'E OCON', name_acronym: 'OCO', team_name: 'Haas F1 Team', team_colour: 'B6BABD', country_code: 'FRA' },
-  { driver_number: 87, full_name: 'Oliver BEARMAN', broadcast_name: 'O BEARMAN', name_acronym: 'BEA', team_name: 'Haas F1 Team', team_colour: 'B6BABD', country_code: 'GBR' }
+  { driver_number: 87, full_name: 'Oliver BEARMAN', broadcast_name: 'O BEARMAN', name_acronym: 'BEA', team_name: 'Haas F1 Team', team_colour: 'B6BABD', country_code: 'GBR' },
+  { driver_number: 43, full_name: 'Franco COLAPINTO', broadcast_name: 'F COLAPINTO', name_acronym: 'COL', team_name: 'Cadillac F1 Team', team_colour: 'FFD700', country_code: 'ARG' },
+  { driver_number: 77, full_name: 'Valtteri BOTTAS', broadcast_name: 'V BOTTAS', name_acronym: 'BOT', team_name: 'Cadillac F1 Team', team_colour: 'FFD700', country_code: 'FIN' }
 ];
 
 function getFallbackMeetings(year) {
