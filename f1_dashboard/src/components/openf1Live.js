@@ -351,8 +351,8 @@ function setupEventListeners(container) {
     btnToggleLive.classList.toggle('active', isLivePolling);
     if (isLivePolling) {
       if (isPlayingReplay) stopReplay();
-      livePollInterval = setInterval(loadSessionData, 5000);
-      loadSessionData();
+      livePollInterval = setInterval(() => loadSessionData(null, true), 5000);
+      loadSessionData(null, true);
     } else {
       if (livePollInterval) clearInterval(livePollInterval);
     }
@@ -360,7 +360,7 @@ function setupEventListeners(container) {
 
   // Refresh
   btnRefresh.addEventListener('click', () => {
-    loadSessionData();
+    loadSessionData(activeLap, true);
   });
 
   // Slider change
@@ -440,7 +440,7 @@ function stopReplay() {
   if (btnPlay) btnPlay.textContent = '▶ Xem lại';
 }
 
-async function loadSessionData(targetLap = null) {
+async function loadSessionData(targetLap = null, bypassCache = false) {
   const rowsContainer = document.querySelector('#openf1-tower-rows');
   const statusText = document.querySelector('#openf1-status-text');
   const statusDot = document.querySelector('#openf1-status-dot');
@@ -461,7 +461,7 @@ async function loadSessionData(targetLap = null) {
       }
     }
 
-    const timingData = await OpenF1Service.getFullLiveTiming(sessionKeyToFetch, targetLap);
+    const timingData = await OpenF1Service.getFullLiveTiming(sessionKeyToFetch, targetLap, bypassCache || isLivePolling);
     currentTimingData = timingData;
     
     if (statusText) statusText.textContent = `OPENF1 ONLINE (${timingData.drivers.length} TAY ĐUA)`;

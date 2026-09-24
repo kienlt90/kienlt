@@ -73,59 +73,59 @@ export const OpenF1Service = {
   /**
    * Fetch all drivers in a session
    */
-  async getDrivers(sessionKey) {
+  async getDrivers(sessionKey, useCache = true) {
     const url = `${BASE_URL}/drivers?session_key=${sessionKey}`;
-    return fetchJSON(url);
+    return fetchJSON(url, useCache);
   },
 
   /**
    * Fetch laps for a session (optionally filter by driver or lap)
    */
-  async getLaps(sessionKey, driverNumber = null, lapNumber = null) {
+  async getLaps(sessionKey, driverNumber = null, lapNumber = null, useCache = true) {
     let url = `${BASE_URL}/laps?session_key=${sessionKey}`;
     if (driverNumber) url += `&driver_number=${driverNumber}`;
     if (lapNumber) url += `&lap_number=${lapNumber}`;
-    return fetchJSON(url);
+    return fetchJSON(url, useCache);
   },
 
   /**
    * Fetch intervals (gap and interval)
    */
-  async getIntervals(sessionKey) {
+  async getIntervals(sessionKey, useCache = true) {
     const url = `${BASE_URL}/intervals?session_key=${sessionKey}`;
-    return fetchJSON(url);
+    return fetchJSON(url, useCache);
   },
 
   /**
    * Fetch stints (tyre compound and age)
    */
-  async getStints(sessionKey) {
+  async getStints(sessionKey, useCache = true) {
     const url = `${BASE_URL}/stints?session_key=${sessionKey}`;
-    return fetchJSON(url);
+    return fetchJSON(url, useCache);
   },
 
   /**
    * Fetch positions progression
    */
-  async getPositions(sessionKey) {
+  async getPositions(sessionKey, useCache = true) {
     const url = `${BASE_URL}/position?session_key=${sessionKey}`;
-    return fetchJSON(url);
+    return fetchJSON(url, useCache);
   },
 
   /**
    * Fetch weather data for session
    */
-  async getWeather(sessionKey) {
+  async getWeather(sessionKey, useCache = true) {
     const url = `${BASE_URL}/weather?session_key=${sessionKey}`;
-    return fetchJSON(url);
+    return fetchJSON(url, useCache);
   },
 
   /**
    * Fetch race control messages
    */
-  async getRaceControl(sessionKey) {
+  async getRaceControl(sessionKey, useCache = true) {
     const url = `${BASE_URL}/race_control?session_key=${sessionKey}`;
-    return fetchJSON(url);
+    return fetchJSON(url, useCache);
   },
 
   /**
@@ -139,16 +139,17 @@ export const OpenF1Service = {
   /**
    * Combined fetch for complete Live Timing Board
    */
-  async getFullLiveTiming(sessionKey, targetLap = null) {
+  async getFullLiveTiming(sessionKey, targetLap = null, bypassCache = false) {
+    const useCache = !bypassCache;
     const [sessionInfo, drivers, laps, intervals, stints, weather, raceControl, positions] = await Promise.all([
       this.getSession(sessionKey).catch(() => null),
-      this.getDrivers(sessionKey).catch(() => []),
-      this.getLaps(sessionKey).catch(() => []),
-      this.getIntervals(sessionKey).catch(() => []),
-      this.getStints(sessionKey).catch(() => []),
-      this.getWeather(sessionKey).catch(() => []),
-      this.getRaceControl(sessionKey).catch(() => []),
-      this.getPositions(sessionKey).catch(() => [])
+      this.getDrivers(sessionKey, useCache).catch(() => []),
+      this.getLaps(sessionKey, null, null, useCache).catch(() => []),
+      this.getIntervals(sessionKey, useCache).catch(() => []),
+      this.getStints(sessionKey, useCache).catch(() => []),
+      this.getWeather(sessionKey, useCache).catch(() => []),
+      this.getRaceControl(sessionKey, useCache).catch(() => []),
+      this.getPositions(sessionKey, useCache).catch(() => [])
     ]);
 
     // Process and merge data per driver
