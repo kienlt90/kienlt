@@ -50,6 +50,48 @@ async function fetchJSON(url, useCache = true) {
 export const OpenF1Service = {
   lastRestrictionNotice: null,
 
+  async login(username, password) {
+    try {
+      const response = await fetch('https://api.openf1.org/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ username, password })
+      });
+      if (!response.ok) {
+        throw new Error('Đăng nhập thất bại: Tài khoản hoặc mật khẩu không chính xác.');
+      }
+      const data = await response.json();
+      if (data && data.access_token) {
+        this.setApiKey(data.access_token);
+        return { success: true, token: data.access_token };
+      }
+      throw new Error('Không nhận được Access Token từ máy chủ OpenF1');
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  setApiKey(token) {
+    if (token) {
+      localStorage.setItem('openf1_api_key', token.trim());
+    } else {
+      localStorage.removeItem('openf1_api_key');
+    }
+    this.clearCache();
+  },
+
+  getApiKey() {
+    try {
+      return localStorage.getItem('openf1_api_key') || null;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  clearCache() {
+    memoryCache.clear();
+  },
+
   /**
    * Fetch meetings for a given year
    */

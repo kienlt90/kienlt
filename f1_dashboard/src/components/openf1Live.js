@@ -124,6 +124,9 @@ export async function renderOpenF1App(container) {
 
           <!-- Mode buttons -->
           <div class="control-group mode-actions">
+            <button id="btn-openf1-auth" class="openf1-btn ${OpenF1Service.getApiKey() ? 'authenticated' : 'secondary'}" title="Quản lý OpenF1 API Token">
+              🔑 ${OpenF1Service.getApiKey() ? 'API Token OK' : 'Nhập API Token'}
+            </button>
             <button id="btn-toggle-live" class="openf1-btn ${isLivePolling ? 'active' : ''}">
               <span class="pulse-icon"></span>
               <span>Live Poll (5s)</span>
@@ -134,6 +137,18 @@ export async function renderOpenF1App(container) {
           </div>
         </div>
       </header>
+
+      <!-- OpenF1 Live Restriction Notice Banner -->
+      <div class="openf1-restriction-banner glass" id="openf1-restriction-banner" style="display: none;">
+        <div class="banner-icon">🔒</div>
+        <div class="banner-content">
+          <div class="banner-title">Máy chủ OpenF1 đang trong phiên đua trực tiếp (Live Session Active)</div>
+          <div class="banner-text">
+            Chính sách OpenF1: Khi có phiên đua Live (FP1/FP2/FP3/Qualifying/Race), máy chủ công cộng tạm khóa quyền stream thời gian thực cho người dùng Free Tier. Nếu bạn có <strong>OpenF1 API Token / Tài khoản</strong>, hãy nhập Token để mở khóa Live ngay lập tức. Sau khi phiên đua kết thúc, toàn bộ dữ liệu viễn trắc sẽ tự động mở miễn phí 100%.
+          </div>
+        </div>
+        <button id="btn-banner-login" class="banner-btn">🔑 Mở Khóa Bằng Token</button>
+      </div>
 
       <!-- Weather & Race Control Banner -->
       <div class="openf1-ribbon-grid">
@@ -234,6 +249,50 @@ export async function renderOpenF1App(container) {
           </div>
           <div class="drawer-body" id="drawer-content">
             <!-- Populated on click -->
+          </div>
+        </div>
+      </div>
+
+      <!-- OpenF1 Auth Modal -->
+      <div class="openf1-modal-backdrop" id="openf1-auth-modal">
+        <div class="openf1-modal">
+          <div class="openf1-modal-header">
+            <h3>🔑 Cấu Hình Token / Tài Khoản OpenF1</h3>
+            <button class="drawer-close-btn" id="btn-close-auth-modal">✕</button>
+          </div>
+          <div class="openf1-modal-tabs">
+            <button class="openf1-tab-btn active" id="tab-btn-token">Nhập Access Token</button>
+            <button class="openf1-tab-btn" id="tab-btn-login">Đăng Nhập Tài Khoản</button>
+          </div>
+          <div class="openf1-modal-body">
+            <!-- Tab 1: Direct Token -->
+            <div id="tab-pane-token" class="auth-pane">
+              <div class="auth-input-group">
+                <label for="input-api-token">Bearer Access Token:</label>
+                <input type="text" id="input-api-token" class="auth-input" placeholder="Dán access token OpenF1 của bạn vào đây..." value="${OpenF1Service.getApiKey() || ''}" />
+              </div>
+              <div class="auth-info-note" style="margin-top: 12px;">
+                💡 <strong>Dành cho người dùng có API Key:</strong> Dán mã token của bạn để mở khóa xem dữ liệu viễn trắc trực tiếp ngay cả khi đang trong phiên đua Live.
+              </div>
+            </div>
+
+            <!-- Tab 2: Username & Password -->
+            <div id="tab-pane-login" class="auth-pane" style="display: none;">
+              <div class="auth-input-group">
+                <label for="input-auth-email">Email tài khoản OpenF1:</label>
+                <input type="email" id="input-auth-email" class="auth-input" placeholder="name@example.com" />
+              </div>
+              <div class="auth-input-group" style="margin-top: 10px;">
+                <label for="input-auth-password">Mật khẩu:</label>
+                <input type="password" id="input-auth-password" class="auth-input" placeholder="••••••••" />
+              </div>
+              <div id="auth-login-error" style="color: #FF4D4D; font-size: 0.8rem; margin-top: 8px; display: none;"></div>
+            </div>
+          </div>
+          <div class="openf1-modal-footer">
+            ${OpenF1Service.getApiKey() ? `<button id="btn-logout-token" class="openf1-btn secondary" style="margin-right: auto; color: #FF6666;">Xóa Token</button>` : ''}
+            <button id="btn-cancel-auth" class="openf1-btn secondary">Hủy</button>
+            <button id="btn-save-auth" class="openf1-btn">Lưu & Áp Dụng</button>
           </div>
         </div>
       </div>
@@ -484,6 +543,118 @@ function setupEventListeners(container) {
   backdrop.addEventListener('click', (e) => {
     if (e.target === backdrop) closeTelemetryDrawer();
   });
+
+  // OpenF1 Auth Modal Handling
+  const authModal = container.querySelector('#openf1-auth-modal');
+  const btnAuth = container.querySelector('#btn-openf1-auth');
+  const btnBannerLogin = container.querySelector('#btn-banner-login');
+  const btnCloseAuth = container.querySelector('#btn-close-auth-modal');
+  const btnCancelAuth = container.querySelector('#btn-cancel-auth');
+  const btnSaveAuth = container.querySelector('#btn-save-auth');
+  const btnLogoutToken = container.querySelector('#btn-logout-token');
+  const tabBtnToken = container.querySelector('#tab-btn-token');
+  const tabBtnLogin = container.querySelector('#tab-btn-login');
+  const tabPaneToken = container.querySelector('#tab-pane-token');
+  const tabPaneLogin = container.querySelector('#tab-pane-login');
+  const inputApiToken = container.querySelector('#input-api-token');
+  const inputAuthEmail = container.querySelector('#input-auth-email');
+  const inputAuthPassword = container.querySelector('#input-auth-password');
+  const authLoginError = container.querySelector('#auth-login-error');
+
+  let activeAuthTab = 'token';
+
+  const openAuthModal = () => {
+    if (authModal) authModal.classList.add('active');
+    if (inputApiToken) inputApiToken.value = OpenF1Service.getApiKey() || '';
+    if (authLoginError) authLoginError.style.display = 'none';
+  };
+
+  const closeAuthModal = () => {
+    if (authModal) authModal.classList.remove('active');
+  };
+
+  if (btnAuth) btnAuth.addEventListener('click', openAuthModal);
+  if (btnBannerLogin) btnBannerLogin.addEventListener('click', openAuthModal);
+  if (btnCloseAuth) btnCloseAuth.addEventListener('click', closeAuthModal);
+  if (btnCancelAuth) btnCancelAuth.addEventListener('click', closeAuthModal);
+  if (authModal) {
+    authModal.addEventListener('click', (e) => {
+      if (e.target === authModal) closeAuthModal();
+    });
+  }
+
+  if (tabBtnToken && tabBtnLogin) {
+    tabBtnToken.addEventListener('click', () => {
+      activeAuthTab = 'token';
+      tabBtnToken.classList.add('active');
+      tabBtnLogin.classList.remove('active');
+      tabPaneToken.style.display = 'block';
+      tabPaneLogin.style.display = 'none';
+    });
+
+    tabBtnLogin.addEventListener('click', () => {
+      activeAuthTab = 'login';
+      tabBtnLogin.classList.add('active');
+      tabBtnToken.classList.remove('active');
+      tabPaneLogin.style.display = 'block';
+      tabPaneToken.style.display = 'none';
+    });
+  }
+
+  if (btnSaveAuth) {
+    btnSaveAuth.addEventListener('click', async () => {
+      if (activeAuthTab === 'token') {
+        const token = (inputApiToken?.value || '').trim();
+        OpenF1Service.setApiKey(token);
+        closeAuthModal();
+        updateAuthButtonState(container);
+        await loadSessionData(null, true);
+      } else {
+        const email = (inputAuthEmail?.value || '').trim();
+        const pwd = (inputAuthPassword?.value || '').trim();
+        if (!email || !pwd) {
+          if (authLoginError) {
+            authLoginError.textContent = 'Vui lòng nhập đầy đủ email và mật khẩu.';
+            authLoginError.style.display = 'block';
+          }
+          return;
+        }
+        btnSaveAuth.disabled = true;
+        btnSaveAuth.textContent = 'Đang xác thực...';
+        const res = await OpenF1Service.login(email, pwd);
+        btnSaveAuth.disabled = false;
+        btnSaveAuth.textContent = 'Lưu & Áp Dụng';
+        if (res.success) {
+          closeAuthModal();
+          updateAuthButtonState(container);
+          await loadSessionData(null, true);
+        } else {
+          if (authLoginError) {
+            authLoginError.textContent = res.error || 'Đăng nhập không thành công.';
+            authLoginError.style.display = 'block';
+          }
+        }
+      }
+    });
+  }
+
+  if (btnLogoutToken) {
+    btnLogoutToken.addEventListener('click', async () => {
+      OpenF1Service.setApiKey(null);
+      closeAuthModal();
+      updateAuthButtonState(container);
+      await loadSessionData(null, true);
+    });
+  }
+}
+
+function updateAuthButtonState(container) {
+  const btnAuth = container.querySelector('#btn-openf1-auth');
+  const hasKey = !!OpenF1Service.getApiKey();
+  if (btnAuth) {
+    btnAuth.className = `openf1-btn ${hasKey ? 'authenticated' : 'secondary'}`;
+    btnAuth.textContent = hasKey ? '🔑 API Token OK' : '🔑 Nhập API Token';
+  }
 }
 
 function startReplay() {
@@ -523,6 +694,7 @@ async function loadSessionData(targetLap = null, bypassCache = false) {
   const statusText = document.querySelector('#openf1-status-text');
   const statusDot = document.querySelector('#openf1-status-dot');
   const headingTitle = document.querySelector('#openf1-heading-title');
+  const restrictionBanner = document.querySelector('#openf1-restriction-banner');
 
   try {
     if (statusText) statusText.textContent = 'ĐANG ĐỒNG BỘ DỮ LIỆU...';
@@ -542,10 +714,12 @@ async function loadSessionData(targetLap = null, bypassCache = false) {
     const timingData = await OpenF1Service.getFullLiveTiming(sessionKeyToFetch, targetLap, bypassCache || isLivePolling);
     currentTimingData = timingData;
     
-    if (OpenF1Service.lastRestrictionNotice) {
-      if (statusText) statusText.textContent = `OPENF1 LIVE MODE (${timingData.drivers.length} TAY ĐUA)`;
-      if (statusDot) statusDot.style.background = '#00E5FF';
+    if (OpenF1Service.lastRestrictionNotice && !OpenF1Service.getApiKey()) {
+      if (restrictionBanner) restrictionBanner.style.display = 'flex';
+      if (statusText) statusText.textContent = `🔴 LIVE KHÓA (FREE TIER) - CẦN TOKEN`;
+      if (statusDot) statusDot.style.background = '#FFB800';
     } else {
+      if (restrictionBanner) restrictionBanner.style.display = 'none';
       if (statusText) statusText.textContent = `OPENF1 ONLINE (${timingData.drivers.length} TAY ĐUA)`;
       if (statusDot) statusDot.style.background = '#00FF66';
     }
