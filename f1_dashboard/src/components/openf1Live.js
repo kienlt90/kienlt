@@ -30,10 +30,57 @@ const PRESET_MEETINGS = [
   { year: 2024, meeting_key: 1252, name: 'Abu Dhabi Grand Prix (Chung Kết 2024)', session_name: 'Race', session_key: 9662, flag: '🇦🇪' }
 ];
 
+async function findOptimalActiveSession(year) {
+  try {
+    const sessions = await OpenF1Service.getSessions(null, year);
+    if (!sessions || sessions.length === 0) return null;
+
+    const now = Date.now();
+
+    // 1. Is there an active session currently running? (now >= date_start && now <= date_end)
+    const active = sessions.find(s => {
+      if (!s.date_start || !s.date_end) return false;
+      const st = new Date(s.date_start).getTime();
+      const end = new Date(s.date_end).getTime();
+      return now >= st && now <= end;
+    });
+    if (active) return active;
+
+    // 2. Is there an upcoming session starting soonest? (date_start > now)
+    const upcoming = sessions
+      .filter(s => s.date_start && new Date(s.date_start).getTime() > now)
+      .sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime());
+    
+    if (upcoming.length > 0) {
+      return upcoming[0];
+    }
+
+    // 3. If no upcoming sessions, pick the most recent past session
+    const past = sessions
+      .filter(s => s.date_end && new Date(s.date_end).getTime() <= now)
+      .sort((a, b) => new Date(b.date_end).getTime() - new Date(a.date_end).getTime());
+    
+    if (past.length > 0) {
+      return past[0];
+    }
+  } catch (err) {
+    console.warn('Could not auto-detect active session:', err);
+  }
+  return null;
+}
+
 export async function renderOpenF1App(container) {
   // Clear any existing timers
   if (livePollInterval) clearInterval(livePollInterval);
   if (replayTimer) clearInterval(replayTimer);
+
+  // Auto-detect current active or upcoming session on startup
+  const optimalSession = await findOptimalActiveSession(currentYear);
+  if (optimalSession) {
+    currentMeetingKey = optimalSession.meeting_key;
+    currentSessionKey = optimalSession.session_key;
+    if (optimalSession.year) currentYear = optimalSession.year;
+  }
 
   container.innerHTML = `
     <div class="openf1-container">
@@ -249,12 +296,24 @@ async function loadSessionsForMeeting(meetingKey, container) {
     cachedSessions = sessions || [];
 
     if (cachedSessions.length > 0) {
-      // Prefer Race, or if not found, Qualifying, or latest session
+      // Prefer currently active/upcoming session within this meeting, or matching currentSessionKey
       let selectedSession = cachedSessions.find(s => s.session_key === currentSessionKey);
       if (!selectedSession) {
-        selectedSession = cachedSessions.find(s => (s.session_name || '').toLowerCase().includes('race')) 
+        const now = Date.now();
+        const activeInMeeting = cachedSessions.find(s => {
+          if (!s.date_start || !s.date_end) return false;
+          return now >= new Date(s.date_start).getTime() && now <= new Date(s.date_end).getTime();
+        });
+        const upcomingInMeeting = cachedSessions
+          .filter(s => s.date_start && new Date(s.date_start).getTime() > now)
+          .sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime())[0];
+        
+        selectedSession = activeInMeeting 
+          || upcomingInMeeting
+          || cachedSessions.find(s => (s.session_name || '').toLowerCase().includes('race')) 
           || cachedSessions.find(s => (s.session_name || '').toLowerCase().includes('qualifying'))
           || cachedSessions[cachedSessions.length - 1];
+
         if (selectedSession) currentSessionKey = selectedSession.session_key;
       }
 
@@ -277,17 +336,32 @@ function formatSessionLabel(session) {
   const name = session.session_name || '';
   const nameLower = name.toLowerCase();
 
-  if (nameLower.includes('practice 1') || nameLower === 'fp1') return `🏎️ Practice 1 (FP1)`;
-  if (nameLower.includes('practice 2') || nameLower === 'fp2') return `🏎️ Practice 2 (FP2)`;
-  if (nameLower.includes('practice 3') || nameLower === 'fp3') return `🏎️ Practice 3 (FP3)`;
-  if (nameLower.includes('qualifying') && !nameLower.includes('sprint')) return `⚡ Qualifying (Phân hạng)`;
-  if (nameLower.includes('sprint qualifying') || nameLower.includes('sprint shootout')) return `⚡ Sprint Shootout`;
-  if (nameLower === 'sprint' || nameLower.includes('sprint race')) return `💨 Sprint Race`;
-  if (nameLower.includes('race')) return `🏁 Race (Chính thức)`;
-  if (nameLower.includes('day 1')) return `🧪 Testing Day 1`;
-  if (nameLower.includes('day 2')) return `🧪 Testing Day 2`;
-  if (nameLower.includes('day 3')) return `🧪 Testing Day 3`;
-  return `🏁 ${name}`;
+  let tag = '';
+  if (session.date_start && session.date_end) {
+    const now = Date.now();
+    const st = new Date(session.date_start).getTime();
+    const end = new Date(session.date_end).getTime();
+    if (now >= st && now <= end) {
+      tag = ' [🔴 LIVE]';
+    } else if (now < st && (st - now < 24 * 60 * 60 * 1000)) {
+      const timeStr = new Date(session.date_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      tag = ` [⚡ ${timeStr}]`;
+    }
+  }
+
+  let label = `🏁 ${name}`;
+  if (nameLower.includes('practice 1') || nameLower === 'fp1') label = `🏎️ Practice 1 (FP1)`;
+  else if (nameLower.includes('practice 2') || nameLower === 'fp2') label = `🏎️ Practice 2 (FP2)`;
+  else if (nameLower.includes('practice 3') || nameLower === 'fp3') label = `🏎️ Practice 3 (FP3)`;
+  else if (nameLower.includes('qualifying') && !nameLower.includes('sprint')) label = `⚡ Qualifying (Phân hạng)`;
+  else if (nameLower.includes('sprint qualifying') || nameLower.includes('sprint shootout')) label = `⚡ Sprint Shootout`;
+  else if (nameLower === 'sprint' || nameLower.includes('sprint race')) label = `💨 Sprint Race`;
+  else if (nameLower.includes('race')) label = `🏁 Race (Chính thức)`;
+  else if (nameLower.includes('day 1')) label = `🧪 Testing Day 1`;
+  else if (nameLower.includes('day 2')) label = `🧪 Testing Day 2`;
+  else if (nameLower.includes('day 3')) label = `🧪 Testing Day 3`;
+
+  return `${label}${tag}`;
 }
 
 function setupEventListeners(container) {
