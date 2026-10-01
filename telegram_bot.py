@@ -60,7 +60,62 @@ except Exception as _e:
 if BOT_TOKEN == "YOUR_TELEGRAM_BOT_TOKEN_HERE":
     print("WARNING: Please set your TELEGRAM_BOT_TOKEN in the script or environment variable.")
 
+telebot.apihelper.ENABLE_MIDDLEWARE = True
 bot = telebot.TeleBot(BOT_TOKEN)
+
+# ----------------------------------------------------------------------
+# FORUM TOPIC / THREAD ROUTING LAYER
+# Đảm bảo Bot luôn trả lời đúng Topic con (message_thread_id) khi chat trong Forum Group
+# ----------------------------------------------------------------------
+_orig_send_message = bot.send_message
+_orig_reply_to = bot.reply_to
+
+def smart_send_message(chat_id, text, **kwargs):
+    if 'message_thread_id' not in kwargs or kwargs['message_thread_id'] is None:
+        tid = getattr(threading.current_thread(), 'current_message_thread_id', None)
+        if tid is not None:
+            kwargs['message_thread_id'] = tid
+    return _orig_send_message(chat_id, text, **kwargs)
+
+def smart_reply_to(message, text, **kwargs):
+    tid = getattr(message, 'message_thread_id', None)
+    if tid is not None and ('message_thread_id' not in kwargs or kwargs['message_thread_id'] is None):
+        kwargs['message_thread_id'] = tid
+    return _orig_reply_to(message, text, **kwargs)
+
+bot.send_message = smart_send_message
+bot.reply_to = smart_reply_to
+
+@bot.middleware_handler(update_types=['message'])
+def set_topic_thread_context(bot_instance, message):
+    threading.current_thread().current_message_thread_id = getattr(message, 'message_thread_id', None)
+
+# ----------------------------------------------------------------------
+# CLOUD / KOYEB HEALTH CHECK SERVER
+# Cung cấp endpoint HTTP GET / trả về 200 OK để Koyeb kiểm tra trạng thái
+# ----------------------------------------------------------------------
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain; charset=utf-8')
+        self.end_headers()
+        self.wfile.write(b"OK - Telegram Bot is alive")
+
+    def log_message(self, format, *args):
+        pass
+
+def start_health_server():
+    port = int(os.environ.get("PORT", 8080))
+    try:
+        server = HTTPServer(('0.0.0.0', port), HealthCheckHandler)
+        print(f"✅ Cloud Health Check Server running on port {port}")
+        server.serve_forever()
+    except Exception as e:
+        print(f"⚠️ Health Server warning: {e}")
+
+threading.Thread(target=start_health_server, daemon=True).start()
 
 # Set bot commands in the menu automatically
 try:
@@ -95,9 +150,12 @@ def read_database():
     match = re.search(r'let\s+units\s*=\s*(\[[\s\S]*?\]);', content)
     if not match:
         raise ValueError("Could not find the 'let units = [...];' declaration in contracts.html")
-        
-    # We use a custom parser or eval to extract the JS array safely in Python.
-    # To keep it simple, we write a temp JS script and run node to dump it to JSON.
+
+    # Ưu tiên parse trực tiếp bằng JSON trong Python (hoạt động tốt trên Cloud không có Node.js)
+    try:
+        return json.loads(match.group(1))
+    except Exception:
+        pass
     temp_js_path = os.path.join(os.path.dirname(HTML_PATH), "temp_dump_units.js")
     temp_json_path = os.path.join(os.path.dirname(HTML_PATH), "temp_dump_units.json")
     
@@ -222,7 +280,8 @@ def send_welcome(message):
         "➕ /add_hisl2 <mã> | <tên> | [mặc định] | [mô tả] : Bổ sung cấu hình HIS L2 mới.\n"
         "❓ /help : Xem hướng dẫn sử dụng."
     )
-    bot.reply_to(message, welcome_text, parse_mode='Markdown')
+    thread_id = getattr(message, 'message_thread_id', None)
+    bot.reply_to(message, welcome_text, parse_mode='Markdown', message_thread_id=thread_id)
 
 def parse_value_to_number(value_str):
     if not value_str:
@@ -240,6 +299,7 @@ def format_vietnamese_currency(amount):
 @bot.message_handler(commands=['list_units', 'listunits', 'list'])
 def list_units(message):
     chat_id = message.chat.id
+    thread_id = getattr(message, 'message_thread_id', None)
     save_chat_id(chat_id)
     try:
         units = read_database()
@@ -253,13 +313,14 @@ def list_units(message):
             
             val_str = format_vietnamese_currency(total_val)
             lines.append(f"{idx+1}. **{u['name']}** -- {val_str}")
-        bot.reply_to(message, "\n".join(lines), parse_mode='Markdown')
+        bot.reply_to(message, "\n".join(lines), parse_mode='Markdown', message_thread_id=thread_id)
     except Exception as e:
-        bot.reply_to(message, f"❌ Lỗi đọc cơ sở dữ liệu: {e}")
+        bot.reply_to(message, f"❌ Lỗi đọc cơ sở dữ liệu: {e}", message_thread_id=thread_id)
 
 @bot.message_handler(commands=['add_contract', 'addcontract', 'add'])
 def start_add_contract(message):
     chat_id = message.chat.id
+    thread_id = getattr(message, 'message_thread_id', None)
     save_chat_id(chat_id)
     try:
         units = read_database()
@@ -269,10 +330,10 @@ def start_add_contract(message):
             markup.add(types.KeyboardButton(f"{u['name']} ({u['id']})"))
         markup.add(types.KeyboardButton("➕ Thêm đơn vị mới..."))
         
-        user_sessions[chat_id] = {"step": "SELECT_UNIT", "data": {}}
-        bot.send_message(chat_id, "Bước 1: Chọn Đơn vị thụ hưởng từ danh sách dưới đây, hoặc chọn thêm đơn vị mới:", reply_markup=markup)
+        user_sessions[chat_id] = {"step": "SELECT_UNIT", "data": {}, "thread_id": thread_id}
+        bot.send_message(chat_id, "Bước 1: Chọn Đơn vị thụ hưởng từ danh sách dưới đây, hoặc chọn thêm đơn vị mới:", reply_markup=markup, message_thread_id=thread_id)
     except Exception as e:
-        bot.reply_to(message, f"❌ Lỗi khởi tạo: {e}")
+        bot.reply_to(message, f"❌ Lỗi khởi tạo: {e}", message_thread_id=thread_id)
 
 @bot.message_handler(func=lambda msg: msg.chat.id in user_sessions)
 def handle_wizard_steps(message):
@@ -469,6 +530,7 @@ def handle_wizard_steps(message):
 def search_hisl2_config(message):
     """Search HIS L2 configuration by keyword."""
     chat_id = message.chat.id
+    thread_id = getattr(message, 'message_thread_id', None)
     save_chat_id(chat_id)
     # Extract keyword from command
     parts = message.text.strip().split(None, 1)
@@ -482,12 +544,13 @@ def search_hisl2_config(message):
             "  `/tracuu bắt buộc nhập`\n"
             "  `/tracuu NGT_TN`\n\n"
             f"📊 Tổng số cấu hình trong hệ thống: *{len(_hisl2_data)}*",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
     keyword = parts[1].strip().lower()
-    bot.send_message(chat_id, f"⏳ Đang tìm kiếm: `{parts[1].strip()}`...", parse_mode='Markdown')
+    bot.send_message(chat_id, f"⏳ Đang tìm kiếm: `{parts[1].strip()}`...", parse_mode='Markdown', message_thread_id=thread_id)
 
     results = []
     for row in _hisl2_data:
@@ -507,7 +570,8 @@ def search_hisl2_config(message):
             chat_id,
             f"❌ Không tìm thấy kết quả nào cho từ khóa: *{parts[1].strip()}*\n"
             "Thử lại với từ khóa khác hoặc dùng mã cấu hình (ví dụ: `NGT_`, `ADMIN_`).",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -533,7 +597,7 @@ def search_hisl2_config(message):
     if len(full_msg) > 4000:
         full_msg = full_msg[:4000] + "\n_(Cắt bớt do quá dài)_"
 
-    bot.send_message(chat_id, full_msg, parse_mode='Markdown')
+    bot.send_message(chat_id, full_msg, parse_mode='Markdown', message_thread_id=thread_id)
 
 
 # Helper to clean HTML for Telegram Markdown
@@ -557,6 +621,7 @@ def clean_html(text):
 def search_attt(message):
     """Search ATTT questions and answers by keyword."""
     chat_id = message.chat.id
+    thread_id = getattr(message, 'message_thread_id', None)
     save_chat_id(chat_id)
     parts = message.text.strip().split(None, 1)
     if len(parts) < 2 or not parts[1].strip():
@@ -569,12 +634,13 @@ def search_attt(message):
             "  `/attt email giả mạo`\n"
             "  `/attt OTP`\n\n"
             f"📊 Tổng số câu hỏi trong bộ đề: *{len(_attt_data)}*",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
     keyword = parts[1].strip().lower()
-    bot.send_message(chat_id, f"⏳ Đang tra cứu bộ đề: `{parts[1].strip()}`...", parse_mode='Markdown')
+    bot.send_message(chat_id, f"⏳ Đang tra cứu bộ đề: `{parts[1].strip()}`...", parse_mode='Markdown', message_thread_id=thread_id)
 
     results = []
     for row in _attt_data:
@@ -595,7 +661,8 @@ def search_attt(message):
             chat_id,
             f"❌ Không tìm thấy câu hỏi nào có từ khóa: *{parts[1].strip()}*\n"
             "Thử tìm bằng các từ khóa khác ngắn hơn.",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -635,13 +702,14 @@ def search_attt(message):
     if len(full_msg) > 4000:
         full_msg = full_msg[:4000] + "\n_(Cắt bớt do vượt quá độ dài tin nhắn)_"
 
-    bot.send_message(chat_id, full_msg, parse_mode='Markdown')
+    bot.send_message(chat_id, full_msg, parse_mode='Markdown', message_thread_id=thread_id)
 
 
 @bot.message_handler(commands=['emr', 'traemr'])
 def search_emr_transtype(message):
     """Search EMR TransType mapping by keyword or code."""
     chat_id = message.chat.id
+    thread_id = getattr(message, 'message_thread_id', None)
     save_chat_id(chat_id)
     parts = message.text.strip().split(None, 1)
     if len(parts) < 2 or not parts[1].strip():
@@ -654,7 +722,8 @@ def search_emr_transtype(message):
             "  `/emr bệnh án`\n"
             "  `/emr 34`\n\n"
             f"📊 Tổng số tài liệu EMR cấu hình: *{len(_emr_data)}*",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -662,7 +731,7 @@ def search_emr_transtype(message):
     # Normalize query: collapse spaces, convert to lowercase
     query = re.sub(r'\s+', ' ', raw_query).strip().lower()
     
-    bot.send_message(chat_id, f"⏳ Đang tìm kiếm tài liệu EMR: `{raw_query}`...", parse_mode='Markdown')
+    bot.send_message(chat_id, f"⏳ Đang tìm kiếm tài liệu EMR: `{raw_query}`...", parse_mode='Markdown', message_thread_id=thread_id)
 
     results = []
     for row in _emr_data:
@@ -683,7 +752,8 @@ def search_emr_transtype(message):
             chat_id,
             f"❌ Không tìm thấy tài liệu EMR nào phù hợp với từ khóa: *{raw_query}*\n"
             "Vui lòng thử từ khóa khác.",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -707,7 +777,7 @@ def search_emr_transtype(message):
     if len(full_msg) > 4000:
         full_msg = full_msg[:4000] + "\n_(Cắt bớt do vượt quá độ dài tin nhắn)_"
 
-    bot.send_message(chat_id, full_msg, parse_mode='Markdown')
+    bot.send_message(chat_id, full_msg, parse_mode='Markdown', message_thread_id=thread_id)
 
 
 def sync_file_to_git(file_path, commit_message):
@@ -729,6 +799,7 @@ def sync_file_to_git(file_path, commit_message):
 def add_emr_entry(message):
     """Add a new EMR TransType entry."""
     chat_id = message.chat.id
+    thread_id = getattr(message, 'message_thread_id', None)
     save_chat_id(chat_id)
     parts = message.text.strip().split(None, 1)
     if len(parts) < 2 or not parts[1].strip() or '|' not in parts[1]:
@@ -738,7 +809,8 @@ def add_emr_entry(message):
             "Cú pháp: `/add_emr <tên phiếu> | <mã TransType>`\n"
             "Ví dụ:\n"
             "  `/add_emr Phiếu khám nhi | 55`",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -752,7 +824,8 @@ def add_emr_entry(message):
             message,
             "⚠️ Tên phiếu và mã TransType không được để trống.\n"
             "Cú pháp: `/add_emr <tên phiếu> | <mã TransType>`",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -767,7 +840,7 @@ def add_emr_entry(message):
             break
             
     if exists:
-        bot.reply_to(message, f"⚠️ Tên phiếu *{name}* đã tồn tại trong danh sách TransType EMR!", parse_mode='Markdown')
+        bot.reply_to(message, f"⚠️ Tên phiếu *{name}* đã tồn tại trong danh sách TransType EMR!", parse_mode='Markdown', message_thread_id=thread_id)
         return
 
     # Append to database
@@ -778,21 +851,22 @@ def add_emr_entry(message):
         with open(TRANSTYPE_CONFIG_PATH, "w", encoding="utf-8") as f:
             json.dump(_emr_data, f, indent=4, ensure_ascii=False)
             
-        bot.send_message(chat_id, f"💾 Đã lưu cục bộ. Đang đồng bộ GitHub...", parse_mode='Markdown')
+        bot.send_message(chat_id, f"💾 Đã lưu cục bộ. Đang đồng bộ GitHub...", parse_mode='Markdown', message_thread_id=thread_id)
         success, git_msg = sync_file_to_git(TRANSTYPE_CONFIG_PATH, f"feat: Add EMR TransType '{name}' via bot")
         
         if success:
-            bot.send_message(chat_id, f"✅ **Đã thêm TransType EMR thành công!**\n\n📄 *{name}* ➔ TransType `{code}`\n\n⚙️ _Đồng bộ GitHub:_ `{git_msg}`", parse_mode='Markdown')
+            bot.send_message(chat_id, f"✅ **Đã thêm TransType EMR thành công!**\n\n📄 *{name}* ➔ TransType `{code}`\n\n⚙️ _Đồng bộ GitHub:_ `{git_msg}`", parse_mode='Markdown', message_thread_id=thread_id)
         else:
-            bot.send_message(chat_id, f"⚠️ **Đã lưu cục bộ nhưng lỗi đồng bộ GitHub:**\n`{git_msg}`\n\n📄 *{name}* ➔ TransType `{code}`", parse_mode='Markdown')
+            bot.send_message(chat_id, f"⚠️ **Đã lưu cục bộ nhưng lỗi đồng bộ GitHub:**\n`{git_msg}`\n\n📄 *{name}* ➔ TransType `{code}`", parse_mode='Markdown', message_thread_id=thread_id)
     except Exception as e:
-        bot.reply_to(message, f"❌ Lỗi ghi file cơ sở dữ liệu: {e}")
+        bot.reply_to(message, f"❌ Lỗi ghi file cơ sở dữ liệu: {e}", message_thread_id=thread_id)
 
 
 @bot.message_handler(commands=['add_hisl2', 'addhisl2'])
 def add_hisl2_entry(message):
     """Add a new HIS L2 configuration entry."""
     chat_id = message.chat.id
+    thread_id = getattr(message, 'message_thread_id', None)
     save_chat_id(chat_id)
     parts = message.text.strip().split(None, 1)
     if len(parts) < 2 or not parts[1].strip() or '|' not in parts[1]:
@@ -802,7 +876,8 @@ def add_hisl2_entry(message):
             "Cú pháp: `/add_hisl2 <mã cấu hình> | <tên cấu hình> | [giá trị mặc định] | [mô tả]`\n"
             "Ví dụ:\n"
             "  `/add_hisl2 NGT_BATBUOC_EMAIL | Bắt buộc nhập Email | 0 | 0: không, 1: có`",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -814,7 +889,8 @@ def add_hisl2_entry(message):
             message,
             "⚠️ Mã cấu hình và tên cấu hình không được để trống.\n"
             "Cú pháp: `/add_hisl2 <mã cấu hình> | <tên cấu hình> | [giá trị mặc định] | [mô tả]`",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -827,7 +903,8 @@ def add_hisl2_entry(message):
         bot.reply_to(
             message,
             "⚠️ Mã cấu hình và tên cấu hình không được để trống.",
-            parse_mode='Markdown'
+            parse_mode='Markdown',
+            message_thread_id=thread_id
         )
         return
 
@@ -839,7 +916,7 @@ def add_hisl2_entry(message):
             break
 
     if exists:
-        bot.reply_to(message, f"⚠️ Mã cấu hình `{ma_cauhinh}` đã tồn tại trong danh sách HIS L2!", parse_mode='Markdown')
+        bot.reply_to(message, f"⚠️ Mã cấu hình `{ma_cauhinh}` đã tồn tại trong danh sách HIS L2!", parse_mode='Markdown', message_thread_id=thread_id)
         return
 
     # Create new configuration object
@@ -868,15 +945,15 @@ def add_hisl2_entry(message):
         with open(HISL2_CONFIG_PATH, "w", encoding="utf-8") as f:
             json.dump(full_data, f, indent=4, ensure_ascii=False)
 
-        bot.send_message(chat_id, f"💾 Đã lưu cục bộ. Đang đồng bộ GitHub...", parse_mode='Markdown')
+        bot.send_message(chat_id, f"💾 Đã lưu cục bộ. Đang đồng bộ GitHub...", parse_mode='Markdown', message_thread_id=thread_id)
         success, git_msg = sync_file_to_git(HISL2_CONFIG_PATH, f"feat: Add HIS L2 Config '{ma_cauhinh}' via bot")
 
         if success:
-            bot.send_message(chat_id, f"✅ **Đã thêm cấu hình HIS L2 thành công!**\n\n📌 `{ma_cauhinh}`\n*{ten_cauhinh}*\nGiá trị mặc định: `{gia_tri_mac_dinh}`\n_{mo_ta}_\n\n⚙️ _Đồng bộ GitHub:_ `{git_msg}`", parse_mode='Markdown')
+            bot.send_message(chat_id, f"✅ **Đã thêm cấu hình HIS L2 thành công!**\n\n📌 `{ma_cauhinh}`\n*{ten_cauhinh}*\nGiá trị mặc định: `{gia_tri_mac_dinh}`\n_{mo_ta}_\n\n⚙️ _Đồng bộ GitHub:_ `{git_msg}`", parse_mode='Markdown', message_thread_id=thread_id)
         else:
-            bot.send_message(chat_id, f"⚠️ **Đã lưu cục bộ nhưng lỗi đồng bộ GitHub:**\n`{git_msg}`\n\n📌 `{ma_cauhinh}`\n*{ten_cauhinh}*", parse_mode='Markdown')
+            bot.send_message(chat_id, f"⚠️ **Đã lưu cục bộ nhưng lỗi đồng bộ GitHub:**\n`{git_msg}`\n\n📌 `{ma_cauhinh}`\n*{ten_cauhinh}*", parse_mode='Markdown', message_thread_id=thread_id)
     except Exception as e:
-        bot.reply_to(message, f"❌ Lỗi ghi file cấu hình HIS L2: {e}")
+        bot.reply_to(message, f"❌ Lỗi ghi file cấu hình HIS L2: {e}", message_thread_id=thread_id)
 
 
 # ----------------------------------------------------------------------
@@ -1520,12 +1597,12 @@ def handle_task_toggle(call):
             except Exception:
                 pass
 
-# Start polling
 if __name__ == "__main__":
-    # Khởi chạy thread giám sát chạy ngầm (đã tắt vì bỏ check task và chrome)
-    # monitor_thread = threading.Thread(target=check_tasks_monitor_loop, daemon=True)
-    # monitor_thread.start()
-    # print("✅ Background Task Monitor Thread started...")
-    
+    try:
+        bot.delete_webhook(drop_pending_updates=True)
+        print("✅ Cleaned webhook and pending updates.")
+    except Exception as _e:
+        print(f"⚠️ delete_webhook warning: {_e}")
+        
     print("Telegram Contract Bot is running...")
-    bot.infinity_polling()
+    bot.infinity_polling(skip_pending=True)
