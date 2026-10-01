@@ -8,12 +8,16 @@ from telebot import types
 import threading
 import time
 from datetime import datetime, timedelta
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
+try:
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from selenium.webdriver.common.keys import Keys
+    HAS_SELENIUM = True
+except ImportError:
+    HAS_SELENIUM = False
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -1040,6 +1044,8 @@ def close_active_dialogs(driver):
         print(f"Lỗi đóng modal: {e}")
 
 def scrape_active_tasks(pause_if_running=True):
+    if not HAS_SELENIUM:
+        return {"error": "Tính năng thao tác Chrome/Task yêu cầu chạy bot trên máy tính cá nhân (local)!"}
     chrome_options = Options()
     chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
     driver = None
@@ -1444,6 +1450,9 @@ def handle_task_toggle(call):
     action = parts[2]
     
     action_text = "bắt đầu" if action == "start" else "tạm dừng"
+    if not HAS_SELENIUM:
+        bot.send_message(chat_id, "⚠️ Tính năng thao tác Chrome/Task yêu cầu chạy bot trên máy tính cá nhân (local)!")
+        return
     bot.send_message(chat_id, f"⏳ Đang thực hiện {action_text} task `{code}` qua Chrome...", parse_mode='Markdown')
     bot.answer_callback_query(call.id, f"Đang {action_text} task...")
     
