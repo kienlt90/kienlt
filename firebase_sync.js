@@ -17,6 +17,27 @@ const firebaseConfig = {
 let db = null;
 let isFirebaseReady = false;
 
+function initFirebaseAuth() {
+  if (typeof firebase === 'undefined' || !firebase.auth) return;
+  try {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        firebase.auth().signInAnonymously()
+          .then((cred) => {
+            console.log("🔐 Firebase Anonymous Auth connected successfully (UID:", cred.user.uid + ")");
+          })
+          .catch((err) => {
+            console.warn("⚠️ Firebase Anonymous Auth sign-in error:", err);
+          });
+      } else {
+        console.log("🔐 Firebase Authenticated session active (UID:", user.uid + ")");
+      }
+    });
+  } catch (authErr) {
+    console.warn("⚠️ Firebase Auth init error:", authErr);
+  }
+}
+
 try {
   if (typeof firebase !== 'undefined') {
     if (!firebase.apps.length) {
@@ -25,6 +46,15 @@ try {
     db = firebase.database();
     isFirebaseReady = true;
     console.log("🟢 Firebase Realtime Database initialized successfully!");
+
+    if (firebase.auth) {
+      initFirebaseAuth();
+    } else if (typeof document !== 'undefined') {
+      const script = document.createElement('script');
+      script.src = "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
+      script.onload = () => initFirebaseAuth();
+      document.head.appendChild(script);
+    }
   }
 } catch (err) {
   console.warn("⚠️ Firebase init warning (Falling back to local storage):", err);
