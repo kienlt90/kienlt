@@ -30,38 +30,35 @@ window.renderKidsLoginList = function() {
     container.innerHTML = kids.map(k => {
       const isGrade2 = k.grade === 2 || k.id === 'kid_thoc';
       const isGrade3 = k.grade === 3;
-      const cardBg = isGrade2 ? '#fffbeb' : (isGrade3 ? '#ecfdf5' : '#f0f9ff');
-      const borderColor = isGrade2 ? '#f59e0b' : (isGrade3 ? '#10b981' : '#0ea5e9');
-      const avatarBg = isGrade2 ? '#fef3c7' : (isGrade3 ? '#d1fae5' : '#e0f2fe');
-      const avatarBorder = isGrade2 ? '#fcd34d' : (isGrade3 ? '#6ee7b7' : '#7dd3fc');
-      const nameColor = isGrade2 ? '#451a03' : (isGrade3 ? '#064e3b' : '#082f49');
-      const badgeBg = isGrade2 ? '#fde68a' : (isGrade3 ? '#a7f3d0' : '#bae6fd');
-      const badgeColor = isGrade2 ? '#78350f' : (isGrade3 ? '#065f46' : '#0369a1');
-      const subColor = isGrade2 ? '#92400e' : (isGrade3 ? '#047857' : '#0369a1');
+      const cardTheme = isGrade2 
+        ? { card: 'bg-amber-50/90 border-amber-300 hover:border-amber-400', avatarBg: 'bg-amber-100 border-amber-200', name: 'text-amber-950', badge: 'bg-amber-200 text-amber-900 border-amber-300', sub: 'text-amber-800' }
+        : (isGrade3 
+          ? { card: 'bg-emerald-50/90 border-emerald-300 hover:border-emerald-400', avatarBg: 'bg-emerald-100 border-emerald-200', name: 'text-emerald-950', badge: 'bg-emerald-200 text-emerald-900 border-emerald-300', sub: 'text-emerald-800' }
+          : { card: 'bg-sky-50/90 border-sky-300 hover:border-sky-400', avatarBg: 'bg-sky-100 border-sky-200', name: 'text-sky-950', badge: 'bg-sky-200 text-sky-900 border-sky-300', sub: 'text-sky-800' });
 
       return `
-        <div class="w-full flex items-center justify-between p-3 rounded-2xl border-2 shadow-sm transition" style="background-color: ${cardBg} !important; border-color: ${borderColor} !important;">
+        <div class="w-full flex items-center justify-between p-3 rounded-2xl border shadow-xs transition ${cardTheme.card}">
           <div class="flex items-center space-x-3 cursor-pointer select-none" onclick="selectKidAccount('${k.username}')" title="Bấm để chọn tài khoản bé ${k.name}">
-            <div class="w-11 h-11 rounded-xl border-2 flex items-center justify-center text-xl shadow-inner shrink-0" style="background-color: ${avatarBg} !important; border-color: ${avatarBorder} !important;">
+            <div class="w-11 h-11 rounded-xl border flex items-center justify-center text-xl shadow-inner shrink-0 ${cardTheme.avatarBg}">
               🎓
             </div>
             <div>
               <div class="flex items-center space-x-2">
-                <span class="font-black text-base" style="color: ${nameColor} !important;">${k.name}</span>
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full" style="background-color: ${badgeBg} !important; color: ${badgeColor} !important; border: 1px solid ${borderColor} !important;">
+                <span class="font-black text-base ${cardTheme.name}">${k.name}</span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${cardTheme.badge}">
                   Lớp ${k.grade}
                 </span>
               </div>
-              <div class="text-[11px] font-bold mt-0.5" style="color: ${subColor} !important;">
-                Tài khoản: <span class="font-semibold text-slate-500">#${k.username}</span> <span class="text-[10px] text-emerald-600 font-bold ml-1">🔒 AES-GCM</span>
+              <div class="text-[11px] font-bold mt-0.5 ${cardTheme.sub}">
+                Tài khoản: <span class="font-semibold text-slate-600">#${k.username}</span> <span class="text-[10px] text-emerald-600 font-bold ml-1">🔒 AES-GCM</span>
               </div>
             </div>
           </div>
           <div class="flex items-center space-x-1.5 shrink-0">
-            <button type="button" onclick="loginDirectAsKid('${k.id}', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm transition flex items-center space-x-1" style="background: linear-gradient(135deg, #f59e0b, #ea580c) !important;" title="Vào Đấu trường Toán Lớp ${k.grade} (Xác thực PIN)">
+            <button type="button" onclick="loginDirectAsKid('${k.id}', 'math')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs hover:opacity-90 transition flex items-center space-x-1 bg-gradient-to-r from-amber-500 to-orange-500" title="Vào Đấu trường Toán Lớp ${k.grade} (Xác thực PIN)">
               <span>🧮 Toán</span>
             </button>
-            <button type="button" onclick="loginDirectAsKid('${k.id}', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-black shadow-sm transition flex items-center space-x-1" style="background: linear-gradient(135deg, #0d9488, #059669) !important;" title="Vào Đấu trường Tiếng Anh Lớp ${k.grade} (Xác thực PIN)">
+            <button type="button" onclick="loginDirectAsKid('${k.id}', 'english')" class="px-2.5 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs hover:opacity-90 transition flex items-center space-x-1 bg-gradient-to-r from-teal-600 to-emerald-600" title="Vào Đấu trường Tiếng Anh Lớp ${k.grade} (Xác thực PIN)">
               <span>🇬🇧 T.Anh</span>
             </button>
           </div>
