@@ -3,20 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KIENLT90 Portal - Cổng thông tin Y tế số</title>
+  <title>KIENLT90 Portal - Cổng Quản Trị Y Tế Số & Đấu Trường Tư Duy</title>
+  
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  
   <!-- Firebase Realtime Database & Auth SDK (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script src="firebase_sync.js"></script>
+  <!-- Security Vault (AES-GCM 256-bit Encryption) -->
+  <script src="crypto_vault.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -39,6 +45,7 @@
       }
     }
   </script>
+
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -52,6 +59,7 @@
       scrollbar-width: none;
     }
   </style>
+
   <script>
     // Auth Check: Redirect to index.html if no session exists
     if (!localStorage.getItem('vnpt_his_session')) {
@@ -59,607 +67,521 @@
     }
   </script>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-full flex justify-center selection:bg-sky-100 selection:text-sky-800">
+<body class="bg-slate-100/90 text-slate-800 antialiased min-h-screen flex flex-col md:flex-row selection:bg-sky-500 selection:text-white">
 
-  <!-- Responsive Wrapper: Mobile Frame (<md) / Full Desktop Dashboard (>=md) -->
-  <div class="w-full max-w-md md:max-w-6xl lg:max-w-7xl min-h-screen flex flex-col md:px-6 md:py-6 relative transition-all duration-300">
-
-    <!-- Top Header (Mobile sticky bar & Desktop glass card) -->
-    <header class="sticky top-0 z-30 bg-white/95 md:bg-white backdrop-blur-md md:backdrop-blur-none border-b md:border border-slate-200/80 px-4 md:px-6 py-3 md:py-3.5 flex items-center justify-between gap-3 md:rounded-2xl md:shadow-sm md:mb-6">
-      <div class="flex items-center space-x-3 shrink-0">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center text-white font-extrabold shadow-md shadow-sky-500/20 text-sm tracking-tight shrink-0">
+  <!-- ============================================== -->
+  <!-- 1. LEFT WORKSPACE SIDEBAR (Desktop Studio Bar) -->
+  <!-- ============================================== -->
+  <aside id="main-sidebar" class="w-72 bg-slate-900 border-r border-slate-800/80 text-slate-300 hidden md:flex flex-col shrink-0 min-h-screen sticky top-0 h-screen z-40 transition-all duration-300">
+    
+    <!-- Brand / Workspace Logo -->
+    <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black shadow-md shadow-sky-500/20 text-sm tracking-tight shrink-0">
           K90
         </div>
-        <div class="min-w-0">
-          <div class="flex items-center space-x-2">
-            <h1 class="text-xs font-bold tracking-wider text-slate-400 uppercase truncate">KIENLT90 Portal</h1>
-            <span class="hidden md:inline-flex px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[10px] font-bold shrink-0">
-              v1.0 Online
-            </span>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <span class="font-black text-sm tracking-wide text-white uppercase">KIENLT90</span>
+            <span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-sky-950 text-sky-400 border border-sky-800/60">PRO</span>
           </div>
-          <p class="text-sm md:text-base font-extrabold text-slate-800 leading-tight truncate">Cổng Quản trị Y tế số</p>
+          <p class="text-[11px] font-medium text-slate-400">Enterprise Health Studio</p>
+        </div>
+      </div>
+      <span class="flex h-2.5 w-2.5 relative" title="Hệ thống Online">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+      </span>
+    </div>
+
+    <!-- Sidebar Navigation Menu (Scrollable) -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar px-3 py-4 space-y-6">
+
+      <!-- Group 1: Y tế số & Bảo hiểm -->
+      <div>
+        <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Mô-đun Y tế & BHYT</p>
+        <nav class="space-y-1 text-xs font-semibold">
+          <a href="mau_09_bh.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-400 group-hover:scale-110 transition shrink-0"></i>
+              <span>Mẫu 09/BH (TT12/2026)</span>
+            </span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">Mới</span>
+          </a>
+
+          <a href="xml_all_validator.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-indigo-400 group-hover:scale-110 transition shrink-0"></i>
+              <span>Tổng hợp 14 bảng XML 130</span>
+            </span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">QĐ 130</span>
+          </a>
+
+          <a href="xml3_checker.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <i data-lucide="clock" class="w-4 h-4 text-amber-400 group-hover:scale-110 transition shrink-0"></i>
+              <span>Tiến độ Thời gian XML 3</span>
+            </span>
+          </a>
+
+          <a href="xml_analyzer.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <i data-lucide="file-code" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition shrink-0"></i>
+              <span>Giám định XML BHYT</span>
+            </span>
+          </a>
+
+          <a href="LIS-Parser-Tool.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <i data-lucide="microscope" class="w-4 h-4 text-cyan-400 group-hover:scale-110 transition shrink-0"></i>
+              <span>LIS JS Parser Studio</span>
+            </span>
+          </a>
+
+          <a href="icd10.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <i data-lucide="book-open" class="w-4 h-4 text-blue-400 group-hover:scale-110 transition shrink-0"></i>
+              <span>Tra cứu ICD-10 QĐ 1849</span>
+            </span>
+          </a>
+
+          <a href="survey.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <i data-lucide="clipboard-list" class="w-4 h-4 text-rose-400 group-hover:scale-110 transition shrink-0"></i>
+              <span>Khảo sát RIS/PACS - EMR</span>
+            </span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Group 2: Đấu trường Tư duy Trẻ em -->
+      <div>
+        <div class="px-3 flex items-center justify-between mb-2">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Đấu trường của Bé</p>
+          <button onclick="openKidManagerModal()" class="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center space-x-0.5 cursor-pointer">
+            <i data-lucide="plus" class="w-3 h-3"></i>
+            <span>Tạo bé</span>
+          </button>
+        </div>
+        <nav class="space-y-1 text-xs font-semibold">
+          <a href="math_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <span class="text-base group-hover:scale-110 transition">🧮</span>
+              <span>Đấu trường Toán Tư Duy</span>
+            </span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Lớp 2 & 5</span>
+          </a>
+
+          <a href="english_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <span class="text-base group-hover:scale-110 transition">🇬🇧</span>
+              <span>Đấu trường Tiếng Anh</span>
+            </span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">Movers</span>
+          </a>
+        </nav>
+
+        <!-- Mini Kid List in Sidebar -->
+        <div id="sidebar-kids-list" class="space-y-1.5 mt-2.5 px-1">
+          <!-- Rendered by JS -->
         </div>
       </div>
 
-      <!-- Desktop Navigation Menu (Fully Non-Wrapping & Responsive) -->
-      <nav class="hidden md:flex items-center space-x-1 lg:space-x-1.5 bg-slate-100/90 p-1.5 rounded-xl border border-slate-200 shrink-0 overflow-x-auto custom-scrollbar">
-        <a href="javascript:void(0)" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-white shadow-xs flex items-center space-x-1.5 transition whitespace-nowrap shrink-0">
-          <i data-lucide="home" class="w-3.5 h-3.5"></i>
-          <span>Trang chủ</span>
-        </a>
-        <a href="survey.html" target="_blank" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0">
-          <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i>
-          <span>Khảo sát</span>
-        </a>
-        <a href="math_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-700 hover:text-amber-900 hover:bg-amber-50 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
-          <span>Toán Tư Duy</span>
-        </a>
-        <a href="english_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-semibold text-teal-700 hover:text-teal-900 hover:bg-teal-50 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0">
-          <i data-lucide="languages" class="w-3.5 h-3.5 text-teal-500"></i>
-          <span>Tiếng Anh</span>
-        </a>
-        <a href="javascript:void(0)" onclick="document.getElementById('modulesSection').scrollIntoView({behavior: 'smooth'})" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0">
-          <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
-          <span>Công cụ</span>
-        </a>
-        <a href="javascript:void(0)" onclick="window.open('xml_analyzer.html', '_blank')" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0">
-          <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
-          <span>XML 130</span>
-        </a>
-        <a href="javascript:void(0)" onclick="window.open('xml3_checker.html', '_blank')" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-700 hover:text-amber-900 hover:bg-amber-50/80 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0 border border-amber-200/60 bg-amber-50/40">
-          <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-600"></i>
-          <span>Check XML 3</span>
-        </a>
-        <a href="javascript:void(0)" onclick="window.open('xml_all_validator.html', '_blank')" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 hover:text-indigo-900 hover:bg-indigo-50 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0 border border-indigo-200/80 bg-indigo-50/50">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i>
-          <span>Check Tổng XML</span>
-        </a>
-        <a href="javascript:void(0)" onclick="window.open('mau_09_bh.html', '_blank')" class="px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-bold text-sky-700 hover:text-sky-900 hover:bg-sky-50 flex items-center space-x-1.5 transition whitespace-nowrap shrink-0 border border-sky-300 bg-sky-50/80">
-          <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-sky-600"></i>
-          <span>Tạo Mẫu 09/BH</span>
-        </a>
-      </nav>
+    </div>
 
-      <!-- User Actions & Logout -->
-      <div class="flex items-center space-x-2 shrink-0">
-        <button class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition relative shrink-0" title="Thông báo" onclick="showSystemToast('Hệ thống hoạt động bình thường. Không có thông báo mới.')" aria-label="Thông báo hệ thống">
-          <i data-lucide="bell" class="w-4 h-4"></i>
-          <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
-        </button>
-        <button onclick="handleLogout()" class="h-9 md:h-10 px-3 md:px-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center space-x-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition shrink-0 whitespace-nowrap" title="Đăng xuất">
+    <!-- Sidebar Footer / User Profile & Logout -->
+    <div class="p-3.5 border-t border-slate-800/80 bg-slate-950/60">
+      <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-800/60 transition">
+        <div class="flex items-center space-x-3 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center font-bold text-white text-xs shrink-0 shadow-inner" id="user-avatar-text">
+            TK
+          </div>
+          <div class="min-w-0">
+            <p class="text-xs font-bold text-white truncate" id="user-display-name">Lê Trung Kiên</p>
+            <p class="text-[11px] text-slate-400 font-mono">Quản trị viên (AD)</p>
+          </div>
+        </div>
+        <button onclick="handleLogout()" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-rose-950/50 transition cursor-pointer" title="Đăng xuất">
           <i data-lucide="log-out" class="w-4 h-4"></i>
-          <span class="hidden md:inline text-xs font-bold">Đăng xuất</span>
         </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Sidebar Backdrop & Drawer (Hidden by default on mobile) -->
+  <div id="mobile-sidebar-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden md:hidden">
+    <div class="w-72 bg-slate-900 h-full p-4 flex flex-col text-slate-200">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center font-black text-white text-xs">K90</div>
+          <span class="font-bold text-sm text-white">Menu Điều Hành</span>
+        </div>
+        <button onclick="toggleMobileSidebar()" class="p-2 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto py-4 space-y-4 text-xs font-medium">
+        <a href="mau_09_bh.html" target="_blank" class="block py-2 text-sky-400 font-bold">📋 Mẫu 09/BH (TT12/2026)</a>
+        <a href="xml_all_validator.html" target="_blank" class="block py-2 text-indigo-400 font-bold">🛡️ Check Tổng 14 Bảng XML 130</a>
+        <a href="xml3_checker.html" target="_blank" class="block py-2">⏰ Kiểm tra Tiến độ XML 3</a>
+        <a href="xml_analyzer.html" target="_blank" class="block py-2">📄 Giám định XML QĐ 130</a>
+        <a href="LIS-Parser-Tool.html" target="_blank" class="block py-2">🔬 LIS JS Parser Studio</a>
+        <a href="icd10.html" target="_blank" class="block py-2">📖 Tra cứu ICD-10 2026</a>
+        <a href="survey.html" target="_blank" class="block py-2">📝 Khảo sát RIS/PACS - EMR</a>
+        <div class="pt-2 border-t border-slate-800">
+          <a href="math_game.html" target="_blank" class="block py-2 text-amber-400 font-bold">🧮 Đấu Trường Toán Tư Duy</a>
+          <a href="english_game.html" target="_blank" class="block py-2 text-teal-400 font-bold">🇬🇧 Đấu Trường Tiếng Anh</a>
+        </div>
+      </div>
+      <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+        <span class="text-xs text-slate-400">Lê Trung Kiên</span>
+        <button onclick="handleLogout()" class="text-xs font-bold text-rose-400">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 2. MAIN CONTENT AREA (Full Width Studio Canvas) -->
+  <!-- ============================================== -->
+  <div class="flex-1 min-w-0 flex flex-col min-h-screen bg-slate-50/70">
+
+    <!-- Top Sticky Header Bar -->
+    <header class="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-slate-200/90 px-4 md:px-8 py-3.5 flex items-center justify-between gap-4 shadow-2xs">
+      
+      <!-- Left: Mobile Menu Toggle & Title -->
+      <div class="flex items-center space-x-3">
+        <button type="button" onclick="toggleMobileSidebar()" class="md:hidden w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200 transition cursor-pointer" aria-label="Mở menu">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-semibold text-slate-400 hidden sm:inline">Cổng Thông Tin</span>
+            <span class="text-xs text-slate-300 hidden sm:inline">/</span>
+            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">Tổng Quan Điều Hành</span>
+          </div>
+          <h1 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">Trung Tâm Quản Trị & Tiện Ích Y Tế</h1>
+        </div>
+      </div>
+
+      <!-- Right: Search Bar + Notifications + View Options -->
+      <div class="flex items-center space-x-2.5">
+        <!-- Live Cloud Sync Indicator -->
+        <div class="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[11px] font-bold text-emerald-800">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Firebase Cloud Active</span>
+        </div>
+
+        <!-- Notification Bell Button -->
+        <button type="button" onclick="showSystemToast('Hệ thống hoạt động bình thường. Đã đồng bộ mã hóa AES-GCM 256-bit.')" class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition relative cursor-pointer" title="Thông báo hệ thống" aria-label="Thông báo">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+        </button>
+
+        <!-- View Switcher -->
+        <div class="hidden sm:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button id="btnGridView" onclick="setViewMode('grid')" class="p-1.5 rounded-lg text-sky-700 bg-white shadow-xs transition" title="Dạng ô vuông (Grid)">
+            <i data-lucide="grid" class="w-4 h-4"></i>
+          </button>
+          <button id="btnListView" onclick="setViewMode('list')" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition" title="Dạng danh sách">
+            <i data-lucide="align-justify" class="w-4 h-4"></i>
+          </button>
+        </div>
       </div>
     </header>
 
-    <!-- Main Content: Mobile Stack / Desktop 2-Column Grid -->
-    <main class="flex-1 bg-white md:bg-transparent px-4 md:px-0 py-5 md:py-0 pb-24 md:pb-6 overflow-y-auto md:overflow-visible custom-scrollbar">
+    <!-- Main Scrollable Canvas Body -->
+    <main class="flex-1 px-4 sm:px-6 md:px-8 py-6 max-w-7xl w-full mx-auto space-y-6">
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-6">
+      <!-- 1. Hero Welcome & Metric Overview Banner -->
+      <section class="bg-gradient-to-r from-slate-900 via-sky-950 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-slate-800">
+        <!-- Background Ambient Glow -->
+        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute right-1/3 -top-20 w-60 h-60 bg-indigo-500/15 rounded-full blur-2xl pointer-events-none"></div>
 
-        <!-- LEFT COLUMN (Mobile: Top / Desktop: Sidebar 4 cols) -->
-        <div class="md:col-span-4 lg:col-span-4 space-y-5">
-
-          <!-- Admin Profile Card -->
-          <section class="bg-gradient-to-br from-slate-50 to-sky-50/50 p-4 md:p-5 rounded-2xl border border-sky-100 shadow-sm relative overflow-hidden">
-            <div class="flex items-start justify-between">
-              <div class="flex items-center space-x-3.5">
-                <div class="relative">
-                  <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-tr from-sky-700 to-sky-500 p-0.5 shadow-sm">
-                    <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center font-bold text-sky-800 text-base md:text-lg" id="user-avatar-text">
-                      TK
-                    </div>
-                  </div>
-                  <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
-                </div>
-                <div>
-                  <div class="flex items-center space-x-2">
-                    <span class="px-2 py-0.5 bg-sky-100 text-sky-700 rounded-full text-[11px] font-bold">Quản trị viên (AD)</span>
-                    <span class="text-xs text-slate-400 font-mono">#KIEN90</span>
-                  </div>
-                  <h2 class="text-base md:text-lg font-bold text-slate-900 mt-0.5" id="user-display-name">Lê Trung Kiên</h2>
-                </div>
-              </div>
-
-              <div class="flex flex-col items-end text-[11px] font-medium text-slate-500">
-                <span class="inline-flex items-center text-emerald-600 font-semibold">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1.5"></span>
-                  Active
-                </span>
-                <span class="text-slate-400 mt-0.5">Máy chủ an toàn</span>
-              </div>
+        <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-2xl">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-bold text-sky-300">
+              <span>🚀 Phiên bản v1.0 • Máy chủ an toàn nội bộ</span>
             </div>
-
-            <p class="text-xs text-slate-500 mt-3.5 border-t border-slate-200/60 pt-3 leading-relaxed">
-              Cổng thông tin hệ thống trung tâm KIENLT90. Quản lý mô-đun công việc và tiện ích y tế số chuyên sâu.
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight">
+              Chào mừng bạn trở lại, <span class="bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">Lê Trung Kiên</span>!
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
+              Cổng điều hành trung tâm tích hợp kiểm tra quy chuẩn BHYT QĐ 130, tạo XML Mẫu 09 TT12/2026 và đấu trường học tập tư duy chuẩn hoá quốc tế.
             </p>
+          </div>
 
-            <div class="mt-3 pt-3 border-t border-slate-200/40 grid grid-cols-2 gap-2 text-center text-xs">
-              <div class="bg-white/80 p-2 rounded-xl border border-sky-100/60">
-                <span class="block text-[10px] text-slate-400 uppercase font-semibold">Quyền hạn</span>
-                <span class="font-bold text-slate-800">Toàn quyền</span>
-              </div>
-              <div class="bg-white/80 p-2 rounded-xl border border-sky-100/60">
-                <span class="block text-[10px] text-slate-400 uppercase font-semibold">Bảo mật</span>
-                <span class="font-bold text-emerald-600">Cấp độ 3</span>
-              </div>
+          <!-- Quick Stat Counters inside Hero -->
+          <div class="grid grid-cols-3 gap-3 w-full lg:w-auto shrink-0">
+            <div class="bg-white/10 backdrop-blur-md border border-white/15 p-3.5 rounded-2xl text-center">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-sky-300">Tiến độ EMR</p>
+              <p class="text-lg sm:text-xl font-black text-white mt-0.5">84%</p>
+              <span class="text-[9px] text-emerald-400 font-bold">+12% chuẩn hóa</span>
             </div>
-          </section>
-
-          <!-- Quick Metrics Grid -->
-          <section class="grid grid-cols-3 gap-2.5">
-            <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
-              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Tiến độ KS</p>
-              <div class="mt-1 flex items-baseline justify-center space-x-1">
-                <span class="text-lg font-extrabold text-slate-800">84%</span>
-                <span class="text-[10px] font-bold text-emerald-600">+12%</span>
-              </div>
-              <p class="text-[10px] text-slate-400 mt-0.5">28/32 Tiêu chí</p>
+            <div class="bg-white/10 backdrop-blur-md border border-white/15 p-3.5 rounded-2xl text-center">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-sky-300">QĐ 130</p>
+              <p class="text-lg sm:text-xl font-black text-white mt-0.5">14/14</p>
+              <span class="text-[9px] text-sky-300 font-bold">Bảng XML sẵn sàng</span>
             </div>
-
-            <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
-              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Lỗi XML 130</p>
-              <div class="mt-1 flex items-baseline justify-center space-x-1">
-                <span class="text-lg font-extrabold text-emerald-600">0</span>
-              </div>
-              <p class="text-[10px] text-emerald-600 font-medium mt-0.5">Chuẩn hoá 100%</p>
+            <div class="bg-white/10 backdrop-blur-md border border-white/15 p-3.5 rounded-2xl text-center">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-sky-300">Bé Học</p>
+              <p class="text-lg sm:text-xl font-black text-white mt-0.5">2</p>
+              <span class="text-[9px] text-amber-300 font-bold">Thóc & Gấu</span>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div class="bg-white p-3 rounded-xl border border-slate-200/90 shadow-sm text-center">
-              <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">LIS Driver</p>
-              <div class="mt-1 flex items-baseline justify-center space-x-1">
-                <span class="text-lg font-extrabold text-sky-700">18/18</span>
-              </div>
-              <p class="text-[10px] text-sky-600 font-medium mt-0.5">Sẵn sàng kết nối</p>
-            </div>
-          </section>
-
-          <!-- Kid Account Manager Card -->
-          <section class="bg-gradient-to-br from-amber-50 to-orange-50/70 p-4 md:p-5 rounded-2xl border-2 border-amber-200/90 shadow-sm space-y-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2.5">
-                <span class="text-2xl">👶</span>
-                <div>
-                  <h4 class="text-xs md:text-sm font-extrabold text-amber-900 leading-tight">Tài Khoản Học Sinh Của Bé</h4>
-                  <p class="text-[10px] text-amber-700 font-semibold">Tự động vào thẳng Đấu trường Toán</p>
-                </div>
-              </div>
-              <button onclick="openKidManagerModal()" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-[11px] rounded-xl shadow-xs flex items-center space-x-1 transition">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                <span>Tạo tài khoản</span>
-              </button>
-            </div>
-
-            <!-- List of created kids in sidebar -->
-            <div id="sidebar-kids-list" class="space-y-1.5 pt-1">
-              <!-- Rendered by JS -->
-            </div>
-          </section>
-
-          <!-- Quick Actions / Quick Links for Desktop -->
-          <section class="hidden md:block bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2.5">
-            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center space-x-1.5">
-              <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i>
-              <span>Truy cập nhanh</span>
-            </h4>
-            <div class="space-y-1.5">
-              <a href="math_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-amber-900 bg-amber-50/70 hover:bg-amber-100/80 transition">
-                <span class="flex items-center space-x-2">
-                  <span class="text-sm">🧮</span>
-                  <span>Đấu trường Toán Logic (Lớp 2 & 5)</span>
-                </span>
-                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
-              </a>
-              <a href="english_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-teal-900 bg-teal-50/70 hover:bg-teal-100/80 transition">
-                <span class="flex items-center space-x-2">
-                  <span class="text-sm">🇬🇧</span>
-                  <span>Đấu trường Tiếng Anh (Starters & Movers)</span>
-                </span>
-                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-teal-500"></i>
-              </a>
-              <a href="survey.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
-                <span class="flex items-center space-x-2">
-                  <i data-lucide="clipboard-check" class="w-4 h-4 text-teal-600"></i>
-                  <span>Mở Form Khảo sát EMR</span>
-                </span>
-                <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-              </a>
-              <a href="xml_analyzer.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
-                <span class="flex items-center space-x-2">
-                  <i data-lucide="file-code" class="w-4 h-4 text-sky-600"></i>
-                  <span>Trình kiểm tra XML QĐ 130</span>
-                </span>
-                <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-              </a>
-              <a href="xml3_checker.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition">
-                <span class="flex items-center space-x-2">
-                  <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
-                  <span>Kiểm tra tiến độ XML 3 & Ra viện</span>
-                </span>
-                <span class="flex items-center space-x-1.5">
-                  <span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded-md">MỚI</span>
-                  <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-                </span>
-              </a>
-              <a href="mau_09_bh.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition">
-                <span class="flex items-center space-x-2">
-                  <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
-                  <span>Tạo XML Mẫu 09/BH (TT 12)</span>
-                </span>
-                <span class="flex items-center space-x-1.5">
-                  <span class="px-1.5 py-0.5 text-[9px] font-bold bg-sky-100 text-sky-700 rounded-md">MỚI</span>
-                  <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-                </span>
-              </a>
-              <a href="LIS-Parser-Tool.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
-                <span class="flex items-center space-x-2">
-                  <i data-lucide="microscope" class="w-4 h-4 text-indigo-600"></i>
-                  <span>LIS JS Parser Studio</span>
-                </span>
-                <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-              </a>
-              <a href="icd10.html" target="_blank" class="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 hover:text-sky-700 transition">
-                <span class="flex items-center space-x-2">
-                  <i data-lucide="book-open" class="w-4 h-4 text-blue-600"></i>
-                  <span>Tra cứu ICD-10 QĐ 1849</span>
-                </span>
-                <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-              </a>
-            </div>
-          </section>
-
+      <!-- 2. Interactive Search & Category Filter Pills -->
+      <section class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <!-- Search Input -->
+        <div class="relative flex-1 max-w-md">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </div>
+          <input type="text" id="module-search-input" oninput="handleSearchModules(this.value)" placeholder="Tìm nhanh công cụ (Mẫu 09, XML 130, LIS, Toán, Tiếng Anh)..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-100 shadow-2xs transition">
         </div>
 
-        <!-- RIGHT COLUMN (Mobile: Bottom / Desktop: Main 8 cols) -->
-        <div class="md:col-span-8 lg:col-span-8 space-y-5">
+        <!-- Filter Category Tabs -->
+        <div class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar pb-1 sm:pb-0">
+          <button id="pill-all" onclick="filterCategory('all')" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-sky-600 text-white shadow-xs">Tất cả</button>
+          <button id="pill-health" onclick="filterCategory('health')" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:text-slate-900 border border-slate-200">🏥 Y tế & BHYT</button>
+          <button id="pill-kid" onclick="filterCategory('kid')" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:text-slate-900 border border-slate-200">🎓 Đấu trường Bé</button>
+        </div>
+      </section>
 
-          <!-- Module Categories Header & View Switcher -->
-          <section class="pt-1" id="modulesSection">
-            <div class="flex items-center justify-between mb-3.5">
-              <div>
-                <h3 class="text-sm md:text-base font-bold text-slate-900 flex items-center space-x-2">
-                  <i data-lucide="layout-grid" class="w-4 h-4 text-sky-700"></i>
-                  <span>Danh mục chức năng y tế</span>
-                </h3>
-                <p class="text-xs text-slate-500">Bộ công cụ vận hành & chuẩn hóa dữ liệu</p>
-              </div>
-
-              <!-- View Mode Toggle Buttons -->
-              <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
-                <button id="btnListView" onclick="setViewMode('list')" class="p-1.5 rounded text-sky-700 bg-white shadow-xs transition" title="Dạng danh sách">
-                  <i data-lucide="align-justify" class="w-3.5 h-3.5"></i>
-                </button>
-                <button id="btnGridView" onclick="setViewMode('grid')" class="p-1.5 rounded text-slate-500 hover:text-slate-800 transition" title="Dạng ô vuông (Grid)">
-                  <i data-lucide="grid" class="w-3.5 h-3.5"></i>
-                </button>
-              </div>
+      <!-- 3. Spotlight Feature Cards (2 Flagship Modules) -->
+      <section id="spotlight-section" class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
+        <!-- Feature 1: Mẫu 09 TT12 -->
+        <a href="mau_09_bh.html" target="_blank" data-cat="health" class="spotlight-card group relative bg-gradient-to-br from-sky-600 via-blue-600 to-indigo-700 rounded-3xl p-5 sm:p-6 text-white shadow-lg shadow-sky-600/20 hover:shadow-xl hover:shadow-sky-600/30 transition-all duration-300 border border-sky-400/40 hover:-translate-y-0.5 block focus:outline-none focus:ring-4 focus:ring-sky-300">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-2xl shadow-inner shrink-0 group-hover:scale-105 transition">
+              📋
             </div>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-white/20 text-white border border-white/30 backdrop-blur-md">TT 12/2026/TT-BTC</span>
+          </div>
+          <div class="mt-4">
+            <h3 class="text-base sm:text-lg font-black tracking-tight group-hover:text-sky-200 transition">Tạo & Chuẩn Hóa XML Mẫu 09/BH</h3>
+            <p class="text-xs text-sky-100 font-medium mt-1.5 leading-relaxed">
+              Lập bảng kê đề nghị điều chỉnh (mã 2) / hủy thu hồi (mã 1), tự động xử lý thẻ XML1_ID đối soát chuẩn QĐ 326/BHXH.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/20 flex items-center justify-between text-xs font-bold text-sky-200 group-hover:text-white">
+            <span>Mở công cụ ngay</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1.5 transition"></i>
+          </div>
+        </a>
 
-            <!-- Modules Container (List / Grid dynamic) -->
-            <div id="modulesContainer" class="space-y-3">
-
-              <!-- Item 0: Math Logic Game (Grade 2 & 5) -->
-              <a href="math_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="module-item block bg-gradient-to-r from-amber-50/70 via-orange-50/40 to-white p-4 rounded-2xl border border-amber-200/90 shadow-xs hover:border-amber-400 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-amber-400">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-amber-100/80 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200 text-xl group-hover:scale-105 transition shadow-inner">
-                      🧮
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-extrabold text-slate-900 group-hover:text-amber-700 transition">Đấu Trường Toán Tư Duy (Lớp 2 & Lớp 5)</h4>
-                        <span class="text-[9px] font-bold px-2 py-0.5 bg-amber-500 text-white rounded-full shadow-xs">Vòng Quay Thưởng</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-600 line-clamp-1 mt-0.5">10 bài toán logic, tự động chấm điểm, chấm bài & vòng quay may mắn</p>
-                    </div>
-                  </div>
-                  <i data-lucide="chevron-right" class="w-4 h-4 text-amber-500 group-hover:text-amber-700 group-hover:translate-x-1 transition shrink-0 ml-2"></i>
-                </div>
-              </a>
-
-              <!-- Item 0b: English Arena Game (Grade 2 & 5) -->
-              <a href="english_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" class="module-item block bg-gradient-to-r from-teal-50/70 via-emerald-50/40 to-white p-4 rounded-2xl border border-teal-200/90 shadow-xs hover:border-teal-400 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-teal-400">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-teal-100/80 text-teal-800 flex items-center justify-center shrink-0 border border-teal-200 text-xl group-hover:scale-105 transition shadow-inner">
-                      🇬🇧
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-extrabold text-slate-900 group-hover:text-teal-700 transition">Đấu Trường Tiếng Anh (Starters & Movers)</h4>
-                        <span class="text-[9px] font-bold px-2 py-0.5 bg-teal-600 text-white rounded-full shadow-xs">100 Câu Hỏi</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-600 line-clamp-1 mt-0.5">100 câu hỏi song ngữ chuẩn Cambridge cho bé Thóc & bé Gấu, giải thích chi tiết</p>
-                    </div>
-                  </div>
-                  <i data-lucide="chevron-right" class="w-4 h-4 text-teal-500 group-hover:text-teal-700 group-hover:translate-x-1 transition shrink-0 ml-2"></i>
-                </div>
-              </a>
-
-              <!-- Item 1: RIS/PACS -->
-              <a href="survey.html" target="_blank" class="module-item block bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-sky-500">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100 group-hover:scale-105 transition">
-                      <i data-lucide="clipboard-check" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Khảo sát RIS/PACS - LIS - EMR</h4>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 bg-rose-50 text-rose-600 rounded border border-rose-200">Quan trọng</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Khảo sát số hoá y tế & đánh giá mức độ triển khai</p>
-                    </div>
-                  </div>
-                  <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition shrink-0 ml-2"></i>
-                </div>
-              </a>
-
-              <!-- Item Mẫu 09/BH: Tạo & Chuẩn hóa XML Mẫu 09/BH theo TT12/2026/TT-BTC -->
-              <a href="mau_09_bh.html" target="_blank" class="module-item block bg-gradient-to-r from-sky-50/80 via-blue-50/40 to-white p-4 rounded-2xl border border-sky-300 shadow-xs hover:border-sky-500 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-sky-500">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-sky-100/90 text-sky-700 flex items-center justify-center shrink-0 border border-sky-200 text-xl group-hover:scale-105 transition shadow-inner">
-                      📋
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-extrabold text-slate-900 group-hover:text-sky-700 transition">Tạo & Chuẩn Hóa XML Mẫu 09/BH (TT 12/2026)</h4>
-                        <span class="text-[9px] font-bold px-2 py-0.5 bg-sky-600 text-white rounded-full shadow-xs">TT12 & QĐ 326</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-600 line-clamp-1 mt-0.5">Lập bảng kê đề nghị điều chỉnh (mã 2) / hủy thu hồi (mã 1), tự động xử lý thẻ XML1_ID, sẵn sàng ký số gửi Cổng BHXH</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-2 shrink-0 ml-2">
-                    <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-700 border border-sky-200">Cập nhật</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-sky-500 group-hover:text-sky-700 group-hover:translate-x-1 transition"></i>
-                  </div>
-                </div>
-              </a>
-
-              <!-- Item XML ALL: Kiểm tra tổng hợp tất cả bảng XML QĐ 130 -->
-              <a href="xml_all_validator.html" target="_blank" class="module-item block bg-gradient-to-r from-indigo-50/80 via-blue-50/40 to-white p-4 rounded-2xl border border-indigo-300 shadow-xs hover:border-indigo-500 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-indigo-100/90 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-200 text-xl group-hover:scale-105 transition shadow-inner">
-                      🛡️
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-extrabold text-slate-900 group-hover:text-indigo-700 transition">Kiểm Tra Tổng Hợp Tất Cả Bảng XML (QĐ 130)</h4>
-                        <span class="text-[9px] font-bold px-2 py-0.5 bg-indigo-600 text-white rounded-full shadow-xs">XML 1 ➔ 14</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-600 line-clamp-1 mt-0.5">Kiểm tra từng bảng (XML 1-14) với rule riêng &amp; đối soát chéo tài chính, CLS, ngày ra viện từ file tổng hợp Excel/ZIP</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-2 shrink-0 ml-2">
-                    <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">Toàn diện</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-indigo-500 group-hover:text-indigo-700 group-hover:translate-x-1 transition"></i>
-                  </div>
-                </div>
-              </a>
-
-              <!-- Item XML 3: Kiểm tra tiến độ thời gian & Ngày ra viện -->
-              <a href="xml3_checker.html" target="_blank" class="module-item block bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-400 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-amber-400">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100 group-hover:scale-105 transition">
-                      <i data-lucide="clock" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-sm font-bold text-slate-800 group-hover:text-amber-700 transition">Kiểm Tra Tiến Độ Thời Gian XML 3</h4>
-                        <span class="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">Đặc thù</span>
-                      </div>
-                      <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">Logic: NGAY_YL &lt; NGAY_TH_YL &lt; NGAY_KQ &le; NGAY_RA (Chặn chỉ định/kết quả sau ra viện)</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-2 shrink-0 ml-2">
-                    <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">QĐ 130/4210</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-1 transition"></i>
-                  </div>
-                </div>
-              </a>
-
-              <!-- Item 2: XML BHYT -->
-              <a href="xml_analyzer.html" target="_blank" class="module-item block bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-sky-500">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-100 group-hover:scale-105 transition">
-                      <i data-lucide="file-code" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Phân tích XML BHYT QĐ 130</h4>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">Chuẩn hóa</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Kiểm tra giám định dữ liệu BHYT, cảnh báo lỗi logic</p>
-                    </div>
-                  </div>
-                  <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition shrink-0 ml-2"></i>
-                </div>
-              </a>
-
-              <!-- Item 3: LIS Parser -->
-              <a href="LIS-Parser-Tool.html" target="_blank" class="module-item block bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-sky-500">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-100 group-hover:scale-105 transition">
-                      <i data-lucide="microscope" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Bộ dịch JS Máy xét nghiệm (LIS)</h4>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 bg-indigo-50 text-indigo-700 rounded border border-indigo-200">HL7 / ASTM</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Trình thông dịch driver kết nối Sysmex, Roche, Beckman</p>
-                    </div>
-                  </div>
-                  <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition shrink-0 ml-2"></i>
-                </div>
-              </a>
-
-              <!-- Item 4: ICD-10 -->
-              <a href="icd10.html" target="_blank" class="module-item block bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-sky-500">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 border border-blue-100 group-hover:scale-105 transition">
-                      <i data-lucide="book-open" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-sky-700 transition">Tra cứu ICD-10 2026</h4>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-200">Tra cứu nhanh</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Từ điển mã bệnh học quốc tế tra cứu AI Vector</p>
-                    </div>
-                  </div>
-                  <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition shrink-0 ml-2"></i>
-                </div>
-              </a>
-
-              <!-- Item 5: Security / BYT -->
-              <button type="button" onclick="showSystemToast('Phân hệ Hạ tầng kiểm thử & Mã hóa BYT đang được đồng bộ theo tiêu chuẩn ATTT Cấp độ 3.', 'info')" class="module-item w-full text-left block bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hover:border-emerald-300 hover:shadow-md transition group focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100 group-hover:scale-105 transition">
-                      <i data-lucide="shield-check" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                      <div class="flex items-center space-x-2">
-                        <h4 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-emerald-700 transition">Hạ tầng kiểm thử & Mã hóa BYT</h4>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded">Cấp độ 3</span>
-                      </div>
-                      <p class="text-[11px] md:text-xs text-slate-500 line-clamp-1 mt-0.5">Giao thức an toàn thông tin & mã hóa bảo mật chuẩn y tế</p>
-                    </div>
-                  </div>
-                  <i data-lucide="info" class="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition shrink-0 ml-2"></i>
-                </div>
-              </button>
-
+        <!-- Feature 2: XML ALL QĐ 130 -->
+        <a href="xml_all_validator.html" target="_blank" data-cat="health" class="spotlight-card group relative bg-gradient-to-br from-indigo-700 via-indigo-800 to-slate-900 rounded-3xl p-5 sm:p-6 text-white shadow-lg shadow-indigo-700/20 hover:shadow-xl hover:shadow-indigo-700/30 transition-all duration-300 border border-indigo-500/40 hover:-translate-y-0.5 block focus:outline-none focus:ring-4 focus:ring-indigo-300">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-2xl shadow-inner shrink-0 group-hover:scale-105 transition">
+              🛡️
             </div>
-          </section>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-white/20 text-white border border-white/30 backdrop-blur-md">XML 1 ➔ 14</span>
+          </div>
+          <div class="mt-4">
+            <h3 class="text-base sm:text-lg font-black tracking-tight group-hover:text-indigo-200 transition">Kiểm Tra Tổng Hợp Toàn Bộ Bảng XML 130</h3>
+            <p class="text-xs text-indigo-100 font-medium mt-1.5 leading-relaxed">
+              Kiểm tra từng bảng (XML 1-14) với rule nghiệp vụ riêng & đối soát chéo thuốc, CLS, chi phí, ngày ra viện từ file ZIP/Excel.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/20 flex items-center justify-between text-xs font-bold text-indigo-200 group-hover:text-white">
+            <span>Khám phá 14 bảng</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1.5 transition"></i>
+          </div>
+        </a>
+      </section>
 
+      <!-- 4. Main Modules Grid -->
+      <section class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+            <i data-lucide="layout-grid" class="w-4 h-4 text-sky-600"></i>
+            <span>Danh mục tiện ích & công cụ</span>
+          </h3>
+          <span id="modules-count-text" class="text-xs font-semibold text-slate-400">8 công cụ khả dụng</span>
         </div>
 
-      </div>
+        <div id="modulesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
 
-      <!-- Footer Info -->
-      <footer class="text-center pt-6 pb-2 space-y-1 text-slate-400 text-xs">
-        <p>Phiên bản v1.0 • ISO/IEC 27001 • Máy chủ an toàn nội bộ</p>
-        <p class="font-medium text-slate-500">Bản quyền thuộc về <span class="text-sky-700 font-bold">Lê Trung Kiên</span> • KIENLT90 Portal</p>
-      </footer>
+          <!-- Card 1: XML 3 Checker -->
+          <a href="xml3_checker.html" target="_blank" data-cat="health" data-title="kiểm tra tiến độ thời gian xml 3 ra viện" class="module-card group block bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-amber-300 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 group-hover:scale-105 transition">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Đặc thù</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-amber-700 transition">Tiến Độ Thời Gian XML 3</h4>
+              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">Kiểm tra logic chỉ định: NGAY_YL &lt; NGAY_TH_YL &lt; NGAY_KQ &le; NGAY_RA theo chuẩn BHYT.</p>
+            </div>
+          </a>
+
+          <!-- Card 2: XML Analyzer QĐ 130 -->
+          <a href="xml_analyzer.html" target="_blank" data-cat="health" data-title="phân tích giám định xml bhyt qđ 130" class="module-card group block bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-sky-300 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center border border-sky-100 group-hover:scale-105 transition">
+                <i data-lucide="file-code" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200">Chuẩn hóa</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-sky-700 transition">Giám Định XML BHYT QĐ 130</h4>
+              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">Kiểm tra định dạng, phát hiện lỗi cảnh báo logic chi phí và xuất kết quả đối soát.</p>
+            </div>
+          </a>
+
+          <!-- Card 3: LIS Parser -->
+          <a href="LIS-Parser-Tool.html" target="_blank" data-cat="health" data-title="bộ dịch js máy xét nghiệm lis parser hl7 astm" class="module-card group block bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-cyan-300 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-700 flex items-center justify-center border border-cyan-100 group-hover:scale-105 transition">
+                <i data-lucide="microscope" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-100 text-cyan-800 border border-cyan-200">HL7 / ASTM</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-cyan-700 transition">LIS JS Parser Studio</h4>
+              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">Trình thông dịch driver kết nối máy xét nghiệm tự động: Sysmex, Roche, Beckman.</p>
+            </div>
+          </a>
+
+          <!-- Card 4: ICD-10 -->
+          <a href="icd10.html" target="_blank" data-cat="health" data-title="tra cứu icd-10 mã bệnh học quốc tế qđ 1849" class="module-card group block bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-100 group-hover:scale-105 transition">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">QĐ 1849</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-blue-700 transition">Tra Cứu ICD-10 2026</h4>
+              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">Từ điển mã bệnh học quốc tế tra cứu AI Vector thông minh và gợi ý chẩn đoán.</p>
+            </div>
+          </a>
+
+          <!-- Card 5: RIS/PACS Survey -->
+          <a href="survey.html" target="_blank" data-cat="health" data-title="khảo sát ris pacs lis emr đánh giá số hóa" class="module-card group block bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-teal-300 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center border border-teal-100 group-hover:scale-105 transition">
+                <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-800 border border-teal-200">Khảo sát</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-teal-700 transition">Khảo Sát RIS/PACS & EMR</h4>
+              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">Đánh giá tiêu chí triển khai bệnh viện thông minh và mức độ số hóa y tế.</p>
+            </div>
+          </a>
+
+          <!-- Card 6: Security ATTT -->
+          <button type="button" onclick="showSystemToast('Hạ tầng kiểm thử & Mã hóa BYT đang được vận hành theo tiêu chuẩn ATTT Cấp độ 3.', 'info')" data-cat="health" data-title="hạ tầng kiểm thử mã hóa byt an toàn thông tin" class="module-card text-left group block bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-emerald-300 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100 group-hover:scale-105 transition">
+                <i data-lucide="shield-alert" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">Cấp độ 3</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-emerald-700 transition">Hạ Tầng Mã Hóa BYT</h4>
+              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">Giao thức an toàn thông tin & mã hóa bảo mật chuẩn y tế (AES-GCM 256-bit).</p>
+            </div>
+          </button>
+
+          <!-- Card 7: Kid Math Arena -->
+          <a href="math_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" data-cat="kid" data-title="đấu trường toán tư duy logic lớp 2 5 quay thưởng" class="module-card group block bg-amber-50/70 p-4 rounded-2xl border border-amber-300/80 shadow-2xs hover:border-amber-400 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-amber-500">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-200 text-xl group-hover:scale-105 transition">
+                🧮
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900 border border-amber-300">Vòng Quay</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-amber-800 transition">Đấu Trường Toán Tư Duy</h4>
+              <p class="text-[11px] text-slate-600 mt-1 line-clamp-2">Bộ câu hỏi toán logic Lớp 2 & Lớp 5, tự động chấm điểm và quay thưởng may mắn.</p>
+            </div>
+          </a>
+
+          <!-- Card 8: Kid English Arena -->
+          <a href="english_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" data-cat="kid" data-title="đấu trường tiếng anh starters movers 100 câu hỏi cambridge" class="module-card group block bg-teal-50/70 p-4 rounded-2xl border border-teal-300/80 shadow-2xs hover:border-teal-400 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center border border-teal-200 text-xl group-hover:scale-105 transition">
+                🇬🇧
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-200 text-teal-900 border border-teal-300">Cambridge</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-teal-800 transition">Đấu Trường Tiếng Anh</h4>
+              <p class="text-[11px] text-slate-600 mt-1 line-clamp-2">100 câu hỏi song ngữ chuẩn Cambridge Starters & Movers cho bé Thóc & bé Gấu.</p>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- 5. Kid Quick Action Bar -->
+      <section class="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent p-5 sm:p-6 rounded-3xl border border-amber-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center space-x-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-2xl shadow-inner shrink-0">
+            👶
+          </div>
+          <div>
+            <h4 class="text-sm font-black text-amber-950">Đấu Trường Bé Trực Tiếp</h4>
+            <p class="text-xs text-amber-800 font-medium">Bấm chọn tài khoản học sinh của bé để vào thẳng hệ thống thi & quay thưởng</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 w-full sm:w-auto shrink-0">
+          <button onclick="loginAsKidDirect('kid_thoc', 'math')" class="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs shadow-xs transition flex items-center justify-center space-x-1.5 cursor-pointer">
+            <span>🌱 Bé Thóc (Lớp 2)</span>
+          </button>
+          <button onclick="loginAsKidDirect('kid_gau', 'math')" class="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-black text-xs shadow-xs transition flex items-center justify-center space-x-1.5 cursor-pointer">
+            <span>🚀 Bé Gấu (Lớp 5)</span>
+          </button>
+          <button onclick="openKidManagerModal()" class="p-2.5 rounded-xl bg-white hover:bg-slate-100 text-amber-800 border border-amber-300 transition cursor-pointer" title="Quản lý tài khoản bé">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </section>
 
     </main>
 
-    <!-- Fixed Bottom Navigation Bar (Visible on Mobile only: md:hidden) -->
-    <nav class="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 flex items-center justify-around z-40 shadow-lg">
-      <a href="javascript:void(0)" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-sky-700 font-bold group">
-        <div class="w-9 h-6 flex items-center justify-center rounded-lg bg-sky-50 text-sky-700">
-          <i data-lucide="home" class="w-4 h-4"></i>
-        </div>
-        <span class="text-[10px] mt-0.5">Trang chủ</span>
-      </a>
-
-      <a href="survey.html" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-slate-700 font-medium group transition">
-        <div class="w-9 h-6 flex items-center justify-center rounded-lg group-hover:bg-slate-50">
-          <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-        </div>
-        <span class="text-[10px] mt-0.5">Khảo sát</span>
-      </a>
-
-      <a href="javascript:void(0)" onclick="document.getElementById('modulesSection').scrollIntoView({behavior: 'smooth'})" class="flex flex-col items-center text-slate-400 hover:text-slate-700 font-medium group transition">
-        <div class="w-9 h-6 flex items-center justify-center rounded-lg group-hover:bg-slate-50">
-          <i data-lucide="wrench" class="w-4 h-4"></i>
-        </div>
-        <span class="text-[10px] mt-0.5">Công cụ</span>
-      </a>
-
-      <a href="javascript:void(0)" onclick="handleLogout()" class="flex flex-col items-center text-slate-400 hover:text-rose-600 font-medium group transition">
-        <div class="w-9 h-6 flex items-center justify-center rounded-lg group-hover:bg-rose-50">
-          <i data-lucide="log-out" class="w-4 h-4"></i>
-        </div>
-        <span class="text-[10px] mt-0.5">Đăng xuất</span>
-      </a>
-    </nav>
+    <!-- Footer -->
+    <footer class="border-t border-slate-200/80 bg-white py-5 px-6 text-center text-xs text-slate-400 space-y-1 mt-auto">
+      <p>KIENLT90 Enterprise Studio • ISO/IEC 27001 • Cổng Thông Tin Y Tế Số</p>
+      <p class="font-medium text-slate-500">Bản quyền thuộc về <span class="text-sky-700 font-bold">Lê Trung Kiên</span> • letrungkien.store</p>
+    </footer>
 
   </div>
 
-  <script>
-    // Initialize icons
-    lucide.createIcons();
+  <!-- Mobile Bottom Navigation (Visible on <md only) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2 flex items-center justify-around z-30 shadow-lg">
+    <a href="javascript:void(0)" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-sky-700 font-bold">
+      <i data-lucide="home" class="w-4 h-4"></i>
+      <span class="text-[10px] mt-0.5">Trang chủ</span>
+    </a>
+    <a href="mau_09_bh.html" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-slate-700 font-medium">
+      <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+      <span class="text-[10px] mt-0.5">Mẫu 09</span>
+    </a>
+    <a href="xml_all_validator.html" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-slate-700 font-medium">
+      <i data-lucide="shield-check" class="w-4 h-4"></i>
+      <span class="text-[10px] mt-0.5">XML 130</span>
+    </a>
+    <a href="math_game.html" target="_blank" class="flex flex-col items-center text-amber-600 hover:text-amber-700 font-bold">
+      <span class="text-sm">🧮</span>
+      <span class="text-[10px] mt-0.5">Đấu trường</span>
+    </a>
+    <button onclick="handleLogout()" class="flex flex-col items-center text-slate-400 hover:text-rose-600 font-medium">
+      <i data-lucide="log-out" class="w-4 h-4"></i>
+      <span class="text-[10px] mt-0.5">Thoát</span>
+    </button>
+  </nav>
 
-    // Modern System Toast Notification (Anti-UI-Slop & A11y standard)
-    function showSystemToast(msg, type = 'info') {
-      let toast = document.getElementById('global-system-toast');
-      if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'global-system-toast';
-        document.body.appendChild(toast);
-      }
-      const bg = type === 'info' ? 'bg-slate-900/95 text-white border border-slate-700/80' : 'bg-emerald-700 text-white';
-      toast.className = `fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md text-xs font-bold flex items-center space-x-2 transition-all duration-300 transform translate-y-0 opacity-100 ${bg}`;
-      toast.innerHTML = `<span class="w-2 h-2 rounded-full ${type === 'info' ? 'bg-sky-400' : 'bg-emerald-300'} animate-ping mr-1 shrink-0"></span><span>${msg}</span>`;
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => {
-        if (toast) {
-          toast.className = 'fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center space-x-2 transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none';
-        }
-      }, 3500);
-    }
-
-    // Set user info from localStorage
-    try {
-      const session = JSON.parse(localStorage.getItem('vnpt_his_session') || '{}');
-      if (session.displayName) {
-        document.getElementById('user-display-name').textContent = session.displayName;
-        const initials = session.displayName.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase();
-        if (initials) {
-          document.getElementById('user-avatar-text').textContent = initials;
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    // Toggle list vs grid view for module functions
-    function setViewMode(mode) {
-      const container = document.getElementById('modulesContainer');
-      const btnList = document.getElementById('btnListView');
-      const btnGrid = document.getElementById('btnGridView');
-
-      if (mode === 'grid') {
-        container.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
-        btnGrid.className = 'p-1.5 rounded text-sky-700 bg-white shadow-xs transition';
-        btnList.className = 'p-1.5 rounded text-slate-500 hover:text-slate-800 transition';
-        
-        document.querySelectorAll('.module-item').forEach(item => {
-          item.classList.add('flex-col', 'items-start', 'text-left', 'space-y-3');
-          item.classList.remove('items-center');
-        });
-      } else {
-        container.className = 'space-y-3';
-        btnList.className = 'p-1.5 rounded text-sky-700 bg-white shadow-xs transition';
-        btnGrid.className = 'p-1.5 rounded text-slate-500 hover:text-slate-800 transition';
-
-        document.querySelectorAll('.module-item').forEach(item => {
-          item.classList.remove('flex-col', 'items-start', 'text-left', 'space-y-3');
-          item.classList.add('items-center');
-        });
-      }
-    }
-
-    function handleLogout() {
-      if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi KIENLT90 Portal?')) {
-        localStorage.removeItem('vnpt_his_session');
-        window.location.href = 'index.html';
-      }
-    }
-  </script>
-  <!-- Modal: Quản lý & Tạo Tài Khoản Cho Bé -->
-  <!-- Modal: Quản lý & Tạo Tài Khoản Cho Bé -->
+  <!-- ============================================== -->
+  <!-- 3. MODAL: Quản lý & Tạo Tài Khoản Cho Bé      -->
+  <!-- ============================================== -->
   <div id="kid-manager-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
     <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-slate-100">
       
@@ -759,15 +681,142 @@
     </div>
   </div>
 
-  <!-- Firebase Realtime Database & Auth SDK (Compat) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-  <script src="firebase_sync.js"></script>
-  <!-- Security Vault (AES-GCM 256-bit Encryption) -->
-  <script src="crypto_vault.js"></script>
-
+  <!-- ============================================== -->
+  <!-- 4. CORE JAVASCRIPT LOGIC                       -->
+  <!-- ============================================== -->
   <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Modern System Toast Notification
+    function showSystemToast(msg, type = 'info') {
+      let toast = document.getElementById('global-system-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'global-system-toast';
+        document.body.appendChild(toast);
+      }
+      const bg = type === 'info' ? 'bg-slate-900/95 text-white border border-slate-700/80' : 'bg-emerald-700 text-white';
+      toast.className = `fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md text-xs font-bold flex items-center space-x-2 transition-all duration-300 transform translate-y-0 opacity-100 ${bg}`;
+      toast.innerHTML = `<span class="w-2 h-2 rounded-full ${type === 'info' ? 'bg-sky-400' : 'bg-emerald-300'} animate-ping mr-1 shrink-0"></span><span>${msg}</span>`;
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        if (toast) {
+          toast.className = 'fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center space-x-2 transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none';
+        }
+      }, 3500);
+    }
+
+    // Set user info from localStorage
+    try {
+      const session = JSON.parse(localStorage.getItem('vnpt_his_session') || '{}');
+      if (session.displayName) {
+        document.getElementById('user-display-name').textContent = session.displayName;
+        const initials = session.displayName.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase();
+        if (initials) {
+          document.getElementById('user-avatar-text').textContent = initials;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Toggle list vs grid view
+    function setViewMode(mode) {
+      const container = document.getElementById('modulesContainer');
+      const btnList = document.getElementById('btnListView');
+      const btnGrid = document.getElementById('btnGridView');
+
+      if (mode === 'grid') {
+        container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5';
+        if (btnGrid) btnGrid.className = 'p-1.5 rounded-lg text-sky-700 bg-white shadow-xs transition';
+        if (btnList) btnList.className = 'p-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition';
+      } else {
+        container.className = 'space-y-3';
+        if (btnList) btnList.className = 'p-1.5 rounded-lg text-sky-700 bg-white shadow-xs transition';
+        if (btnGrid) btnGrid.className = 'p-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition';
+      }
+    }
+
+    // Search Filter
+    function handleSearchModules(query) {
+      const q = (query || '').toLowerCase().trim();
+      const cards = document.querySelectorAll('.module-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const title = (card.getAttribute('data-title') || '').toLowerCase();
+        const text = card.textContent.toLowerCase();
+        if (!q || title.includes(q) || text.includes(q)) {
+          card.style.display = '';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      const countText = document.getElementById('modules-count-text');
+      if (countText) {
+        countText.textContent = `${visibleCount} công cụ tìm thấy`;
+      }
+    }
+
+    // Category Filter
+    let currentCategory = 'all';
+    function filterCategory(cat) {
+      currentCategory = cat;
+      const pills = document.querySelectorAll('.cat-pill');
+      pills.forEach(p => {
+        p.className = 'cat-pill px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:text-slate-900 border border-slate-200';
+      });
+
+      const activeBtn = document.getElementById(`pill-${cat}`);
+      if (activeBtn) {
+        activeBtn.className = 'cat-pill px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-sky-600 text-white shadow-xs';
+      }
+
+      const spotlight = document.getElementById('spotlight-section');
+      if (spotlight) {
+        if (cat === 'kid') {
+          spotlight.style.display = 'none';
+        } else {
+          spotlight.style.display = '';
+        }
+      }
+
+      const cards = document.querySelectorAll('.module-card');
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const cardCat = card.getAttribute('data-cat') || 'health';
+        if (cat === 'all' || cardCat === cat) {
+          card.style.display = '';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      const countText = document.getElementById('modules-count-text');
+      if (countText) {
+        countText.textContent = `${visibleCount} công cụ khả dụng`;
+      }
+    }
+
+    // Toggle Mobile Sidebar
+    function toggleMobileSidebar() {
+      const drawer = document.getElementById('mobile-sidebar-drawer');
+      if (drawer) {
+        drawer.classList.toggle('hidden');
+      }
+    }
+
+    function handleLogout() {
+      if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi KIENLT90 Portal?')) {
+        localStorage.removeItem('vnpt_his_session');
+        window.location.href = 'index.html';
+      }
+    }
+
     // Kid Manager State & Functions
     const defaultKids = [
       { id: 'kid_thoc', name: 'THÓC', grade: 2, username: 'thoc', pin: 'ENC:aae9de425f5eebdfbf1c914b:b420370f95f50b2c662b670508f13ac9ef73e20e' },
@@ -780,15 +829,6 @@
         try {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            // Check if old default kids exist and migrate if needed
-            const hasOldBap = parsed.some(k => k.name === 'Bé Bắp' || k.name === 'Bé Sóc');
-            if (hasOldBap) {
-              const cleaned = parsed.filter(k => k.name !== 'Bé Bắp' && k.name !== 'Bé Sóc');
-              if (!cleaned.some(k => k.name === 'THÓC')) cleaned.unshift(defaultKids[0]);
-              if (!cleaned.some(k => k.name === 'Gấu')) cleaned.push(defaultKids[1]);
-              localStorage.setItem('kienlt_kid_accounts', JSON.stringify(cleaned));
-              return cleaned;
-            }
             return parsed;
           }
         } catch(e) {}
@@ -821,39 +861,34 @@
         const isGrade2 = k.grade === 2 || k.id === 'kid_thoc';
         const isGrade3 = k.grade === 3;
         const theme = isGrade2 ? {
-          bg: 'from-amber-50 to-white border-amber-300 hover:border-amber-400',
-          name: 'text-amber-950',
-          badge: 'bg-amber-200 text-amber-900'
+          bg: 'from-amber-950/40 to-slate-900 border-amber-500/30 text-amber-300',
+          badge: 'bg-amber-500/20 text-amber-300'
         } : (isGrade3 ? {
-          bg: 'from-emerald-50 to-white border-emerald-300 hover:border-emerald-400',
-          name: 'text-emerald-950',
-          badge: 'bg-emerald-200 text-emerald-900'
+          bg: 'from-emerald-950/40 to-slate-900 border-emerald-500/30 text-emerald-300',
+          badge: 'bg-emerald-500/20 text-emerald-300'
         } : {
-          bg: 'from-sky-50 to-white border-sky-300 hover:border-sky-400',
-          name: 'text-sky-950',
-          badge: 'bg-sky-200 text-sky-900'
+          bg: 'from-sky-950/40 to-slate-900 border-sky-500/30 text-sky-300',
+          badge: 'bg-sky-500/20 text-sky-300'
         });
 
         return `
-          <div class="flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r ${theme.bg} border text-xs shadow-2xs hover:shadow-xs transition">
-            <div class="flex items-center space-x-2.5">
-              <span class="text-lg">🎓</span>
+          <div class="flex items-center justify-between p-2 rounded-xl bg-gradient-to-r ${theme.bg} border text-xs shadow-2xs hover:border-slate-700 transition">
+            <div class="flex items-center space-x-2">
+              <span class="text-base">🎓</span>
               <div>
-                <div class="flex items-center space-x-1.5">
-                  <span class="font-black ${theme.name}">${k.name}</span>
+                <div class="flex items-center space-x-1">
+                  <span class="font-black ${theme.text}">${k.name}</span>
                   <span class="px-1.5 py-0.2 rounded-full text-[9px] font-black ${theme.badge}">Lớp ${k.grade}</span>
                 </div>
-                <span class="text-[10px] text-slate-500 block font-semibold">#${k.username}</span>
+                <span class="text-[10px] text-slate-400 block">#${k.username}</span>
               </div>
             </div>
-            <div class="flex items-center space-x-1.5 shrink-0">
-              <button onclick="loginAsKidDirect('${k.id}', 'math')" class="px-2.5 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-[11px] rounded-lg shadow-xs transition flex items-center space-x-1 whitespace-nowrap" title="Vào thi Toán">
-                <span>🧮</span>
-                <span>Toán</span>
+            <div class="flex items-center space-x-1 shrink-0">
+              <button onclick="loginAsKidDirect('${k.id}', 'math')" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white font-black text-[10px] rounded-lg shadow-xs transition" title="Toán">
+                Toán
               </button>
-              <button onclick="loginAsKidDirect('${k.id}', 'english')" class="px-2.5 py-1.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-black text-[11px] rounded-lg shadow-xs transition flex items-center space-x-1 whitespace-nowrap" title="Vào thi Tiếng Anh">
-                <span>🇬🇧</span>
-                <span>T.Anh</span>
+              <button onclick="loginAsKidDirect('${k.id}', 'english')" class="px-2 py-1 bg-teal-600 hover:bg-teal-700 text-white font-black text-[10px] rounded-lg shadow-xs transition" title="Tiếng Anh">
+                T.Anh
               </button>
             </div>
           </div>
@@ -898,15 +933,16 @@
             <div class="min-w-0">
               <div class="flex items-center space-x-2">
                 <h5 class="font-black ${theme.title} text-sm truncate">${k.name}</h5>
-                <span class="px-2 py-0.5 ${theme.badge} rounded-full text-[10px] font-black border shrink-0">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${theme.badge}">
                   Lớp ${k.grade}
                 </span>
+                <span class="text-[10px] text-emerald-700 bg-emerald-100/80 px-1.5 py-0.2 rounded font-bold">AES-GCM</span>
               </div>
-              <div class="text-xs text-slate-500 mt-1 flex items-center space-x-2 flex-wrap gap-y-1">
-                <span class="font-semibold text-slate-600 whitespace-nowrap">User: <b class="text-slate-800">#${k.username}</b></span>
-                <span class="text-slate-300">•</span>
-                <span class="inline-flex items-center space-x-1.5 whitespace-nowrap">
-                  <span class="text-slate-500 font-medium">PIN:</span>
+              <div class="flex items-center space-x-3 text-xs text-slate-500 mt-1">
+                <span>Tài khoản: <strong class="text-slate-700">#${k.username}</strong></span>
+                <span>•</span>
+                <span class="flex items-center space-x-1">
+                  <span>Mã PIN:</span>
                   <span id="pin-val-${k.id}" data-revealed="false" class="font-mono bg-white px-2 py-0.5 rounded-md text-slate-800 font-bold border border-slate-200 shadow-2xs">••••</span>
                   <button type="button" onclick="toggleRevealPin('${k.id}')" id="btn-reveal-${k.id}" class="text-sky-600 hover:text-sky-800 font-bold text-[11px] px-2 py-0.5 rounded-lg hover:bg-sky-50 border border-sky-200/60 transition whitespace-nowrap inline-flex items-center space-x-1 cursor-pointer">
                     <i data-lucide="eye" class="w-3 h-3"></i>
@@ -917,7 +953,7 @@
             </div>
           </div>
 
-          <!-- Right: Action Buttons (Strictly Aligned) -->
+          <!-- Right: Action Buttons -->
           <div class="flex items-center space-x-1.5 shrink-0">
             <button type="button" onclick="loginAsKidDirect('${k.id}', 'math')" class="px-3 py-2 rounded-xl text-white font-black text-xs shadow-xs hover:shadow transition flex items-center space-x-1 whitespace-nowrap cursor-pointer shrink-0 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600" title="Vào Đấu trường Toán Lớp ${k.grade}">
               <span>🧮</span>
@@ -942,36 +978,44 @@
     }
 
     async function toggleRevealPin(kidId) {
-      const span = document.getElementById(`pin-val-${kidId}`);
-      const btn = document.getElementById(`btn-reveal-${kidId}`);
-      if (!span || !btn) return;
+      const pinEl = document.getElementById(`pin-val-${kidId}`);
+      const btnEl = document.getElementById(`btn-reveal-${kidId}`);
+      if (!pinEl || !btnEl) return;
 
-      if (span.getAttribute('data-revealed') === 'true') {
-        span.textContent = '••••';
-        span.setAttribute('data-revealed', 'false');
-        btn.innerHTML = `<i data-lucide="eye" class="w-3 h-3"></i><span>Xem PIN</span>`;
+      const isRevealed = pinEl.getAttribute('data-revealed') === 'true';
+      if (isRevealed) {
+        pinEl.textContent = '••••';
+        pinEl.setAttribute('data-revealed', 'false');
+        btnEl.innerHTML = `<i data-lucide="eye" class="w-3 h-3"></i><span>Xem PIN</span>`;
+        lucide.createIcons();
       } else {
         const kids = getKidsList();
         const kid = kids.find(k => k.id === kidId);
-        if (kid) {
-          const plain = window.SecurityVault ? await window.SecurityVault.decryptPin(kid.pin) : (kid.pin || '1234');
-          span.textContent = plain;
-          span.setAttribute('data-revealed', 'true');
-          btn.innerHTML = `<i data-lucide="eye-off" class="w-3 h-3"></i><span>Ẩn PIN</span>`;
+        if (!kid) return;
+
+        let plainPin = kid.pin;
+        if (window.SecurityVault && plainPin && plainPin.startsWith('ENC:')) {
+          plainPin = await window.SecurityVault.decrypt(plainPin);
         }
+
+        pinEl.textContent = plainPin || 'Chưa đặt';
+        pinEl.setAttribute('data-revealed', 'true');
+        btnEl.innerHTML = `<i data-lucide="eye-off" class="w-3 h-3"></i><span>Ẩn PIN</span>`;
+        lucide.createIcons();
       }
-      lucide.createIcons();
     }
 
     function openKidManagerModal() {
+      cancelEditKid();
       renderModalKids();
-      document.getElementById('kid-manager-modal').classList.remove('hidden');
-      lucide.createIcons();
+      const modal = document.getElementById('kid-manager-modal');
+      if (modal) modal.classList.remove('hidden');
     }
 
     function closeKidManagerModal() {
+      const modal = document.getElementById('kid-manager-modal');
+      if (modal) modal.classList.add('hidden');
       cancelEditKid();
-      document.getElementById('kid-manager-modal').classList.add('hidden');
     }
 
     async function editKidAccount(kidId) {
@@ -983,70 +1027,66 @@
       document.getElementById('new-kid-name').value = kid.name;
       document.getElementById('new-kid-grade').value = kid.grade;
       document.getElementById('new-kid-username').value = kid.username;
-      
-      const plainPin = window.SecurityVault ? await window.SecurityVault.decryptPin(kid.pin) : (kid.pin || '1234');
+
+      let plainPin = kid.pin;
+      if (window.SecurityVault && plainPin && plainPin.startsWith('ENC:')) {
+        plainPin = await window.SecurityVault.decrypt(plainPin);
+      }
       document.getElementById('new-kid-pin').value = plainPin;
 
       document.getElementById('form-kid-title').textContent = `Chỉnh Sửa Tài Khoản: ${kid.name}`;
-      const iconContainer = document.getElementById('form-kid-icon');
-      if (iconContainer) {
-        iconContainer.className = 'w-6 h-6 rounded-lg bg-sky-100 flex items-center justify-center text-sky-700';
-        iconContainer.innerHTML = '<i data-lucide="edit-3" class="w-3.5 h-3.5"></i>';
-      }
-      
-      const editBadge = document.getElementById('form-edit-badge');
-      if (editBadge) editBadge.classList.remove('hidden');
-
-      document.getElementById('btn-submit-kid-text').textContent = '💾 Lưu Thay Đổi Thông Tin Bé';
+      document.getElementById('btn-submit-kid-text').textContent = 'Cập Nhật Thông Tin Bé';
+      document.getElementById('form-edit-badge').classList.remove('hidden');
       document.getElementById('btn-cancel-edit-kid').classList.remove('hidden');
 
-      const modalScroll = document.querySelector('#kid-manager-modal .custom-scrollbar');
-      if (modalScroll) modalScroll.scrollTo({ top: 0, behavior: 'smooth' });
-
-      lucide.createIcons();
+      const nameInput = document.getElementById('new-kid-name');
+      nameInput.focus();
+      nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function cancelEditKid() {
       document.getElementById('editing-kid-id').value = '';
       document.getElementById('new-kid-name').value = '';
+      document.getElementById('new-kid-grade').value = '2';
       document.getElementById('new-kid-username').value = '';
       document.getElementById('new-kid-pin').value = '1234';
-      document.getElementById('new-kid-grade').value = '2';
 
       document.getElementById('form-kid-title').textContent = 'Tạo Tài Khoản Mới Cho Bé';
-      const iconContainer = document.getElementById('form-kid-icon');
-      if (iconContainer) {
-        iconContainer.className = 'w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700';
-        iconContainer.innerHTML = '<i data-lucide="user-plus" class="w-3.5 h-3.5"></i>';
-      }
-
-      const editBadge = document.getElementById('form-edit-badge');
-      if (editBadge) editBadge.classList.add('hidden');
-
       document.getElementById('btn-submit-kid-text').textContent = 'Lưu & Tạo Tài Khoản Bé (Mã hóa AES-GCM)';
+      document.getElementById('form-edit-badge').classList.add('hidden');
       document.getElementById('btn-cancel-edit-kid').classList.add('hidden');
-      lucide.createIcons();
     }
 
     async function saveOrUpdateKidAccount() {
-      const editId = document.getElementById('editing-kid-id').value;
+      const editingId = document.getElementById('editing-kid-id').value.trim();
       const name = document.getElementById('new-kid-name').value.trim();
       const grade = parseInt(document.getElementById('new-kid-grade').value, 10);
-      const username = document.getElementById('new-kid-username').value.trim();
-      const pin = document.getElementById('new-kid-pin').value.trim() || '1234';
+      const username = document.getElementById('new-kid-username').value.trim().toLowerCase();
+      const pin = document.getElementById('new-kid-pin').value.trim();
 
-      if (!name || !username) {
-        alert('Vui lòng nhập tên của bé và tên đăng nhập!');
+      if (!name) {
+        alert('Vui lòng nhập tên của bé!');
+        return;
+      }
+      if (!username) {
+        alert('Vui lòng nhập tên đăng nhập cho bé!');
+        return;
+      }
+      if (!pin) {
+        alert('Vui lòng nhập mã PIN cho bé!');
         return;
       }
 
-      const encryptedPin = window.SecurityVault ? await window.SecurityVault.encryptPin(pin) : pin;
+      let encryptedPin = pin;
+      if (window.SecurityVault) {
+        encryptedPin = await window.SecurityVault.encrypt(pin);
+      }
+
       let kids = getKidsList();
 
-      if (editId) {
-        // Update Existing Kid
-        const idx = kids.findIndex(k => k.id === editId);
-        if (idx !== -1) {
+      if (editingId) {
+        const idx = kids.findIndex(k => k.id === editingId);
+        if (idx >= 0) {
           kids[idx] = {
             ...kids[idx],
             name: name,
@@ -1056,10 +1096,9 @@
           };
           await saveKidsList(kids);
           cancelEditKid();
-          alert(`Đã cập nhật thông tin cho bé ${name} (Lớp ${grade}) thành công!`);
+          showSystemToast(`Đã cập nhật thông tin cho bé ${name} (Lớp ${grade}) thành công!`, 'success');
         }
       } else {
-        // Create New Kid
         kids.push({
           id: 'kid_' + Date.now(),
           name: name,
@@ -1069,12 +1108,9 @@
         });
         await saveKidsList(kids);
         cancelEditKid();
-        alert(`Đã tạo tài khoản cho bé ${name} (Lớp ${grade}) thành công với mã hóa AES-GCM!`);
+        showSystemToast(`Đã tạo tài khoản cho bé ${name} (Lớp ${grade}) thành công với mã hóa AES-GCM!`, 'success');
       }
     }
-
-    // Alias for compatibility
-    window.createNewKidAccount = saveOrUpdateKidAccount;
 
     function deleteKidAccount(kidId) {
       let kids = getKidsList();
@@ -1096,7 +1132,7 @@
       window.open(`${page}?kid=${encodeURIComponent(kid.id)}&grade=${kid.grade}`, '_blank');
     }
 
-    // Auto-init sidebar kids with CloudSync
+    // Auto-init on load
     document.addEventListener('DOMContentLoaded', () => {
       if (window.CloudSync) {
         window.CloudSync.getKids(() => {
