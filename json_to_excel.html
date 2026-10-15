@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIENLT90 - JSON to Excel Studio Converter | Công Cụ Chuyển Đổi Dữ Liệu Client-Side</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- SheetJS for Client-Side Excel Export -->
+  <script src="xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');
+    }
+  </script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom Scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* Editor line numbers */
+    .line-numbers {
+      counter-reset: line;
+      user-select: none;
+    }
+    .line-numbers span {
+      counter-increment: line;
+    }
+    .line-numbers span::before {
+      content: counter(line);
+      display: block;
+      color: #94a3b8;
+      text-align: right;
+      padding-right: 8px;
+    }
+    /* Table sticky column and header */
+    th.sticky-col, td.sticky-col {
+      position: sticky;
+      left: 0;
+      z-index: 10;
+    }
+    th.sticky-col {
+      z-index: 20;
+    }
+  </style>
+</head>
+<body class="bg-slate-100/90 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- ============================================== -->
+  <!-- 1. TOP STUDIO NAVIGATION BAR                   -->
+  <!-- ============================================== -->
+  <header class="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-40 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Left: Brand & Back to Portal -->
+      <div class="flex items-center space-x-3">
+        <a id="lnkBackPortal" href="main.html" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-bold rounded-xl border border-slate-700 transition flex items-center gap-1.5 shadow-xs" title="Quay lại Cổng điều hành KIENLT90 Portal">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>Về Portal</span>
+        </a>
+
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-600 to-sky-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-emerald-500/20 shrink-0">
+          <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+        </div>
+
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-sm sm:text-base font-black text-white tracking-tight uppercase">JSON to Excel Studio</h1>
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full">Client-Side Pure</span>
+            <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40 rounded-full">UTF-8 Unicode</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium">Chuyển đổi dữ liệu JSON phân cấp lồng nhau sang bảng tính Excel (.xlsx) với làm phẳng tự động</p>
+        </div>
+      </div>
+
+      <!-- Right: Primary Action Buttons -->
+      <div class="flex items-center space-x-2">
+        <!-- Sample Data Dropdown -->
+        <div class="relative inline-block text-left">
+          <button type="button" onclick="toggleSampleDropdown()" id="btnSampleDropdown" aria-haspopup="true" aria-expanded="false" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <i data-lucide="database" class="w-3.5 h-3.5 text-sky-400"></i>
+            <span>Dữ Liệu Mẫu</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          
+          <div id="sampleMenu" role="menu" aria-orientation="vertical" aria-labelledby="btnSampleDropdown" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-slate-200 shadow-xl z-50 py-1.5 text-slate-700 text-xs">
+            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">Chọn mẫu JSON kiểm thử</div>
+            <button type="button" role="menuitem" onclick="loadSampleData('patients')" class="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center space-x-2 cursor-pointer focus:outline-none focus:bg-slate-100">
+              <span class="text-base">🏥</span>
+              <div>
+                <p class="font-bold text-slate-800">Hồ sơ Bệnh nhân & BHYT</p>
+                <p class="text-[10px] text-slate-500">Mảng đối tượng lồng nhau đa cấp</p>
+              </div>
+            </button>
+            <button type="button" role="menuitem" onclick="loadSampleData('prescriptions')" class="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center space-x-2 cursor-pointer focus:outline-none focus:bg-slate-100">
+              <span class="text-base">💊</span>
+              <div>
+                <p class="font-bold text-slate-800">Đơn thuốc & Dịch vụ CLS</p>
+                <p class="text-[10px] text-slate-500">Mảng thuốc con lồng trong mảng bệnh</p>
+              </div>
+            </button>
+            <button type="button" role="menuitem" onclick="loadSampleData('api_response')" class="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center space-x-2 cursor-pointer focus:outline-none focus:bg-slate-100">
+              <span class="text-base">🌐</span>
+              <div>
+                <p class="font-bold text-slate-800">Phản hồi API { data: [...] }</p>
+                <p class="text-[10px] text-slate-500">Đối tượng bọc mảng kết quả chính</p>
+              </div>
+            </button>
+            <button type="button" role="menuitem" onclick="loadSampleData('deep_single')" class="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center space-x-2 cursor-pointer focus:outline-none focus:bg-slate-100">
+              <span class="text-base">🌳</span>
+              <div>
+                <p class="font-bold text-slate-800">Đối tượng Đơn Phân Cấp Sâu</p>
+                <p class="text-[10px] text-slate-500">Cấu hình hệ thống sâu 5+ tầng</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Clear Button -->
+        <button type="button" onclick="clearAllData()" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-rose-950/60 hover:text-rose-300 text-slate-300 text-xs font-medium border border-slate-700/80 transition flex items-center gap-1.5 cursor-pointer" title="Xóa toàn bộ nội dung">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Xóa</span>
+        </button>
+
+        <!-- Primary Export Excel Button -->
+        <button type="button" onclick="exportToExcel()" id="btnHeaderExport" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-950/20 transition flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Xuất Excel (.xlsx)</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ============================================== -->
+  <!-- 2. SUMMARY METRICS CARDS                       -->
+  <!-- ============================================== -->
+  <section class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-5">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      
+      <!-- Metric 1: Rows -->
+      <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center justify-between text-slate-400">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Tổng Số Hàng</span>
+          <div class="w-7 h-7 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+            <i data-lucide="rows-3" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+        <p class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-mono" id="stat-total-rows">0</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Dòng dữ liệu đã phân tích</p>
+      </div>
+
+      <!-- Metric 2: Columns -->
+      <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center justify-between text-slate-400">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Số Cột Phân Cấp</span>
+          <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="columns-3" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+        <p class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-mono" id="stat-total-cols">0</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Trường thuộc tính độc lập</p>
+      </div>
+
+      <!-- Metric 3: File Size -->
+      <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center justify-between text-slate-400">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Dung Lượng JSON</span>
+          <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <i data-lucide="hard-drive" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+        <p class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-mono" id="stat-json-size">0 KB</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Bộ nhớ chuỗi thô</p>
+      </div>
+
+      <!-- Metric 4: Syntax Status -->
+      <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center justify-between text-slate-400">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Cú Pháp Dữ Liệu</span>
+          <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center" id="stat-status-icon">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+        <div class="mt-1 flex items-center space-x-1.5" id="stat-status-badge">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+            Chờ dữ liệu
+          </span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-0.5 truncate" id="stat-status-desc">Dán JSON hoặc kéo thả file</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <!-- 3. MAIN WORKSPACE (2 PANELS: INPUT & PREVIEW)  -->
+  <!-- ============================================== -->
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 py-5 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+    
+    <!-- LEFT PANEL (5 cols on lg): JSON INPUT & CONFIGURATION -->
+    <div class="lg:col-span-5 space-y-4">
+      
+      <!-- Input Card -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden flex flex-col">
+        
+        <!-- Editor Header Toolbar -->
+        <div class="p-3.5 bg-slate-50 border-b border-slate-200/80 flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+            <span class="text-xs font-bold text-slate-800">Bộ Soạn Thảo & Nạp JSON</span>
+          </div>
+
+          <div class="flex items-center space-x-1.5 text-xs">
+            <button type="button" onclick="formatJson()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-200 transition font-medium flex items-center gap-1 cursor-pointer" title="Định dạng thụt lề 2 khoảng trắng">
+              <i data-lucide="code" class="w-3 h-3"></i>
+              <span>Định dạng</span>
+            </button>
+            <button type="button" onclick="minifyJson()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-200 transition font-medium flex items-center gap-1 cursor-pointer" title="Nén dòng đơn">
+              <i data-lucide="minimize-2" class="w-3 h-3"></i>
+              <span>Nén</span>
+            </button>
+            <button type="button" onclick="copyJsonToClipboard()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-200 transition font-medium flex items-center gap-1 cursor-pointer" title="Sao chép JSON">
+              <i data-lucide="copy" class="w-3 h-3"></i>
+              <span>Chép</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Drag & Drop Zone -->
+        <div class="p-3.5 border-b border-slate-100 bg-white">
+          <div id="dropZone" class="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-xl p-4 text-center cursor-pointer bg-slate-50/70 hover:bg-indigo-50/30 transition flex flex-col items-center justify-center">
+            <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mb-1.5">
+              <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+            </div>
+            <p class="text-xs font-bold text-slate-700">Kéo thả file <span class="text-indigo-600 font-extrabold">.JSON</span> vào đây, hoặc <span class="text-indigo-600 underline">chọn tệp</span></p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Xử lý 100% bảo mật tại trình duyệt máy tính của bạn (Client-Side)</p>
+            <input type="file" id="fileInput" accept=".json,.txt" class="hidden">
+          </div>
+
+          <!-- Active File Info (Hidden by default) -->
+          <div id="fileInfoBox" class="hidden mt-2 p-2 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2 min-w-0">
+              <i data-lucide="file" class="w-4 h-4 text-indigo-600 shrink-0"></i>
+              <span id="txtLoadedFileName" class="font-bold text-indigo-900 truncate">data.json</span>
+              <span id="txtLoadedFileSize" class="text-[11px] text-indigo-600 shrink-0">(0 KB)</span>
+            </div>
+            <button type="button" onclick="removeLoadedFile()" class="p-1 text-slate-400 hover:text-rose-600 transition" title="Gỡ file này">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Direct JSON Textarea -->
+        <div class="relative flex-1 p-3.5 bg-white">
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="jsonInput" class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Hoặc dán chuỗi JSON trực tiếp:</label>
+            <span id="txtEditorLineCount" class="text-[10px] font-mono text-slate-400">0 dòng • 0 ký tự</span>
+          </div>
+
+          <textarea id="jsonInput" oninput="handleJsonInputChange()" placeholder='[\n  {\n    "id": "BN001",\n    "ho_ten": "Nguyễn Văn Đạt",\n    "dia_chi": { "tinh": "Hà Nội", "quan": "Ba Đình" },\n    "dich_vu": ["Khám lâm sàng", "Điện tim"]\n  }\n]' class="w-full h-80 sm:h-96 p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs leading-relaxed border border-slate-700/80 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 custom-scroll resize-y" spellcheck="false"></textarea>
+        </div>
+
+        <!-- Syntax Error Box (Hidden by default) -->
+        <div id="errorBox" class="hidden p-3.5 bg-rose-50 border-t border-rose-200 text-rose-800 text-xs">
+          <div class="flex items-start space-x-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0 mt-0.5"></i>
+            <div class="space-y-1 flex-1">
+              <p class="font-bold text-rose-900" id="errorTitle">Lỗi Cú Pháp JSON (JSON Parse Error)</p>
+              <p class="font-mono text-[11px] text-rose-700 whitespace-pre-wrap bg-white/70 p-2 rounded-lg border border-rose-200" id="errorMessage"></p>
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-[10px] text-rose-600" id="errorPosition"></span>
+                <button type="button" onclick="tryFixCommonErrors()" class="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-[10px] transition cursor-pointer">
+                  Thử Sửa Lỗi Tự Động
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Advanced Flattening Settings Card -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 space-y-3.5">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center space-x-1.5">
+            <i data-lucide="sliders" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Tùy Chọn Làm Phẳng (Flatten Options)</span>
+          </h3>
+          <span class="text-[10px] font-bold text-slate-400">Tự động</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <!-- Separator option -->
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 block mb-1">Ký tự nối cột phân cấp:</label>
+            <select id="optSeparator" onchange="applyFlattenSettings()" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 font-mono text-xs font-semibold focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+              <option value="." selected>Dấu chấm (.)  — ví dụ: dia_chi.tinh</option>
+              <option value="_">Gạch dưới (_) — ví dụ: dia_chi_tinh</option>
+              <option value="/">Gạch chéo (/) — ví dụ: dia_chi/tinh</option>
+              <option value="->">Mũi tên (-&gt;) — ví dụ: dia_chi-&gt;tinh</option>
+            </select>
+          </div>
+
+          <!-- Nested Array Handling -->
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 block mb-1">Mảng chuỗi / số con:</label>
+            <select id="optArrayJoin" onchange="applyFlattenSettings()" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+              <option value="comma" selected>Nối bằng dấu phẩy ("A, B, C")</option>
+              <option value="pipe">Nối bằng gạch đứng ("A | B | C")</option>
+              <option value="json">Chuỗi JSON gốc (["A", "B"])</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Smart Array Extractor (Visible when root is an object containing arrays) -->
+        <div id="smartExtractorContainer" class="hidden pt-2 border-t border-slate-100">
+          <label class="text-[11px] font-bold text-indigo-900 block mb-1 flex items-center space-x-1">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Phát hiện mảng dữ liệu trong thuộc tính đối tượng:</span>
+          </label>
+          <select id="optExtractKey" onchange="applyFlattenSettings()" class="w-full px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50/50 text-indigo-950 font-bold text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300 transition">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL (7 cols on lg): DATA GRID PREVIEW & EXPORT CONTROLS -->
+    <div class="lg:col-span-7 space-y-4">
+      
+      <!-- Export Settings & Action Toolbar Card -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 space-y-3">
+        
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center space-x-1.5">
+              <i data-lucide="table" class="w-4 h-4 text-emerald-600"></i>
+              <span>Xem Trước Bảng Tính & Thiết Lập Tệp</span>
+            </h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Kiểm tra số liệu trước khi xuất bản tệp bảng tính</p>
+          </div>
+
+          <!-- Export Action Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="exportToCsv()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer" title="Xuất CSV chuẩn UTF-8 BOM">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-600"></i>
+              <span>Xuất CSV</span>
+            </button>
+            <button type="button" onclick="copyTableAsTsv()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer" title="Sao chép bảng TSV để dán trực tiếp vào Excel">
+              <i data-lucide="clipboard" class="w-3.5 h-3.5 text-slate-600"></i>
+              <span>Chép TSV</span>
+            </button>
+            <button type="button" onclick="exportToExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-md shadow-emerald-950/20 transition flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Tải .XLSX</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Export Filename & Sheet Name inputs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100 text-xs">
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 block mb-1">Tên tệp Excel tải về:</label>
+            <div class="relative">
+              <input type="text" id="exportFileName" value="du_lieu_json" placeholder="ten_tep" class="w-full pl-3 pr-14 py-2 rounded-xl border border-slate-200 font-mono text-xs font-bold focus:outline-none focus:border-emerald-500 transition bg-slate-50/50 focus:bg-white">
+              <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-[11px] font-mono text-slate-400 pointer-events-none">.xlsx</span>
+            </div>
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 block mb-1">Tên Sheet bên trong:</label>
+            <input type="text" id="exportSheetName" value="Data" placeholder="Data" class="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono text-xs font-bold focus:outline-none focus:border-emerald-500 transition bg-slate-50/50 focus:bg-white">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Data Grid Table Card -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden flex flex-col min-h-[460px]">
+        
+        <!-- Table Filter & Header Bar -->
+        <div class="p-3.5 bg-slate-50 border-b border-slate-200/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+          
+          <!-- Search within Table -->
+          <div class="relative flex-1 w-full sm:max-w-xs">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            </div>
+            <input type="text" id="tableFilterInput" oninput="handleTableFilter(this.value)" placeholder="Lọc nội dung bảng..." aria-label="Lọc nội dung bảng xem trước" class="w-full pl-8 pr-8 py-1.5 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition">
+            <button type="button" id="btnClearTableFilter" onclick="clearTableFilter()" class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer" title="Xóa bộ lọc (Esc)">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Page size & Column count badge -->
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="text-[11px] font-bold text-slate-500">Hiển thị:</span>
+            <select id="pageSizeSelect" onchange="changePageSize(this.value)" class="px-2 py-1 rounded-lg border border-slate-200 bg-white text-xs font-bold focus:outline-none">
+              <option value="10">10 dòng</option>
+              <option value="25" selected>25 dòng</option>
+              <option value="50">50 dòng</option>
+              <option value="100">100 dòng</option>
+              <option value="all">Tất cả</option>
+            </select>
+            <span id="txtVisibleColCount" class="px-2 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 font-mono text-[10px] font-bold border border-indigo-100">
+              0 cột
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Table Container (Horizontal & Vertical Scrollable) -->
+        <div class="flex-1 overflow-x-auto overflow-y-auto max-h-[520px] custom-scroll relative bg-white">
+          
+          <!-- Table Element -->
+          <table id="dataTable" class="w-full text-left border-collapse text-xs hidden">
+            <thead class="sticky top-0 z-20 bg-slate-100 text-slate-700 uppercase tracking-wider text-[11px] font-bold border-b border-slate-300">
+              <tr id="tableHeaderRow">
+                <!-- Populated dynamically -->
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-slate-100 font-sans">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+
+          <!-- Empty State Container -->
+          <div id="tableEmptyState" class="py-20 px-4 text-center flex flex-col items-center justify-center space-y-3">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center">
+              <i data-lucide="layout-grid" class="w-7 h-7"></i>
+            </div>
+            <div class="space-y-1">
+              <h4 class="text-sm font-black text-slate-700">Chưa có dữ liệu bảng tính</h4>
+              <p class="text-xs text-slate-400 max-w-sm mx-auto">Vui lòng tải tệp .json, dán mã JSON vào ô bên trái hoặc bấm nạp dữ liệu mẫu để bắt đầu.</p>
+            </div>
+            <button type="button" onclick="loadSampleData('patients')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Nạp Dữ Liệu Bệnh Nhân Mẫu</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Table Pagination Footer -->
+        <div id="tablePaginationBar" class="p-3 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-600 flex-wrap gap-2 hidden">
+          <div class="text-[11px] text-slate-500" id="txtPaginationInfo">
+            Hiển thị dòng 1 - 0 của 0
+          </div>
+          <div class="flex items-center space-x-1">
+            <button type="button" id="btnPagePrev" onclick="changePage(-1)" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition cursor-pointer">
+              Trước
+            </button>
+            <span class="px-2 font-mono text-[11px] font-bold text-slate-700" id="txtCurrentPage">
+              1 / 1
+            </span>
+            <button type="button" id="btnPageNext" onclick="changePage(1)" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition cursor-pointer">
+              Sau
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- 4. FOOTER                                      -->
+  <!-- ============================================== -->
+  <footer class="border-t border-slate-200/80 bg-white py-4 px-6 text-center text-xs text-slate-400 space-y-1 mt-auto">
+    <p>KIENLT90 Enterprise Studio • Client-Side Pure Data Converter • ISO/IEC 27001 Ready</p>
+    <p class="font-medium text-slate-500">Cổng thông tin &amp; Tiện ích <span class="text-indigo-700 font-bold">Lê Trung Kiên</span> • letrungkien.store</p>
+  </footer>
+
+  <!-- ============================================== -->
+  <!-- 5. FLOATING SYSTEM TOAST NOTIFICATION          -->
+  <!-- ============================================== -->
+  <div id="systemToast" class="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md text-xs font-bold flex items-center space-x-2 transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none bg-slate-900 text-white border border-slate-800">
+    <span id="toastDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1 shrink-0"></span>
+    <span id="toastMsg">Thông báo</span>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 6. CORE CONVERTER JAVASCRIPT LOGIC             -->
+  <!-- ============================================== -->
+  <script>
+    // Global State
+    var parsedJsonData = null;
+    var processedResult = { columns: [], rows: [] };
+    var filteredRows = [];
+    var currentPage = 1;
+    var pageSize = 25;
+    var detectedArrayKeys = [];
+
+    // Initialize Lucide Icons
+    function renderIcons() {
+      if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
+    }
+
+    // Toast Notification System
+    let toastTimer = null;
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('systemToast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastDot = document.getElementById('toastDot');
+      if (!toast || !toastMsg) return;
+
+      toastMsg.textContent = msg;
+      let bg = 'bg-slate-900/95 text-white border-slate-700';
+      let dot = 'bg-emerald-400';
+
+      if (type === 'error') {
+        bg = 'bg-rose-950/95 text-white border-rose-800';
+        dot = 'bg-rose-400';
+      } else if (type === 'info') {
+        bg = 'bg-sky-950/95 text-white border-sky-800';
+        dot = 'bg-sky-400';
+      }
+
+      toast.className = `fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md text-xs font-bold flex items-center space-x-2 transition-all duration-300 transform translate-y-0 opacity-100 ${bg} border`;
+      if (toastDot) toastDot.className = `w-2 h-2 rounded-full ${dot} animate-ping mr-1 shrink-0`;
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.className = 'fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center space-x-2 transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none bg-slate-900 text-white';
+      }, 3500);
+    }
+
+    // Toggle Sample Dropdown
+    function toggleSampleDropdown() {
+      const menu = document.getElementById('sampleMenu');
+      const btn = document.getElementById('btnSampleDropdown');
+      if (!menu) return;
+      const isHidden = menu.classList.toggle('hidden');
+      if (btn) btn.setAttribute('aria-expanded', !isHidden ? 'true' : 'false');
+    }
+
+    // Close dropdown when clicked outside
+    document.addEventListener('click', (e) => {
+      const btn = document.getElementById('btnSampleDropdown');
+      const menu = document.getElementById('sampleMenu');
+      if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Helper: Normalize & strip Vietnamese diacritics for accent-insensitive search
+    function stripVietnameseDiacritics(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'd')
+        .toLowerCase();
+    }
+
+    // ==============================================
+    // CORE FLATTENING LOGIC
+    // ==============================================
+    function flattenObject(obj, prefix = '', sep = '.', maxDepth = 20, currentDepth = 0, arrayJoinMode = null) {
+      const result = {};
+      if (currentDepth > maxDepth || obj === null || typeof obj !== 'object') {
+        const key = prefix || 'value';
+        result[key] = (obj !== null && typeof obj === 'object') ? JSON.stringify(obj) : obj;
+        return result;
+      }
+
+      if (obj instanceof Date) {
+        result[prefix || 'value'] = obj.toISOString();
+        return result;
+      }
+
+      if (!arrayJoinMode) {
+        arrayJoinMode = (document.getElementById('optArrayJoin') ? document.getElementById('optArrayJoin').value : 'comma') || 'comma';
+      }
+
+      if (Array.isArray(obj)) {
+        if (obj.length === 0) {
+          result[prefix || 'value'] = '';
+          return result;
+        }
+
+        const allPrimitives = obj.every(item => item === null || typeof item !== 'object');
+        if (allPrimitives) {
+          if (prefix) {
+            if (arrayJoinMode === 'json') {
+              result[prefix] = JSON.stringify(obj);
+            } else if (arrayJoinMode === 'pipe') {
+              result[prefix] = obj.map(v => (v === null || v === undefined) ? '' : String(v)).join(' | ');
+            } else {
+              result[prefix] = obj.map(v => (v === null || v === undefined) ? '' : String(v)).join(', ');
+            }
+          } else {
+            // Direct array of primitives or 2D matrix row: map each index to a column: [0], [1], ...
+            obj.forEach((item, index) => {
+              result[`[${index}]`] = (item === null || item === undefined) ? '' : item;
+            });
+          }
+          return result;
+        }
+
+        // Array of objects or mixed
+        obj.forEach((item, index) => {
+          const key = prefix ? `${prefix}[${index}]` : `[${index}]`;
+          if (item === null || typeof item !== 'object') {
+            result[key] = (item === null || item === undefined) ? '' : item;
+          } else {
+            const flatChild = flattenObject(item, key, sep, maxDepth, currentDepth + 1, arrayJoinMode);
+            Object.assign(result, flatChild);
+          }
+        });
+        return result;
+      }
+
+      const keys = Object.keys(obj);
+      if (keys.length === 0) {
+        if (prefix) result[prefix] = '';
+        return result;
+      }
+
+      for (const k of keys) {
+        const val = obj[k];
+        const key = prefix ? `${prefix}${sep}${k}` : k;
+
+        if (val === null || val === undefined) {
+          result[key] = '';
+        } else if (typeof val === 'object') {
+          if (Array.isArray(val)) {
+            if (val.length === 0) {
+              result[key] = '';
+            } else {
+              const allPrimitives = val.every(item => item === null || typeof item !== 'object');
+              if (allPrimitives) {
+                if (arrayJoinMode === 'json') {
+                  result[key] = JSON.stringify(val);
+                } else if (arrayJoinMode === 'pipe') {
+                  result[key] = val.map(v => (v === null || v === undefined) ? '' : String(v)).join(' | ');
+                } else {
+                  result[key] = val.map(v => (v === null || v === undefined) ? '' : String(v)).join(', ');
+                }
+              } else {
+                val.forEach((item, index) => {
+                  const childKey = `${key}[${index}]`;
+                  if (item === null || typeof item !== 'object') {
+                    result[childKey] = (item === null || item === undefined) ? '' : item;
+                  } else {
+                    const flatChild = flattenObject(item, childKey, sep, maxDepth, currentDepth + 1, arrayJoinMode);
+                    Object.assign(result, flatChild);
+                  }
+                });
+              }
+            }
+          } else if (val instanceof Date) {
+            result[key] = val.toISOString();
+          } else {
+            const flatChild = flattenObject(val, key, sep, maxDepth, currentDepth + 1, arrayJoinMode);
+            Object.assign(result, flatChild);
+          }
+        } else {
+          result[key] = val;
+        }
+      }
+
+      return result;
+    }
+
+    // Process & Normalize Flattened JSON Data
+    function processJsonData(parsedJson, options = {}) {
+      const sep = options.sep || '.';
+      let rawList = [];
+
+      if (Array.isArray(parsedJson)) {
+        if (parsedJson.length === 0) {
+          return { columns: [], rows: [] };
+        }
+        rawList = parsedJson;
+      } else if (parsedJson && typeof parsedJson === 'object') {
+        if (options.extractKey) {
+          const parts = options.extractKey.split('.');
+          let target = parsedJson;
+          for (const p of parts) {
+            target = target ? target[p] : undefined;
+          }
+          if (Array.isArray(target)) {
+            rawList = target;
+          } else {
+            rawList = [parsedJson];
+          }
+        } else if (Object.keys(parsedJson).length === 0) {
+          return { columns: [], rows: [] };
+        } else {
+          rawList = [parsedJson];
+        }
+      } else if (parsedJson === null || parsedJson === undefined) {
+        return { columns: [], rows: [] };
+      } else {
+        rawList = [{ value: parsedJson }];
+      }
+
+      const arrayJoinMode = (document.getElementById('optArrayJoin') ? document.getElementById('optArrayJoin').value : 'comma') || 'comma';
+      const flattenedRows = rawList.map(item => {
+        if (item !== null && typeof item === 'object') {
+          return flattenObject(item, '', sep, 20, 0, arrayJoinMode);
+        }
+        return { value: (item === null || item === undefined) ? '' : item };
+      });
+
+      // Collect union of all column keys (maintaining first appearance order)
+      const allKeys = [];
+      const keySet = new Set();
+      flattenedRows.forEach(row => {
+        Object.keys(row).forEach(k => {
+          if (!keySet.has(k)) {
+            keySet.add(k);
+            allKeys.push(k);
+          }
+        });
+      });
+
+      // Return columns and rows directly (SheetJS & renderTable handle missing row keys natively, saving 50% heap memory)
+      return { columns: allKeys, rows: flattenedRows };
+    }
+
+    // Detect if Root JSON has array keys (checks root and 2nd level)
+    function detectRootArrayKeys(obj) {
+      if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return [];
+      const keys = [];
+      for (const k of Object.keys(obj)) {
+        if (Array.isArray(obj[k]) && obj[k].length > 0) {
+          keys.push({ key: k, count: obj[k].length });
+        } else if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
+          // Check 2nd level wrapper, e.g. { response: { data: [...] } }
+          for (const subK of Object.keys(obj[k])) {
+            if (Array.isArray(obj[k][subK]) && obj[k][subK].length > 0) {
+              keys.push({ key: `${k}.${subK}`, count: obj[k][subK].length });
+            }
+          }
+        }
+      }
+      return keys;
+    }
+
+    // Parse JSON with Detailed Syntax Error Diagnostics
+    function parseJsonWithDiagnostics(text) {
+      try {
+        const parsed = JSON.parse(text);
+        return { success: true, data: parsed, error: null };
+      } catch (err) {
+        let line = 1;
+        let column = 1;
+        let snippet = '';
+
+        // Extract position from error message if available
+        const posMatch = err.message.match(/at position (\d+)/i);
+        if (posMatch) {
+          const pos = parseInt(posMatch[1], 10);
+          const upToPos = text.substring(0, pos);
+          const lines = upToPos.split('\n');
+          line = lines.length;
+          column = lines[lines.length - 1].length + 1;
+        } else {
+          const lineMatch = err.message.match(/line (\d+) column (\d+)/i);
+          if (lineMatch) {
+            line = parseInt(lineMatch[1], 10);
+            column = parseInt(lineMatch[2], 10);
+          }
+        }
+
+        // Generate context snippet around line
+        const allLines = text.split('\n');
+        const start = Math.max(0, line - 2);
+        const end = Math.min(allLines.length, line + 1);
+        const snippetLines = [];
+        for (let i = start; i < end; i++) {
+          const prefix = (i + 1 === line) ? '> ' : '  ';
+          snippetLines.push(`${prefix}${i + 1}: ${allLines[i]}`);
+          if (i + 1 === line) {
+            const pointer = ' '.repeat(Math.max(0, column + 3)) + '^';
+            snippetLines.push(pointer);
+          }
+        }
+        snippet = snippetLines.join('\n');
+
+        return {
+          success: false,
+          data: null,
+          error: {
+            message: err.message,
+            line: line,
+            column: column,
+            snippet: snippet
+          }
+        };
+      }
+    }
+
+    // Handle Input Change (Real-time or Debounced)
+    let parseDebounce = null;
+    function handleJsonInputChange() {
+      clearTimeout(parseDebounce);
+      parseDebounce = setTimeout(() => {
+        executeParsing();
+      }, 250);
+    }
+
+    // Execute Main Parsing Workflow
+    function executeParsing() {
+      const textarea = document.getElementById('jsonInput');
+      const rawText = textarea ? textarea.value.trim() : '';
+
+      // Update counters (fast char and line counter without array allocation)
+      const charCount = rawText.length;
+      let lineCount = 1;
+      for (let i = 0; i < charCount; i++) {
+        if (rawText.charCodeAt(i) === 10) lineCount++;
+      }
+      if (charCount === 0) lineCount = 0;
+      const countEl = document.getElementById('txtEditorLineCount');
+      if (countEl) countEl.textContent = `${lineCount.toLocaleString('vi-VN')} dòng • ${charCount.toLocaleString('vi-VN')} ký tự`;
+
+      const statSizeEl = document.getElementById('stat-json-size');
+      if (statSizeEl) {
+        const kb = (charCount / 1024).toFixed(1);
+        statSizeEl.textContent = `${kb} KB`;
+      }
+
+      const errorBox = document.getElementById('errorBox');
+      const errorMessage = document.getElementById('errorMessage');
+      const errorPosition = document.getElementById('errorPosition');
+      const statBadge = document.getElementById('stat-status-badge');
+      const statDesc = document.getElementById('stat-status-desc');
+      const statIcon = document.getElementById('stat-status-icon');
+
+      if (!rawText) {
+        // Empty Input
+        parsedJsonData = null;
+        processedResult = { columns: [], rows: [] };
+        filteredRows = [];
+        updateMetrics(0, 0);
+        renderTable();
+        if (errorBox) errorBox.classList.add('hidden');
+        if (statBadge) statBadge.innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">Chờ dữ liệu</span>`;
+        if (statDesc) statDesc.textContent = 'Dán JSON hoặc kéo thả file';
+        if (statIcon) {
+          statIcon.className = 'w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center';
+          statIcon.innerHTML = '<i data-lucide="check-circle" class="w-3.5 h-3.5"></i>';
+        }
+        hideSmartExtractor();
+        renderIcons();
+        return;
+      }
+
+      const parseResult = parseJsonWithDiagnostics(rawText);
+
+      if (!parseResult.success) {
+        // Syntax Error
+        parsedJsonData = null;
+        processedResult = { columns: [], rows: [] };
+        filteredRows = [];
+        updateMetrics(0, 0);
+        renderTable();
+
+        if (errorBox) {
+          errorBox.classList.remove('hidden');
+          if (errorMessage) errorMessage.textContent = `${parseResult.error.message}\n\n${parseResult.error.snippet}`;
+          if (errorPosition) errorPosition.textContent = `Vị trí lỗi: Dòng ${parseResult.error.line}, Cột ${parseResult.error.column}`;
+        }
+        if (statBadge) statBadge.innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">Lỗi cú pháp (Parse Error)</span>`;
+        if (statDesc) statDesc.textContent = `Lỗi tại dòng ${parseResult.error.line}`;
+        if (statIcon) {
+          statIcon.className = 'w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center';
+          statIcon.innerHTML = '<i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>';
+        }
+        hideSmartExtractor();
+        renderIcons();
+        return;
+      }
+
+      // Valid JSON
+      if (errorBox) errorBox.classList.add('hidden');
+      if (statBadge) statBadge.innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Hợp lệ (Valid JSON)</span>`;
+      if (statDesc) statDesc.textContent = 'Cú pháp JSON chuẩn UTF-8';
+      if (statIcon) {
+        statIcon.className = 'w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center';
+        statIcon.innerHTML = '<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>';
+      }
+
+      parsedJsonData = parseResult.data;
+
+      // Smart Array Extractor Check
+      checkSmartExtractor(parsedJsonData);
+
+      // Process Flattening
+      applyFlattenSettings();
+      renderIcons();
+    }
+
+    // Check & Display Smart Extractor
+    function checkSmartExtractor(data) {
+      const container = document.getElementById('smartExtractorContainer');
+      const select = document.getElementById('optExtractKey');
+      if (!container || !select) return;
+
+      detectedArrayKeys = detectRootArrayKeys(data);
+      if (detectedArrayKeys.length > 0) {
+        select.innerHTML = '';
+        
+        // Option 1: Root Object
+        const optRoot = document.createElement('option');
+        optRoot.value = '__root__';
+        optRoot.textContent = 'Toàn bộ đối tượng gốc (1 dòng duy nhất)';
+        select.appendChild(optRoot);
+
+        // Options for each array
+        detectedArrayKeys.forEach(item => {
+          const opt = document.createElement('option');
+          opt.value = item.key;
+          opt.textContent = `Trích xuất mảng: "${item.key}" (${item.count} dòng)`;
+          if (item.key === 'data' || item.key === 'items' || item.key === 'results' || item.key === 'records') {
+            opt.selected = true; // Auto-select popular wrappers
+          }
+          select.appendChild(opt);
+        });
+
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    }
+
+    function hideSmartExtractor() {
+      const container = document.getElementById('smartExtractorContainer');
+      if (container) container.classList.add('hidden');
+    }
+
+    // Apply Settings & Re-flatten
+    function applyFlattenSettings() {
+      if (!parsedJsonData) return;
+
+      const sep = document.getElementById('optSeparator') ? document.getElementById('optSeparator').value : '.';
+      const select = document.getElementById('optExtractKey');
+      let extractKey = null;
+
+      if (select && select.value && select.value !== '__root__') {
+        extractKey = select.value;
+      }
+
+      processedResult = processJsonData(parsedJsonData, { sep, extractKey });
+      updateMetrics(processedResult.rows.length, processedResult.columns.length);
+
+      const filterInput = document.getElementById('tableFilterInput');
+      const activeFilter = filterInput ? filterInput.value.trim() : '';
+      if (activeFilter) {
+        handleTableFilter(activeFilter);
+      } else {
+        filteredRows = [...processedResult.rows];
+        currentPage = 1;
+        renderTable();
+      }
+    }
+
+    // Update Top Metric Counters
+    function updateMetrics(rowCount, colCount) {
+      const rowEl = document.getElementById('stat-total-rows');
+      const colEl = document.getElementById('stat-total-cols');
+      const visColEl = document.getElementById('txtVisibleColCount');
+
+      if (rowEl) rowEl.textContent = Number(rowCount).toLocaleString('vi-VN');
+      if (colEl) colEl.textContent = Number(colCount).toLocaleString('vi-VN');
+      if (visColEl) visColEl.textContent = `${colCount} cột`;
+    }
+
+    // HTML Sanitizer for safe DOM insertion
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // ==============================================
+    // TABLE RENDERING & PAGINATION
+    // ==============================================
+    function renderTable() {
+      const table = document.getElementById('dataTable');
+      const emptyState = document.getElementById('tableEmptyState');
+      const headerRow = document.getElementById('tableHeaderRow');
+      const body = document.getElementById('tableBody');
+      const paginationBar = document.getElementById('tablePaginationBar');
+
+      if (!table || !emptyState || !headerRow || !body) return;
+
+      if (!processedResult || processedResult.rows.length === 0 || processedResult.columns.length === 0) {
+        table.classList.add('hidden');
+        if (paginationBar) paginationBar.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      table.classList.remove('hidden');
+      if (paginationBar) paginationBar.classList.remove('hidden');
+
+      // Build Headers
+      headerRow.innerHTML = '';
+
+      // Index Column
+      const thIdx = document.createElement('th');
+      thIdx.className = 'px-3.5 py-2.5 text-center w-12 sticky-col bg-slate-100 text-slate-500 border-r border-slate-200';
+      thIdx.textContent = '#';
+      headerRow.appendChild(thIdx);
+
+      // Data Columns (Sanitized against XSS injection)
+      const sep = document.getElementById('optSeparator') ? document.getElementById('optSeparator').value : '.';
+      processedResult.columns.forEach(col => {
+        const th = document.createElement('th');
+        th.className = 'px-3 py-2.5 whitespace-nowrap border-r border-slate-200 font-bold';
+        
+        // Highlight nested dot hierarchy safely
+        if (col.includes(sep)) {
+          const parts = col.split(sep);
+          const parent = parts.slice(0, -1).join(sep);
+          const leaf = parts[parts.length - 1];
+          th.innerHTML = `<div><span class="text-[9px] text-indigo-500 font-semibold block leading-tight lowercase font-mono">${escapeHtml(parent)}${escapeHtml(sep)}</span><span class="text-slate-900 font-black">${escapeHtml(leaf)}</span></div>`;
+        } else {
+          th.innerHTML = `<span class="text-slate-900 font-black">${escapeHtml(col)}</span>`;
+        }
+        headerRow.appendChild(th);
+      });
+
+      // Pagination slice
+      const totalFiltered = filteredRows.length;
+
+      // Handle 0 filtered results (search filter matched nothing)
+      if (totalFiltered === 0) {
+        body.innerHTML = `<tr><td colspan="${processedResult.columns.length + 1}" class="py-14 px-4 text-center text-slate-400"><div class="flex flex-col items-center justify-center space-y-2"><div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400"><i data-lucide="search-x" class="w-5 h-5"></i></div><p class="text-xs font-bold text-slate-600">Không tìm thấy dòng dữ liệu nào khớp với từ khóa</p><p class="text-[11px] text-slate-400">Thử tìm kiếm với từ khóa khác hoặc bấm nút bên dưới để khôi phục bảng.</p><button type="button" onclick="clearTableFilter()" class="mt-1 px-3 py-1.5 text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl transition cursor-pointer border border-indigo-100 flex items-center gap-1 shadow-2xs"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i><span>Xóa bộ lọc tìm kiếm</span></button></div></td></tr>`;
+        const pageInfo = document.getElementById('txtPaginationInfo');
+        if (pageInfo) pageInfo.textContent = 'Không có kết quả phù hợp';
+        const curPageEl = document.getElementById('txtCurrentPage');
+        if (curPageEl) curPageEl.textContent = '0 / 0';
+        const btnPrev = document.getElementById('btnPagePrev');
+        const btnNext = document.getElementById('btnPageNext');
+        if (btnPrev) btnPrev.disabled = true;
+        if (btnNext) btnNext.disabled = true;
+        renderIcons();
+        return;
+      }
+
+      let startIdx = 0;
+      let endIdx = totalFiltered;
+
+      if (pageSize !== 'all') {
+        const ps = parseInt(pageSize, 10);
+        const totalPages = Math.max(1, Math.ceil(totalFiltered / ps));
+        if (currentPage > totalPages) currentPage = totalPages;
+        startIdx = (currentPage - 1) * ps;
+        endIdx = Math.min(startIdx + ps, totalFiltered);
+
+        const pageInfo = document.getElementById('txtPaginationInfo');
+        if (pageInfo) pageInfo.textContent = `Hiển thị dòng ${(startIdx + 1).toLocaleString('vi-VN')} - ${endIdx.toLocaleString('vi-VN')} của ${totalFiltered.toLocaleString('vi-VN')} dòng`;
+
+        const curPageEl = document.getElementById('txtCurrentPage');
+        if (curPageEl) curPageEl.textContent = `${currentPage} / ${totalPages}`;
+
+        const btnPrev = document.getElementById('btnPagePrev');
+        const btnNext = document.getElementById('btnPageNext');
+        if (btnPrev) btnPrev.disabled = (currentPage <= 1);
+        if (btnNext) btnNext.disabled = (currentPage >= totalPages);
+      } else {
+        const MAX_ALL_PREVIEW = 500;
+        const pageInfo = document.getElementById('txtPaginationInfo');
+        if (totalFiltered > MAX_ALL_PREVIEW) {
+          endIdx = MAX_ALL_PREVIEW;
+          if (pageInfo) pageInfo.innerHTML = `<span class="text-amber-700 font-semibold">Hiển thị ${MAX_ALL_PREVIEW} dòng đầu tiên (tối ưu hiệu năng xem trước). Tệp Excel / CSV tải về sẽ chứa đầy đủ cả ${totalFiltered.toLocaleString('vi-VN')} dòng.</span>`;
+        } else {
+          if (pageInfo) pageInfo.textContent = `Hiển thị toàn bộ ${totalFiltered.toLocaleString('vi-VN')} dòng`;
+        }
+        const curPageEl = document.getElementById('txtCurrentPage');
+        if (curPageEl) curPageEl.textContent = `1 / 1`;
+        const btnPrev = document.getElementById('btnPagePrev');
+        const btnNext = document.getElementById('btnPageNext');
+        if (btnPrev) btnPrev.disabled = true;
+        if (btnNext) btnNext.disabled = true;
+      }
+
+      // Populate Body Rows
+      body.innerHTML = '';
+      const rowsToRender = filteredRows.slice(startIdx, endIdx);
+
+      rowsToRender.forEach((row, i) => {
+        const isOdd = ((startIdx + i) % 2 === 1);
+        const tr = document.createElement('tr');
+        tr.className = `hover:bg-indigo-50/40 transition ${isOdd ? 'bg-slate-50/50' : 'bg-white'} group`;
+
+        // Index cell with solid background to prevent bleed-through when scrolling horizontally
+        const tdIdx = document.createElement('td');
+        tdIdx.className = `px-3.5 py-2 text-center text-[11px] font-mono font-bold text-slate-400 sticky-col ${isOdd ? 'bg-slate-50' : 'bg-white'} group-hover:bg-indigo-50/40 border-r border-slate-200`;
+        tdIdx.textContent = (startIdx + i + 1);
+        tr.appendChild(tdIdx);
+
+        // Data cells
+        processedResult.columns.forEach(col => {
+          const td = document.createElement('td');
+          td.className = 'px-3 py-2 text-xs border-r border-slate-200 max-w-xs truncate font-sans text-slate-700';
+
+          const val = row[col];
+          if (val === '' || val === null || val === undefined) {
+            td.innerHTML = '<span class="text-slate-300 italic font-mono text-[11px]">—</span>';
+          } else if (typeof val === 'boolean') {
+            td.innerHTML = val 
+              ? '<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold">true</span>'
+              : '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 font-mono text-[10px] font-bold">false</span>';
+          } else if (typeof val === 'number') {
+            td.className += ' font-mono text-slate-900 font-semibold';
+            td.textContent = val.toLocaleString('vi-VN');
+          } else if (typeof val === 'object') {
+            td.textContent = JSON.stringify(val);
+          } else {
+            td.textContent = String(val);
+          }
+          tr.appendChild(td);
+        });
+
+        body.appendChild(tr);
+      });
+    }
+
+    // Pagination Controls
+    function changePage(direction) {
+      currentPage += direction;
+      renderTable();
+    }
+
+    function changePageSize(val) {
+      pageSize = val;
+      currentPage = 1;
+      renderTable();
+    }
+
+    // Search filter within Preview Table (Accent-Insensitive & Case-Insensitive)
+    function handleTableFilter(query) {
+      const rawQ = (query !== undefined && query !== null) ? String(query).trim() : '';
+      const filterInput = document.getElementById('tableFilterInput');
+      if (filterInput && query !== undefined && filterInput.value !== query) {
+        filterInput.value = query;
+      }
+
+      const clearBtn = document.getElementById('btnClearTableFilter');
+      if (clearBtn) {
+        if (rawQ) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+
+      if (!rawQ) {
+        filteredRows = [...processedResult.rows];
+      } else {
+        const qLower = rawQ.toLowerCase();
+        const qNormalized = stripVietnameseDiacritics(rawQ);
+        filteredRows = processedResult.rows.filter(row => {
+          return Object.values(row).some(val => {
+            if (val === null || val === undefined) return false;
+            const s = (typeof val === 'object') ? JSON.stringify(val) : String(val);
+            const sLower = s.toLowerCase();
+            if (sLower.includes(qLower)) return true;
+            const sNormalized = stripVietnameseDiacritics(s);
+            return sNormalized.includes(qNormalized);
+          });
+        });
+      }
+      currentPage = 1;
+      renderTable();
+    }
+
+    // Clear active table filter
+    function clearTableFilter() {
+      const filterInput = document.getElementById('tableFilterInput');
+      if (filterInput) {
+        filterInput.value = '';
+        filterInput.focus();
+      }
+      handleTableFilter('');
+    }
+
+    // ==============================================
+    // EXPORT TO EXCEL (.XLSX) VIA SHEETJS
+    // ==============================================
+    function exportToExcel() {
+      if (!processedResult || processedResult.rows.length === 0 || processedResult.columns.length === 0) {
+        showToast('Chưa có dữ liệu để xuất Excel!', 'error');
+        return;
+      }
+
+      if (typeof XLSX === 'undefined') {
+        showToast('Lỗi: Thư viện SheetJS chưa sẵn sàng!', 'error');
+        return;
+      }
+
+      try {
+        const rows = processedResult.rows;
+        const columns = processedResult.columns;
+
+        // Auto-calculate column widths (sample up to 500 rows for high performance)
+        const colWidths = columns.map(key => {
+          let maxLen = key.length;
+          const sampleCount = Math.min(rows.length, 500);
+          for (let i = 0; i < sampleCount; i++) {
+            const val = rows[i][key];
+            const str = (val !== null && val !== undefined) 
+              ? ((typeof val === 'object') ? JSON.stringify(val) : String(val)) 
+              : '';
+            if (str.length > maxLen) maxLen = Math.min(str.length, 60);
+          }
+          return { wch: Math.max(maxLen + 3, 10) };
+        });
+
+        // Generate worksheet with header order
+        const ws = XLSX.utils.json_to_sheet(rows, { header: columns });
+        ws['!cols'] = colWidths;
+
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+
+        // Sanitize sheet name: Excel forbids \ / ? * [ ] : and max length is 31 chars
+        let rawSheet = (document.getElementById('exportSheetName').value || 'Data').trim();
+        let cleanSheet = rawSheet.replace(/[\\/?*\[\]:]/g, '_').replace(/^'+|'+$/g, '').trim().substring(0, 31);
+        if (!cleanSheet) cleanSheet = 'Data';
+
+        XLSX.utils.book_append_sheet(wb, ws, cleanSheet);
+
+        // Sanitize filename without double extension
+        let rawFilename = (document.getElementById('exportFileName').value || 'du_lieu_json').trim();
+        let cleanFilename = rawFilename.replace(/[<>:"/\\|?*]/g, '_').trim();
+        if (!cleanFilename) cleanFilename = 'du_lieu_json';
+        cleanFilename = cleanFilename.replace(/\.(xlsx|csv|tsv|txt)$/i, '') + '.xlsx';
+
+        // Trigger native download
+        XLSX.writeFile(wb, cleanFilename);
+        showToast(`Đã xuất thành công tệp Excel: ${cleanFilename} (${rows.length.toLocaleString('vi-VN')} dòng)`, 'success');
+      } catch (err) {
+        console.error('Export Excel Error:', err);
+        showToast(`Lỗi xuất Excel: ${err.message}`, 'error');
+      }
+    }
+
+    // Export to CSV with UTF-8 BOM
+    function exportToCsv() {
+      if (!processedResult || processedResult.rows.length === 0 || processedResult.columns.length === 0) {
+        showToast('Chưa có dữ liệu để xuất CSV!', 'error');
+        return;
+      }
+
+      try {
+        const columns = processedResult.columns;
+        const rows = processedResult.rows;
+
+        const escapeCsv = (str) => {
+          if (str === null || str === undefined) return '';
+          let s = (typeof str === 'object') ? JSON.stringify(str) : String(str);
+          // Mitigate CSV Formula Injection: only for non-number strings, never for actual numbers!
+          if (typeof str !== 'number' && /^[=+\-@\t\r]/.test(s)) {
+            s = "'" + s;
+          }
+          if (s.includes('"') || s.includes(',') || s.includes('\n') || s.includes('\r')) {
+            return `"${s.replace(/"/g, '""')}"`;
+          }
+          return s;
+        };
+
+        const headerLine = columns.map(escapeCsv).join(',');
+        const dataLines = rows.map(row => {
+          return columns.map(col => escapeCsv(row[col])).join(',');
+        });
+
+        // Add UTF-8 BOM for Excel compatibility
+        const csvContent = '\uFEFF' + [headerLine, ...dataLines].join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        
+        let rawFilename = (document.getElementById('exportFileName').value || 'du_lieu_json').trim();
+        let cleanFilename = rawFilename.replace(/[<>:"/\\|?*]/g, '_').trim();
+        if (!cleanFilename) cleanFilename = 'du_lieu_json';
+        cleanFilename = cleanFilename.replace(/\.(xlsx|csv|tsv|txt)$/i, '') + '.csv';
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = cleanFilename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Delayed revoke to avoid download cancellation in Chromium/Edge
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        showToast(`Đã tải về tệp CSV UTF-8: ${cleanFilename}`, 'success');
+      } catch (err) {
+        console.error('Export CSV Error:', err);
+        showToast(`Lỗi xuất CSV: ${err.message}`, 'error');
+      }
+    }
+
+    // Format cell for RFC 4180 / TSV compliance
+    function formatTsvCell(val) {
+      if (val === null || val === undefined) return '';
+      let s = (typeof val === 'object') ? JSON.stringify(val) : String(val);
+      // Formula injection mitigation: only for non-number strings
+      if (typeof val !== 'number' && /^[=+\-@\t\r]/.test(s)) {
+        s = "'" + s;
+      }
+      // If cell contains tab, newline, carriage return, or double quote, quote it per TSV standards
+      if (s.includes('\t') || s.includes('\n') || s.includes('\r') || s.includes('"')) {
+        return `"${s.replace(/"/g, '""')}"`;
+      }
+      return s;
+    }
+
+    // Copy Table to Clipboard as TSV (Formatted for direct Excel paste)
+    function copyTableAsTsv() {
+      if (!processedResult || processedResult.rows.length === 0 || processedResult.columns.length === 0) {
+        showToast('Chưa có dữ liệu để sao chép!', 'error');
+        return;
+      }
+
+      try {
+        const columns = processedResult.columns;
+        const rowsToCopy = (filteredRows && filteredRows.length > 0 && filteredRows.length < processedResult.rows.length) 
+          ? filteredRows 
+          : processedResult.rows;
+
+        const header = columns.map(col => formatTsvCell(col)).join('\t');
+        const lines = rowsToCopy.map(row => {
+          return columns.map(col => formatTsvCell(row[col])).join('\t');
+        });
+
+        const tsv = [header, ...lines].join('\r\n');
+        copyTextToClipboard(
+          tsv,
+          `Đã chép ${rowsToCopy.length.toLocaleString('vi-VN')} dòng vào bộ nhớ tạm (dán trực tiếp vào Excel)!`,
+          'Không thể sao chép tự động'
+        );
+      } catch (err) {
+        showToast('Lỗi sao chép: ' + err.message, 'error');
+      }
+    }
+
+    // Universal clipboard copy helper with execCommand fallback
+    function copyTextToClipboard(text, successMsg, failMsg) {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(successMsg, 'success');
+        }).catch(() => {
+          fallbackCopyText(text, successMsg, failMsg);
+        });
+      } else {
+        fallbackCopyText(text, successMsg, failMsg);
+      }
+    }
+
+    function fallbackCopyText(text, successMsg, failMsg) {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        textArea.style.top = '-9999px';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        if (successful) {
+          showToast(successMsg, 'success');
+        } else {
+          showToast(failMsg || 'Không thể sao chép tự động', 'error');
+        }
+      } catch (err) {
+        showToast(failMsg || ('Lỗi sao chép: ' + err.message), 'error');
+      }
+    }
+
+    // ==============================================
+    // EDITOR UTILITIES (BEAUTIFY, MINIFY, COPY)
+    // ==============================================
+    function formatJson() {
+      const textarea = document.getElementById('jsonInput');
+      if (!textarea || !textarea.value.trim()) return;
+
+      try {
+        const parsed = JSON.parse(textarea.value);
+        textarea.value = JSON.stringify(parsed, null, 2);
+        executeParsing();
+        showToast('Đã định dạng JSON (2 spaces)', 'info');
+      } catch (err) {
+        showToast('Không thể định dạng do JSON có lỗi cú pháp!', 'error');
+      }
+    }
+
+    function minifyJson() {
+      const textarea = document.getElementById('jsonInput');
+      if (!textarea || !textarea.value.trim()) return;
+
+      try {
+        const parsed = JSON.parse(textarea.value);
+        textarea.value = JSON.stringify(parsed);
+        executeParsing();
+        showToast('Đã nén gọn chuỗi JSON', 'info');
+      } catch (err) {
+        showToast('Không thể nén do JSON có lỗi cú pháp!', 'error');
+      }
+    }
+
+    function copyJsonToClipboard() {
+      const textarea = document.getElementById('jsonInput');
+      if (!textarea || !textarea.value.trim()) return;
+
+      copyTextToClipboard(textarea.value, 'Đã sao chép toàn bộ mã JSON', 'Không thể sao chép');
+    }
+
+    function tryFixCommonErrors() {
+      const textarea = document.getElementById('jsonInput');
+      if (!textarea || !textarea.value.trim()) return;
+
+      let text = textarea.value;
+
+      // 1. Remove JS comments (single-line & multi-line) outside string literals
+      text = text.replace(/("(?:\\.|[^"\\])*")|('(?:\\.|[^'\\])*')|(\/\*[\s\S]*?\*\/|\/\/[^\r\n]*)/g, (match, dStr, sStr, comment) => {
+        if (comment) return '';
+        return match;
+      });
+
+      // 2. Remove trailing commas before } or ]
+      text = text.replace(/,(\s*[}\]])/g, '$1');
+
+      // 3. Convert Python constants (True -> true, False -> false, None -> null) outside string literals
+      text = text.replace(/("(?:\\.|[^"\\])*")|('(?:\\.|[^'\\])*')|(\bTrue\b|\bFalse\b|\bNone\b)/g, (match, dStr, sStr, pyConst) => {
+        if (pyConst) {
+          if (pyConst === 'True') return 'true';
+          if (pyConst === 'False') return 'false';
+          if (pyConst === 'None') return 'null';
+        }
+        return match;
+      });
+
+      // 4. Convert single-quoted strings: preserve inner double quotes by escaping them
+      text = text.replace(/'((?:\\.|[^'\\])*)'/g, (match, content) => {
+        const unescapedSingle = content.replace(/\\'/g, "'");
+        const escapedDouble = unescapedSingle.replace(/"/g, '\\"');
+        return `"${escapedDouble}"`;
+      });
+
+      // 5. Quote unquoted keys: support Unicode letters, numbers, _, -, $, @
+      text = text.replace(/([{,]\s*)([a-zA-Z0-9_\-$@\u00C0-\u1EF9]+)\s*:/g, '$1"$2":');
+
+      textarea.value = text;
+      executeParsing();
+      showToast('Đã áp dụng các quy tắc sửa lỗi cú pháp phổ biến', 'info');
+    }
+
+    function clearAllData() {
+      if (confirm('Bạn có chắc chắn muốn xóa toàn bộ nội dung và thiết lập lại từ đầu?')) {
+        const textarea = document.getElementById('jsonInput');
+        if (textarea) textarea.value = '';
+        removeLoadedFile();
+        executeParsing();
+        showToast('Đã xóa dữ liệu thành công', 'info');
+      }
+    }
+
+    function removeLoadedFile() {
+      const box = document.getElementById('fileInfoBox');
+      const fileInput = document.getElementById('fileInput');
+      if (box) box.classList.add('hidden');
+      if (fileInput) fileInput.value = '';
+    }
+
+    // ==============================================
+    // FILE UPLOAD & DRAG DROP LISTENERS
+    // ==============================================
+    var MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB safety limit
+    var ALLOWED_EXTS = ['.json', '.txt', '.geojson', '.jsonl', '.js'];
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+
+    if (dropZone && fileInput) {
+      dropZone.addEventListener('click', () => fileInput.click());
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-indigo-600', 'bg-indigo-50/50');
+      });
+
+      dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-indigo-600', 'bg-indigo-50/50');
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-indigo-600', 'bg-indigo-50/50');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleSelectedFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          handleSelectedFile(e.target.files[0]);
+          e.target.value = ''; // Reset so the user can re-upload the same file
+        }
+      });
+    }
+
+    function handleSelectedFile(file) {
+      if (!file) return;
+
+      // 1. Check file size: empty file rejection
+      if (file.size === 0) {
+        showToast(`Tệp "${file.name}" rỗng (0 bytes)! Vui lòng kiểm tra lại.`, 'error');
+        removeLoadedFile();
+        return;
+      }
+
+      // 2. Check file size: oversized file cap (protect browser tab from freezing)
+      if (file.size > MAX_FILE_SIZE) {
+        showToast(`Dung lượng tệp vượt quá giới hạn an toàn 25 MB (${(file.size / (1024 * 1024)).toFixed(1)} MB)!`, 'error');
+        removeLoadedFile();
+        return;
+      }
+
+      // 3. Check allowed extensions (reject binary files, images, archives)
+      const fileNameLower = file.name.toLowerCase();
+      const hasAllowedExt = ALLOWED_EXTS.some(ext => fileNameLower.endsWith(ext));
+      if (!hasAllowedExt) {
+        showToast(`Định dạng tệp không được hỗ trợ! Vui lòng chọn tệp .json hoặc .txt.`, 'error');
+        removeLoadedFile();
+        return;
+      }
+
+      // Pre-fill export filename suggestion from uploaded file
+      const exportNameInput = document.getElementById('exportFileName');
+      if (exportNameInput) {
+        const base = file.name.replace(/\.[^/.]+$/, '');
+        exportNameInput.value = `${base}_converted`;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target.result;
+        const textarea = document.getElementById('jsonInput');
+        if (textarea) {
+          textarea.value = text;
+          executeParsing();
+
+          // Only display file info box on successful read
+          const infoBox = document.getElementById('fileInfoBox');
+          const txtName = document.getElementById('txtLoadedFileName');
+          const txtSize = document.getElementById('txtLoadedFileSize');
+          if (infoBox && txtName && txtSize) {
+            txtName.textContent = file.name;
+            txtSize.textContent = `(${(file.size / 1024).toFixed(1)} KB)`;
+            infoBox.classList.remove('hidden');
+          }
+
+          showToast(`Đã nạp tệp "${file.name}" thành công!`, 'success');
+        }
+      };
+      reader.onerror = () => {
+        removeLoadedFile();
+        showToast('Lỗi đọc tệp tin: ' + (reader.error ? reader.error.message : 'Không xác định'), 'error');
+      };
+      reader.onabort = () => {
+        removeLoadedFile();
+        showToast('Đã hủy quá trình đọc tệp tin', 'info');
+      };
+      reader.readAsText(file, 'utf-8');
+    }
+
+    // ==============================================
+    // PRESET SAMPLE DATASETS
+    // ==============================================
+    const SAMPLE_DATASETS = {
+      patients: [
+        {
+          "ma_benh_nhan": "BN-2026-001",
+          "ho_ten": "Nguyễn Văn Đạt",
+          "gioi_tinh": "Nam",
+          "ngay_sinh": "1985-04-12",
+          "dia_chi": {
+            "tinh_thanh": "TP. Hà Nội",
+            "quan_huyen": "Quận Ba Đình",
+            "phuong_xa": "Phường Điện Biên",
+            "chi_tiet": { "so_nha": "12B", "pho": "Hoàng Diệu" }
+          },
+          "bhyt": {
+            "ma_the": "DN4010123456789",
+            "muc_huong": 80,
+            "noi_dang_ky": "Bệnh viện Đa khoa Xanh Pôn"
+          },
+          "kham_benh": {
+            "ngay_kham": "2026-10-15 08:30:00",
+            "khoa": "Khoa Khám Bệnh - Nội Tim Mạch",
+            "chan_doan": "Tăng huyết áp nguyên phát (vô căn)",
+            "ma_icd": "I10"
+          },
+          "dich_vu_chi_dinh": ["Khám tim mạch", "Điện tim ECG", "Siêu âm tim Dopper màu"],
+          "tong_chi_phi": 650000
+        },
+        {
+          "ma_benh_nhan": "BN-2026-002",
+          "ho_ten": "Trần Thị Mỹ Linh",
+          "gioi_tinh": "Nữ",
+          "ngay_sinh": "1992-08-23",
+          "dia_chi": {
+            "tinh_thanh": "TP. Hồ Chí Minh",
+            "quan_huyen": "Quận 1",
+            "phuong_xa": "Phường Bến Nghé",
+            "chi_tiet": { "so_nha": "88", "pho": "Nguyễn Du" }
+          },
+          "bhyt": {
+            "ma_the": "GD4790198765432",
+            "muc_huong": 100,
+            "noi_dang_ky": "Bệnh viện Chợ Rẫy"
+          },
+          "kham_benh": {
+            "ngay_kham": "2026-10-15 09:15:00",
+            "khoa": "Khoa Nội Tiết",
+            "chan_doan": "Đái tháo đường típ 2 không phụ thuộc insulin",
+            "ma_icd": "E11"
+          },
+          "dich_vu_chi_dinh": ["Đường huyết mao mạch", "Định lượng HbA1c", "Xét nghiệm chức năng thận"],
+          "tong_chi_phi": 480000
+        },
+        {
+          "ma_benh_nhan": "BN-2026-003",
+          "ho_ten": "Phạm Quốc Dũng",
+          "gioi_tinh": "Nam",
+          "ngay_sinh": "1978-11-05",
+          "dia_chi": {
+            "tinh_thanh": "TP. Đà Nẵng",
+            "quan_huyen": "Quận Hải Châu",
+            "phuong_xa": "Phường Thạch Thang"
+          },
+          "bhyt": {
+            "ma_the": "HT5480133445566",
+            "muc_huong": 95,
+            "noi_dang_ky": "Bệnh viện Đà Nẵng"
+          },
+          "kham_benh": {
+            "ngay_kham": "2026-10-15 10:00:00",
+            "khoa": "Khoa Hô Hấp",
+            "chan_doan": "Viêm phế quản cấp tính",
+            "ma_icd": "J20"
+          },
+          "dich_vu_chi_dinh": ["Chụp X-quang phổi thẳng", "Tổng phân tích tế bào máu"],
+          "tong_chi_phi": 390000
+        }
+      ],
+
+      prescriptions: [
+        {
+          "ma_don": "DT-001",
+          "benh_nhan": "Lê Hoài Nam",
+          "bac_si": "BS. CKI Nguyễn Văn Bình",
+          "danh_sach_thuoc": [
+            { "ma_thuoc": "TH01", "ten_thuoc": "Paracetamol 500mg", "so_luong": 20, "don_vi": "Viên", "don_gia": 1200 },
+            { "ma_thuoc": "TH02", "ten_thuoc": "Amoxicillin 500mg", "so_luong": 14, "don_vi": "Viên", "don_gia": 2500 }
+          ],
+          "ngay_ke_don": "2026-10-15"
+        },
+        {
+          "ma_don": "DT-002",
+          "benh_nhan": "Vũ Minh Tâm",
+          "bac_si": "ThS. BS Trần Bích Ngọc",
+          "danh_sach_thuoc": [
+            { "ma_thuoc": "TH03", "ten_thuoc": "Amlodipine 5mg", "so_luong": 30, "don_vi": "Viên", "don_gia": 3000 },
+            { "ma_thuoc": "TH04", "ten_thuoc": "Metformin 850mg", "so_luong": 60, "don_vi": "Viên", "don_gia": 1800 }
+          ],
+          "ngay_ke_don": "2026-10-15"
+        }
+      ],
+
+      api_response: {
+        "status": 200,
+        "message": "Truy vấn danh mục thuốc thành công",
+        "timestamp": "2026-10-15T09:00:00Z",
+        "data": [
+          { "stt": 1, "ma_hoat_chat": "40.102", "ten_hoat_chat": "Paracetamol", "nong_do": "500mg", "duong_dung": "Uống", "muc_bhyt": "100%" },
+          { "stt": 2, "ma_hoat_chat": "40.103", "ten_hoat_chat": "Ibuprofen", "nong_do": "400mg", "duong_dung": "Uống", "muc_bhyt": "100%" },
+          { "stt": 3, "ma_hoat_chat": "40.215", "ten_hoat_chat": "Cefuroxim axetil", "nong_do": "500mg", "duong_dung": "Uống", "muc_bhyt": "80%" },
+          { "stt": 4, "ma_hoat_chat": "40.350", "ten_hoat_chat": "Atorvastatin", "nong_do": "20mg", "duong_dung": "Uống", "muc_bhyt": "100%" }
+        ],
+        "metadata": {
+          "total_items": 4,
+          "page": 1,
+          "per_page": 10
+        }
+      },
+
+      deep_single: {
+        "he_thong": {
+          "ten_ung_dung": "KIENLT90 Portal Health Studio",
+          "phien_ban": "v2.1 Enterprise",
+          "moi_truong": "Production",
+          "may_chu": {
+            "ten_host": "srv-prod-hanoi-01",
+            "ip_noi_bo": "10.0.1.15",
+            "cau_hinh_phan_cung": {
+              "cpu": "Intel Xeon Gold 32 Cores",
+              "ram_gb": 64,
+              "luu_tru": { "loai": "NVMe SSD", "dung_luong_tb": 2 }
+            }
+          },
+          "bao_mat": {
+            "thuat_toan_ma_hoa": "AES-GCM 256-bit",
+            "chung_chi": "ISO/IEC 27001",
+            "xac_thuc_hai_lop": true
+          }
+        }
+      }
+    };
+
+    function loadSampleData(sampleKey) {
+      const data = SAMPLE_DATASETS[sampleKey];
+      if (!data) return;
+
+      const textarea = document.getElementById('jsonInput');
+      if (textarea) {
+        textarea.value = JSON.stringify(data, null, 2);
+        executeParsing();
+        showToast('Đã nạp dữ liệu mẫu thành công!', 'success');
+      }
+
+      const menu = document.getElementById('sampleMenu');
+      if (menu) menu.classList.add('hidden');
+
+      // Update filename suggestion
+      const exportName = document.getElementById('exportFileName');
+      if (exportName) {
+        if (sampleKey === 'patients') exportName.value = 'danh_sach_benh_nhan_bhyt';
+        else if (sampleKey === 'prescriptions') exportName.value = 'don_thuoc_dich_vu';
+        else if (sampleKey === 'api_response') exportName.value = 'danh_muc_hoat_chat';
+        else if (sampleKey === 'deep_single') exportName.value = 'thong_so_he_thong';
+      }
+    }
+
+    // Global Keyboard Shortcuts & Accessibility Navigation
+    document.addEventListener('keydown', (e) => {
+      // 1. ESC key: Dismiss open dropdowns, clear active search filter, or dismiss alerts
+      if (e.key === 'Escape') {
+        const menu = document.getElementById('sampleMenu');
+        const btnDropdown = document.getElementById('btnSampleDropdown');
+        if (menu && !menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+          if (btnDropdown) {
+            btnDropdown.setAttribute('aria-expanded', 'false');
+            btnDropdown.focus();
+          }
+          return;
+        }
+
+        const filterInput = document.getElementById('tableFilterInput');
+        if (filterInput && (document.activeElement === filterInput || filterInput.value)) {
+          if (filterInput.value) {
+            clearTableFilter();
+            return;
+          }
+        }
+
+        const toast = document.getElementById('systemToast');
+        if (toast && !toast.classList.contains('opacity-0')) {
+          toast.className = 'fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center space-x-2 transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none bg-slate-900 text-white';
+          return;
+        }
+      }
+
+      // 2. Ctrl+Enter or Cmd+Enter: Force execute parsing immediately inside textarea
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        const textarea = document.getElementById('jsonInput');
+        if (document.activeElement === textarea) {
+          e.preventDefault();
+          executeParsing();
+          showToast('Đã kích hoạt phân tích dữ liệu JSON', 'info');
+        }
+      }
+    });
+
+    // Auto-load default sample on fresh load if empty
+    window.addEventListener('DOMContentLoaded', () => {
+      renderIcons();
+      // Load sample data initially so the user immediately sees a working studio
+      loadSampleData('patients');
+    });
+  </script>
+</body>
+</html>

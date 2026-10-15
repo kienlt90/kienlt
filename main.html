@@ -151,6 +151,14 @@
               <span>Khảo sát RIS/PACS - EMR</span>
             </span>
           </a>
+
+          <a href="json_to_excel.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/90 transition group">
+            <span class="flex items-center space-x-2.5">
+              <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition shrink-0"></i>
+              <span>JSON to Excel Studio</span>
+            </span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Mới</span>
+          </a>
         </nav>
       </div>
 
@@ -228,6 +236,7 @@
         <a href="LIS-Parser-Tool.html" target="_blank" class="block py-2">🔬 LIS JS Parser Studio</a>
         <a href="icd10.html" target="_blank" class="block py-2">📖 Tra cứu ICD-10 2026</a>
         <a href="survey.html" target="_blank" class="block py-2">📝 Khảo sát RIS/PACS - EMR</a>
+        <a href="json_to_excel.html" target="_blank" class="block py-2 text-emerald-400 font-bold">📊 JSON to Excel Studio</a>
         <div class="pt-2 border-t border-slate-800">
           <a href="math_game.html" target="_blank" class="block py-2 text-amber-400 font-bold">🧮 Đấu Trường Toán Tư Duy</a>
           <a href="english_game.html" target="_blank" class="block py-2 text-teal-400 font-bold">🇬🇧 Đấu Trường Tiếng Anh</a>
@@ -339,7 +348,7 @@
           <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
             <i data-lucide="search" class="w-4 h-4"></i>
           </div>
-          <input type="text" id="module-search-input" oninput="handleSearchModules(this.value)" placeholder="Tìm nhanh công cụ (Mẫu 09, XML 130, LIS, Toán, Tiếng Anh)..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-100 shadow-2xs transition">
+          <input type="text" id="module-search-input" oninput="handleSearchModules(this.value)" placeholder="Tìm nhanh công cụ (JSON to Excel, Mẫu 09, XML 130, LIS)..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-100 shadow-2xs transition">
         </div>
 
         <!-- Filter Category Tabs -->
@@ -400,7 +409,7 @@
             <i data-lucide="layout-grid" class="w-4 h-4 text-sky-600"></i>
             <span>Danh mục tiện ích & công cụ</span>
           </h3>
-          <span id="modules-count-text" class="text-xs font-semibold text-slate-400">8 công cụ khả dụng</span>
+          <span id="modules-count-text" class="text-xs font-semibold text-slate-400">9 công cụ khả dụng</span>
         </div>
 
         <div id="modulesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -489,7 +498,21 @@
             </div>
           </button>
 
-          <!-- Card 7: Kid Math Arena -->
+          <!-- Card 7: JSON to Excel Studio Converter -->
+          <a href="json_to_excel.html" target="_blank" data-cat="health" data-title="chuyển đổi json sang excel json to excel converter studio làm phẳng flatten dữ liệu utf8 unicode client-side" class="module-card group block bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:border-emerald-400 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 group-hover:scale-105 transition">
+                <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Client-Side</span>
+            </div>
+            <div class="mt-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-emerald-700 transition">JSON to Excel Studio</h4>
+              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">Chuyển đổi dữ liệu JSON lồng nhau sang bảng tính Excel (.xlsx) chuẩn Unicode UTF-8, làm phẳng tự động.</p>
+            </div>
+          </a>
+
+          <!-- Card 8: Kid Math Arena -->
           <a href="math_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" data-cat="kid" data-title="đấu trường toán tư duy logic lớp 2 5 quay thưởng" class="module-card group block bg-amber-50/70 p-4 rounded-2xl border border-amber-300/80 shadow-2xs hover:border-amber-400 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-amber-500">
             <div class="flex items-start justify-between">
               <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-200 text-xl group-hover:scale-105 transition">
@@ -503,7 +526,7 @@
             </div>
           </a>
 
-          <!-- Card 8: Kid English Arena -->
+          <!-- Card 9: Kid English Arena -->
           <a href="english_game.html" target="_blank" onclick="localStorage.removeItem('kienlt_active_kid_session')" data-cat="kid" data-title="đấu trường tiếng anh starters movers 100 câu hỏi cambridge" class="module-card group block bg-teal-50/70 p-4 rounded-2xl border border-teal-300/80 shadow-2xs hover:border-teal-400 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-teal-500">
             <div class="flex items-start justify-between">
               <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center border border-teal-200 text-xl group-hover:scale-105 transition">

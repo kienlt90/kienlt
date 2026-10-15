@@ -37,3 +37,4 @@ test_*.py
 debug_dom_output.txt
 running_tasks.json
 chrome_bot_profile/
+.agents/teamwork/
