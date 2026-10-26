@@ -1,0 +1,2246 @@
+<!DOCTYPE html>
+<html lang="vi" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07090e" />
+  <title>F1 Live Timing &amp; Track Map — 22 Xe Thời Gian Thực (FormulaTimer Style)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.openf1.org">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-0: #07090e;
+      --bg-1: #0c1018;
+      --bg-2: #121824;
+      --bg-3: #192132;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hi: rgba(255, 255, 255, 0.16);
+      --f1-red: #e10600;
+      --f1-cyan: #00f0ff;
+      --f1-green: #00e676;
+      --f1-purple: #c850ff;
+      --f1-yellow: #ffd600;
+      --f1-amber: #ff9100;
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+      --text-dim: #64748b;
+      --font-display: 'Chakra Petch', sans-serif;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: var(--bg-0);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+      font-variant-numeric: tabular-nums;
+    }
+
+    button:focus-visible, select:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+      outline: 2px solid var(--f1-cyan);
+      outline-offset: 1px;
+    }
+
+    /* TOP HEADER BAR */
+    .topbar {
+      height: 48px;
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      gap: 10px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .f1-badge {
+      background: var(--f1-red);
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-style: italic;
+      font-size: 15px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.8px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--f1-green);
+      background: rgba(0, 230, 118, 0.1);
+      border: 1px solid rgba(0, 230, 118, 0.28);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* SESSION CONTROLS */
+    .session-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
+
+    .ctrl-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      letter-spacing: 0.3px;
+    }
+
+    select, button.btn {
+      background-color: var(--bg-3);
+      color: var(--text-main);
+      border: 1px solid var(--border-hi);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+      touch-action: manipulation;
+      transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    select:hover, button.btn:hover {
+      border-color: var(--f1-cyan);
+    }
+
+    button.btn-red {
+      background-color: var(--f1-red);
+      border-color: var(--f1-red);
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+    button.btn-red:hover { background-color: #ff1e18; }
+
+    button.btn-cyan {
+      background-color: rgba(0, 240, 255, 0.12);
+      border-color: rgba(0, 240, 255, 0.4);
+      color: var(--f1-cyan);
+      font-weight: 600;
+    }
+    button.btn-cyan:hover { background-color: rgba(0, 240, 255, 0.22); }
+
+    /* WEATHER & API STATUS */
+    .telemetry-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .wx-pills {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: 5px;
+    }
+
+    .wx-item {
+      color: var(--text-sub);
+      font-size: 10.5px;
+    }
+    .wx-val {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .api-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      font-size: 10.5px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--f1-green);
+      box-shadow: 0 0 6px var(--f1-green);
+      flex-shrink: 0;
+    }
+    .dot.loading {
+      background: var(--f1-yellow);
+      box-shadow: 0 0 6px var(--f1-yellow);
+    }
+    .dot.err {
+      background: var(--f1-red);
+      box-shadow: 0 0 6px var(--f1-red);
+    }
+
+    /* MAIN 2-COLUMN WORKSPACE */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 58% 42%;
+      grid-template-rows: 1fr 235px;
+      gap: 8px;
+      padding: 8px;
+      min-height: 0;
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      height: 38px;
+      padding: 0 12px;
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .panel-title::before {
+      content: '';
+      width: 3px;
+      height: 12px;
+      background: var(--f1-red);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* =========================================================================
+       LEFT PANEL: FIA DRIVER TIMING TOWER (ZERO WRAPPING, UNIFORM 44PX ROWS)
+       ========================================================================= */
+    .panel-tower {
+      grid-column: 1 / 2;
+      grid-row: 1 / 3;
+    }
+
+    .leader-banner {
+      height: 32px;
+      padding: 0 12px;
+      background: linear-gradient(90deg, rgba(255, 214, 0, 0.14) 0%, rgba(18, 24, 36, 0.95) 100%);
+      border-bottom: 1px solid rgba(255, 214, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .leader-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .crown-pill {
+      background: var(--f1-yellow);
+      color: #000;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .leader-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sort-switch {
+      display: inline-flex;
+      background: var(--bg-0);
+      border: 1px solid var(--border-hi);
+      border-radius: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sort-btn {
+      background: transparent;
+      color: var(--text-sub);
+      border: none;
+      padding: 3px 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s, color 0.15s;
+    }
+    .sort-btn.active {
+      background: var(--f1-red);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .tower-subbar {
+      height: 26px;
+      padding: 0 12px;
+      background: var(--bg-0);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-sub);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* STRICT 10-COLUMN GRID FOR PERFECT ALIGNMENT */
+    .tower-grid-cols {
+      display: grid;
+      grid-template-columns: 44px minmax(105px, 1.15fr) 74px 102px 46px 78px minmax(72px, 1fr) minmax(80px, 1.1fr) minmax(80px, 1.1fr) 38px;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+    }
+
+    .tower-head {
+      height: 28px;
+      background: rgba(0, 0, 0, 0.4);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tower-body {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .tower-body::-webkit-scrollbar { width: 5px; }
+    .tower-body::-webkit-scrollbar-thumb { background: #263044; border-radius: 3px; }
+
+    .t-row {
+      height: 44px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.12s;
+    }
+
+    .t-row:hover {
+      background-color: rgba(255, 255, 255, 0.045);
+    }
+
+    .t-row.is-leader-row {
+      background: linear-gradient(90deg, rgba(255, 214, 0, 0.08) 0%, transparent 100%);
+    }
+
+    .t-row.sel-a {
+      background-color: rgba(0, 240, 255, 0.12);
+      box-shadow: inset 3px 0 0 var(--f1-cyan);
+    }
+
+    /* CELL 1: POS & GRID DELTA */
+    .pos-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.15;
+    }
+    .pos-num {
+      font-weight: 700;
+      font-size: 11.5px;
+      color: var(--text-main);
+    }
+    .t-row.is-leader-row .pos-num {
+      color: var(--f1-yellow);
+    }
+    .pos-delta {
+      font-size: 9px;
+      font-weight: 600;
+    }
+    .delta-up { color: var(--f1-green); }
+    .delta-down { color: var(--f1-red); }
+    .delta-same { color: var(--text-dim); }
+
+    /* CELL 2: DRIVER & TEAM */
+    .drv-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+    .team-stripe {
+      width: 3.5px;
+      height: 26px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .drv-meta {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.2;
+      min-width: 0;
+      flex: 1;
+    }
+    .drv-line1 {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .drv-code {
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--text-main);
+    }
+    .drv-num {
+      font-size: 9.5px;
+      color: var(--text-dim);
+    }
+    .drv-team {
+      font-family: var(--font-sans);
+      font-size: 9.5px;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* CELL 3: GAP & INTERVAL */
+    .gap-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.2;
+      min-width: 0;
+    }
+    .gap-leader {
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 10.5px;
+    }
+    .gap-leader.leader-tag {
+      color: #000;
+      background: var(--f1-yellow);
+      padding: 0px 5px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      width: fit-content;
+    }
+    .gap-int {
+      color: var(--text-sub);
+      font-size: 9px;
+    }
+
+    /* CELL 4: TYRE & TYRE AGE */
+    .stint-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      min-width: 0;
+    }
+    .tyre-main-line {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tyre-dot {
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 700;
+      background: #0b0e16;
+      border: 2px solid #888;
+      flex-shrink: 0;
+    }
+    .tyre-S { border-color: #ff2a2a; color: #ff2a2a; }
+    .tyre-M { border-color: #ffd600; color: #ffd600; }
+    .tyre-H { border-color: #f1f5f9; color: #f1f5f9; }
+    .tyre-I { border-color: #00e676; color: #00e676; }
+    .tyre-W { border-color: #00b0ff; color: #00b0ff; }
+
+    .tyre-age-badge {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 0px 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      white-space: nowrap;
+    }
+    .age-fresh { color: var(--f1-green); border: 1px solid rgba(0, 230, 118, 0.35); }
+    .age-mid { color: var(--f1-yellow); border: 1px solid rgba(255, 214, 0, 0.35); }
+    .age-worn { color: var(--f1-amber); border: 1px solid rgba(255, 145, 0, 0.45); }
+
+    .tyre-history-sub {
+      font-size: 8.5px;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* CELL 5: PIT STOPS */
+    .pit-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.2;
+    }
+    .pit-count {
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 10px;
+    }
+    .pit-dur {
+      font-size: 8.5px;
+      color: var(--text-sub);
+    }
+
+    /* CELL 6: BEST & LAST LAP */
+    .lap-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.2;
+    }
+    .lap-best { font-size: 10.5px; font-weight: 700; }
+    .lap-last { font-size: 8.5px; color: var(--text-sub); }
+    .purple-text { color: var(--f1-purple) !important; font-weight: 700; }
+    .green-text { color: var(--f1-green) !important; }
+    .yellow-text { color: var(--f1-yellow) !important; }
+
+    /* CELLS 7, 8, 9: S1, S2, S3 WITH DISTINCT MINI-SECTORS */
+    .sector-box {
+      background: rgba(0, 0, 0, 0.36);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      padding: 3px 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+      min-width: 0;
+    }
+    .sector-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 9.5px;
+      line-height: 1;
+    }
+    .sector-lbl {
+      font-size: 8px;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+    .sector-val {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .minisec-bar {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+      gap: 1.5px;
+      height: 6px;
+      align-items: center;
+    }
+    .ms-seg {
+      height: 6px;
+      border-radius: 1px;
+      background: #232a3b;
+    }
+    .ms-2051 { background: var(--f1-purple); box-shadow: 0 0 4px var(--f1-purple); }
+    .ms-2049 { background: var(--f1-green); }
+    .ms-2048 { background: var(--f1-yellow); }
+    .ms-2064 { background: #38bdf8; }
+    .ms-null { background: rgba(255, 255, 255, 0.08); }
+
+    /* CELL 10: SPEED TRAP */
+    .st-cell {
+      text-align: right;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--f1-cyan);
+    }
+
+    /* =========================================================================
+       RIGHT TOP PANEL: LIVE 22-CAR TRACK MAP (FORMULATIMER STYLE)
+       ========================================================================= */
+    .panel-map {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+      background: radial-gradient(circle at 50% 50%, #101726 0%, #07090f 100%);
+    }
+
+    .map-info-strip {
+      height: 30px;
+      padding: 0 12px;
+      background: rgba(12, 16, 24, 0.9);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .circuit-title-inline {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+    }
+
+    .circuit-sub-inline {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--f1-cyan);
+    }
+
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+      min-width: 0;
+    }
+
+    #trackCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .map-footer-bar {
+      height: 34px;
+      padding: 0 12px;
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .legend-inline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      color: var(--text-sub);
+    }
+
+    .playback-inline {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    input[type="range"].scrubber {
+      width: 115px;
+      accent-color: var(--f1-red);
+      cursor: pointer;
+    }
+
+    /* =========================================================================
+       RIGHT BOTTOM PANEL: STRATEGY, TEAM RADIO, 2026 STANDINGS
+       ========================================================================= */
+    .panel-deck {
+      grid-column: 2 / 3;
+      grid-row: 2 / 3;
+    }
+
+    .deck-tabs {
+      display: flex;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .dtab {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-sub);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .dtab:hover { color: var(--text-main); background: rgba(255,255,255,0.04); }
+    .dtab.active {
+      background: rgba(225, 6, 0, 0.16);
+      color: #fff;
+      border-color: var(--f1-red);
+    }
+
+    .deck-content {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .tab-pane {
+      width: 100%;
+      height: 100%;
+      display: none;
+      overflow-y: auto;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+    .tab-pane::-webkit-scrollbar { width: 5px; }
+    .tab-pane::-webkit-scrollbar-thumb { background: #263044; border-radius: 3px; }
+
+    /* TAB 1: TYRE STRATEGY GANTT */
+    .stint-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      white-space: nowrap;
+    }
+    .stint-table th, .stint-table td {
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      text-align: left;
+    }
+    .stint-table th {
+      color: var(--text-dim);
+      font-size: 9.5px;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      background: var(--bg-1);
+      z-index: 2;
+    }
+    .stint-bar-wrap {
+      width: 100%;
+      height: 15px;
+      background: var(--bg-0);
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+    }
+    .stint-seg {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: #05070b;
+      border-right: 1.5px solid #06070b;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    /* TAB 2: TEAM RADIO & RACE CONTROL */
+    .radio-rc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 100%;
+    }
+    .sub-pane {
+      height: 100%;
+      overflow-y: auto;
+      padding: 8px 10px;
+      border-right: 1px solid var(--border);
+    }
+    .radio-item, .rc-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 5px 8px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      margin-bottom: 5px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+    }
+    .radio-item audio {
+      height: 24px;
+      max-width: 175px;
+    }
+
+    /* TAB 3: 2026 STANDINGS & SCHEDULE */
+    .standings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px 10px;
+      height: 100%;
+      overflow-y: auto;
+    }
+    .std-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 9px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      min-width: 0;
+    }
+    .std-card h4 {
+      font-family: var(--font-display);
+      font-size: 11px;
+      color: var(--f1-cyan);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .std-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 3.5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      white-space: nowrap;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="topbar">
+    <div class="brand">
+      <a href="main.html" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;color:var(--text-sub);" title="Quay về trang chủ letrungkien.store">← Portal</a>
+      <div class="f1-badge" translate="no">F1</div>
+      <h1 class="brand-title">LIVE TIMING &amp; 22-CAR TRACK MAP</h1>
+      <span class="brand-sub">100% REAL FIA DATA</span>
+    </div>
+
+    <div class="session-controls">
+      <label class="ctrl-group">
+        <span class="ctrl-label">Chặng:</span>
+        <select id="sessionSelect" aria-label="Chọn chặng đua F1" onchange="onSessionSelectChange()">
+          <option value="11396" selected>2026 US GP (Austin) — Race</option>
+          <option value="11395">2026 US GP (Austin) — Qualifying</option>
+          <option value="11392">2026 US GP (Austin) — Sprint</option>
+          <option value="11385">2026 Singapore GP — Race</option>
+          <option value="11377">2026 Azerbaijan GP (Baku) — Race</option>
+          <option value="11369">2026 Italian GP (Monza) — Race</option>
+          <option value="11361">2026 Dutch GP (Zandvoort) — Race</option>
+          <option value="11353">2026 Belgian GP (Spa) — Race</option>
+          <option value="11345">2026 British GP (Silverstone) — Race</option>
+          <option value="11289">2026 Monaco GP — Race</option>
+          <option value="11249">2026 Japanese GP (Suzuka) — Race</option>
+          <option value="latest">LIVE / Latest Session</option>
+        </select>
+        <button type="button" class="btn" onclick="fetchAll2026Sessions()" title="Tải toàn bộ danh sách các chặng 2026 từ OpenF1">Tất cả 2026</button>
+      </label>
+
+      <label class="ctrl-group">
+        <span class="ctrl-label">Vòng (Lap):</span>
+        <select id="lapSelect" aria-label="Chọn vòng đua" onchange="onLapFilterChange()">
+          <option value="RACE_END" selected>Kết quả Main Race</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="telemetry-strip">
+      <div class="wx-pills" aria-label="Thời tiết đường đua">
+        <span class="wx-item">Track <span class="wx-val" id="wxTrack">--°C</span></span>
+        <span class="wx-item">Air <span class="wx-val" id="wxAir">--°C</span></span>
+        <span class="wx-item">Hum <span class="wx-val" id="wxHum">--%</span></span>
+        <span class="wx-item">Wind <span class="wx-val" id="wxWind">--m/s</span></span>
+        <span class="wx-item" id="wxRain" style="color:var(--f1-cyan);font-weight:700;">DRY</span>
+      </div>
+
+      <div class="api-pill" role="status" aria-live="polite">
+        <span class="dot loading" id="apiDot" aria-hidden="true"></span>
+        <span id="apiStatus">Đang đồng bộ OpenF1…</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN 2-COLUMN WORKSPACE -->
+  <main class="workspace">
+
+    <!-- LEFT: EXPANDED FIA PIT-WALL TIMING TOWER -->
+    <section class="panel panel-tower" aria-label="Bảng xếp hạng tay đua và Mini-Sectors">
+      <div class="panel-header">
+        <div class="panel-title">Bảng Dữ Liệu Tay Đua (FIA Timing &amp; Mini-Sectors)</div>
+        <div class="sort-switch" role="group" aria-label="Chế độ sắp xếp bảng">
+          <button type="button" class="sort-btn active" id="btnSortRace" onclick="setTowerSortMode('RACE')">🏁 Thứ tự Main Race (Leader)</button>
+          <button type="button" class="sort-btn" id="btnSortBest" onclick="setTowerSortMode('BEST')">⚡ Xếp theo Fastest Lap</button>
+        </div>
+      </div>
+
+      <!-- RACE LEADER HIGHLIGHT BANNER -->
+      <div class="leader-banner" id="raceLeaderBanner">
+        <div class="leader-left">
+          <span class="crown-pill">👑 P1 LEADER</span>
+          <span class="leader-text" id="leaderBannerName">Đang tải dữ liệu tay đua dẫn đầu…</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+          <span id="towerLapIndicator" style="color:var(--f1-cyan);font-weight:700;">Lap --/--</span>
+          <span id="bestSessionLapBadge" style="color:var(--f1-purple);font-weight:700;">FL: --</span>
+        </div>
+      </div>
+
+      <!-- SUB-TOOLBAR -->
+      <div class="tower-subbar">
+        <span>Click vào tay đua bất kỳ để <b style="color:var(--f1-cyan)">định vị nổi bật (Highlight)</b> trên Bản đồ 22 xe</span>
+        <span>
+          Mini-Sector:
+          <b style="color:var(--f1-purple)">■</b> Tím (Fastest) &nbsp;
+          <b style="color:var(--f1-green)">■</b> Xanh (PB) &nbsp;
+          <b style="color:var(--f1-yellow)">■</b> Vàng &nbsp;
+          <b style="color:#38bdf8">■</b> Pit
+        </span>
+      </div>
+
+      <!-- TABLE COLUMN HEADERS -->
+      <div class="tower-head tower-grid-cols">
+        <div>P / Δ</div>
+        <div>Tay đua &amp; Đội</div>
+        <div>Gap / Int</div>
+        <div>Lốp &amp; Tuổi</div>
+        <div>Pit</div>
+        <div>Best / Last</div>
+        <div style="text-align:center">Sector 1 (6 Mini)</div>
+        <div style="text-align:center">Sector 2 (8 Mini)</div>
+        <div style="text-align:center">Sector 3 (8 Mini)</div>
+        <div style="text-align:right">ST</div>
+      </div>
+
+      <!-- TABLE BODY -->
+      <div class="tower-body" id="towerBody"></div>
+    </section>
+
+    <!-- RIGHT TOP: LIVE 22-CAR TRACK MAP (FORMULATIMER STYLE) -->
+    <section class="panel panel-map" aria-label="Bản đồ theo dõi 22 xe trên đường đua">
+      <div class="panel-header">
+        <div class="panel-title">Bản Đồ Đường Đua — 22 Xe Thời Gian Thực (Real GPS)</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--f1-green);font-weight:600;" id="packStatusText">Đang tải GPS 22 xe…</span>
+          <button type="button" class="btn btn-cyan" onclick="loadMultiCarRealGpsForCurrentLap()">Tải lại GPS vòng này</button>
+        </div>
+      </div>
+
+      <!-- DEDICATED CIRCUIT INFO BAR -->
+      <div class="map-info-strip">
+        <span class="circuit-title-inline" id="hudCircuitName">UNITED STATES — AUSTIN</span>
+        <span class="circuit-sub-inline" id="hudSessionSub">OpenF1 22-Car Live GPS Stream</span>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="trackCanvas"></canvas>
+      </div>
+
+      <!-- DEDICATED FOOTER BAR FOR SECTOR LEGEND & PLAYBACK CONTROLS -->
+      <div class="map-footer-bar">
+        <div class="legend-inline">
+          <span>Đường đua:</span>
+          <span style="color:#ff3d00;font-weight:700;">■ S1</span>
+          <span style="color:#00f0ff;font-weight:700;">■ S2</span>
+          <span style="color:#ffd600;font-weight:700;">■ S3</span>
+          <span style="color:var(--text-dim)">|</span>
+          <span id="focusedDriverTag" style="color:var(--f1-cyan);font-weight:700;">Đang chọn: --</span>
+        </div>
+
+        <div class="playback-inline">
+          <button type="button" class="btn btn-red" id="btnPlayPause" onclick="togglePlayPause()" aria-label="Tạm dừng hoặc phát tiếp">⏸ PAUSE</button>
+          <input type="range" class="scrubber" id="timelineScrubber" aria-label="Tua tiến độ vòng đua" min="0" max="1000" value="0" oninput="onScrubTimeline(this.value)" />
+          <span id="scrubPctText" style="min-width:30px;text-align:right;">0%</span>
+          <select id="playSpeedSelect" aria-label="Tốc độ phát" onchange="state.playbackSpeed = parseFloat(this.value)">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1.0x</option>
+            <option value="2">2.0x</option>
+            <option value="4">4.0x</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT BOTTOM: STRATEGY, TEAM RADIO, 2026 STANDINGS -->
+    <section class="panel panel-deck" aria-label="Chiến thuật lốp, Team Radio và Bảng xếp hạng mùa giải">
+      <div class="panel-header">
+        <div class="deck-tabs" role="tablist">
+          <button type="button" class="dtab active" id="dtabStrategy" onclick="switchDeckTab('STRATEGY')">🛞 Chiến thuật Lốp &amp; Pit (22 Xe)</button>
+          <button type="button" class="dtab" id="dtabRadio" onclick="switchDeckTab('RADIO')">🎧 Team Radio MP3 &amp; FIA</button>
+          <button type="button" class="dtab" id="dtabStandings" onclick="switchDeckTab('STANDINGS')">🏆 BXH F1 2026 &amp; Lịch Đua</button>
+        </div>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);" id="gpsSamplesCounter">GPS 3.7Hz</span>
+      </div>
+
+      <div class="deck-content">
+        <!-- PANE 1: TYRE STRATEGY & PIT STOPS -->
+        <div class="tab-pane active" id="paneSTRATEGY">
+          <table class="stint-table" id="strategyTable">
+            <thead>
+              <tr>
+                <th style="width:44px;">Pos</th>
+                <th style="width:125px;">Tay đua</th>
+                <th style="width:125px;">Pit Stops</th>
+                <th>Chuỗi Stint Lốp thực tế (Lap 1 → Kết thúc)</th>
+              </tr>
+            </thead>
+            <tbody id="strategyTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- PANE 2: REAL TEAM RADIO AUDIO & FIA RACE CONTROL -->
+        <div class="tab-pane" id="paneRADIO">
+          <div class="radio-rc-grid">
+            <div class="sub-pane">
+              <div style="font-family:var(--font-display);font-size:11px;font-weight:700;color:var(--f1-cyan);margin-bottom:6px;">
+                🎧 TEAM RADIO MP3 (LIVETIMING.FORMULA1.COM)
+              </div>
+              <div id="teamRadioList">Đang tải Team Radio…</div>
+            </div>
+            <div class="sub-pane" style="border-right:none;">
+              <div style="font-family:var(--font-display);font-size:11px;font-weight:700;color:var(--f1-yellow);margin-bottom:6px;">
+                🚩 FIA RACE CONTROL (FLAGS, PENALTIES, DRS)
+              </div>
+              <div id="raceControlList">Đang tải FIA Race Control…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE 3: 2026 WORLD CHAMPIONSHIP STANDINGS & SCHEDULE -->
+        <div class="tab-pane" id="paneSTANDINGS">
+          <div class="standings-grid">
+            <div class="std-card">
+              <h4>🏆 BXH Tay Đua 2026 (WDC)</h4>
+              <div id="wdcStandingsBox">Đang tải BXH Tay đua…</div>
+            </div>
+            <div class="std-card">
+              <h4>🛠️ BXH Đội Đua 2026 (WCC)</h4>
+              <div id="wccStandingsBox">Đang tải BXH Đội đua…</div>
+            </div>
+            <div class="std-card">
+              <h4>📅 Lịch Đua F1 2026</h4>
+              <div id="f1ScheduleBox">Đang tải Lịch đua 2026…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /***************************************************************************
+     * 100% REAL DATA F1 LIVE TIMING & 22-CAR TRACK MAP (FORMULATIMER STYLE)
+     ***************************************************************************/
+    const OPENF1_BASE = 'https://api.openf1.org/v1';
+    const JOLPICA_BASE = 'https://api.jolpi.ca/ergast/f1/current';
+    const SCHEDULE_2026_URL = 'https://raw.githubusercontent.com/formulatimer/F1Schedule/main/2026.json';
+
+    const apiCache = new Map();
+    let requestQueue = Promise.resolve();
+    let lastRequestTime = 0;
+    const MIN_REQUEST_GAP_MS = 370;
+
+    async function fetchOpenF1(endpointAndQuery, retries = 3) {
+      const url = endpointAndQuery.startsWith('http') ? endpointAndQuery : `${OPENF1_BASE}${endpointAndQuery}`;
+      if (apiCache.has(url)) return apiCache.get(url);
+
+      return new Promise((resolve, reject) => {
+        requestQueue = requestQueue.then(async () => {
+          const now = performance.now();
+          const wait = Math.max(0, MIN_REQUEST_GAP_MS - (now - lastRequestTime));
+          if (wait > 0) await new Promise(r => setTimeout(r, wait));
+          lastRequestTime = performance.now();
+
+          for (let attempt = 0; attempt <= retries; attempt++) {
+            try {
+              const res = await fetch(url);
+              if (res.status === 429) {
+                const backoff = 1100 * (attempt + 1);
+                setApiStatus(`OpenF1 Rate Limit — đợi ${backoff}ms…`, 'loading');
+                await new Promise(r => setTimeout(r, backoff));
+                lastRequestTime = performance.now();
+                continue;
+              }
+              if (!res.ok) throw new Error(`HTTP ${res.status}`);
+              const data = await res.json();
+              apiCache.set(url, data);
+              resolve(data);
+              return;
+            } catch (err) {
+              if (attempt === retries) {
+                reject(err);
+                return;
+              }
+              await new Promise(r => setTimeout(r, 700));
+            }
+          }
+        });
+      });
+    }
+
+    const state = {
+      sessionKey: '11396',
+      sessionInfo: null,
+      driversMap: {},
+      allLaps: [],
+      lapsByDriver: {},
+      maxLapNumber: 1,
+      selectedLapFilter: 'RACE_END',
+      towerSortMode: 'RACE',
+
+      positionsByDriver: {},
+      gridPosByDriver: {},
+      finalPosByDriver: {},
+      rankByDriver: {}, // driver_number -> current displayed P1..P22 rank
+
+      stintsByDriver: {},
+      pitsByDriver: {},
+      teamRadios: [],
+      raceControl: [],
+
+      towerRows: [],
+      sessionBestLapSec: Infinity,
+      sessionBestLapDriver: '',
+      sessionBestS1: Infinity,
+      sessionBestS2: Infinity,
+      sessionBestS3: Infinity,
+
+      selectedDriver: null,   // Highlighted driver on the 22-car track map
+      circuitOutlinePts: [],  // Clean 1-lap (x, y, normDist) array to draw the circuit outline
+      multiCarGps: {},        // driver_number -> array of { t, x, y } for all 22 cars
+      multiCarWindowStartMs: 0,
+      multiCarWindowEndMs: 0,
+
+      progress: 0,
+      isPlaying: true,
+      playbackSpeed: 1.0,
+      lastFrameTs: performance.now()
+    };
+
+    function setApiStatus(msg, mode = 'ok') {
+      const dot = document.getElementById('apiDot');
+      const txt = document.getElementById('apiStatus');
+      dot.className = 'dot' + (mode === 'loading' ? ' loading' : mode === 'err' ? ' err' : '');
+      txt.textContent = msg;
+    }
+
+    function formatLapTime(sec) {
+      if (!sec || !isFinite(sec) || sec <= 0) return '--:--.---';
+      const mins = Math.floor(sec / 60);
+      const rem = (sec % 60).toFixed(3).padStart(6, '0');
+      return mins > 0 ? `${mins}:${rem}` : `${rem}s`;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvases();
+      window.addEventListener('resize', resizeCanvases);
+      loadSessionData(state.sessionKey);
+      loadStandingsAndSchedule();
+      requestAnimationFrame(animationLoop);
+    });
+
+    function resizeCanvases() {
+      const tc = document.getElementById('trackCanvas');
+      if (tc && tc.parentElement) {
+        tc.width = tc.parentElement.clientWidth * window.devicePixelRatio;
+        tc.height = tc.parentElement.clientHeight * window.devicePixelRatio;
+      }
+    }
+
+    function onSessionSelectChange() {
+      const val = document.getElementById('sessionSelect').value;
+      loadSessionData(val);
+    }
+
+    async function fetchAll2026Sessions() {
+      try {
+        setApiStatus('Đang tải danh sách chặng 2026…', 'loading');
+        const sessions = await fetchOpenF1('/sessions?year=2026');
+        if (!Array.isArray(sessions) || !sessions.length) return;
+        const sel = document.getElementById('sessionSelect');
+        sel.innerHTML = '';
+        sessions.slice().reverse().forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.session_key;
+          opt.textContent = `2026 ${s.country_name} (${s.circuit_short_name}) — ${s.session_name}`;
+          if (String(s.session_key) === String(state.sessionKey)) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        setApiStatus(`Đã tải ${sessions.length} phiên chạy mùa 2026`, 'ok');
+      } catch (e) {
+        setApiStatus('Lỗi tải danh sách chặng: ' + e.message, 'err');
+      }
+    }
+
+    async function loadSessionData(sessionKeyInput) {
+      try {
+        state.sessionKey = sessionKeyInput;
+        state.circuitOutlinePts = [];
+        state.multiCarGps = {};
+
+        setApiStatus(`Đang đồng bộ Session #${sessionKeyInput} (1/4)…`, 'loading');
+
+        const sessions = await fetchOpenF1(`/sessions?session_key=${sessionKeyInput}`);
+        const sInfo = sessions && sessions.length ? sessions[sessions.length - 1] : null;
+        if (!sInfo) throw new Error('Không tìm thấy dữ liệu Session trên OpenF1');
+        state.sessionInfo = sInfo;
+        state.sessionKey = sInfo.session_key;
+
+        document.getElementById('hudCircuitName').textContent =
+          `${sInfo.country_name || ''} — ${sInfo.circuit_short_name || 'CIRCUIT'}`;
+        document.getElementById('hudSessionSub').textContent =
+          `${sInfo.year} ${sInfo.meeting_name || sInfo.country_name} • ${sInfo.session_name} (#${sInfo.session_key})`;
+
+        const drivers = await fetchOpenF1(`/drivers?session_key=${state.sessionKey}`);
+        state.driversMap = {};
+        drivers.forEach(d => {
+          state.driversMap[d.driver_number] = {
+            number: d.driver_number,
+            code: d.name_acronym || `#${d.driver_number}`,
+            fullName: d.full_name || d.broadcast_name || `#${d.driver_number}`,
+            team: d.team_name || 'F1 Team',
+            color: d.team_colour ? `#${d.team_colour}` : '#00f0ff'
+          };
+        });
+
+        setApiStatus(`Đang đồng bộ Laps & Thứ hạng đua (2/4)…`, 'loading');
+        const weather = await fetchOpenF1(`/weather?session_key=${state.sessionKey}`);
+        if (weather && weather.length) {
+          const w = weather[weather.length - 1];
+          document.getElementById('wxTrack').textContent = `${w.track_temperature ?? '--'}°C`;
+          document.getElementById('wxAir').textContent = `${w.air_temperature ?? '--'}°C`;
+          document.getElementById('wxHum').textContent = `${w.humidity ?? '--'}%`;
+          document.getElementById('wxWind').textContent = `${w.wind_speed ?? '--'}m/s`;
+          document.getElementById('wxRain').textContent = w.rainfall ? 'WET' : 'DRY';
+        }
+
+        const [laps, posRecords] = await Promise.all([
+          fetchOpenF1(`/laps?session_key=${state.sessionKey}`),
+          fetchOpenF1(`/position?session_key=${state.sessionKey}`)
+        ]);
+
+        state.positionsByDriver = {};
+        state.gridPosByDriver = {};
+        state.finalPosByDriver = {};
+        (posRecords || []).forEach(p => {
+          const dNum = p.driver_number;
+          if (!state.positionsByDriver[dNum]) state.positionsByDriver[dNum] = [];
+          state.positionsByDriver[dNum].push({
+            t: new Date(p.date).getTime(),
+            position: p.position
+          });
+        });
+        Object.entries(state.positionsByDriver).forEach(([dNum, arr]) => {
+          arr.sort((a, b) => a.t - b.t);
+          if (arr.length) {
+            state.gridPosByDriver[dNum] = arr[0].position;
+            state.finalPosByDriver[dNum] = arr[arr.length - 1].position;
+          }
+        });
+
+        state.allLaps = Array.isArray(laps) ? laps : [];
+        state.lapsByDriver = {};
+        state.maxLapNumber = 1;
+        state.sessionBestLapSec = Infinity;
+        state.sessionBestLapDriver = '';
+        state.sessionBestS1 = Infinity;
+        state.sessionBestS2 = Infinity;
+        state.sessionBestS3 = Infinity;
+
+        state.allLaps.forEach(l => {
+          const dNum = l.driver_number;
+          if (!state.lapsByDriver[dNum]) state.lapsByDriver[dNum] = [];
+          state.lapsByDriver[dNum].push(l);
+          if (l.lap_number && l.lap_number > state.maxLapNumber) {
+            state.maxLapNumber = l.lap_number;
+          }
+          if (l.lap_duration && l.lap_duration > 40 && l.lap_duration < state.sessionBestLapSec) {
+            state.sessionBestLapSec = l.lap_duration;
+            const drv = state.driversMap[dNum];
+            state.sessionBestLapDriver = drv ? drv.code : `#${dNum}`;
+          }
+          if (l.duration_sector_1 && l.duration_sector_1 > 10 && l.duration_sector_1 < state.sessionBestS1) {
+            state.sessionBestS1 = l.duration_sector_1;
+          }
+          if (l.duration_sector_2 && l.duration_sector_2 > 10 && l.duration_sector_2 < state.sessionBestS2) {
+            state.sessionBestS2 = l.duration_sector_2;
+          }
+          if (l.duration_sector_3 && l.duration_sector_3 > 10 && l.duration_sector_3 < state.sessionBestS3) {
+            state.sessionBestS3 = l.duration_sector_3;
+          }
+        });
+
+        Object.values(state.lapsByDriver).forEach(arr => arr.sort((a, b) => a.lap_number - b.lap_number));
+
+        const isRaceOrSprint = state.sessionInfo && /race|sprint/i.test(state.sessionInfo.session_name || '');
+        state.towerSortMode = isRaceOrSprint ? 'RACE' : 'BEST';
+        document.getElementById('btnSortRace').classList.toggle('active', state.towerSortMode === 'RACE');
+        document.getElementById('btnSortBest').classList.toggle('active', state.towerSortMode === 'BEST');
+
+        populateLapDropdown(isRaceOrSprint);
+
+        setApiStatus(`Đang đồng bộ Lốp & Pit Stops (3/4)…`, 'loading');
+        const [stints, pits] = await Promise.all([
+          fetchOpenF1(`/stints?session_key=${state.sessionKey}`),
+          fetchOpenF1(`/pit?session_key=${state.sessionKey}`)
+        ]);
+
+        state.stintsByDriver = {};
+        (stints || []).forEach(st => {
+          if (!state.stintsByDriver[st.driver_number]) state.stintsByDriver[st.driver_number] = [];
+          state.stintsByDriver[st.driver_number].push(st);
+        });
+        Object.values(state.stintsByDriver).forEach(arr => arr.sort((a, b) => a.stint_number - b.stint_number));
+
+        state.pitsByDriver = {};
+        (pits || []).forEach(p => {
+          if (!state.pitsByDriver[p.driver_number]) state.pitsByDriver[p.driver_number] = [];
+          state.pitsByDriver[p.driver_number].push(p);
+        });
+
+        buildTimingTower();
+        renderStrategyTable();
+
+        // Highlight P1 Leader by default & load 22-car track map immediately
+        if (state.towerRows.length > 0) {
+          setSelectedDriver(state.towerRows[0].driverNumber);
+          await loadMultiCarRealGpsForCurrentLap();
+        }
+
+        const [radios, rc] = await Promise.all([
+          fetchOpenF1(`/team_radio?session_key=${state.sessionKey}`),
+          fetchOpenF1(`/race_control?session_key=${state.sessionKey}`)
+        ]);
+        state.teamRadios = Array.isArray(radios) ? radios.slice().reverse() : [];
+        state.raceControl = Array.isArray(rc) ? rc.slice().reverse() : [];
+        renderTeamRadioAndRaceControl();
+
+        setApiStatus(`LIVE SYNC OK • ${Object.keys(state.driversMap).length} Xe • ${state.allLaps.length} Laps`, 'ok');
+      } catch (err) {
+        console.error(err);
+        setApiStatus(`Lỗi OpenF1: ${err.message}`, 'err');
+      }
+    }
+
+    function setSelectedDriver(dNum) {
+      state.selectedDriver = dNum;
+      const drv = state.driversMap[dNum];
+      const rank = state.rankByDriver[dNum];
+      const tag = document.getElementById('focusedDriverTag');
+      if (drv && tag) {
+        tag.textContent = `Đang chọn: ${rank ? 'P' + rank + ' ' : ''}${drv.code} (#${dNum})`;
+        tag.style.color = drv.color;
+      }
+      renderTowerDOM();
+    }
+
+    function populateLapDropdown(isRaceOrSprint = true) {
+      const sel = document.getElementById('lapSelect');
+      sel.innerHTML = '';
+
+      const optRaceEnd = document.createElement('option');
+      optRaceEnd.value = 'RACE_END';
+      optRaceEnd.textContent = `🏁 Kết quả Main Race (Lap ${state.maxLapNumber}/${state.maxLapNumber})`;
+      if (isRaceOrSprint) optRaceEnd.selected = true;
+      sel.appendChild(optRaceEnd);
+
+      const optBest = document.createElement('option');
+      optBest.value = 'BEST';
+      optBest.textContent = `⚡ Fastest Lap (Best mỗi xe)`;
+      if (!isRaceOrSprint) optBest.selected = true;
+      sel.appendChild(optBest);
+
+      for (let i = state.maxLapNumber; i >= 1; i--) {
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        opt.textContent = `Lap ${i} / ${state.maxLapNumber}`;
+        sel.appendChild(opt);
+      }
+      state.selectedLapFilter = isRaceOrSprint ? 'RACE_END' : 'BEST';
+    }
+
+    function setTowerSortMode(mode) {
+      state.towerSortMode = mode;
+      document.getElementById('btnSortRace').classList.toggle('active', mode === 'RACE');
+      document.getElementById('btnSortBest').classList.toggle('active', mode === 'BEST');
+      buildTimingTower();
+    }
+
+    async function onLapFilterChange() {
+      const val = document.getElementById('lapSelect').value;
+      if (val === 'BEST') {
+        state.selectedLapFilter = 'BEST';
+        state.towerSortMode = 'BEST';
+      } else if (val === 'RACE_END') {
+        state.selectedLapFilter = 'RACE_END';
+        state.towerSortMode = 'RACE';
+      } else {
+        state.selectedLapFilter = parseInt(val, 10);
+        state.towerSortMode = 'RACE';
+      }
+      document.getElementById('btnSortRace').classList.toggle('active', state.towerSortMode === 'RACE');
+      document.getElementById('btnSortBest').classList.toggle('active', state.towerSortMode === 'BEST');
+
+      buildTimingTower();
+      await loadMultiCarRealGpsForCurrentLap();
+    }
+
+    function buildTimingTower() {
+      const rows = [];
+      const isBestLapView = state.selectedLapFilter === 'BEST' || state.towerSortMode === 'BEST';
+      const targetLapNum = (state.selectedLapFilter === 'BEST' || state.selectedLapFilter === 'RACE_END')
+        ? state.maxLapNumber
+        : state.selectedLapFilter;
+
+      document.getElementById('towerLapIndicator').textContent =
+        state.towerSortMode === 'RACE'
+          ? `Main Race • Lap ${targetLapNum}/${state.maxLapNumber}`
+          : `Xếp theo Fastest Lap`;
+
+      if (isFinite(state.sessionBestLapSec)) {
+        document.getElementById('bestSessionLapBadge').textContent =
+          `FL: ${state.sessionBestLapDriver} ${formatLapTime(state.sessionBestLapSec)}`;
+      }
+
+      const driverNums = Object.keys(state.driversMap).map(Number);
+
+      driverNums.forEach(dNum => {
+        const drv = state.driversMap[dNum];
+        const dLaps = state.lapsByDriver[dNum] || [];
+        const stints = state.stintsByDriver[dNum] || [];
+        const pits = state.pitsByDriver[dNum] || [];
+        if (!dLaps.length && !state.finalPosByDriver[dNum]) return;
+
+        let bestLap = null;
+        let pbS1 = Infinity, pbS2 = Infinity, pbS3 = Infinity;
+        for (const l of dLaps) {
+          if (l.lap_duration && l.lap_duration > 40) {
+            if (!bestLap || l.lap_duration < bestLap.lap_duration) bestLap = l;
+          }
+          if (l.duration_sector_1 && l.duration_sector_1 < pbS1) pbS1 = l.duration_sector_1;
+          if (l.duration_sector_2 && l.duration_sector_2 < pbS2) pbS2 = l.duration_sector_2;
+          if (l.duration_sector_3 && l.duration_sector_3 < pbS3) pbS3 = l.duration_sector_3;
+        }
+
+        const lapsUpToTarget = dLaps.filter(l => l.lap_number <= targetLapNum);
+        const lastLapObj = lapsUpToTarget.length ? lapsUpToTarget[lapsUpToTarget.length - 1] : dLaps[dLaps.length - 1];
+        const activeLapObj = isBestLapView
+          ? (bestLap || lastLapObj)
+          : ((lastLapObj && (lastLapObj.segments_sector_1 || lastLapObj.duration_sector_1)) ? lastLapObj : (bestLap || lastLapObj));
+
+        let finishEpochMs = Infinity;
+        const lapsDone = lastLapObj ? lastLapObj.lap_number : 0;
+        if (lastLapObj && lastLapObj.date_start) {
+          const startMs = new Date(lastLapObj.date_start).getTime();
+          const durMs = (lastLapObj.lap_duration || 95) * 1000;
+          finishEpochMs = startMs + durMs;
+        }
+
+        const posTimeline = state.positionsByDriver[dNum] || [];
+        let officialPos = state.finalPosByDriver[dNum] || 99;
+        if (posTimeline.length && isFinite(finishEpochMs) && targetLapNum < state.maxLapNumber) {
+          for (let i = 0; i < posTimeline.length; i++) {
+            if (posTimeline[i].t <= finishEpochMs) officialPos = posTimeline[i].position;
+            else break;
+          }
+        }
+        const gridPos = state.gridPosByDriver[dNum] || officialPos;
+
+        rows.push({
+          driverNumber: dNum,
+          drv,
+          bestLap,
+          lastLapObj,
+          activeLapObj,
+          pbS1,
+          pbS2,
+          pbS3,
+          lapsCompleted: lapsDone,
+          finishEpochMs,
+          officialPos,
+          gridPos,
+          targetLapNum,
+          stints,
+          pits
+        });
+      });
+
+      if (state.towerSortMode === 'RACE') {
+        rows.sort((a, b) => {
+          if (state.selectedLapFilter === 'RACE_END' && a.officialPos !== b.officialPos) {
+            return a.officialPos - b.officialPos;
+          }
+          if (b.lapsCompleted !== a.lapsCompleted) {
+            return b.lapsCompleted - a.lapsCompleted;
+          }
+          if (isFinite(a.finishEpochMs) && isFinite(b.finishEpochMs) && Math.abs(a.finishEpochMs - b.finishEpochMs) > 10) {
+            return a.finishEpochMs - b.finishEpochMs;
+          }
+          return a.officialPos - b.officialPos;
+        });
+      } else {
+        rows.sort((a, b) => {
+          const tA = a.bestLap ? a.bestLap.lap_duration : 999999;
+          const tB = b.bestLap ? b.bestLap.lap_duration : 999999;
+          return tA - tB;
+        });
+      }
+
+      state.towerRows = rows;
+      state.rankByDriver = {};
+      rows.forEach((r, i) => { state.rankByDriver[r.driverNumber] = i + 1; });
+      renderTowerDOM();
+    }
+
+    function renderMiniSectorBox(sectorLabel, sectorDuration, bestSessionSec, pbSec, segmentsArray, expectedLen) {
+      const segs = Array.isArray(segmentsArray) ? segmentsArray.slice(0, expectedLen) : [];
+      while (segs.length < expectedLen) segs.push(null);
+
+      let timeColorClass = '';
+      if (sectorDuration && Math.abs(sectorDuration - bestSessionSec) < 0.002) {
+        timeColorClass = 'purple-text';
+      } else if (sectorDuration && Math.abs(sectorDuration - pbSec) < 0.002) {
+        timeColorClass = 'green-text';
+      } else if (sectorDuration) {
+        timeColorClass = 'yellow-text';
+      }
+
+      const timeStr = sectorDuration ? sectorDuration.toFixed(3) : '--.---';
+
+      const blocksHtml = segs.map((code, idx) => {
+        let cls = 'ms-null';
+        let statusName = 'Chưa ghi nhận';
+        if (code === 2051) { cls = 'ms-2051'; statusName = 'Tím — Fastest Session (2051)'; }
+        else if (code === 2049) { cls = 'ms-2049'; statusName = 'Xanh lá — Personal Best (2049)'; }
+        else if (code === 2048) { cls = 'ms-2048'; statusName = 'Vàng — Normal Sector (2048)'; }
+        else if (code === 2064) { cls = 'ms-2064'; statusName = 'Xanh dương — Pit Lane (2064)'; }
+        return `<span class="ms-seg ${cls}" title="${sectorLabel} • Mini-sector #${idx + 1}/${expectedLen}: ${statusName}"></span>`;
+      }).join('');
+
+      return `
+        <div class="sector-box">
+          <div class="sector-top">
+            <span class="sector-lbl">${sectorLabel}</span>
+            <span class="sector-val ${timeColorClass}">${timeStr}</span>
+          </div>
+          <div class="minisec-bar">${blocksHtml}</div>
+        </div>
+      `;
+    }
+
+    function renderTowerDOM() {
+      const container = document.getElementById('towerBody');
+      container.innerHTML = '';
+
+      if (!state.towerRows.length) {
+        container.innerHTML = `<div style="padding:16px;color:var(--text-sub);">Không có dữ liệu vòng đua cho phiên này.</div>`;
+        return;
+      }
+
+      const leaderRow = state.towerRows[0];
+      const leaderBestSec = leaderRow.bestLap ? leaderRow.bestLap.lap_duration : null;
+      const leaderFinishMs = leaderRow.finishEpochMs;
+
+      const leaderDrv = leaderRow.drv;
+      const leaderActiveStint = leaderRow.stints.length ? leaderRow.stints[leaderRow.stints.length - 1] : null;
+      const leaderCompound = leaderActiveStint ? leaderActiveStint.compound : 'HARD';
+      document.getElementById('leaderBannerName').innerHTML =
+        `<b style="color:${leaderDrv.color}">#${leaderRow.driverNumber} ${leaderDrv.fullName}</b> ` +
+        `<span style="color:var(--text-sub);">(${leaderDrv.team}) • ${leaderRow.lapsCompleted} Laps • Lốp ${leaderCompound}</span>`;
+
+      state.towerRows.forEach((row, idx) => {
+        const dNum = row.driverNumber;
+        const drv = row.drv;
+        const lap = row.activeLapObj || {};
+        const bestSec = row.bestLap ? row.bestLap.lap_duration : null;
+        const lastSec = row.lastLapObj ? row.lastLapObj.lap_duration : null;
+
+        const posGain = (row.gridPos || (idx + 1)) - (idx + 1);
+        let deltaHtml = `<span class="pos-delta delta-same">–</span>`;
+        if (posGain > 0) deltaHtml = `<span class="pos-delta delta-up" title="Xuất phát P${row.gridPos} → Hiện tại P${idx + 1}">▲+${posGain}</span>`;
+        else if (posGain < 0) deltaHtml = `<span class="pos-delta delta-down" title="Xuất phát P${row.gridPos} → Hiện tại P${idx + 1}">▼${posGain}</span>`;
+
+        let gapHtml = idx === 0
+          ? `<span class="gap-leader leader-tag">LEADER</span>`
+          : `<span class="gap-leader">--</span>`;
+        let intStr = idx === 0 ? `Lap ${row.lapsCompleted}` : '';
+
+        if (idx > 0) {
+          const prevRow = state.towerRows[idx - 1];
+          if (state.towerSortMode === 'RACE' && isFinite(row.finishEpochMs) && isFinite(leaderFinishMs)) {
+            if (row.lapsCompleted < leaderRow.lapsCompleted) {
+              const lapDiff = leaderRow.lapsCompleted - row.lapsCompleted;
+              gapHtml = `<span class="gap-leader">+${lapDiff} LAP</span>`;
+              intStr = `L${row.lapsCompleted}`;
+            } else {
+              const g = (row.finishEpochMs - leaderFinishMs) / 1000;
+              gapHtml = `<span class="gap-leader">${g > 0 ? '+' + g.toFixed(3) + 's' : '--'}</span>`;
+            }
+            if (isFinite(prevRow.finishEpochMs) && row.lapsCompleted === prevRow.lapsCompleted) {
+              const iv = (row.finishEpochMs - prevRow.finishEpochMs) / 1000;
+              intStr = iv > 0 ? `Int +${iv.toFixed(3)}s` : '';
+            }
+          } else if (bestSec && leaderBestSec) {
+            const diff = bestSec - leaderBestSec;
+            gapHtml = `<span class="gap-leader">+${diff.toFixed(3)}s</span>`;
+            const prevBest = prevRow.bestLap ? prevRow.bestLap.lap_duration : null;
+            if (prevBest) intStr = `Int +${(bestSec - prevBest).toFixed(3)}s`;
+          }
+        }
+
+        let stintHtml = '';
+        if (row.stints.length) {
+          let activeSt = row.stints[row.stints.length - 1];
+          for (const st of row.stints) {
+            if ((st.lap_start || 1) <= row.targetLapNum) activeSt = st;
+          }
+          const comp = (activeSt.compound || 'M')[0].toUpperCase();
+          const compFull = activeSt.compound || 'MEDIUM';
+          const effectiveEndLap = Math.min(row.targetLapNum, activeSt.lap_end || row.lapsCompleted || row.targetLapNum);
+          const stintLapsRun = Math.max(1, effectiveEndLap - (activeSt.lap_start || 1) + 1);
+          const totalTyreAge = (activeSt.tyre_age_at_start || 0) + stintLapsRun;
+          const ageClass = totalTyreAge <= 12 ? 'age-fresh' : totalTyreAge <= 26 ? 'age-mid' : 'age-worn';
+
+          const chainStr = row.stints.map(s => {
+            const c = (s.compound || 'M')[0].toUpperCase();
+            const len = Math.max(1, (s.lap_end || row.lapsCompleted) - (s.lap_start || 1) + 1 + (s.tyre_age_at_start || 0));
+            return `${c}:${len}v`;
+          }).join('→');
+
+          stintHtml = `
+            <div class="tyre-main-line">
+              <span class="tyre-dot tyre-${comp}" title="Lốp hiện tại: ${compFull} (Stint #${activeSt.stint_number})">${comp}</span>
+              <span class="tyre-age-badge ${ageClass}" title="Tuổi lốp tính đến Lap ${effectiveEndLap}: ${totalTyreAge} vòng">${totalTyreAge} vòng</span>
+            </div>
+            <div class="tyre-history-sub" title="Chuỗi lốp & tuổi lốp: ${chainStr}">${chainStr}</div>
+          `;
+        } else {
+          stintHtml = `<span class="tyre-age-badge">-- vòng</span>`;
+        }
+
+        const pitCount = row.pits.length;
+        const lastPitDur = pitCount ? `${row.pits[pitCount - 1].pit_duration}s` : '–';
+        const pitHtml = `
+          <span class="pit-count">${pitCount} Pit</span>
+          <span class="pit-dur" title="Thời gian dừng Pit gần nhất">${lastPitDur}</span>
+        `;
+
+        const s1BoxHtml = renderMiniSectorBox('S1', lap.duration_sector_1, state.sessionBestS1, row.pbS1, lap.segments_sector_1, 6);
+        const s2BoxHtml = renderMiniSectorBox('S2', lap.duration_sector_2, state.sessionBestS2, row.pbS2, lap.segments_sector_2, 8);
+        const s3BoxHtml = renderMiniSectorBox('S3', lap.duration_sector_3, state.sessionBestS3, row.pbS3, lap.segments_sector_3, 8);
+
+        const isPurpleBest = bestSec && Math.abs(bestSec - state.sessionBestLapSec) < 0.002;
+
+        const tr = document.createElement('div');
+        tr.setAttribute('role', 'button');
+        tr.setAttribute('tabindex', '0');
+        tr.className = 't-row tower-grid-cols' +
+          (idx === 0 ? ' is-leader-row' : '') +
+          (state.selectedDriver === dNum ? ' sel-a' : '');
+
+        tr.onclick = () => setSelectedDriver(dNum);
+        tr.onkeydown = (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') {
+            ev.preventDefault();
+            setSelectedDriver(dNum);
+          }
+        };
+
+        tr.innerHTML = `
+          <div class="pos-cell">
+            <span class="pos-num">${idx === 0 ? 'P1' : idx + 1}</span>
+            ${deltaHtml}
+          </div>
+          <div class="drv-cell">
+            <div class="team-stripe" style="background:${drv.color}"></div>
+            <div class="drv-meta">
+              <div class="drv-line1">
+                <span class="drv-code" translate="no">${drv.code}</span>
+                <span class="drv-num">#${dNum}</span>
+              </div>
+              <div class="drv-team">${drv.team}</div>
+            </div>
+          </div>
+          <div class="gap-cell">
+            ${gapHtml}
+            <span class="gap-int">${intStr}</span>
+          </div>
+          <div class="stint-cell">${stintHtml}</div>
+          <div class="pit-cell">${pitHtml}</div>
+          <div class="lap-cell">
+            <span class="lap-best ${isPurpleBest ? 'purple-text' : 'green-text'}" title="Fastest Lap của ${drv.code}">${formatLapTime(bestSec)}</span>
+            <span class="lap-last" title="Thời gian vòng L${lap.lap_number || '--'}">L${lap.lap_number || '--'} ${formatLapTime(lastSec)}</span>
+          </div>
+          ${s1BoxHtml}
+          ${s2BoxHtml}
+          ${s3BoxHtml}
+          <div class="st-cell" title="Speed Trap (km/h)">${lap.st_speed ? lap.st_speed : '–'}</div>
+        `;
+
+        container.appendChild(tr);
+      });
+    }
+
+    // =========================================================================
+    // 22-CAR REAL GPS STREAM LOADER & CIRCUIT OUTLINE BUILDER
+    // =========================================================================
+    async function loadMultiCarRealGpsForCurrentLap() {
+      try {
+        // Pick the selected lap, or if RACE_END/BEST pick a representative full-pack racing lap (or final lap)
+        const lapNum = (state.selectedLapFilter === 'BEST' || state.selectedLapFilter === 'RACE_END')
+          ? state.maxLapNumber
+          : state.selectedLapFilter;
+
+        // Find a clean reference lap with date_start & lap_duration to define the full-lap window
+        let refLap = null;
+        for (const row of state.towerRows) {
+          const dLaps = state.lapsByDriver[row.driverNumber] || [];
+          const found = dLaps.find(l => l.lap_number === lapNum && l.date_start);
+          if (found) { refLap = found; break; }
+        }
+        if (!refLap) refLap = state.allLaps.find(l => l.date_start && l.lap_duration && l.lap_duration > 40);
+        if (!refLap || !refLap.date_start) return;
+
+        // If we don't have the full circuit outline yet for this session, fetch 1 complete clean lap of the leader first
+        if (!state.circuitOutlinePts || state.circuitOutlinePts.length < 40) {
+          let outlineLap = null;
+          for (const row of state.towerRows) {
+            const dLaps = state.lapsByDriver[row.driverNumber] || [];
+            const valid = dLaps.find(l => l.date_start && l.lap_duration && l.lap_duration > 50 && l.lap_duration < 140);
+            if (valid) { outlineLap = valid; break; }
+          }
+          if (outlineLap) {
+            const oStartMs = new Date(outlineLap.date_start).getTime();
+            const oEndMs = oStartMs + outlineLap.lap_duration * 1000 + 500;
+            const oLoc = await fetchOpenF1(
+              `/location?session_key=${state.sessionKey}&driver_number=${outlineLap.driver_number}&date>=${new Date(oStartMs).toISOString()}&date<=${new Date(oEndMs).toISOString()}`
+            );
+            const cleanPts = (oLoc || []).filter(p => p.x !== 0 || p.y !== 0);
+            let cumDist = 0;
+            const outline = cleanPts.map((p, i) => {
+              if (i > 0) cumDist += Math.hypot(p.x - cleanPts[i - 1].x, p.y - cleanPts[i - 1].y);
+              return { x: p.x, y: p.y, dist: cumDist, normDist: 0 };
+            });
+            const totalD = cumDist || 1;
+            outline.forEach(pt => { pt.normDist = pt.dist / totalD; });
+            state.circuitOutlinePts = outline;
+          }
+        }
+
+        // Now fetch simultaneous multi-car GPS stream across all 22 cars for the selected lap
+        const winStartMs = new Date(refLap.date_start).getTime();
+        const lapDurMs = Math.min(105000, Math.max(55000, (refLap.lap_duration || 92) * 1000));
+        const winEndMs = winStartMs + lapDurMs;
+        const startISO = new Date(winStartMs).toISOString();
+        const endISO = new Date(winEndMs).toISOString();
+
+        setApiStatus(`Đang tải GPS thực của 22 xe ở Lap ${refLap.lap_number}…`, 'loading');
+        document.getElementById('packStatusText').textContent = `Đang đồng bộ 22 xe (Lap ${refLap.lap_number})…`;
+
+        const rawMultiLoc = await fetchOpenF1(
+          `/location?session_key=${state.sessionKey}&date>=${startISO}&date<=${endISO}`
+        );
+
+        const grouped = {};
+        let validCount = 0;
+        (rawMultiLoc || []).forEach(pt => {
+          if (pt.x === 0 && pt.y === 0) return;
+          const dNum = pt.driver_number;
+          if (!grouped[dNum]) grouped[dNum] = [];
+          grouped[dNum].push({
+            t: new Date(pt.date).getTime(),
+            x: pt.x,
+            y: pt.y
+          });
+          validCount++;
+        });
+
+        Object.values(grouped).forEach(arr => arr.sort((a, b) => a.t - b.t));
+
+        state.multiCarGps = grouped;
+        state.multiCarWindowStartMs = winStartMs;
+        state.multiCarWindowEndMs = winEndMs;
+
+        const carCount = Object.keys(grouped).length;
+        document.getElementById('packStatusText').textContent =
+          `Lap ${refLap.lap_number}: ${carCount} xe hoạt động`;
+        document.getElementById('gpsSamplesCounter').textContent =
+          `${validCount.toLocaleString()} tọa độ GPS (${carCount} xe)`;
+        setApiStatus(`LIVE SYNC OK • ${carCount} xe trên đường đua (Lap ${refLap.lap_number})`, 'ok');
+      } catch (e) {
+        setApiStatus(`Lỗi tải GPS 22 xe: ${e.message}`, 'err');
+      }
+    }
+
+    function togglePlayPause() {
+      state.isPlaying = !state.isPlaying;
+      document.getElementById('btnPlayPause').textContent = state.isPlaying ? '⏸ PAUSE' : '▶ PLAY';
+    }
+
+    function onScrubTimeline(val) {
+      state.progress = Math.max(0, Math.min(1, parseFloat(val) / 1000));
+      document.getElementById('scrubPctText').textContent = `${Math.round(state.progress * 100)}%`;
+    }
+
+    function animationLoop(now) {
+      const dt = Math.min(0.1, (now - state.lastFrameTs) / 1000);
+      state.lastFrameTs = now;
+
+      if (state.isPlaying) {
+        const cycleDurationSec = 70;
+        state.progress += (dt * state.playbackSpeed) / cycleDurationSec;
+        if (state.progress >= 1) state.progress -= 1;
+
+        const scrubEl = document.getElementById('timelineScrubber');
+        if (scrubEl) scrubEl.value = Math.round(state.progress * 1000);
+        document.getElementById('scrubPctText').textContent = `${Math.round(state.progress * 100)}%`;
+      }
+
+      renderTrackCanvas();
+      requestAnimationFrame(animationLoop);
+    }
+
+    function renderTrackCanvas() {
+      const canvas = document.getElementById('trackCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const dpr = window.devicePixelRatio || 1;
+
+      ctx.clearRect(0, 0, W, H);
+
+      const outline = state.circuitOutlinePts;
+      if (!outline || outline.length < 5) {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = `${12 * dpr}px "JetBrains Mono", monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillText('Đang tải bản đồ đường đua & vị trí GPS 22 xe từ OpenF1…', W / 2, H / 2);
+        return;
+      }
+
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (const p of outline) {
+        if (p.x < minX) minX = p.x;
+        if (p.x > maxX) maxX = p.x;
+        if (p.y < minY) minY = p.y;
+        if (p.y > maxY) maxY = p.y;
+      }
+
+      const pad = 36 * dpr;
+      const spanX = Math.max(1, maxX - minX);
+      const spanY = Math.max(1, maxY - minY);
+      const scale = Math.min((W - pad * 2) / spanX, (H - pad * 2) / spanY);
+      const offsetX = (W - spanX * scale) / 2;
+      const offsetY = (H - spanY * scale) / 2;
+
+      const toScreen = (x, y) => ({
+        sx: offsetX + (x - minX) * scale,
+        sy: H - (offsetY + (y - minY) * scale)
+      });
+
+      // 1. Draw Dark Asphalt Track Border
+      ctx.save();
+      ctx.beginPath();
+      outline.forEach((p, idx) => {
+        const { sx, sy } = toScreen(p.x, p.y);
+        if (idx === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      });
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 11 * dpr;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      ctx.strokeStyle = '#0b101b';
+      ctx.lineWidth = 7.5 * dpr;
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Draw Subtle 3-Sector Center Line (S1 Red, S2 Cyan, S3 Yellow)
+      for (let i = 1; i < outline.length; i++) {
+        const p0 = toScreen(outline[i - 1].x, outline[i - 1].y);
+        const p1 = toScreen(outline[i].x, outline[i].y);
+        const nd = outline[i].normDist;
+
+        ctx.beginPath();
+        ctx.moveTo(p0.sx, p0.sy);
+        ctx.lineTo(p1.sx, p1.sy);
+        ctx.strokeStyle = nd < 0.333
+          ? 'rgba(255, 61, 0, 0.55)'
+          : nd < 0.666
+          ? 'rgba(0, 240, 255, 0.55)'
+          : 'rgba(255, 214, 0, 0.55)';
+        ctx.lineWidth = 2.2 * dpr;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+
+      // 3. Start/Finish Line Marker
+      const sf = toScreen(outline[0].x, outline[0].y);
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(sf.sx, sf.sy, 4.5 * dpr, 0, Math.PI * 2);
+      ctx.fill();
+
+      const sfBoxW = 28 * dpr, sfBoxH = 14 * dpr;
+      ctx.fillStyle = 'rgba(7, 9, 14, 0.92)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = 1 * dpr;
+      ctx.beginPath();
+      ctx.roundRect(sf.sx + 7 * dpr, sf.sy - 7 * dpr, sfBoxW, sfBoxH, 3 * dpr);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = `700 ${8.5 * dpr}px "JetBrains Mono", monospace`;
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('S/F', sf.sx + 7 * dpr + sfBoxW / 2, sf.sy);
+      ctx.restore();
+
+      // 4. Render All 22 Cars at Current Timestamp (Draw non-selected cars first, then P1 & selected car on top)
+      const targetEpochMs = state.multiCarWindowStartMs +
+        state.progress * (state.multiCarWindowEndMs - state.multiCarWindowStartMs);
+
+      const entries = Object.entries(state.multiCarGps);
+      entries.sort(([dA], [dB]) => {
+        const selA = Number(dA) === state.selectedDriver ? 2 : (state.rankByDriver[dA] === 1 ? 1 : 0);
+        const selB = Number(dB) === state.selectedDriver ? 2 : (state.rankByDriver[dB] === 1 ? 1 : 0);
+        return selA - selB;
+      });
+
+      entries.forEach(([dNumStr, gpsArr]) => {
+        if (!gpsArr || gpsArr.length < 2) return;
+        const dNum = Number(dNumStr);
+        const drv = state.driversMap[dNum];
+        if (!drv) return;
+
+        let k = 0;
+        while (k + 1 < gpsArr.length && gpsArr[k + 1].t < targetEpochMs) k++;
+        const p0 = gpsArr[k];
+        const p1 = gpsArr[Math.min(gpsArr.length - 1, k + 1)];
+        const span = Math.max(1, p1.t - p0.t);
+        const alpha = Math.max(0, Math.min(1, (targetEpochMs - p0.t) / span));
+        const curX = p0.x + (p1.x - p0.x) * alpha;
+        const curY = p0.y + (p1.y - p0.y) * alpha;
+
+        const isSelected = dNum === state.selectedDriver;
+        const rank = state.rankByDriver[dNum];
+        drawCarOnTrack(ctx, toScreen(curX, curY), drv.code, drv.color, rank, dpr, isSelected);
+      });
+    }
+
+    function drawCarOnTrack(ctx, pos, code, color, rank, dpr, isSelected) {
+      ctx.save();
+
+      // Outer pulse ring for selected driver
+      if (isSelected) {
+        ctx.beginPath();
+        ctx.arc(pos.sx, pos.sy, 11 * dpr, 0, Math.PI * 2);
+        ctx.strokeStyle = '#00f0ff';
+        ctx.lineWidth = 2 * dpr;
+        ctx.stroke();
+      }
+
+      // Car dot
+      ctx.beginPath();
+      ctx.arc(pos.sx, pos.sy, (isSelected ? 6.5 : 5) * dpr, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.shadowColor = isSelected ? '#00f0ff' : color;
+      ctx.shadowBlur = (isSelected ? 12 : 4) * dpr;
+      ctx.fill();
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+
+      // Driver Code Tag
+      const label = isSelected && rank ? `P${rank} ${code}` : code;
+      ctx.font = `700 ${(isSelected ? 9.5 : 8) * dpr}px "JetBrains Mono", monospace`;
+      const textW = ctx.measureText(label).width;
+      const pillW = textW + 7 * dpr;
+      const pillH = (isSelected ? 14 : 12) * dpr;
+      const px = pos.sx + 8 * dpr;
+      const py = pos.sy - pillH / 2;
+
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = isSelected ? 'rgba(0, 240, 255, 0.2)' : 'rgba(7, 9, 14, 0.82)';
+      ctx.strokeStyle = isSelected ? '#00f0ff' : color;
+      ctx.lineWidth = 1 * dpr;
+      ctx.beginPath();
+      ctx.roundRect(px, py, pillW, pillH, 3 * dpr);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, px + 3.5 * dpr, pos.sy);
+      ctx.restore();
+    }
+
+    function switchDeckTab(tabName) {
+      ['STRATEGY', 'RADIO', 'STANDINGS'].forEach(t => {
+        const pane = document.getElementById(`pane${t}`);
+        if (pane) pane.classList.toggle('active', t === tabName);
+      });
+      document.getElementById('dtabStrategy').classList.toggle('active', tabName === 'STRATEGY');
+      document.getElementById('dtabRadio').classList.toggle('active', tabName === 'RADIO');
+      document.getElementById('dtabStandings').classList.toggle('active', tabName === 'STANDINGS');
+    }
+
+    function renderStrategyTable() {
+      const tbody = document.getElementById('strategyTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const totalLaps = Math.max(1, state.maxLapNumber);
+      const compColors = {
+        SOFT: '#ff2a2a',
+        MEDIUM: '#ffd600',
+        HARD: '#f1f5f9',
+        INTERMEDIATE: '#00e676',
+        WET: '#00b0ff'
+      };
+
+      state.towerRows.forEach((row, idx) => {
+        const dNum = row.driverNumber;
+        const drv = row.drv;
+        const stints = state.stintsByDriver[dNum] || [];
+        const pits = state.pitsByDriver[dNum] || [];
+
+        const pitSummary = pits.length
+          ? `${pits.length} Pit (${pits.map(p => `L${p.lap_number}:${p.pit_duration}s`).join(', ')})`
+          : '0 Pit';
+
+        const segHtml = stints.map(st => {
+          const lStart = st.lap_start || 1;
+          const lEnd = st.lap_end || totalLaps;
+          const len = Math.max(1, lEnd - lStart + 1);
+          const widthPct = (len / totalLaps) * 100;
+          const cName = (st.compound || 'MEDIUM').toUpperCase();
+          const bg = compColors[cName] || '#94a3b8';
+          return `<div class="stint-seg" style="width:${widthPct}%;background:${bg}" title="${cName}: Lap ${lStart} → ${lEnd} (${len} vòng)">${cName[0]} (${len}v)</div>`;
+        }).join('');
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:700;">P${idx + 1}</td>
+          <td><span style="color:${drv.color};font-weight:700;" translate="no">${drv.code}</span> <span style="color:var(--text-sub)">#${dNum}</span></td>
+          <td style="color:var(--text-sub);font-size:10px;">${pitSummary}</td>
+          <td><div class="stint-bar-wrap">${segHtml || '<span style="padding-left:6px;color:var(--text-dim)">Không có dữ liệu Stint</span>'}</div></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTeamRadioAndRaceControl() {
+      const radioBox = document.getElementById('teamRadioList');
+      const rcBox = document.getElementById('raceControlList');
+
+      if (!state.teamRadios.length) {
+        radioBox.innerHTML = `<div style="color:var(--text-sub)">Không có bản ghi Team Radio trong phiên này.</div>`;
+      } else {
+        radioBox.innerHTML = state.teamRadios.slice(0, 40).map(r => {
+          const drv = state.driversMap[r.driver_number] || { code: `#${r.driver_number}`, color: '#00f0ff', team: '' };
+          const timeStr = (r.date || '').split('T')[1]?.slice(0, 8) || '';
+          return `
+            <div class="radio-item">
+              <div style="white-space:nowrap;">
+                <span style="color:${drv.color};font-weight:700;" translate="no">${drv.code}</span>
+                <span style="color:var(--text-dim);font-size:9.5px;margin-left:5px;">${timeStr}</span>
+                <div style="font-size:9px;color:var(--text-sub)">${drv.team}</div>
+              </div>
+              <audio controls preload="none" src="${r.recording_url}"></audio>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (!state.raceControl.length) {
+        rcBox.innerHTML = `<div style="color:var(--text-sub)">Không có thông báo FIA Race Control.</div>`;
+      } else {
+        rcBox.innerHTML = state.raceControl.slice(0, 50).map(m => {
+          const timeStr = (m.date || '').split('T')[1]?.slice(0, 8) || '';
+          const lapTag = m.lap_number ? `L${m.lap_number}` : '';
+          let badgeColor = 'var(--text-sub)';
+          if (/YELLOW|SAFETY/i.test(m.flag || m.message || '')) badgeColor = 'var(--f1-yellow)';
+          else if (/GREEN|CLEAR/i.test(m.flag || m.message || '')) badgeColor = 'var(--f1-green)';
+          else if (/RED/i.test(m.flag || m.message || '')) badgeColor = 'var(--f1-red)';
+          return `
+            <div class="rc-item">
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:9.5px;color:${badgeColor};font-weight:700;">
+                  ${timeStr} ${lapTag} • ${m.category || 'FIA'} ${m.flag ? `[${m.flag}]` : ''}
+                </div>
+                <div style="margin-top:2px;color:var(--text-main);white-space:normal;">${m.message || ''}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    async function loadStandingsAndSchedule() {
+      try {
+        const res = await fetch(`${JOLPICA_BASE}/driverStandings.json`);
+        const json = await res.json();
+        const lists = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings || [];
+        const box = document.getElementById('wdcStandingsBox');
+        box.innerHTML = lists.slice(0, 15).map(item => `
+          <div class="std-row">
+            <span><b>P${item.position}</b> <span translate="no">${item.Driver.code || item.Driver.familyName}</span> <span style="color:var(--text-dim)">(${item.Constructors?.[0]?.name || ''})</span></span>
+            <span style="color:var(--f1-cyan);font-weight:700;">${item.points} pts</span>
+          </div>
+        `).join('');
+      } catch (e) {
+        document.getElementById('wdcStandingsBox').textContent = 'Không thể tải BXH WDC: ' + e.message;
+      }
+
+      try {
+        const res = await fetch(`${JOLPICA_BASE}/constructorStandings.json`);
+        const json = await res.json();
+        const lists = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings || [];
+        const box = document.getElementById('wccStandingsBox');
+        box.innerHTML = lists.map(item => `
+          <div class="std-row">
+            <span><b>P${item.position}</b> ${item.Constructor.name}</span>
+            <span style="color:var(--f1-yellow);font-weight:700;">${item.points} pts</span>
+          </div>
+        `).join('');
+      } catch (e) {
+        document.getElementById('wccStandingsBox').textContent = 'Không thể tải BXH WCC: ' + e.message;
+      }
+
+      try {
+        const res = await fetch(SCHEDULE_2026_URL);
+        const rounds = await res.json();
+        const box = document.getElementById('f1ScheduleBox');
+        const arr = Array.isArray(rounds) ? rounds : Object.values(rounds);
+        box.innerHTML = arr.slice(0, 24).map((r, i) => `
+          <div class="std-row">
+            <span><b>R${r.round || i + 1}</b> ${r.country || r.name || r.event_name || 'GP'}</span>
+            <span style="color:var(--text-sub)">${(r.sessions?.race || r.date || '').slice(0, 10)}</span>
+          </div>
+        `).join('');
+      } catch (e) {
+        document.getElementById('f1ScheduleBox').textContent = 'Không thể tải lịch 2026: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>

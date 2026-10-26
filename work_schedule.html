@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lịch Làm Việc & Quản Lý Thời Gian - KIENLT90 Portal</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SheetJS for Excel Export -->
+  <script src="xlsx.full.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      .print-shadow-none {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100/90 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-sky-500 selection:text-white">
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 md:px-8 py-3.5 shadow-2xs no-print">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Left: Logo & Back Link -->
+      <div class="flex items-center space-x-3">
+        <a href="main.html" class="flex items-center space-x-3 group" title="Về trang tổng quan KIENLT90">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black shadow-md shadow-sky-500/20 text-sm tracking-tight shrink-0 group-hover:scale-105 transition">
+            K90
+          </div>
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <span class="font-black text-sm tracking-wide text-slate-900 uppercase">KIENLT90</span>
+              <span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-sky-100 text-sky-700 border border-sky-300">SCHEDULE</span>
+            </div>
+            <p class="text-[11px] font-semibold text-slate-500">Lịch Làm Việc & Chấm Công Thông Minh</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Center: Month Switcher Navigation -->
+      <div class="flex items-center bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 shadow-inner">
+        <button onclick="changeMonth(-1)" class="w-8 h-8 rounded-xl bg-white hover:bg-sky-50 text-slate-700 hover:text-sky-700 flex items-center justify-center shadow-xs transition cursor-pointer" title="Tháng trước">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        
+        <div class="px-3 sm:px-4 py-1 flex items-center space-x-2">
+          <i data-lucide="calendar" class="w-4 h-4 text-sky-600 hidden sm:inline"></i>
+          <span id="current-month-label" class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide">
+            Tháng 10 / 2026
+          </span>
+        </div>
+
+        <button onclick="changeMonth(1)" class="w-8 h-8 rounded-xl bg-white hover:bg-sky-50 text-slate-700 hover:text-sky-700 flex items-center justify-center shadow-xs transition cursor-pointer" title="Tháng kế tiếp">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+
+        <button onclick="jumpToMonth(2026, 9)" class="ml-1.5 px-2.5 py-1 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold shadow-xs transition hidden sm:inline" title="Về mốc chuẩn Tháng 10/2026">
+          Mốc T10/2026
+        </button>
+      </div>
+
+      <!-- Right: Action Buttons (Export, Print, Return) -->
+      <div class="flex items-center space-x-2">
+        <button onclick="exportScheduleExcel()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition flex items-center space-x-1.5 cursor-pointer" title="Xuất dữ liệu chấm công sang Excel">
+          <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Xuất Excel</span>
+        </button>
+
+        <button onclick="window.print()" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold shadow-xs transition flex items-center space-x-1.5 cursor-pointer" title="In lịch làm việc">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">In Lịch</span>
+        </button>
+
+        <a href="main.html" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition" title="Đóng và về Portal">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 px-4 sm:px-6 md:px-8 py-6 max-w-7xl w-full mx-auto space-y-6">
+
+    <!-- 1. Policy & Rule Alert Banner -->
+    <section class="bg-gradient-to-r from-slate-900 via-sky-950 to-indigo-950 rounded-3xl p-6 text-white relative overflow-hidden shadow-xl border border-slate-800">
+      <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div class="space-y-2">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-[11px] font-bold text-sky-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>Quy Chuẩn Giờ Làm Việc Chính Thức</span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight">
+            Lịch Làm Việc Định Kỳ: <span class="bg-gradient-to-r from-sky-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">Thứ 2 ➔ Thứ 6 (8h/ngày)</span>
+          </h1>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-300 pt-1 font-medium">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>Sáng: <strong>07:30 - 12:00</strong> (4.5 giờ)</span>
+            </span>
+            <span class="text-slate-500 hidden sm:inline">•</span>
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="coffee" class="w-3.5 h-3.5 text-amber-300"></i>
+              <span>Nghỉ trưa: <strong>12:00 - 13:00</strong> (1.0 giờ)</span>
+            </span>
+            <span class="text-slate-500 hidden sm:inline">•</span>
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="sunset" class="w-3.5 h-3.5 text-orange-400"></i>
+              <span>Chiều: <strong>13:00 - 16:30</strong> (3.5 giờ)</span>
+            </span>
+            <span class="text-slate-500 hidden sm:inline">•</span>
+            <span class="flex items-center space-x-1.5 text-emerald-300 font-bold">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Nghỉ Thứ 7 & Chủ Nhật</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 w-full lg:w-auto shrink-0 no-print">
+          <button onclick="resetMonthToStandard()" class="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition flex items-center justify-center space-x-2 cursor-pointer w-full sm:w-auto">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Thiết Lập Chuẩn 8h</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Monthly Summary Stat KPI Cards -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+      <!-- Card 1: Tổng ngày công chuẩn -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center justify-between text-slate-500 text-xs font-bold mb-2">
+          <span>Ngày Làm Chuẩn (T2-T6)</span>
+          <div class="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline space-x-2">
+          <span id="stat-working-days" class="text-2xl sm:text-3xl font-black text-slate-900">22</span>
+          <span class="text-xs font-semibold text-slate-400">ngày</span>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-1">Định mức tháng (trừ T7 & CN)</p>
+      </div>
+
+      <!-- Card 2: Tổng giờ công chuẩn tháng -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center justify-between text-slate-500 text-xs font-bold mb-2">
+          <span>Tổng Giờ Chuẩn Tháng</span>
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="clock" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline space-x-2">
+          <span id="stat-standard-hours" class="text-2xl sm:text-3xl font-black text-indigo-900">176</span>
+          <span class="text-xs font-semibold text-slate-400">giờ</span>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-1">Định mức: 8.0 giờ / ngày chuẩn</p>
+      </div>
+
+      <!-- Card 3: Số ngày đã ghi nhận (Check trên lịch) -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center justify-between text-slate-500 text-xs font-bold mb-2">
+          <span>Ngày Đã Ghi Nhận Công</span>
+          <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <i data-lucide="check-square" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline space-x-1.5">
+          <span id="stat-checked-days" class="text-2xl sm:text-3xl font-black text-emerald-700">0</span>
+          <span class="text-xs font-semibold text-slate-400">/ <span id="stat-working-days-sub">22</span> ngày</span>
+        </div>
+        <p id="stat-checked-days-label" class="text-[11px] text-emerald-800 font-bold mt-1">Lấy từ bản đồ lịch</p>
+      </div>
+
+      <!-- Card 4: Tổng giờ thực tế ghi nhận -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center justify-between text-slate-500 text-xs font-bold mb-2">
+          <span>Giờ Thực Tế Ghi Nhận</span>
+          <div class="w-8 h-8 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center">
+            <i data-lucide="calculator" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="flex items-baseline space-x-1.5">
+          <span id="stat-actual-hours" class="text-2xl sm:text-3xl font-black text-sky-900">0.0</span>
+          <span class="text-xs font-semibold text-slate-400">/ <span id="stat-std-hours-sub">176</span>h</span>
+        </div>
+        <p id="stat-progress-label" class="text-[11px] text-sky-700 font-bold mt-1">Đồng bộ từ các ngày đã check</p>
+      </div>
+    </section>
+
+    <!-- 3. Weekly Summary Breakdown (Bảng Thống Kê Theo Tuần) -->
+    <section class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-2xs space-y-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm sm:text-base font-black text-slate-900 flex items-center space-x-2">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-sky-600"></i>
+            <span>Bảng Tổng Hợp Thời Gian Làm Việc Theo Từng Tuần</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Tự động phân rã các tuần trong tháng, tính giờ thực tế nghiêm ngặt theo các ngày đã check trên bản đồ lịch</p>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">
+          Tiêu chuẩn: 40 giờ / tuần đủ
+        </span>
+      </div>
+
+      <!-- Weekly Cards Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-bold uppercase tracking-wider">
+              <th class="py-3 px-4">Tuần Thứ</th>
+              <th class="py-3 px-4">Khoảng Thời Gian</th>
+              <th class="py-3 px-4 text-center">Ngày Chuẩn (T2-T6)</th>
+              <th class="py-3 px-4 text-center">Đã Ghi Nhận (Check)</th>
+              <th class="py-3 px-4 text-center">Giờ Định Mức</th>
+              <th class="py-3 px-4 text-center">Giờ Thực Làm (Theo Lịch)</th>
+              <th class="py-3 px-4 text-center">Tỷ Lệ Đạt</th>
+              <th class="py-3 px-4 text-right">Trạng Thái</th>
+            </tr>
+          </thead>
+          <tbody id="weekly-table-body" class="divide-y divide-slate-100 font-medium text-slate-700">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. Interactive Monthly Calendar Grid (Lịch Tháng Trực Quan) -->
+    <section class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-2xs space-y-4">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+        <div>
+          <h3 class="text-sm sm:text-base font-black text-slate-900 flex items-center space-x-2">
+            <i data-lucide="calendar-days" class="w-4 h-4 text-sky-600"></i>
+            <span>Bản Đồ Lịch & Chấm Công Từng Ngày</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">Tích chọn [✓] trực tiếp vào từng ngày để ghi nhận công. Bảng tổng hợp tuần & tháng sẽ tự động đồng bộ theo bản đồ lịch.</p>
+        </div>
+
+        <!-- Quick Check Actions Toolbar -->
+        <div class="flex flex-wrap items-center gap-2 no-print">
+          <button onclick="checkUpToToday()" class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-2xs" title="Chấm công tất cả ngày T2-T6 từ đầu tháng đến hôm nay">
+            <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+            <span>Check Đến Hôm Nay</span>
+          </button>
+          
+          <button onclick="checkAllMonth(true)" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-2xs" title="Chấm công đủ toàn bộ ngày T2-T6 trong tháng">
+            <i data-lucide="calendar-check-2" class="w-3.5 h-3.5"></i>
+            <span>Check Cả Tháng (T2-T6)</span>
+          </button>
+
+          <button onclick="uncheckAllMonth()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-2xs" title="Bỏ chọn chấm công tất cả các ngày">
+            <i data-lucide="square" class="w-3.5 h-3.5"></i>
+            <span>Bỏ Check Tất Cả</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-semibold text-slate-600 no-print pt-1">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="flex items-center space-x-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span>Đã ghi nhận công (8h chuẩn)</span>
+          </span>
+          <span class="flex items-center space-x-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <span>Nửa ngày (Sáng / Chiều)</span>
+          </span>
+          <span class="flex items-center space-x-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
+            <span>Nghỉ phép / Lễ (8h)</span>
+          </span>
+          <span class="flex items-center space-x-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+            <span>Chưa ghi nhận (0h)</span>
+          </span>
+        </div>
+        <span class="text-xs text-sky-700 font-medium italic">
+          💡 Click [✓] để bật/tắt công • Click vào ô để sửa giờ/OT/ghi chú
+        </span>
+      </div>
+
+      <!-- Calendar Day Names Header -->
+      <div class="grid grid-cols-7 gap-1.5 sm:gap-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider py-1">
+        <div class="py-2 rounded-xl bg-slate-100">Thứ 2</div>
+        <div class="py-2 rounded-xl bg-slate-100">Thứ 3</div>
+        <div class="py-2 rounded-xl bg-slate-100">Thứ 4</div>
+        <div class="py-2 rounded-xl bg-slate-100">Thứ 5</div>
+        <div class="py-2 rounded-xl bg-slate-100">Thứ 6</div>
+        <div class="py-2 rounded-xl bg-purple-50 text-purple-700">Thứ 7</div>
+        <div class="py-2 rounded-xl bg-rose-50 text-rose-700">Chủ Nhật</div>
+      </div>
+
+      <!-- Calendar Days Grid -->
+      <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2">
+        <!-- Dynamically populated -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Day Edit Modal -->
+  <div id="day-edit-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-5 bg-gradient-to-r from-sky-600 to-indigo-700 text-white flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-black" id="modal-date-title">Chỉnh sửa ngày 15/10/2026</h3>
+          <p class="text-xs text-sky-100 mt-0.5">Cập nhật trạng thái chấm công & thời gian làm việc</p>
+        </div>
+        <button onclick="closeDayEditModal()" class="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 text-white flex items-center justify-center cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 bg-slate-50/50 text-xs">
+        <input type="hidden" id="edit-date-key" value="">
+
+        <!-- Direct Checkbox inside Modal -->
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
+          <div class="pr-2">
+            <label for="edit-checked" class="font-bold text-slate-900 text-xs cursor-pointer block flex items-center space-x-1.5">
+              <span>Ghi nhận công ngày này</span>
+            </label>
+            <p class="text-[11px] text-slate-500 mt-0.5">Tích chọn để tính giờ vào Bảng tổng hợp tuần & KPI tháng</p>
+          </div>
+          <input type="checkbox" id="edit-checked" onchange="handleStatusChange()" class="w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 cursor-pointer">
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1.5">Ca / Trạng thái làm việc:</label>
+          <select id="edit-status" onchange="handleStatusChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-800 focus:outline-none focus:border-sky-500">
+            <option value="full">Đủ công tiêu chuẩn (8.0 giờ: 7h30-12h & 13h-16h30)</option>
+            <option value="morning">Làm nửa ngày sáng (4.5 giờ: 7h30-12h00)</option>
+            <option value="afternoon">Làm nửa ngày chiều (3.5 giờ: 13h00-16h30)</option>
+            <option value="leave_paid">Nghỉ phép có lương (Tính đủ 8.0 giờ công)</option>
+            <option value="leave_unpaid">Nghỉ không lương (0.0 giờ)</option>
+            <option value="holiday">Nghỉ lễ / Tết quy định (Tính đủ 8.0 giờ công)</option>
+            <option value="weekend">Nghỉ cuối tuần (0.0 giờ)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1.5">Giờ làm thêm (OT / Tăng ca):</label>
+          <div class="flex items-center space-x-2">
+            <input type="number" id="edit-ot" min="0" max="12" step="0.5" value="0" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-800 focus:outline-none focus:border-sky-500">
+            <span class="font-semibold text-slate-500">giờ</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1.5">Ghi chú công việc trong ngày:</label>
+          <input type="text" id="edit-note" placeholder="Ví dụ: Họp dự án HIS L2, kiểm thử XML 130..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-semibold text-slate-800 focus:outline-none focus:border-sky-500">
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-sky-50 border border-sky-100 text-sky-800">
+          <p class="font-bold text-slate-700">Tổng giờ ghi nhận vào bảng tổng hợp:</p>
+          <p id="modal-calculated-hours" class="text-base font-black text-sky-900 mt-0.5">8.0 giờ</p>
+        </div>
+
+        <div class="flex items-center space-x-2 pt-2">
+          <button onclick="saveDayEdit()" class="flex-1 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center space-x-1.5 cursor-pointer">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Lưu Thay Đổi</span>
+          </button>
+          <button onclick="closeDayEditModal()" class="px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition cursor-pointer">
+            Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200/80 bg-white py-5 px-6 text-center text-xs text-slate-400 space-y-1 mt-auto no-print">
+    <p>KIENLT90 Portal • Quản Trị Y Tế Số & Lịch Làm Việc</p>
+    <p class="font-medium text-slate-500">Bản quyền thuộc về <span class="text-sky-700 font-bold">Lê Trung Kiên</span> • letrungkien.store</p>
+  </footer>
+
+  <!-- Application Logic Script -->
+  <script>
+    // State
+    let currentYear = 2026;
+    let currentMonth = 9; // 0-indexed: 9 = October (Tháng 10)
+    let scheduleCustomData = {}; // key: YYYY-MM-DD -> { checked, status, ot, note, hours }
+
+    // Load from LocalStorage
+    function loadSavedData() {
+      try {
+        const stored = localStorage.getItem('kienlt_work_schedule_data');
+        if (stored) {
+          scheduleCustomData = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.error("Error loading saved schedule data:", e);
+      }
+    }
+
+    // Save to LocalStorage
+    function saveStorageData() {
+      try {
+        localStorage.setItem('kienlt_work_schedule_data', JSON.stringify(scheduleCustomData));
+      } catch (e) {
+        console.error("Error saving schedule data:", e);
+      }
+    }
+
+    // Helper: Format Date String YYYY-MM-DD
+    function formatDateKey(year, monthIndex, day) {
+      const m = String(monthIndex + 1).padStart(2, '0');
+      const d = String(day).padStart(2, '0');
+      return `${year}-${m}-${d}`;
+    }
+
+    // Standard hours calculation & check state
+    function getStandardDayInfo(year, monthIndex, day) {
+      const date = new Date(year, monthIndex, day);
+      const dayOfWeek = date.getDay(); // 0: Sun, 1: Mon, ..., 6: Sat
+      const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+      const key = formatDateKey(year, monthIndex, day);
+      const custom = scheduleCustomData[key];
+
+      // Default checked logic:
+      // If user hasn't explicitly set checked, standard weekdays up to today default to checked
+      const today = new Date();
+      const isPastOrToday = (year < today.getFullYear()) ||
+        (year === today.getFullYear() && monthIndex < today.getMonth()) ||
+        (year === today.getFullYear() && monthIndex === today.getMonth() && day <= today.getDate());
+
+      const defaultChecked = (!isWeekend && isPastOrToday);
+
+      if (custom) {
+        const isChecked = (custom.checked !== undefined) ? !!custom.checked : defaultChecked;
+        return {
+          day,
+          dayOfWeek,
+          isWeekend,
+          checked: isChecked,
+          status: custom.status || (isWeekend ? 'weekend' : 'full'),
+          hours: parseFloat(custom.hours !== undefined ? custom.hours : (isWeekend ? 0 : 8.0)),
+          ot: parseFloat(custom.ot || 0),
+          note: custom.note || ''
+        };
+      }
+
+      // Default rules:
+      if (isWeekend) {
+        return {
+          day,
+          dayOfWeek,
+          isWeekend: true,
+          checked: false,
+          status: 'weekend',
+          hours: 0,
+          ot: 0,
+          note: ''
+        };
+      } else {
+        return {
+          day,
+          dayOfWeek,
+          isWeekend: false,
+          checked: defaultChecked,
+          status: 'full',
+          hours: 8.0,
+          ot: 0,
+          note: ''
+        };
+      }
+    }
+
+    // Render Calendar & Summary
+    function renderSchedule() {
+      const label = document.getElementById('current-month-label');
+      label.textContent = `Tháng ${currentMonth + 1} / ${currentYear}`;
+
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const firstDayOfWeek = new Date(currentYear, currentMonth, 1).getDay(); // 0 is Sun, 1 is Mon...
+      // Shift so that Monday is 0, Sunday is 6
+      const mondayStartIndex = (firstDayOfWeek === 0) ? 6 : (firstDayOfWeek - 1);
+
+      const daysGrid = document.getElementById('calendar-days-grid');
+      daysGrid.innerHTML = '';
+
+      // Stats counters
+      let totalWorkingDays = 0;
+      let totalCheckedDays = 0;
+      let totalStandardHours = 0;
+      let totalActualHours = 0;
+
+      // Group by weeks
+      const weeklyBuckets = [];
+      let currentWeekDays = [];
+
+      // Blank padding days from previous month
+      for (let i = 0; i < mondayStartIndex; i++) {
+        const blank = document.createElement('div');
+        blank.className = "min-h-[110px] sm:min-h-[130px] rounded-2xl bg-slate-50/50 border border-slate-100 opacity-30";
+        daysGrid.appendChild(blank);
+      }
+
+      // Populate days
+      for (let day = 1; day <= daysInMonth; day++) {
+        const info = getStandardDayInfo(currentYear, currentMonth, day);
+        const dateKey = formatDateKey(currentYear, currentMonth, day);
+
+        if (!info.isWeekend) {
+          totalWorkingDays++;
+          totalStandardHours += 8.0;
+        }
+
+        if (info.checked) {
+          totalCheckedDays++;
+          totalActualHours += (info.hours + info.ot);
+        }
+
+        // Track weeks
+        currentWeekDays.push({ ...info, dateKey });
+        if (info.dayOfWeek === 0 || day === daysInMonth) {
+          weeklyBuckets.push([...currentWeekDays]);
+          currentWeekDays = [];
+        }
+
+        // Render Day Cell
+        const cell = document.createElement('div');
+        let cardStyle = "bg-white border-slate-200/90 hover:border-sky-300";
+        let badgeContent = "";
+
+        if (info.checked) {
+          if (info.status === 'full') {
+            cardStyle = "bg-emerald-50/40 border-emerald-300 hover:border-emerald-400";
+            badgeContent = `
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                8h Chuẩn
+              </span>
+            `;
+          } else if (info.status === 'morning') {
+            cardStyle = "bg-amber-50/40 border-amber-300 hover:border-amber-400";
+            badgeContent = `
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                4.5h Sáng
+              </span>
+            `;
+          } else if (info.status === 'afternoon') {
+            cardStyle = "bg-amber-50/40 border-amber-300 hover:border-amber-400";
+            badgeContent = `
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                3.5h Chiều
+              </span>
+            `;
+          } else if (info.status === 'leave_paid' || info.status === 'holiday') {
+            cardStyle = "bg-sky-50/40 border-sky-300 hover:border-sky-400";
+            badgeContent = `
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                ${info.status === 'holiday' ? 'Lễ (8h)' : 'Phép (8h)'}
+              </span>
+            `;
+          } else if (info.status === 'leave_unpaid') {
+            cardStyle = "bg-rose-50/40 border-rose-200 hover:border-rose-400";
+            badgeContent = `
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                Nghỉ 0h
+              </span>
+            `;
+          } else {
+            // Weekend checked as OT/shift
+            cardStyle = "bg-purple-50/50 border-purple-300 hover:border-purple-400";
+            badgeContent = `
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">
+                T7/CN Có Làm
+              </span>
+            `;
+          }
+        } else {
+          // Unchecked
+          if (info.isWeekend) {
+            cardStyle = "bg-slate-50/70 border-slate-200 text-slate-400";
+            badgeContent = `
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-200/70 text-slate-500">
+                Cuối tuần
+              </span>
+            `;
+          } else {
+            cardStyle = "bg-slate-50/40 border-slate-200/80 text-slate-500 hover:border-slate-300";
+            badgeContent = `
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                Chưa ghi nhận
+              </span>
+            `;
+          }
+        }
+
+        const isToday = (new Date().getFullYear() === currentYear && new Date().getMonth() === currentMonth && new Date().getDate() === day);
+
+        cell.className = `min-h-[115px] sm:min-h-[135px] p-2.5 rounded-2xl border shadow-2xs transition flex flex-col justify-between cursor-pointer group ${cardStyle} ${isToday ? 'ring-2 ring-sky-500 shadow-md' : ''}`;
+        cell.onclick = () => openDayEditModal(dateKey, info);
+
+        cell.innerHTML = `
+          <div>
+            <!-- Header: Date number & Checkbox -->
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-100/80">
+              <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black ${isToday ? 'bg-sky-600 text-white' : 'text-slate-800 group-hover:text-sky-600'}">
+                ${day}
+              </span>
+              
+              <!-- One-click Interactive Checkbox -->
+              <label class="inline-flex items-center space-x-1 cursor-pointer select-none bg-white/90 hover:bg-white px-1.5 py-0.5 rounded-md border border-slate-200/90 shadow-2xs transition" onclick="event.stopPropagation()" title="Nhấp để bật/tắt ghi nhận công cho ngày này">
+                <input type="checkbox" ${info.checked ? 'checked' : ''} onchange="toggleDayCheck('${dateKey}', this.checked)" class="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 cursor-pointer">
+                <span class="text-[10px] font-bold ${info.checked ? 'text-emerald-700' : 'text-slate-400'}">
+                  ${info.checked ? 'Đã check' : 'Chưa'}
+                </span>
+              </label>
+            </div>
+
+            <!-- Status Badge -->
+            <div class="mt-1.5 flex items-center justify-between">
+              ${badgeContent}
+            </div>
+
+            <!-- Standard shifts info -->
+            ${!info.isWeekend && (info.status === 'full' || info.status === 'morning' || info.status === 'afternoon') ? `
+              <div class="mt-1 space-y-0.5 text-[9.5px] text-slate-500 font-medium">
+                ${(info.status === 'full' || info.status === 'morning') ? '<div class="truncate text-amber-700">☀️ 07:30 - 12:00</div>' : ''}
+                ${(info.status === 'full' || info.status === 'afternoon') ? '<div class="truncate text-indigo-700">🌙 13:00 - 16:30</div>' : ''}
+              </div>
+            ` : ''}
+
+            ${info.ot > 0 ? `
+              <div class="mt-1 text-[10px] font-bold text-orange-600">
+                +${info.ot}h OT tăng ca
+              </div>
+            ` : ''}
+
+            ${info.note ? `
+              <div class="mt-1 text-[9.5px] text-slate-600 italic truncate" title="${info.note}">
+                📝 ${info.note}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Bottom: Recorded Hours & Quick Edit Button -->
+          <div class="mt-2 pt-1 border-t border-slate-100 flex items-center justify-between text-[10px]">
+            <span class="text-slate-400 font-medium">Giờ tính:</span>
+            <div class="flex items-center space-x-1">
+              ${info.checked ? `
+                <span class="font-black text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200">
+                  +${(info.hours + info.ot).toFixed(1)}h
+                </span>
+              ` : `
+                <span class="font-bold text-slate-400">
+                  0.0h
+                </span>
+              `}
+              <span class="text-slate-300 text-[10px] group-hover:text-sky-600 font-bold ml-1">✎</span>
+            </div>
+          </div>
+        `;
+
+        daysGrid.appendChild(cell);
+      }
+
+      // Update Header Stats
+      document.getElementById('stat-working-days').textContent = totalWorkingDays;
+      document.getElementById('stat-working-days-sub').textContent = totalWorkingDays;
+      document.getElementById('stat-standard-hours').textContent = totalStandardHours.toFixed(1);
+      document.getElementById('stat-std-hours-sub').textContent = totalStandardHours.toFixed(0);
+      
+      document.getElementById('stat-checked-days').textContent = totalCheckedDays;
+      const checkedDaysPct = totalWorkingDays > 0 ? Math.round((totalCheckedDays / totalWorkingDays) * 100) : 0;
+      document.getElementById('stat-checked-days-label').textContent = `${checkedDaysPct}% ngày công (${totalCheckedDays}/${totalWorkingDays} ngày đã ghi nhận)`;
+
+      document.getElementById('stat-actual-hours').textContent = totalActualHours.toFixed(1);
+      const hoursPct = totalStandardHours > 0 ? Math.round((totalActualHours / totalStandardHours) * 100) : 0;
+      const progressLabel = document.getElementById('stat-progress-label');
+      progressLabel.textContent = `${hoursPct}% định mức (${totalActualHours >= totalStandardHours ? 'Đã đủ / Vượt chỉ tiêu' : 'Đang tích lũy'})`;
+      if (hoursPct >= 100) {
+        progressLabel.className = "text-[11px] text-emerald-600 font-bold mt-1";
+      } else {
+        progressLabel.className = "text-[11px] text-sky-700 font-bold mt-1";
+      }
+
+      // Render Weekly Breakdown Table
+      renderWeeklyTable(weeklyBuckets);
+
+      // Refresh icons
+      lucide.createIcons();
+    }
+
+    // Toggle 1-Click Checkbox on Calendar Day
+    function toggleDayCheck(dateKey, isChecked) {
+      const parts = dateKey.split('-');
+      const y = parseInt(parts[0]);
+      const m = parseInt(parts[1]) - 1;
+      const d = parseInt(parts[2]);
+
+      const existing = scheduleCustomData[dateKey];
+      if (existing) {
+        existing.checked = isChecked;
+      } else {
+        const date = new Date(y, m, d);
+        const isWeekend = (date.getDay() === 0 || date.getDay() === 6);
+        scheduleCustomData[dateKey] = {
+          checked: isChecked,
+          status: isWeekend ? 'weekend' : 'full',
+          hours: isWeekend ? 0 : 8.0,
+          ot: 0,
+          note: ''
+        };
+      }
+      saveStorageData();
+      renderSchedule();
+    }
+
+    // Quick Action: Check up to today (Oct 22)
+    function checkUpToToday() {
+      const today = new Date();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = formatDateKey(currentYear, currentMonth, day);
+        const date = new Date(currentYear, currentMonth, day);
+        const isWeekend = (date.getDay() === 0 || date.getDay() === 6);
+        const isPastOrToday = (currentYear < today.getFullYear()) ||
+          (currentYear === today.getFullYear() && currentMonth < today.getMonth()) ||
+          (currentYear === today.getFullYear() && currentMonth === today.getMonth() && day <= today.getDate());
+
+        const shouldCheck = !isWeekend && isPastOrToday;
+        if (!scheduleCustomData[key]) {
+          scheduleCustomData[key] = {
+            checked: shouldCheck,
+            status: isWeekend ? 'weekend' : 'full',
+            hours: isWeekend ? 0 : 8.0,
+            ot: 0,
+            note: ''
+          };
+        } else {
+          scheduleCustomData[key].checked = shouldCheck;
+        }
+      }
+      saveStorageData();
+      renderSchedule();
+    }
+
+    // Quick Action: Check all weekdays in month
+    function checkAllMonth(onlyWeekdays = true) {
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = formatDateKey(currentYear, currentMonth, day);
+        const date = new Date(currentYear, currentMonth, day);
+        const isWeekend = (date.getDay() === 0 || date.getDay() === 6);
+
+        if (onlyWeekdays && isWeekend) continue;
+
+        if (!scheduleCustomData[key]) {
+          scheduleCustomData[key] = {
+            checked: true,
+            status: isWeekend ? 'weekend' : 'full',
+            hours: isWeekend ? 0 : 8.0,
+            ot: 0,
+            note: ''
+          };
+        } else {
+          scheduleCustomData[key].checked = true;
+        }
+      }
+      saveStorageData();
+      renderSchedule();
+    }
+
+    // Quick Action: Uncheck all
+    function uncheckAllMonth() {
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = formatDateKey(currentYear, currentMonth, day);
+        const date = new Date(currentYear, currentMonth, day);
+        const isWeekend = (date.getDay() === 0 || date.getDay() === 6);
+
+        if (!scheduleCustomData[key]) {
+          scheduleCustomData[key] = {
+            checked: false,
+            status: isWeekend ? 'weekend' : 'full',
+            hours: isWeekend ? 0 : 8.0,
+            ot: 0,
+            note: ''
+          };
+        } else {
+          scheduleCustomData[key].checked = false;
+        }
+      }
+      saveStorageData();
+      renderSchedule();
+    }
+
+    // Render Weekly Table strictly based on checked days on the calendar map
+    function renderWeeklyTable(weeklyBuckets) {
+      const tbody = document.getElementById('weekly-table-body');
+      tbody.innerHTML = '';
+
+      weeklyBuckets.forEach((week, idx) => {
+        const firstDay = week[0].day;
+        const lastDay = week[week.length - 1].day;
+
+        let weekWorkingDays = 0;
+        let weekCheckedDays = 0;
+        let weekStdHours = 0;
+        let weekActHours = 0;
+
+        week.forEach(d => {
+          if (!d.isWeekend) {
+            weekWorkingDays++;
+            weekStdHours += 8.0;
+          }
+          if (d.checked) {
+            weekCheckedDays++;
+            weekActHours += (d.hours + d.ot);
+          }
+        });
+
+        const weekPct = weekStdHours > 0 ? Math.round((weekActHours / weekStdHours) * 100) : 0;
+        const isComplete = (weekActHours >= weekStdHours && weekStdHours > 0);
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-bold text-slate-900">
+            Tuần ${idx + 1}
+          </td>
+          <td class="py-3 px-4 text-slate-600 font-medium">
+            ${String(firstDay).padStart(2, '0')}/${String(currentMonth + 1).padStart(2, '0')} ➔ ${String(lastDay).padStart(2, '0')}/${String(currentMonth + 1).padStart(2, '0')}
+          </td>
+          <td class="py-3 px-4 text-center font-semibold text-slate-700">
+            ${weekWorkingDays} ngày
+          </td>
+          <td class="py-3 px-4 text-center font-bold">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-extrabold ${weekCheckedDays >= weekWorkingDays ? 'bg-emerald-100 text-emerald-800' : (weekCheckedDays > 0 ? 'bg-sky-100 text-sky-800' : 'bg-slate-100 text-slate-500')}">
+              ${weekCheckedDays} / ${weekWorkingDays} ngày
+            </span>
+          </td>
+          <td class="py-3 px-4 text-center font-bold text-slate-700">
+            ${weekStdHours.toFixed(1)}h
+          </td>
+          <td class="py-3 px-4 text-center font-black ${weekActHours >= weekStdHours ? 'text-emerald-700' : (weekActHours > 0 ? 'text-sky-800' : 'text-slate-400')}">
+            ${weekActHours.toFixed(1)}h
+          </td>
+          <td class="py-3 px-4 text-center">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${isComplete ? 'bg-emerald-100 text-emerald-800' : (weekActHours > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-500')}">
+              ${weekPct}%
+            </span>
+          </td>
+          <td class="py-3 px-4 text-right">
+            ${isComplete ? `
+              <span class="inline-flex items-center space-x-1 text-emerald-600 text-xs font-bold">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                <span>Đạt chuẩn tuần</span>
+              </span>
+            ` : (weekActHours > 0 ? `
+              <span class="inline-flex items-center space-x-1 text-amber-600 text-xs font-bold">
+                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                <span>Đang ghi nhận</span>
+              </span>
+            ` : `
+              <span class="inline-flex items-center space-x-1 text-slate-400 text-xs font-medium">
+                <i data-lucide="circle-dashed" class="w-3.5 h-3.5"></i>
+                <span>Chưa có công</span>
+              </span>
+            `)}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal Operations
+    function openDayEditModal(dateKey, info) {
+      document.getElementById('edit-date-key').value = dateKey;
+      const parts = dateKey.split('-');
+      document.getElementById('modal-date-title').textContent = `Chỉnh sửa ngày ${parts[2]}/${parts[1]}/${parts[0]}`;
+      
+      document.getElementById('edit-checked').checked = !!info.checked;
+      document.getElementById('edit-status').value = info.status;
+      document.getElementById('edit-ot').value = info.ot || 0;
+      document.getElementById('edit-note').value = info.note || '';
+
+      handleStatusChange();
+      document.getElementById('day-edit-modal').classList.remove('hidden');
+    }
+
+    function closeDayEditModal() {
+      document.getElementById('day-edit-modal').classList.add('hidden');
+    }
+
+    function handleStatusChange() {
+      const isChecked = document.getElementById('edit-checked').checked;
+      const status = document.getElementById('edit-status').value;
+      const ot = parseFloat(document.getElementById('edit-ot').value || 0);
+      let baseHours = 8.0;
+
+      if (status === 'morning') baseHours = 4.5;
+      else if (status === 'afternoon') baseHours = 3.5;
+      else if (status === 'leave_unpaid' || status === 'weekend') baseHours = 0.0;
+      else if (status === 'full' || status === 'leave_paid' || status === 'holiday') baseHours = 8.0;
+
+      const total = baseHours + ot;
+      const previewEl = document.getElementById('modal-calculated-hours');
+      if (isChecked) {
+        previewEl.innerHTML = `<span class="text-emerald-700">${total.toFixed(1)} giờ</span> <span class="text-xs font-semibold text-slate-500">(Cơ bản: ${baseHours}h + OT: ${ot}h)</span>`;
+      } else {
+        previewEl.innerHTML = `<span class="text-slate-400">0.0 giờ</span> <span class="text-xs font-semibold text-rose-500">(Chưa tích chọn ghi nhận công)</span>`;
+      }
+    }
+
+    document.getElementById('edit-ot').addEventListener('input', handleStatusChange);
+
+    function saveDayEdit() {
+      const dateKey = document.getElementById('edit-date-key').value;
+      const isChecked = document.getElementById('edit-checked').checked;
+      const status = document.getElementById('edit-status').value;
+      const ot = parseFloat(document.getElementById('edit-ot').value || 0);
+      const note = document.getElementById('edit-note').value.trim();
+
+      let baseHours = 8.0;
+      if (status === 'morning') baseHours = 4.5;
+      else if (status === 'afternoon') baseHours = 3.5;
+      else if (status === 'leave_unpaid' || status === 'weekend') baseHours = 0.0;
+
+      scheduleCustomData[dateKey] = {
+        checked: isChecked,
+        status,
+        hours: baseHours,
+        ot,
+        note
+      };
+
+      saveStorageData();
+      closeDayEditModal();
+      renderSchedule();
+    }
+
+    // Reset current month to default standard 8h/day (Mon-Fri)
+    function resetMonthToStandard() {
+      if (!confirm(`Bạn có chắc muốn đặt lại toàn bộ ngày trong Tháng ${currentMonth + 1}/${currentYear} về tiêu chuẩn 8h (Thứ 2 ➔ Thứ 6)?`)) return;
+
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = formatDateKey(currentYear, currentMonth, day);
+        delete scheduleCustomData[key];
+      }
+
+      saveStorageData();
+      renderSchedule();
+    }
+
+    // Month navigation
+    function changeMonth(offset) {
+      currentMonth += offset;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      } else if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderSchedule();
+    }
+
+    function jumpToMonth(year, monthIndex) {
+      currentYear = year;
+      currentMonth = monthIndex;
+      renderSchedule();
+    }
+
+    // Export to Excel with Checked status & Map calculation
+    function exportScheduleExcel() {
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const exportRows = [];
+
+      // Header row
+      exportRows.push([
+        "STT", "Ngày", "Thứ", "Đã Ghi Nhận Công (Bản Đồ Lịch)", "Trạng Thái Ca Làm", "Giờ Bắt Đầu Sáng", "Giờ Kết Thúc Sáng",
+        "Nghỉ Trưa", "Giờ Bắt Đầu Chiều", "Giờ Kết Thúc Chiều", "Giờ Định Mức (h)", "Giờ OT (h)", "Tổng Giờ Thực Tế Tính Công (h)", "Ghi Chú"
+      ]);
+
+      const dayNames = ["Chủ Nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const info = getStandardDayInfo(currentYear, currentMonth, day);
+        const dayStr = `${String(day).padStart(2, '0')}/${String(currentMonth + 1).padStart(2, '0')}/${currentYear}`;
+        const dayName = dayNames[info.dayOfWeek];
+
+        let statusText = "Đủ công (8h)";
+        let morningStart = "07:30", morningEnd = "12:00";
+        let lunch = "12:00 - 13:00";
+        let afternoonStart = "13:00", afternoonEnd = "16:30";
+
+        if (info.isWeekend) {
+          statusText = "Nghỉ cuối tuần";
+          morningStart = "-"; morningEnd = "-"; lunch = "-"; afternoonStart = "-"; afternoonEnd = "-";
+        } else if (info.status === 'morning') {
+          statusText = "Làm nửa ngày sáng";
+          afternoonStart = "-"; afternoonEnd = "-";
+        } else if (info.status === 'afternoon') {
+          statusText = "Làm nửa ngày chiều";
+          morningStart = "-"; morningEnd = "-";
+        } else if (info.status === 'leave_paid') {
+          statusText = "Nghỉ phép có lương";
+        } else if (info.status === 'leave_unpaid') {
+          statusText = "Nghỉ không lương";
+          morningStart = "-"; morningEnd = "-"; lunch = "-"; afternoonStart = "-"; afternoonEnd = "-";
+        } else if (info.status === 'holiday') {
+          statusText = "Nghỉ lễ/Tết";
+        }
+
+        const checkedText = info.checked ? "ĐÃ GHI NHẬN (✓)" : "Chưa ghi nhận";
+        const actualHoursCalculated = info.checked ? (info.hours + info.ot) : 0;
+
+        exportRows.push([
+          day,
+          dayStr,
+          dayName,
+          checkedText,
+          statusText,
+          morningStart,
+          morningEnd,
+          lunch,
+          afternoonStart,
+          afternoonEnd,
+          info.hours,
+          info.ot,
+          actualHoursCalculated,
+          info.note
+        ]);
+      }
+
+      // Create sheet and workbook
+      const ws = XLSX.utils.aoa_to_sheet(exportRows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `Lich_Lam_Viec_T${currentMonth + 1}_${currentYear}`);
+
+      const fileName = `Lich_Lam_Viec_KIENLT90_T${currentMonth + 1}_${currentYear}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSavedData();
+      renderSchedule();
+    });
+  </script>
+</body>
+</html>
