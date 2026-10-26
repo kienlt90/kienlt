@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#07090e" />
-  <title>F1 Live Timing &amp; Track Map — 22 Xe Thời Gian Thực (FormulaTimer Style)</title>
+  <title>F1 Live Timing, Best Sectors &amp; 22-Car Track Map — letrungkien.store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://api.openf1.org">
@@ -37,9 +37,10 @@
       background: var(--bg-0);
       color: var(--text-main);
       font-family: var(--font-sans);
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
+      min-height: 100vh;
+      width: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
       user-select: none;
@@ -52,10 +53,11 @@
       outline-offset: 1px;
     }
 
-    /* TOP HEADER BAR */
+    /* TOP HEADER BAR (STICKY) */
     .topbar {
       height: 48px;
-      background: var(--bg-1);
+      background: rgba(12, 16, 24, 0.95);
+      backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -64,6 +66,9 @@
       gap: 10px;
       flex-shrink: 0;
       white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 40;
     }
 
     .brand {
@@ -133,7 +138,7 @@
       letter-spacing: 0.3px;
     }
 
-    select, button.btn {
+    select, button.btn, a.btn {
       background-color: var(--bg-3);
       color: var(--text-main);
       border: 1px solid var(--border-hi);
@@ -147,7 +152,7 @@
       transition: background-color 0.15s, border-color 0.15s, color 0.15s;
     }
 
-    select:hover, button.btn:hover {
+    select:hover, button.btn:hover, a.btn:hover {
       border-color: var(--f1-cyan);
     }
 
@@ -228,16 +233,18 @@
       box-shadow: 0 0 6px var(--f1-red);
     }
 
-    /* MAIN 2-COLUMN WORKSPACE */
+    /* =========================================================================
+       MAIN WORKSPACE:
+       - ROW 1: DRIVER TIMING TABLE (LEFT 58%) + 22-CAR TRACK MAP (RIGHT 42%)
+       - ROW 2: ANALYTICS & STANDINGS DECK DIRECTLY BELOW DRIVER TABLE (FULL WIDTH)
+       ========================================================================= */
     .workspace {
-      flex: 1;
       display: grid;
-      grid-template-columns: 58% 42%;
-      grid-template-rows: 1fr 235px;
+      grid-template-columns: 58% calc(42% - 8px);
+      grid-template-rows: 640px auto;
       gap: 8px;
       padding: 8px;
-      min-height: 0;
-      min-width: 0;
+      width: 100%;
     }
 
     .panel {
@@ -286,11 +293,11 @@
     }
 
     /* =========================================================================
-       LEFT PANEL: FIA DRIVER TIMING TOWER (ZERO WRAPPING, UNIFORM 44PX ROWS)
+       ROW 1 LEFT: FIA DRIVER TIMING TOWER
        ========================================================================= */
     .panel-tower {
       grid-column: 1 / 2;
-      grid-row: 1 / 3;
+      grid-row: 1 / 2;
     }
 
     .leader-banner {
@@ -374,7 +381,6 @@
       flex-shrink: 0;
     }
 
-    /* STRICT 10-COLUMN GRID FOR PERFECT ALIGNMENT */
     .tower-grid-cols {
       display: grid;
       grid-template-columns: 44px minmax(105px, 1.15fr) 74px 102px 46px 78px minmax(72px, 1fr) minmax(80px, 1.1fr) minmax(80px, 1.1fr) 38px;
@@ -405,7 +411,7 @@
     .tower-body::-webkit-scrollbar-thumb { background: #263044; border-radius: 3px; }
 
     .t-row {
-      height: 44px;
+      height: 42px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.045);
       font-family: var(--font-mono);
       font-size: 11px;
@@ -427,7 +433,6 @@
       box-shadow: inset 3px 0 0 var(--f1-cyan);
     }
 
-    /* CELL 1: POS & GRID DELTA */
     .pos-cell {
       display: flex;
       flex-direction: column;
@@ -439,18 +444,12 @@
       font-size: 11.5px;
       color: var(--text-main);
     }
-    .t-row.is-leader-row .pos-num {
-      color: var(--f1-yellow);
-    }
-    .pos-delta {
-      font-size: 9px;
-      font-weight: 600;
-    }
+    .t-row.is-leader-row .pos-num { color: var(--f1-yellow); }
+    .pos-delta { font-size: 9px; font-weight: 600; }
     .delta-up { color: var(--f1-green); }
     .delta-down { color: var(--f1-red); }
     .delta-same { color: var(--text-dim); }
 
-    /* CELL 2: DRIVER & TEAM */
     .drv-cell {
       display: flex;
       align-items: center;
@@ -459,7 +458,7 @@
     }
     .team-stripe {
       width: 3.5px;
-      height: 26px;
+      height: 25px;
       border-radius: 2px;
       flex-shrink: 0;
     }
@@ -476,15 +475,8 @@
       align-items: baseline;
       gap: 4px;
     }
-    .drv-code {
-      font-weight: 700;
-      font-size: 12px;
-      color: var(--text-main);
-    }
-    .drv-num {
-      font-size: 9.5px;
-      color: var(--text-dim);
-    }
+    .drv-code { font-weight: 700; font-size: 12px; color: var(--text-main); }
+    .drv-num { font-size: 9.5px; color: var(--text-dim); }
     .drv-team {
       font-family: var(--font-sans);
       font-size: 9.5px;
@@ -494,7 +486,6 @@
       text-overflow: ellipsis;
     }
 
-    /* CELL 3: GAP & INTERVAL */
     .gap-cell {
       display: flex;
       flex-direction: column;
@@ -502,11 +493,7 @@
       line-height: 1.2;
       min-width: 0;
     }
-    .gap-leader {
-      color: var(--text-main);
-      font-weight: 700;
-      font-size: 10.5px;
-    }
+    .gap-leader { color: var(--text-main); font-weight: 700; font-size: 10.5px; }
     .gap-leader.leader-tag {
       color: #000;
       background: var(--f1-yellow);
@@ -516,12 +503,8 @@
       font-weight: 700;
       width: fit-content;
     }
-    .gap-int {
-      color: var(--text-sub);
-      font-size: 9px;
-    }
+    .gap-int { color: var(--text-sub); font-size: 9px; }
 
-    /* CELL 4: TYRE & TYRE AGE */
     .stint-cell {
       display: flex;
       flex-direction: column;
@@ -573,24 +556,15 @@
       text-overflow: ellipsis;
     }
 
-    /* CELL 5: PIT STOPS */
     .pit-cell {
       display: flex;
       flex-direction: column;
       justify-content: center;
       line-height: 1.2;
     }
-    .pit-count {
-      color: var(--text-main);
-      font-weight: 700;
-      font-size: 10px;
-    }
-    .pit-dur {
-      font-size: 8.5px;
-      color: var(--text-sub);
-    }
+    .pit-count { color: var(--text-main); font-weight: 700; font-size: 10px; }
+    .pit-dur { font-size: 8.5px; color: var(--text-sub); }
 
-    /* CELL 6: BEST & LAST LAP */
     .lap-cell {
       display: flex;
       flex-direction: column;
@@ -603,7 +577,6 @@
     .green-text { color: var(--f1-green) !important; }
     .yellow-text { color: var(--f1-yellow) !important; }
 
-    /* CELLS 7, 8, 9: S1, S2, S3 WITH DISTINCT MINI-SECTORS */
     .sector-box {
       background: rgba(0, 0, 0, 0.36);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -622,15 +595,8 @@
       font-size: 9.5px;
       line-height: 1;
     }
-    .sector-lbl {
-      font-size: 8px;
-      color: var(--text-dim);
-      font-weight: 700;
-    }
-    .sector-val {
-      font-weight: 700;
-      color: var(--text-main);
-    }
+    .sector-lbl { font-size: 8px; color: var(--text-dim); font-weight: 700; }
+    .sector-val { font-weight: 700; color: var(--text-main); }
     .minisec-bar {
       display: grid;
       grid-auto-flow: column;
@@ -639,18 +605,13 @@
       height: 6px;
       align-items: center;
     }
-    .ms-seg {
-      height: 6px;
-      border-radius: 1px;
-      background: #232a3b;
-    }
+    .ms-seg { height: 6px; border-radius: 1px; background: #232a3b; }
     .ms-2051 { background: var(--f1-purple); box-shadow: 0 0 4px var(--f1-purple); }
     .ms-2049 { background: var(--f1-green); }
     .ms-2048 { background: var(--f1-yellow); }
     .ms-2064 { background: #38bdf8; }
     .ms-null { background: rgba(255, 255, 255, 0.08); }
 
-    /* CELL 10: SPEED TRAP */
     .st-cell {
       text-align: right;
       font-size: 10.5px;
@@ -659,7 +620,7 @@
     }
 
     /* =========================================================================
-       RIGHT TOP PANEL: LIVE 22-CAR TRACK MAP (FORMULATIMER STYLE)
+       ROW 1 RIGHT: LIVE 22-CAR TRACK MAP
        ========================================================================= */
     .panel-map {
       grid-column: 2 / 3;
@@ -745,36 +706,38 @@
     }
 
     /* =========================================================================
-       RIGHT BOTTOM PANEL: STRATEGY, TEAM RADIO, 2026 STANDINGS
+       ROW 2 (DIRECTLY BELOW DRIVER TABLE, FULL WIDTH):
+       CHAMPIONSHIP STANDINGS (WITH GAP), BEST SECTORS TABLE, STRATEGY, RADIO
        ========================================================================= */
     .panel-deck {
-      grid-column: 2 / 3;
+      grid-column: 1 / 3;
       grid-row: 2 / 3;
+      min-height: 430px;
     }
 
     .deck-tabs {
       display: flex;
-      gap: 4px;
+      gap: 6px;
       white-space: nowrap;
     }
 
     .dtab {
-      background: transparent;
-      border: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
       color: var(--text-sub);
       font-family: var(--font-display);
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
       text-transform: uppercase;
-      padding: 4px 9px;
-      border-radius: 4px;
+      padding: 5px 12px;
+      border-radius: 5px;
       cursor: pointer;
       white-space: nowrap;
       transition: background-color 0.15s, color 0.15s, border-color 0.15s;
     }
-    .dtab:hover { color: var(--text-main); background: rgba(255,255,255,0.04); }
+    .dtab:hover { color: var(--text-main); background: rgba(255,255,255,0.07); }
     .dtab.active {
-      background: rgba(225, 6, 0, 0.16);
+      background: rgba(225, 6, 0, 0.18);
       color: #fff;
       border-color: var(--f1-red);
     }
@@ -783,46 +746,87 @@
       flex: 1;
       position: relative;
       min-height: 0;
-      overflow: hidden;
     }
 
     .tab-pane {
       width: 100%;
-      height: 100%;
       display: none;
-      overflow-y: auto;
+      padding: 10px 12px;
     }
     .tab-pane.active {
       display: block;
     }
-    .tab-pane::-webkit-scrollbar { width: 5px; }
-    .tab-pane::-webkit-scrollbar-thumb { background: #263044; border-radius: 3px; }
 
-    /* TAB 1: TYRE STRATEGY GANTT */
-    .stint-table {
+    /* DATA TABLES FOR STANDINGS & BEST SECTORS */
+    .data-table {
       width: 100%;
       border-collapse: collapse;
       font-family: var(--font-mono);
-      font-size: 10.5px;
+      font-size: 11px;
       white-space: nowrap;
     }
-    .stint-table th, .stint-table td {
-      padding: 4px 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      text-align: left;
-    }
-    .stint-table th {
+    .data-table th {
+      background: rgba(0, 0, 0, 0.45);
       color: var(--text-dim);
       font-size: 9.5px;
+      font-weight: 700;
       text-transform: uppercase;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border-hi);
+      text-align: left;
       position: sticky;
       top: 0;
-      background: var(--bg-1);
       z-index: 2;
     }
+    .data-table td {
+      padding: 5.5px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+      color: var(--text-main);
+    }
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .standings-3col {
+      display: grid;
+      grid-template-columns: 1.25fr 1.15fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .std-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .std-card-hdr {
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--f1-cyan);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .std-scroll {
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    .std-scroll::-webkit-scrollbar { width: 5px; }
+    .std-scroll::-webkit-scrollbar-thumb { background: #263044; border-radius: 3px; }
+
+    /* TYRE STRATEGY GANTT */
     .stint-bar-wrap {
       width: 100%;
-      height: 15px;
+      height: 16px;
       background: var(--bg-0);
       border-radius: 3px;
       overflow: hidden;
@@ -833,7 +837,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
+      font-size: 9.5px;
       font-weight: 700;
       color: #05070b;
       border-right: 1.5px solid #06070b;
@@ -841,71 +845,36 @@
       white-space: nowrap;
     }
 
-    /* TAB 2: TEAM RADIO & RACE CONTROL */
+    /* TEAM RADIO & RACE CONTROL */
     .radio-rc-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      height: 100%;
+      gap: 12px;
     }
     .sub-pane {
-      height: 100%;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 10px;
+      max-height: 370px;
       overflow-y: auto;
-      padding: 8px 10px;
-      border-right: 1px solid var(--border);
     }
     .radio-item, .rc-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 5px 8px;
-      background: var(--bg-2);
+      padding: 6px 8px;
+      background: var(--bg-1);
       border: 1px solid var(--border);
       border-radius: 5px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       font-family: var(--font-mono);
-      font-size: 10.5px;
+      font-size: 11px;
     }
     .radio-item audio {
-      height: 24px;
-      max-width: 175px;
-    }
-
-    /* TAB 3: 2026 STANDINGS & SCHEDULE */
-    .standings-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      padding: 8px 10px;
-      height: 100%;
-      overflow-y: auto;
-    }
-    .std-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 7px 9px;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      min-width: 0;
-    }
-    .std-card h4 {
-      font-family: var(--font-display);
-      font-size: 11px;
-      color: var(--f1-cyan);
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .std-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      padding: 3.5px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      white-space: nowrap;
+      height: 26px;
+      max-width: 240px;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -923,7 +892,7 @@
     <div class="brand">
       <a href="main.html" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;color:var(--text-sub);" title="Quay về trang chủ letrungkien.store">← Portal</a>
       <div class="f1-badge" translate="no">F1</div>
-      <h1 class="brand-title">LIVE TIMING &amp; 22-CAR TRACK MAP</h1>
+      <h1 class="brand-title">LIVE TIMING, BEST SECTORS &amp; 22-CAR TRACK MAP</h1>
       <span class="brand-sub">100% REAL FIA DATA</span>
     </div>
 
@@ -971,10 +940,10 @@
     </div>
   </header>
 
-  <!-- MAIN 2-COLUMN WORKSPACE -->
+  <!-- MAIN WORKSPACE -->
   <main class="workspace">
 
-    <!-- LEFT: EXPANDED FIA PIT-WALL TIMING TOWER -->
+    <!-- ROW 1 LEFT: FIA PIT-WALL TIMING TOWER -->
     <section class="panel panel-tower" aria-label="Bảng xếp hạng tay đua và Mini-Sectors">
       <div class="panel-header">
         <div class="panel-title">Bảng Dữ Liệu Tay Đua (FIA Timing &amp; Mini-Sectors)</div>
@@ -1026,7 +995,7 @@
       <div class="tower-body" id="towerBody"></div>
     </section>
 
-    <!-- RIGHT TOP: LIVE 22-CAR TRACK MAP (FORMULATIMER STYLE) -->
+    <!-- ROW 1 RIGHT: LIVE 22-CAR TRACK MAP -->
     <section class="panel panel-map" aria-label="Bản đồ theo dõi 22 xe trên đường đua">
       <div class="panel-header">
         <div class="panel-title">Bản Đồ Đường Đua — 22 Xe Thời Gian Thực (Real GPS)</div>
@@ -1036,7 +1005,6 @@
         </div>
       </div>
 
-      <!-- DEDICATED CIRCUIT INFO BAR -->
       <div class="map-info-strip">
         <span class="circuit-title-inline" id="hudCircuitName">UNITED STATES — AUSTIN</span>
         <span class="circuit-sub-inline" id="hudSessionSub">OpenF1 22-Car Live GPS Stream</span>
@@ -1046,7 +1014,6 @@
         <canvas id="trackCanvas"></canvas>
       </div>
 
-      <!-- DEDICATED FOOTER BAR FOR SECTOR LEGEND & PLAYBACK CONTROLS -->
       <div class="map-footer-bar">
         <div class="legend-inline">
           <span>Đường đua:</span>
@@ -1071,44 +1038,159 @@
       </div>
     </section>
 
-    <!-- RIGHT BOTTOM: STRATEGY, TEAM RADIO, 2026 STANDINGS -->
-    <section class="panel panel-deck" aria-label="Chiến thuật lốp, Team Radio và Bảng xếp hạng mùa giải">
+    <!-- ROW 2 (FULL WIDTH BELOW DRIVER TABLE): STANDINGS (WITH POINTS GAP), BEST SECTORS TABLE, STRATEGY, RADIO -->
+    <section class="panel panel-deck" aria-label="Bảng điểm mùa giải, Bảng Sector tốt nhất, Chiến thuật lốp và Team Radio">
       <div class="panel-header">
         <div class="deck-tabs" role="tablist">
-          <button type="button" class="dtab active" id="dtabStrategy" onclick="switchDeckTab('STRATEGY')">🛞 Chiến thuật Lốp &amp; Pit (22 Xe)</button>
-          <button type="button" class="dtab" id="dtabRadio" onclick="switchDeckTab('RADIO')">🎧 Team Radio MP3 &amp; FIA</button>
-          <button type="button" class="dtab" id="dtabStandings" onclick="switchDeckTab('STANDINGS')">🏆 BXH F1 2026 &amp; Lịch Đua</button>
+          <button type="button" class="dtab active" id="dtabStandings" onclick="switchDeckTab('STANDINGS')">🏆 BXH Điểm Tay Đua &amp; Đội Đua 2026 (Kèm Chênh Lệch Điểm)</button>
+          <button type="button" class="dtab" id="dtabSectors" onclick="switchDeckTab('SECTORS')">🟣 Bảng Sector Tốt Nhất Của Từng Tay Đua (Best S1/S2/S3 &amp; Ideal Lap)</button>
+          <button type="button" class="dtab" id="dtabStrategy" onclick="switchDeckTab('STRATEGY')">🛞 Chiến Thuật Lốp &amp; Pit Stops (22 Xe)</button>
+          <button type="button" class="dtab" id="dtabRadio" onclick="switchDeckTab('RADIO')">🎧 Team Radio MP3 &amp; FIA Race Control</button>
         </div>
         <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);" id="gpsSamplesCounter">GPS 3.7Hz</span>
       </div>
 
       <div class="deck-content">
-        <!-- PANE 1: TYRE STRATEGY & PIT STOPS -->
-        <div class="tab-pane active" id="paneSTRATEGY">
-          <table class="stint-table" id="strategyTable">
-            <thead>
-              <tr>
-                <th style="width:44px;">Pos</th>
-                <th style="width:125px;">Tay đua</th>
-                <th style="width:125px;">Pit Stops</th>
-                <th>Chuỗi Stint Lốp thực tế (Lap 1 → Kết thúc)</th>
-              </tr>
-            </thead>
-            <tbody id="strategyTableBody"></tbody>
-          </table>
+
+        <!-- PANE 1: 2026 WORLD CHAMPIONSHIP STANDINGS (WITH POINTS DIFF COLUMNS) & SCHEDULE -->
+        <div class="tab-pane active" id="paneSTANDINGS">
+          <div class="standings-3col">
+            <!-- WDC DRIVER STANDINGS WITH GAP & INTERVAL -->
+            <div class="std-card">
+              <div class="std-card-hdr">
+                <span>🏆 BXH Điểm Tay Đua 2026 (WDC)</span>
+                <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-sub);">Jolpica / FIA</span>
+              </div>
+              <div class="std-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>P</th>
+                      <th>Tay đua</th>
+                      <th>Đội đua</th>
+                      <th style="text-align:right">Wins</th>
+                      <th style="text-align:right">Điểm</th>
+                      <th style="text-align:right">Chênh P1</th>
+                      <th style="text-align:right">So liền trên</th>
+                    </tr>
+                  </thead>
+                  <tbody id="wdcStandingsBody">
+                    <tr><td colspan="7" style="color:var(--text-sub)">Đang tải BXH Tay đua…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- WCC CONSTRUCTOR STANDINGS WITH GAP & INTERVAL -->
+            <div class="std-card">
+              <div class="std-card-hdr">
+                <span style="color:var(--f1-yellow)">🛠️ BXH Điểm Đội Đua 2026 (WCC)</span>
+                <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-sub);">Jolpica / FIA</span>
+              </div>
+              <div class="std-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>P</th>
+                      <th>Đội đua</th>
+                      <th style="text-align:right">Wins</th>
+                      <th style="text-align:right">Điểm</th>
+                      <th style="text-align:right">Chênh P1</th>
+                      <th style="text-align:right">So liền trên</th>
+                    </tr>
+                  </thead>
+                  <tbody id="wccStandingsBody">
+                    <tr><td colspan="6" style="color:var(--text-sub)">Đang tải BXH Đội đua…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- 2026 F1 CALENDAR -->
+            <div class="std-card">
+              <div class="std-card-hdr">
+                <span style="color:var(--f1-green)">📅 Lịch Đua F1 2026</span>
+                <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-sub);">24 Chặng</span>
+              </div>
+              <div class="std-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Chặng</th>
+                      <th>Grand Prix / Quốc gia</th>
+                      <th style="text-align:right">Ngày đua</th>
+                    </tr>
+                  </thead>
+                  <tbody id="f1ScheduleBody">
+                    <tr><td colspan="3" style="color:var(--text-sub)">Đang tải Lịch đua 2026…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- PANE 2: REAL TEAM RADIO AUDIO & FIA RACE CONTROL -->
+        <!-- PANE 2: DEDICATED BEST SECTORS & IDEAL LAP TABLE FOR ALL 22 DRIVERS -->
+        <div class="tab-pane" id="paneSECTORS">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-family:var(--font-mono);font-size:11px;">
+            <div>
+              <b style="color:var(--f1-purple)">■ Tím:</b> Sector nhanh nhất toàn chặng (Session Best) &nbsp;|&nbsp;
+              <b style="color:var(--f1-green)">■ Xanh lá:</b> Kỷ lục Sector cá nhân của từng tay đua (Personal Best) &nbsp;|&nbsp;
+              <b style="color:var(--f1-cyan)">Ideal Lap:</b> Tổng ghép 3 Sector tốt nhất (`Best S1 + Best S2 + Best S3`)
+            </div>
+            <div id="bestSectorsSummaryBanner" style="color:var(--f1-yellow);font-weight:700;"></div>
+          </div>
+          <div style="max-height:365px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;">
+            <table class="data-table" id="bestSectorsTable">
+              <thead>
+                <tr>
+                  <th>Hạng</th>
+                  <th>Tay đua &amp; Đội</th>
+                  <th style="text-align:right">Best Sector 1 (Vòng)</th>
+                  <th style="text-align:right">Lệch S1</th>
+                  <th style="text-align:right">Best Sector 2 (Vòng)</th>
+                  <th style="text-align:right">Lệch S2</th>
+                  <th style="text-align:right">Best Sector 3 (Vòng)</th>
+                  <th style="text-align:right">Lệch S3</th>
+                  <th style="text-align:right">Ideal Lap (S1+S2+S3)</th>
+                  <th style="text-align:right">Best Lap Thực Tế</th>
+                  <th style="text-align:right">Độ Lệch (Actual - Ideal)</th>
+                  <th style="text-align:right">Max Speed Trap</th>
+                </tr>
+              </thead>
+              <tbody id="bestSectorsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PANE 3: TYRE STRATEGY & PIT STOPS -->
+        <div class="tab-pane" id="paneSTRATEGY">
+          <div style="max-height:375px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;">
+            <table class="data-table" id="strategyTable">
+              <thead>
+                <tr>
+                  <th style="width:50px;">Pos</th>
+                  <th style="width:160px;">Tay đua</th>
+                  <th style="width:180px;">Pit Stops</th>
+                  <th>Chuỗi Stint Lốp thực tế (Lap 1 → Kết thúc)</th>
+                </tr>
+              </thead>
+              <tbody id="strategyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PANE 4: REAL TEAM RADIO AUDIO & FIA RACE CONTROL -->
         <div class="tab-pane" id="paneRADIO">
           <div class="radio-rc-grid">
             <div class="sub-pane">
-              <div style="font-family:var(--font-display);font-size:11px;font-weight:700;color:var(--f1-cyan);margin-bottom:6px;">
+              <div style="font-family:var(--font-display);font-size:11.5px;font-weight:700;color:var(--f1-cyan);margin-bottom:8px;">
                 🎧 TEAM RADIO MP3 (LIVETIMING.FORMULA1.COM)
               </div>
               <div id="teamRadioList">Đang tải Team Radio…</div>
             </div>
-            <div class="sub-pane" style="border-right:none;">
-              <div style="font-family:var(--font-display);font-size:11px;font-weight:700;color:var(--f1-yellow);margin-bottom:6px;">
+            <div class="sub-pane">
+              <div style="font-family:var(--font-display);font-size:11.5px;font-weight:700;color:var(--f1-yellow);margin-bottom:8px;">
                 🚩 FIA RACE CONTROL (FLAGS, PENALTIES, DRS)
               </div>
               <div id="raceControlList">Đang tải FIA Race Control…</div>
@@ -1116,23 +1198,6 @@
           </div>
         </div>
 
-        <!-- PANE 3: 2026 WORLD CHAMPIONSHIP STANDINGS & SCHEDULE -->
-        <div class="tab-pane" id="paneSTANDINGS">
-          <div class="standings-grid">
-            <div class="std-card">
-              <h4>🏆 BXH Tay Đua 2026 (WDC)</h4>
-              <div id="wdcStandingsBox">Đang tải BXH Tay đua…</div>
-            </div>
-            <div class="std-card">
-              <h4>🛠️ BXH Đội Đua 2026 (WCC)</h4>
-              <div id="wccStandingsBox">Đang tải BXH Đội đua…</div>
-            </div>
-            <div class="std-card">
-              <h4>📅 Lịch Đua F1 2026</h4>
-              <div id="f1ScheduleBox">Đang tải Lịch đua 2026…</div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -1140,7 +1205,7 @@
 
   <script>
     /***************************************************************************
-     * 100% REAL DATA F1 LIVE TIMING & 22-CAR TRACK MAP (FORMULATIMER STYLE)
+     * 100% REAL DATA F1 LIVE TIMING, BEST SECTORS & 22-CAR TRACK MAP
      ***************************************************************************/
     const OPENF1_BASE = 'https://api.openf1.org/v1';
     const JOLPICA_BASE = 'https://api.jolpi.ca/ergast/f1/current';
@@ -1202,7 +1267,7 @@
       positionsByDriver: {},
       gridPosByDriver: {},
       finalPosByDriver: {},
-      rankByDriver: {}, // driver_number -> current displayed P1..P22 rank
+      rankByDriver: {},
 
       stintsByDriver: {},
       pitsByDriver: {},
@@ -1213,12 +1278,15 @@
       sessionBestLapSec: Infinity,
       sessionBestLapDriver: '',
       sessionBestS1: Infinity,
+      sessionBestS1Driver: '',
       sessionBestS2: Infinity,
+      sessionBestS2Driver: '',
       sessionBestS3: Infinity,
+      sessionBestS3Driver: '',
 
-      selectedDriver: null,   // Highlighted driver on the 22-car track map
-      circuitOutlinePts: [],  // Clean 1-lap (x, y, normDist) array to draw the circuit outline
-      multiCarGps: {},        // driver_number -> array of { t, x, y } for all 22 cars
+      selectedDriver: null,
+      circuitOutlinePts: [],
+      multiCarGps: {},
       multiCarWindowStartMs: 0,
       multiCarWindowEndMs: 0,
 
@@ -1314,7 +1382,7 @@
           };
         });
 
-        setApiStatus(`Đang đồng bộ Laps & Thứ hạng đua (2/4)…`, 'loading');
+        setApiStatus(`Đang đồng bộ Laps, Sectors & Thứ hạng đua (2/4)…`, 'loading');
         const weather = await fetchOpenF1(`/weather?session_key=${state.sessionKey}`);
         if (weather && weather.length) {
           const w = weather[weather.length - 1];
@@ -1355,11 +1423,15 @@
         state.sessionBestLapSec = Infinity;
         state.sessionBestLapDriver = '';
         state.sessionBestS1 = Infinity;
+        state.sessionBestS1Driver = '';
         state.sessionBestS2 = Infinity;
+        state.sessionBestS2Driver = '';
         state.sessionBestS3 = Infinity;
+        state.sessionBestS3Driver = '';
 
         state.allLaps.forEach(l => {
           const dNum = l.driver_number;
+          const drvCode = state.driversMap[dNum]?.code || `#${dNum}`;
           if (!state.lapsByDriver[dNum]) state.lapsByDriver[dNum] = [];
           state.lapsByDriver[dNum].push(l);
           if (l.lap_number && l.lap_number > state.maxLapNumber) {
@@ -1367,17 +1439,19 @@
           }
           if (l.lap_duration && l.lap_duration > 40 && l.lap_duration < state.sessionBestLapSec) {
             state.sessionBestLapSec = l.lap_duration;
-            const drv = state.driversMap[dNum];
-            state.sessionBestLapDriver = drv ? drv.code : `#${dNum}`;
+            state.sessionBestLapDriver = drvCode;
           }
           if (l.duration_sector_1 && l.duration_sector_1 > 10 && l.duration_sector_1 < state.sessionBestS1) {
             state.sessionBestS1 = l.duration_sector_1;
+            state.sessionBestS1Driver = drvCode;
           }
           if (l.duration_sector_2 && l.duration_sector_2 > 10 && l.duration_sector_2 < state.sessionBestS2) {
             state.sessionBestS2 = l.duration_sector_2;
+            state.sessionBestS2Driver = drvCode;
           }
           if (l.duration_sector_3 && l.duration_sector_3 > 10 && l.duration_sector_3 < state.sessionBestS3) {
             state.sessionBestS3 = l.duration_sector_3;
+            state.sessionBestS3Driver = drvCode;
           }
         });
 
@@ -1410,9 +1484,9 @@
         });
 
         buildTimingTower();
+        renderBestSectorsTable();
         renderStrategyTable();
 
-        // Highlight P1 Leader by default & load 22-car track map immediately
         if (state.towerRows.length > 0) {
           setSelectedDriver(state.towerRows[0].driverNumber);
           await loadMultiCarRealGpsForCurrentLap();
@@ -1523,14 +1597,30 @@
         if (!dLaps.length && !state.finalPosByDriver[dNum]) return;
 
         let bestLap = null;
-        let pbS1 = Infinity, pbS2 = Infinity, pbS3 = Infinity;
+        let pbS1 = Infinity, pbS1Lap = null;
+        let pbS2 = Infinity, pbS2Lap = null;
+        let pbS3 = Infinity, pbS3Lap = null;
+        let maxSpeedTrap = 0;
+
         for (const l of dLaps) {
           if (l.lap_duration && l.lap_duration > 40) {
             if (!bestLap || l.lap_duration < bestLap.lap_duration) bestLap = l;
           }
-          if (l.duration_sector_1 && l.duration_sector_1 < pbS1) pbS1 = l.duration_sector_1;
-          if (l.duration_sector_2 && l.duration_sector_2 < pbS2) pbS2 = l.duration_sector_2;
-          if (l.duration_sector_3 && l.duration_sector_3 < pbS3) pbS3 = l.duration_sector_3;
+          if (l.duration_sector_1 && l.duration_sector_1 > 10 && l.duration_sector_1 < pbS1) {
+            pbS1 = l.duration_sector_1;
+            pbS1Lap = l.lap_number;
+          }
+          if (l.duration_sector_2 && l.duration_sector_2 > 10 && l.duration_sector_2 < pbS2) {
+            pbS2 = l.duration_sector_2;
+            pbS2Lap = l.lap_number;
+          }
+          if (l.duration_sector_3 && l.duration_sector_3 > 10 && l.duration_sector_3 < pbS3) {
+            pbS3 = l.duration_sector_3;
+            pbS3Lap = l.lap_number;
+          }
+          if (l.st_speed && l.st_speed > maxSpeedTrap) {
+            maxSpeedTrap = l.st_speed;
+          }
         }
 
         const lapsUpToTarget = dLaps.filter(l => l.lap_number <= targetLapNum);
@@ -1563,9 +1653,10 @@
           bestLap,
           lastLapObj,
           activeLapObj,
-          pbS1,
-          pbS2,
-          pbS3,
+          pbS1, pbS1Lap,
+          pbS2, pbS2Lap,
+          pbS3, pbS3Lap,
+          maxSpeedTrap,
           lapsCompleted: lapsDone,
           finishEpochMs,
           officialPos,
@@ -1793,16 +1884,106 @@
     }
 
     // =========================================================================
+    // DEDICATED BEST SECTORS & IDEAL LAP TABLE FOR ALL 22 DRIVERS
+    // =========================================================================
+    function renderBestSectorsTable() {
+      const tbody = document.getElementById('bestSectorsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const banner = document.getElementById('bestSectorsSummaryBanner');
+      if (banner && isFinite(state.sessionBestS1)) {
+        banner.innerHTML =
+          `Purple S1: <span style="color:var(--f1-purple)">${state.sessionBestS1Driver} (${state.sessionBestS1.toFixed(3)}s)</span> &nbsp;•&nbsp; ` +
+          `Purple S2: <span style="color:var(--f1-purple)">${state.sessionBestS2Driver} (${state.sessionBestS2.toFixed(3)}s)</span> &nbsp;•&nbsp; ` +
+          `Purple S3: <span style="color:var(--f1-purple)">${state.sessionBestS3Driver} (${state.sessionBestS3.toFixed(3)}s)</span>`;
+      }
+
+      // Build list sorted by Ideal Lap (pbS1 + pbS2 + pbS3)
+      const sectorRows = state.towerRows.map(r => {
+        const hasAll3 = isFinite(r.pbS1) && isFinite(r.pbS2) && isFinite(r.pbS3);
+        const idealLapSec = hasAll3 ? (r.pbS1 + r.pbS2 + r.pbS3) : Infinity;
+        const actualBestSec = r.bestLap ? r.bestLap.lap_duration : Infinity;
+        const lostPotential = (isFinite(actualBestSec) && isFinite(idealLapSec))
+          ? Math.max(0, actualBestSec - idealLapSec)
+          : null;
+        return {
+          ...r,
+          idealLapSec,
+          actualBestSec,
+          lostPotential
+        };
+      });
+
+      sectorRows.sort((a, b) => a.idealLapSec - b.idealLapSec);
+
+      sectorRows.forEach((r, idx) => {
+        const drv = r.drv;
+        const isS1Purple = isFinite(r.pbS1) && Math.abs(r.pbS1 - state.sessionBestS1) < 0.002;
+        const isS2Purple = isFinite(r.pbS2) && Math.abs(r.pbS2 - state.sessionBestS2) < 0.002;
+        const isS3Purple = isFinite(r.pbS3) && Math.abs(r.pbS3 - state.sessionBestS3) < 0.002;
+        const isBestActualPurple = isFinite(r.actualBestSec) && Math.abs(r.actualBestSec - state.sessionBestLapSec) < 0.002;
+
+        const diffS1 = isFinite(r.pbS1) && isFinite(state.sessionBestS1) ? (r.pbS1 - state.sessionBestS1) : null;
+        const diffS2 = isFinite(r.pbS2) && isFinite(state.sessionBestS2) ? (r.pbS2 - state.sessionBestS2) : null;
+        const diffS3 = isFinite(r.pbS3) && isFinite(state.sessionBestS3) ? (r.pbS3 - state.sessionBestS3) : null;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:700;color:${idx === 0 ? 'var(--f1-yellow)' : 'var(--text-main)'}">P${idx + 1}</td>
+          <td>
+            <span style="display:inline-block;width:3px;height:12px;background:${drv.color};border-radius:2px;vertical-align:middle;margin-right:5px;"></span>
+            <b style="color:${drv.color}" translate="no">${drv.code}</b>
+            <span style="color:var(--text-dim);font-size:9.5px;">#${r.driverNumber}</span>
+            <span style="color:var(--text-sub);font-size:10px;margin-left:4px;">${drv.team}</span>
+          </td>
+          <td style="text-align:right" class="${isS1Purple ? 'purple-text' : 'green-text'}">
+            ${isFinite(r.pbS1) ? r.pbS1.toFixed(3) + 's' : '--'}
+            <span style="color:var(--text-dim);font-size:9px;">${r.pbS1Lap ? `(L${r.pbS1Lap})` : ''}</span>
+          </td>
+          <td style="text-align:right;color:${diffS1 === 0 ? 'var(--f1-purple)' : 'var(--text-sub)'}">
+            ${diffS1 !== null ? (diffS1 <= 0.001 ? 'BEST' : `+${diffS1.toFixed(3)}s`) : '--'}
+          </td>
+          <td style="text-align:right" class="${isS2Purple ? 'purple-text' : 'green-text'}">
+            ${isFinite(r.pbS2) ? r.pbS2.toFixed(3) + 's' : '--'}
+            <span style="color:var(--text-dim);font-size:9px;">${r.pbS2Lap ? `(L${r.pbS2Lap})` : ''}</span>
+          </td>
+          <td style="text-align:right;color:${diffS2 === 0 ? 'var(--f1-purple)' : 'var(--text-sub)'}">
+            ${diffS2 !== null ? (diffS2 <= 0.001 ? 'BEST' : `+${diffS2.toFixed(3)}s`) : '--'}
+          </td>
+          <td style="text-align:right" class="${isS3Purple ? 'purple-text' : 'green-text'}">
+            ${isFinite(r.pbS3) ? r.pbS3.toFixed(3) + 's' : '--'}
+            <span style="color:var(--text-dim);font-size:9px;">${r.pbS3Lap ? `(L${r.pbS3Lap})` : ''}</span>
+          </td>
+          <td style="text-align:right;color:${diffS3 === 0 ? 'var(--f1-purple)' : 'var(--text-sub)'}">
+            ${diffS3 !== null ? (diffS3 <= 0.001 ? 'BEST' : `+${diffS3.toFixed(3)}s`) : '--'}
+          </td>
+          <td style="text-align:right;color:var(--f1-cyan);font-weight:700;">
+            ${isFinite(r.idealLapSec) ? formatLapTime(r.idealLapSec) : '--'}
+          </td>
+          <td style="text-align:right" class="${isBestActualPurple ? 'purple-text' : 'green-text'}">
+            ${isFinite(r.actualBestSec) ? formatLapTime(r.actualBestSec) : '--'}
+          </td>
+          <td style="text-align:right;color:var(--f1-yellow);">
+            ${r.lostPotential !== null ? `+${r.lostPotential.toFixed(3)}s` : '--'}
+          </td>
+          <td style="text-align:right;color:var(--f1-cyan);font-weight:700;">
+            ${r.maxSpeedTrap ? `${r.maxSpeedTrap} km/h` : '--'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // =========================================================================
     // 22-CAR REAL GPS STREAM LOADER & CIRCUIT OUTLINE BUILDER
     // =========================================================================
     async function loadMultiCarRealGpsForCurrentLap() {
       try {
-        // Pick the selected lap, or if RACE_END/BEST pick a representative full-pack racing lap (or final lap)
         const lapNum = (state.selectedLapFilter === 'BEST' || state.selectedLapFilter === 'RACE_END')
           ? state.maxLapNumber
           : state.selectedLapFilter;
 
-        // Find a clean reference lap with date_start & lap_duration to define the full-lap window
         let refLap = null;
         for (const row of state.towerRows) {
           const dLaps = state.lapsByDriver[row.driverNumber] || [];
@@ -1812,7 +1993,6 @@
         if (!refLap) refLap = state.allLaps.find(l => l.date_start && l.lap_duration && l.lap_duration > 40);
         if (!refLap || !refLap.date_start) return;
 
-        // If we don't have the full circuit outline yet for this session, fetch 1 complete clean lap of the leader first
         if (!state.circuitOutlinePts || state.circuitOutlinePts.length < 40) {
           let outlineLap = null;
           for (const row of state.towerRows) {
@@ -1838,7 +2018,6 @@
           }
         }
 
-        // Now fetch simultaneous multi-car GPS stream across all 22 cars for the selected lap
         const winStartMs = new Date(refLap.date_start).getTime();
         const lapDurMs = Math.min(105000, Math.max(55000, (refLap.lap_duration || 92) * 1000));
         const winEndMs = winStartMs + lapDurMs;
@@ -1950,7 +2129,6 @@
         sy: H - (offsetY + (y - minY) * scale)
       });
 
-      // 1. Draw Dark Asphalt Track Border
       ctx.save();
       ctx.beginPath();
       outline.forEach((p, idx) => {
@@ -1970,7 +2148,6 @@
       ctx.stroke();
       ctx.restore();
 
-      // 2. Draw Subtle 3-Sector Center Line (S1 Red, S2 Cyan, S3 Yellow)
       for (let i = 1; i < outline.length; i++) {
         const p0 = toScreen(outline[i - 1].x, outline[i - 1].y);
         const p1 = toScreen(outline[i].x, outline[i].y);
@@ -1989,7 +2166,6 @@
         ctx.stroke();
       }
 
-      // 3. Start/Finish Line Marker
       const sf = toScreen(outline[0].x, outline[0].y);
       ctx.save();
       ctx.fillStyle = '#ffffff';
@@ -2013,7 +2189,6 @@
       ctx.fillText('S/F', sf.sx + 7 * dpr + sfBoxW / 2, sf.sy);
       ctx.restore();
 
-      // 4. Render All 22 Cars at Current Timestamp (Draw non-selected cars first, then P1 & selected car on top)
       const targetEpochMs = state.multiCarWindowStartMs +
         state.progress * (state.multiCarWindowEndMs - state.multiCarWindowStartMs);
 
@@ -2048,7 +2223,6 @@
     function drawCarOnTrack(ctx, pos, code, color, rank, dpr, isSelected) {
       ctx.save();
 
-      // Outer pulse ring for selected driver
       if (isSelected) {
         ctx.beginPath();
         ctx.arc(pos.sx, pos.sy, 11 * dpr, 0, Math.PI * 2);
@@ -2057,7 +2231,6 @@
         ctx.stroke();
       }
 
-      // Car dot
       ctx.beginPath();
       ctx.arc(pos.sx, pos.sy, (isSelected ? 6.5 : 5) * dpr, 0, Math.PI * 2);
       ctx.fillStyle = color;
@@ -2068,7 +2241,6 @@
       ctx.strokeStyle = '#ffffff';
       ctx.stroke();
 
-      // Driver Code Tag
       const label = isSelected && rank ? `P${rank} ${code}` : code;
       ctx.font = `700 ${(isSelected ? 9.5 : 8) * dpr}px "JetBrains Mono", monospace`;
       const textW = ctx.measureText(label).width;
@@ -2094,13 +2266,14 @@
     }
 
     function switchDeckTab(tabName) {
-      ['STRATEGY', 'RADIO', 'STANDINGS'].forEach(t => {
+      ['STANDINGS', 'SECTORS', 'STRATEGY', 'RADIO'].forEach(t => {
         const pane = document.getElementById(`pane${t}`);
         if (pane) pane.classList.toggle('active', t === tabName);
       });
+      document.getElementById('dtabStandings').classList.toggle('active', tabName === 'STANDINGS');
+      document.getElementById('dtabSectors').classList.toggle('active', tabName === 'SECTORS');
       document.getElementById('dtabStrategy').classList.toggle('active', tabName === 'STRATEGY');
       document.getElementById('dtabRadio').classList.toggle('active', tabName === 'RADIO');
-      document.getElementById('dtabStandings').classList.toggle('active', tabName === 'STANDINGS');
     }
 
     function renderStrategyTable() {
@@ -2195,50 +2368,90 @@
       }
     }
 
+    // =========================================================================
+    // 2026 STANDINGS WITH POINTS GAP (WDC & WCC) + CLEAN 2026 CALENDAR
+    // =========================================================================
     async function loadStandingsAndSchedule() {
+      // 1. WDC Driver Standings with Points Difference (Gap to P1 & Interval to car ahead)
       try {
         const res = await fetch(`${JOLPICA_BASE}/driverStandings.json`);
         const json = await res.json();
         const lists = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings || [];
-        const box = document.getElementById('wdcStandingsBox');
-        box.innerHTML = lists.slice(0, 15).map(item => `
-          <div class="std-row">
-            <span><b>P${item.position}</b> <span translate="no">${item.Driver.code || item.Driver.familyName}</span> <span style="color:var(--text-dim)">(${item.Constructors?.[0]?.name || ''})</span></span>
-            <span style="color:var(--f1-cyan);font-weight:700;">${item.points} pts</span>
-          </div>
-        `).join('');
+        const tbody = document.getElementById('wdcStandingsBody');
+        const p1Pts = lists.length ? parseFloat(lists[0].points) : 0;
+
+        tbody.innerHTML = lists.map((item, idx) => {
+          const pts = parseFloat(item.points) || 0;
+          const prevPts = idx > 0 ? (parseFloat(lists[idx - 1].points) || 0) : pts;
+          const gapP1 = idx === 0 ? 'LEADER' : `-${p1Pts - pts}`;
+          const gapPrev = idx === 0 ? '–' : `-${prevPts - pts}`;
+
+          return `
+            <tr>
+              <td style="font-weight:700;color:${idx === 0 ? 'var(--f1-yellow)' : 'var(--text-main)'}">P${item.position}</td>
+              <td><b translate="no">${item.Driver.code || item.Driver.familyName}</b> <span style="color:var(--text-sub);font-size:10px;">${item.Driver.familyName}</span></td>
+              <td style="color:var(--text-sub);font-size:10px;">${item.Constructors?.[0]?.name || ''}</td>
+              <td style="text-align:right;color:var(--text-sub)">${item.wins}</td>
+              <td style="text-align:right;color:var(--f1-cyan);font-weight:700;">${item.points}</td>
+              <td style="text-align:right;color:${idx === 0 ? 'var(--f1-yellow)' : 'var(--f1-amber)'};font-weight:600;">${gapP1}</td>
+              <td style="text-align:right;color:var(--text-sub);">${gapPrev}</td>
+            </tr>
+          `;
+        }).join('');
       } catch (e) {
-        document.getElementById('wdcStandingsBox').textContent = 'Không thể tải BXH WDC: ' + e.message;
+        document.getElementById('wdcStandingsBody').innerHTML = `<tr><td colspan="7">Lỗi tải BXH WDC: ${e.message}</td></tr>`;
       }
 
+      // 2. WCC Constructor Standings with Points Difference (Gap to P1 & Interval to team ahead)
       try {
         const res = await fetch(`${JOLPICA_BASE}/constructorStandings.json`);
         const json = await res.json();
         const lists = json?.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings || [];
-        const box = document.getElementById('wccStandingsBox');
-        box.innerHTML = lists.map(item => `
-          <div class="std-row">
-            <span><b>P${item.position}</b> ${item.Constructor.name}</span>
-            <span style="color:var(--f1-yellow);font-weight:700;">${item.points} pts</span>
-          </div>
-        `).join('');
+        const tbody = document.getElementById('wccStandingsBody');
+        const p1Pts = lists.length ? parseFloat(lists[0].points) : 0;
+
+        tbody.innerHTML = lists.map((item, idx) => {
+          const pts = parseFloat(item.points) || 0;
+          const prevPts = idx > 0 ? (parseFloat(lists[idx - 1].points) || 0) : pts;
+          const gapP1 = idx === 0 ? 'LEADER' : `-${p1Pts - pts}`;
+          const gapPrev = idx === 0 ? '–' : `-${prevPts - pts}`;
+
+          return `
+            <tr>
+              <td style="font-weight:700;color:${idx === 0 ? 'var(--f1-yellow)' : 'var(--text-main)'}">P${item.position}</td>
+              <td style="font-weight:700;">${item.Constructor.name}</td>
+              <td style="text-align:right;color:var(--text-sub)">${item.wins}</td>
+              <td style="text-align:right;color:var(--f1-yellow);font-weight:700;">${item.points}</td>
+              <td style="text-align:right;color:${idx === 0 ? 'var(--f1-yellow)' : 'var(--f1-amber)'};font-weight:600;">${gapP1}</td>
+              <td style="text-align:right;color:var(--text-sub);">${gapPrev}</td>
+            </tr>
+          `;
+        }).join('');
       } catch (e) {
-        document.getElementById('wccStandingsBox').textContent = 'Không thể tải BXH WCC: ' + e.message;
+        document.getElementById('wccStandingsBody').innerHTML = `<tr><td colspan="6">Lỗi tải BXH WCC: ${e.message}</td></tr>`;
       }
 
+      // 3. 2026 F1 Schedule (Filter out Pre-Season Testing or label properly)
       try {
         const res = await fetch(SCHEDULE_2026_URL);
         const rounds = await res.json();
-        const box = document.getElementById('f1ScheduleBox');
-        const arr = Array.isArray(rounds) ? rounds : Object.values(rounds);
-        box.innerHTML = arr.slice(0, 24).map((r, i) => `
-          <div class="std-row">
-            <span><b>R${r.round || i + 1}</b> ${r.country || r.name || r.event_name || 'GP'}</span>
-            <span style="color:var(--text-sub)">${(r.sessions?.race || r.date || '').slice(0, 10)}</span>
-          </div>
-        `).join('');
+        const tbody = document.getElementById('f1ScheduleBody');
+        const arr = (Array.isArray(rounds) ? rounds : Object.values(rounds))
+          .filter(r => !/testing/i.test(r.name || r.event_name || r.country || ''));
+
+        tbody.innerHTML = arr.map((r, i) => {
+          const roundNum = r.round || (i + 1);
+          const dateStr = (r.sessions?.gp || r.sessions?.race || r.date || '').slice(0, 10);
+          return `
+            <tr>
+              <td style="font-weight:700;color:var(--f1-green)">R${roundNum}</td>
+              <td style="font-weight:600;">${r.country || r.name || r.event_name || 'Grand Prix'}</td>
+              <td style="text-align:right;color:var(--text-sub)">${dateStr}</td>
+            </tr>
+          `;
+        }).join('');
       } catch (e) {
-        document.getElementById('f1ScheduleBox').textContent = 'Không thể tải lịch 2026: ' + e.message;
+        document.getElementById('f1ScheduleBody').innerHTML = `<tr><td colspan="3">Lỗi tải lịch 2026: ${e.message}</td></tr>`;
       }
     }
   </script>
