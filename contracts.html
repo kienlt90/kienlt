@@ -239,20 +239,6 @@
       color: var(--vnpt-blue);
     }
 
-    /* Cards */
-    .dash-card {
-      background: #ffffff;
-      border: 1px solid var(--color-surface-border);
-      border-radius: 10px;
-      box-shadow: var(--shadow-sm);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .dash-card:hover {
-      border-color: #b8cfe6;
-      box-shadow: var(--shadow-md);
-    }
-
     /* KPI Summary Cards Grid */
     .stats-grid {
       display: grid;
@@ -299,7 +285,7 @@
     }
 
     .kpi-total::before { background: var(--vnpt-blue); }
-    .kpi-signed::before { background: #15803d; }
+    .kpi-signed::before { background: #0066b3; }
     .kpi-pending::before { background: #f59e0b; }
     .kpi-warning::before { background: #c2410c; }
 
@@ -373,7 +359,6 @@
       gap: 0.5rem;
     }
 
-    /* Segmented switch for chart */
     .chart-toggle-group {
       display: inline-flex;
       background: #f1f5f9;
@@ -408,7 +393,6 @@
       min-height: 0;
     }
 
-    /* Custom Doughnut Legend */
     .donut-legend-wrap {
       display: flex;
       justify-content: center;
@@ -519,7 +503,7 @@
       outline: none;
     }
 
-    /* Premium Data Table */
+    /* Table */
     .table-responsive {
       width: 100%;
       overflow-x: auto;
@@ -627,7 +611,6 @@
       font-family: monospace;
     }
 
-    /* Region Pill */
     .region-pill {
       display: inline-flex;
       align-items: center;
@@ -649,22 +632,23 @@
       color: var(--vnpt-blue);
     }
 
-    /* Status Pills */
+    /* Status Pills: Strictly "Đã ký" & "Chưa Ký" */
     .status-pill {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
       padding: 0.25rem 0.65rem;
       border-radius: 12px;
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
-      transition: opacity 0.12s;
+      transition: all 0.15s ease;
+      user-select: none;
     }
 
     .status-pill:hover {
-      opacity: 0.85;
+      transform: scale(1.04);
     }
 
     .status-signed {
@@ -679,19 +663,6 @@
       border: 1px solid #fef08a;
     }
 
-    .status-almost {
-      background-color: #f0fdf4;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
-    }
-
-    .status-draft {
-      background-color: #f8fafc;
-      color: #64748b;
-      border: 1px solid #cbd5e1;
-    }
-
-    /* Expiration Status Badge */
     .exp-badge {
       display: inline-flex;
       align-items: center;
@@ -734,7 +705,7 @@
       padding: 0.75rem 1.25rem;
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.85rem;
       box-shadow: var(--shadow-lg);
       z-index: 100;
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -860,7 +831,6 @@
       gap: 0.65rem;
     }
 
-    /* Form Fields in Modal */
     .form-group {
       display: flex;
       flex-direction: column;
@@ -891,7 +861,6 @@
       outline: none;
     }
 
-    /* Contract Edit Item in Modal */
     .contract-edit-card {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -908,7 +877,6 @@
       margin-bottom: 0.75rem;
     }
 
-    /* Responsive */
     @media (max-width: 1024px) {
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .charts-container { grid-template-columns: 1fr; }
@@ -973,17 +941,17 @@
       <!-- Signed Card -->
       <div class="kpi-card kpi-signed" id="kpi-card-signed" onclick="setKpiFilter('signed')">
         <div class="kpi-header">
-          <span class="kpi-label">Hợp đồng đã Ký số</span>
+          <span class="kpi-label">Hợp đồng Đã ký</span>
           <span class="kpi-icon">✅</span>
         </div>
-        <span class="kpi-value" id="stat-signed-cnt" style="color: #15803d;">48</span>
-        <span class="kpi-sub" id="stat-signed-val" style="color: #15803d;">7.90 tỷ VND (94.1%)</span>
+        <span class="kpi-value" id="stat-signed-cnt" style="color: #0066b3;">48</span>
+        <span class="kpi-sub" id="stat-signed-val" style="color: #0066b3;">7.90 tỷ VND (94.1%)</span>
       </div>
 
       <!-- Pending Card -->
       <div class="kpi-card kpi-pending" id="kpi-card-pending" onclick="setKpiFilter('pending')">
         <div class="kpi-header">
-          <span class="kpi-label">Hợp đồng Chờ Ký</span>
+          <span class="kpi-label">Hợp đồng Chưa Ký</span>
           <span class="kpi-icon">⏳</span>
         </div>
         <span class="kpi-value" id="stat-pending-cnt" style="color: #b45309;">3</span>
@@ -1001,7 +969,7 @@
       </div>
     </section>
 
-    <!-- Executive Analytics Charts (Clean, Sleek, Professional) -->
+    <!-- Executive Analytics Charts -->
     <section class="charts-container" aria-label="Biểu đồ phân tích">
       
       <!-- Chart 1: Revenue by Region / Top 10 Units -->
@@ -1025,14 +993,14 @@
         </div>
       </div>
 
-      <!-- Chart 2: Status & Progress Donut -->
+      <!-- Chart 2: Status Donut -->
       <div class="chart-card">
         <div class="chart-card-header">
           <div class="chart-card-title">
             <span>🎯</span>
-            <span>Tỷ lệ Ký số &amp; Thực hiện</span>
+            <span>Tỷ lệ Hợp đồng Đã ký / Chưa Ký</span>
           </div>
-          <span style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: 600;">VNPT SmartCA / PKI</span>
+          <span style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: 600;">Tiến độ hoàn thiện HĐ</span>
         </div>
         <div class="chart-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
           <div style="position: relative; width: 190px; height: 190px;">
@@ -1042,15 +1010,15 @@
               <span style="font-size: 0.72rem; font-weight: 600; color: var(--color-text-muted);">Hợp đồng</span>
             </div>
           </div>
-          <!-- Custom Legend Cards -->
+          <!-- Legend Cards -->
           <div class="donut-legend-wrap">
             <div class="donut-legend-item" onclick="setKpiFilter('signed')" title="Xem danh sách hợp đồng đã ký">
               <span class="donut-dot" style="background: var(--vnpt-blue);"></span>
               <span>Đã ký: <strong id="legend-signed-cnt">48</strong> HĐ</span>
             </div>
-            <div class="donut-legend-item" onclick="setKpiFilter('pending')" title="Xem danh sách hợp đồng chờ ký">
+            <div class="donut-legend-item" onclick="setKpiFilter('pending')" title="Xem danh sách hợp đồng chưa ký">
               <span class="donut-dot" style="background: #f59e0b;"></span>
-              <span>Chờ ký: <strong id="legend-pending-cnt">3</strong> HĐ</span>
+              <span>Chưa Ký: <strong id="legend-pending-cnt">3</strong> HĐ</span>
             </div>
           </div>
         </div>
@@ -1063,15 +1031,12 @@
       
       <!-- Table Filter & Search Controls -->
       <div class="table-controls-bar">
-        <!-- Search Input -->
         <div class="search-input-wrap">
           <span class="search-icon">🔍</span>
           <input type="text" id="unit-search" placeholder="Tìm theo tên đơn vị, số HĐ, MST, AM..." oninput="handleSearch(this.value)">
         </div>
 
-        <!-- Filters Cluster -->
         <div class="filters-cluster">
-          <!-- Region Filter -->
           <select id="filter-region" class="form-select" onchange="handleFiltersChange()">
             <option value="all">📍 Tất cả Địa bàn (7 đơn vị)</option>
             <option value="Bến Cát">Bến Cát</option>
@@ -1083,7 +1048,6 @@
             <option value="Thuận An">Thuận An</option>
           </select>
 
-          <!-- Year Filter -->
           <select id="filter-year" class="form-select" onchange="handleFiltersChange()">
             <option value="all">📅 Tất cả các năm</option>
             <option value="2026" selected>Năm 2026</option>
@@ -1092,15 +1056,13 @@
             <option value="2025">Năm 2025</option>
           </select>
 
-          <!-- Status Filter -->
           <select id="filter-status" class="form-select" onchange="handleFiltersChange()">
             <option value="all">⚡ Tất cả trạng thái</option>
-            <option value="signed">Đã ký số</option>
-            <option value="pending">Chờ ký số</option>
+            <option value="signed">Đã ký</option>
+            <option value="pending">Chưa Ký</option>
             <option value="expiring">Sắp hết hạn / Cần gia hạn</option>
           </select>
 
-          <!-- Sort Select -->
           <select id="sort-by" class="form-select" onchange="handleFiltersChange()">
             <option value="khuVuc">Sắp xếp: Khu vực</option>
             <option value="valDesc">Doanh thu: Cao → Thấp</option>
@@ -1109,7 +1071,6 @@
             <option value="endDate">Hạn hợp đồng: Gần nhất</option>
           </select>
 
-          <!-- Reset Filter Button -->
           <button type="button" class="btn-secondary" onclick="resetAllFilters()" title="Đặt lại bộ lọc">
             🔄 Đặt lại
           </button>
@@ -1131,9 +1092,9 @@
               <th class="sortable" onclick="sortByHeader('khuVuc')" style="width: 140px; text-align: center;">
                 Địa bàn <span class="sort-indicator" id="sort-ind-khuVuc">↕</span>
               </th>
-              <th style="width: 280px;">Số HĐ &amp; Gói dịch vụ</th>
-              <th class="sortable" onclick="sortByHeader('status')" style="width: 130px; text-align: center;">
-                Trạng thái ký <span class="sort-indicator" id="sort-ind-status">↕</span>
+              <th style="width: 290px;">Số HĐ &amp; Gói dịch vụ</th>
+              <th class="sortable" onclick="sortByHeader('status')" style="width: 120px; text-align: center;">
+                Trạng thái <span class="sort-indicator" id="sort-ind-status">↕</span>
               </th>
               <th class="sortable" onclick="sortByHeader('valDesc')" style="width: 160px; text-align: right;">
                 Giá trị hợp đồng <span class="sort-indicator" id="sort-ind-val">↕</span>
@@ -1141,7 +1102,7 @@
               <th class="sortable" onclick="sortByHeader('endDate')" style="width: 140px; text-align: center;">
                 Thời hạn <span class="sort-indicator" id="sort-ind-date">↕</span>
               </th>
-              <th style="width: 160px; text-align: center;">Thao tác nhanh</th>
+              <th style="width: 140px; text-align: center;">Thao tác</th>
             </tr>
           </thead>
           <tbody id="units-tbody">
@@ -1167,14 +1128,17 @@
     <span style="font-size: 0.85rem; font-weight: 700; color: var(--vnpt-blue-dark);" id="batch-selected-count">
       Đã chọn 0 đơn vị
     </span>
-    <button type="button" class="btn-primary" onclick="batchSignSelected()">
-      ✍️ Ký số hàng loạt
+    <button type="button" class="btn-primary" onclick="batchMarkStatus('signed')" style="background-color: #0066b3;">
+      ✅ Đánh dấu Đã ký
+    </button>
+    <button type="button" class="btn-secondary" onclick="batchMarkStatus('pending')" style="color: #b45309;">
+      ⏳ Đánh dấu Chưa Ký
     </button>
     <button type="button" class="btn-secondary" onclick="batchChangeRegion()">
       📍 Đổi địa bàn
     </button>
     <button type="button" class="btn-secondary" onclick="exportSelected()">
-      📥 Xuất Excel đã chọn
+      📥 Xuất Excel
     </button>
     <button type="button" class="btn-icon" onclick="clearBatchSelection()" title="Bỏ chọn">
       ✕
@@ -1237,14 +1201,13 @@
         <div>
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
             <h4 style="font-size: 0.84rem; font-weight: 700; color: var(--vnpt-blue-dark); text-transform: uppercase; letter-spacing: 0.02em;">
-              📑 Danh sách Hợp đồng / Văn bản ({count})
+              📑 Danh sách Hợp đồng / Văn bản
             </h4>
             <button type="button" class="btn-primary" onclick="addNewContractToCurrentUnit()" style="padding: 0.35rem 0.7rem; font-size: 0.76rem;">
               ➕ Thêm hợp đồng
             </button>
           </div>
 
-          <!-- Dynamic Contracts Editor Container -->
           <div id="modal-contracts-list">
             <!-- Rendered dynamically -->
           </div>
@@ -1283,62 +1246,7 @@
   </div>
 
   <!-- =========================================================================
-       MODAL 2: Digital Signing Modal (VNPT SmartCA / Token PKI)
-       ========================================================================= -->
-  <div class="modal-overlay" id="sign-modal" onclick="handleModalOverlayClick(event, 'sign-modal')">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>✍️ Ký số Văn bản Hợp đồng</h3>
-        <button type="button" class="btn-icon" onclick="closeSignModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        <p style="font-size: 0.82rem; color: var(--color-text-secondary); margin-bottom: 1rem;">
-          Đơn vị: <strong id="sign-modal-unit-name" style="color: var(--vnpt-blue);">...</strong><br>
-          Số HĐ: <span id="sign-modal-contract-code" style="font-family: monospace; font-weight: 600;">...</span>
-        </p>
-
-        <!-- Method Selection Step -->
-        <div id="sign-step-method">
-          <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Chọn phương thức ký số CA:</label>
-          <div class="signing-method-btn" onclick="proceedToPinInput('token')" style="border: 1px solid var(--color-surface-border); padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.65rem; cursor: pointer;">
-            <div style="font-size: 1.5rem;">🔑</div>
-            <div>
-              <div style="font-weight: 700; font-size: 0.84rem; color: var(--vnpt-blue-dark);">VNPT-CA USB Token (PKI)</div>
-              <div style="font-size: 0.74rem; color: var(--color-text-muted);">Chứng thư số ký qua thiết bị phần cứng cắm máy</div>
-            </div>
-          </div>
-          <div class="signing-method-btn" onclick="proceedToPinInput('smartca')" style="border: 1px solid var(--color-surface-border); padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer;">
-            <div style="font-size: 1.5rem;">📱</div>
-            <div>
-              <div style="font-weight: 700; font-size: 0.84rem; color: var(--vnpt-blue-dark);">VNPT SmartCA (Ký số từ xa)</div>
-              <div style="font-size: 0.74rem; color: var(--color-text-muted);">Xác thực ký qua ứng dụng VNPT SmartCA trên di động</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PIN Step -->
-        <div id="sign-step-pin" class="hidden">
-          <label class="form-label" id="pin-prompt-label">Nhập mã PIN Token (Mặc định: 123456):</label>
-          <input type="password" id="sign-pin-input" class="form-input" style="letter-spacing: 0.3rem; text-align: center; font-size: 1.2rem; font-weight: 800; margin-top: 0.5rem;" maxlength="8" placeholder="••••••">
-          <div style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: flex-end;">
-            <button type="button" class="btn-secondary" onclick="backToSignMethod()">Quay lại</button>
-            <button type="button" class="btn-primary" onclick="executeDigitalSign()">Xác nhận Ký số</button>
-          </div>
-        </div>
-
-        <!-- Progress Spinner Step -->
-        <div id="sign-step-progress" class="hidden" style="text-align: center; padding: 2rem 1rem;">
-          <div style="width: 44px; height: 44px; border: 3px solid var(--vnpt-soft-border); border-top-color: var(--vnpt-blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem;"></div>
-          <div style="font-weight: 700; color: var(--vnpt-blue-dark); font-size: 0.9rem;" id="sign-progress-text">Đang kết nối hệ thống chứng thực VNPT CA...</div>
-          <p style="font-size: 0.76rem; color: var(--color-text-muted); margin-top: 0.35rem;">Vui lòng giữ kết nối internet ổn định</p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       MODAL 3: PDF Document Viewer & Stamp Simulator
+       MODAL 2: PDF Document Viewer
        ========================================================================= -->
   <div class="modal-overlay" id="pdf-modal" onclick="handleModalOverlayClick(event, 'pdf-modal')">
     <div class="modal-card modal-lg">
@@ -1349,7 +1257,7 @@
       <div class="modal-body" style="background: #525659; padding: 1.5rem; display: flex; justify-content: center;">
         
         <!-- Simulated Paper Sheet -->
-        <div style="background: #ffffff; width: 100%; max-width: 680px; min-height: 520px; padding: 2.5rem; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-family: 'Times New Roman', serif; font-size: 1rem; line-height: 1.6; color: #111827;">
+        <div style="background: #ffffff; width: 100%; max-width: 680px; min-height: 480px; padding: 2.5rem; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-family: 'Times New Roman', serif; font-size: 1rem; line-height: 1.6; color: #111827;">
           
           <div style="text-align: center; margin-bottom: 1.5rem;">
             <p style="font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin: 0;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
@@ -1374,16 +1282,15 @@
             <p><strong>Thời hạn thực hiện:</strong> Từ ngày <span id="pdf-doc-start">01/01/2026</span> đến ngày <span id="pdf-doc-end">31/12/2026</span></p>
           </div>
 
-          <!-- Digital Stamp Stamp Box -->
+          <!-- Status Box -->
           <div id="pdf-stamp-box" style="margin-top: 2rem; display: flex; justify-content: flex-end;">
-            <div style="border: 2px dashed #16a34a; background: #f0fdf4; border-radius: 8px; padding: 0.75rem 1rem; width: 260px; font-family: var(--font-primary);">
-              <div style="display: flex; align-items: center; gap: 0.4rem; color: #16a34a; font-weight: 700; font-size: 0.8rem; margin-bottom: 0.2rem;">
-                <span>🛡️</span>
-                <span>CHỨNG THƯ SỐ ĐÃ KÝ</span>
+            <div id="pdf-stamp-content" style="border: 2px dashed #0066b3; background: #eff6ff; border-radius: 8px; padding: 0.75rem 1rem; width: 250px; font-family: var(--font-primary);">
+              <div style="display: flex; align-items: center; gap: 0.4rem; color: #0066b3; font-weight: 700; font-size: 0.82rem; margin-bottom: 0.2rem;">
+                <span id="pdf-stamp-icon">✅</span>
+                <span id="pdf-stamp-title">HỢP ĐỒNG ĐÃ KÝ</span>
               </div>
-              <div style="font-size: 0.72rem; color: #1f2937;">Ký bởi: <strong>VNPT Bình Dương</strong></div>
-              <div style="font-size: 0.68rem; color: #4b5563;" id="pdf-stamp-time">Thời gian: 01/01/2026 09:00:00</div>
-              <div style="font-size: 0.66rem; color: #6b7280; font-family: monospace;">Mã CA: GP2-1002517</div>
+              <div style="font-size: 0.72rem; color: #1f2937;">Đơn vị: <strong>VNPT Bình Dương</strong></div>
+              <div style="font-size: 0.68rem; color: #4b5563;" id="pdf-stamp-status-sub">Hợp đồng đã có hiệu lực chính thức</div>
             </div>
           </div>
 
@@ -1393,14 +1300,14 @@
       <div class="modal-footer">
         <button type="button" class="btn-secondary" onclick="closePdfModal()">Đóng</button>
         <button type="button" class="btn-primary" onclick="downloadSimulatedPdf()">
-          📥 Tải bản PDF chính thức
+          📥 Tải bản PDF
         </button>
       </div>
     </div>
   </div>
 
   <!-- =========================================================================
-       MODAL 4: Add New Unit / Contract Modal
+       MODAL 3: Add New Unit / Contract Modal
        ========================================================================= -->
   <div class="modal-overlay" id="add-modal" onclick="handleModalOverlayClick(event, 'add-modal')">
     <div class="modal-card">
@@ -1445,10 +1352,10 @@
             <input type="number" id="add-contract-val" class="form-input" placeholder="25200000">
           </div>
           <div class="form-group">
-            <label class="form-label">Trạng thái ký</label>
+            <label class="form-label">Trạng thái</label>
             <select id="add-contract-status" class="form-select" style="width: 100%;">
-              <option value="signed">Đã ký số</option>
-              <option value="pending">Chờ ký</option>
+              <option value="signed">Đã ký</option>
+              <option value="pending">Chưa Ký</option>
             </select>
           </div>
         </div>
@@ -1472,15 +1379,8 @@
     </div>
   </div>
 
-  <!-- Keyframe animation for spinner -->
-  <style>
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-  </style>
-
   <!-- =========================================================================
-       JAVASCRIPT ENGINE (ONPAGE ARCHITECTURE)
+       JAVASCRIPT ENGINE (ONPAGE ARCHITECTURE - NO SIGNING CODE)
        ========================================================================= -->
   <script>
     // Database of 50 units and 51 contracts from DS_KHACHHANG (1).xlsx
@@ -3160,7 +3060,7 @@
 ];
 
     // Database version control
-    const CURRENT_DB_VERSION = '2026_10_28_ds_khachhang_v4_onepage';
+    const CURRENT_DB_VERSION = '2026_10_28_ds_khachhang_v5_simple_status';
     const storedVersion = localStorage.getItem('vnpt_his_units_version');
     const storedUnits = localStorage.getItem('vnpt_his_units');
 
@@ -3196,7 +3096,6 @@
     let currentSortOrder = 'asc'; // 'asc' or 'desc'
     let selectedUnitIds = new Set();
     let editingUnitId = null;
-    let signingTarget = { unitId: null, contractId: null, method: 'token' };
 
     // Chart instances
     let revenueChartInstance = null;
@@ -3254,7 +3153,6 @@
       const end = parseVnDate(endDateStr);
       if (!end) return { type: 'unknown', text: 'Chưa có hạn', days: 9999 };
       
-      // Reference date: current date 2026-10-28
       const now = new Date(2026, 9, 28);
       const diffMs = end.getTime() - now.getTime();
       const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
@@ -3279,7 +3177,6 @@
       return worst;
     }
 
-    // Filter Logic for a Unit
     function isContractActiveInYear(c, selectedYear) {
       if (selectedYear === 'all') return true;
       const y = parseInt(selectedYear, 10);
@@ -3303,7 +3200,6 @@
       const q = currentSearchQuery.toLowerCase().trim();
 
       return units.filter(u => {
-        // Search query
         if (q) {
           const matchName = u.name.toLowerCase().includes(q);
           const matchMst = (u.mst || '').toLowerCase().includes(q);
@@ -3312,18 +3208,16 @@
           if (!matchName && !matchMst && !matchAm && !matchCode) return false;
         }
 
-        // Region filter
         if (regionFilter !== 'all') {
           if (u.khuVuc !== regionFilter) return false;
         }
 
-        // Year filter: unit must have at least 1 contract active in this year
         if (yearFilter !== 'all') {
           const hasYear = u.contracts.some(c => isContractActiveInYear(c, yearFilter));
           if (!hasYear) return false;
         }
 
-        // KPI card filter
+        // KPI card filter: Strictly "signed" (Đã ký) or "pending" (Chưa Ký)
         if (currentKpiFilter === 'signed') {
           const isSigned = u.contracts.length > 0 && u.contracts.every(c => c.status === 'signed');
           if (!isSigned) return false;
@@ -3348,7 +3242,6 @@
       });
     }
 
-    // Sorting
     function sortUnits(list) {
       const sortVal = document.getElementById('sort-by')?.value || currentSortColumn;
       const sorted = [...list];
@@ -3448,7 +3341,6 @@
 
       document.getElementById('stat-warning-cnt').textContent = warningCnt;
 
-      // Update Donut Legend counts
       const legSigned = document.getElementById('legend-signed-cnt');
       if (legSigned) legSigned.textContent = signedCnt;
       const legPending = document.getElementById('legend-pending-cnt');
@@ -3477,7 +3369,6 @@
         const tr = document.createElement('tr');
         tr.className = selectedUnitIds.has(unit.id) ? 'selected-row' : '';
         
-        // Calculate unit sums
         const unitTotalVal = unit.contracts.reduce((acc, c) => acc + parseNumericValue(c.value), 0);
         const signedContracts = unit.contracts.filter(c => c.status === 'signed').length;
         const totalContracts = unit.contracts.length;
@@ -3488,8 +3379,12 @@
         const contractCode = firstContract.code || 'Chưa nhập HĐ';
         const packageName = firstContract.package || 'Hệ thống Y tế số';
 
+        // Strictly "Đã ký" or "Chưa Ký"
         let statusClass = isAllSigned ? 'status-signed' : 'status-pending';
-        let statusText = isAllSigned ? `${signedContracts}/${totalContracts} Đã ký` : `${signedContracts}/${totalContracts} Chờ ký`;
+        let statusText = isAllSigned ? 'Đã ký' : 'Chưa Ký';
+        if (totalContracts > 1) {
+          statusText = `${signedContracts}/${totalContracts} ${isAllSigned ? 'Đã ký' : 'Chưa Ký'}`;
+        }
 
         let expBadgeClass = 'exp-active';
         if (expSummary.type === 'warning') expBadgeClass = 'exp-warning';
@@ -3526,7 +3421,7 @@
             </div>
           </td>
           <td style="text-align: center;" onclick="event.stopPropagation()">
-            <span class="status-pill ${statusClass}" onclick="quickToggleStatus('${unit.id}')" title="Bấm để chuyển trạng thái">
+            <span class="status-pill ${statusClass}" onclick="quickToggleStatus('${unit.id}')" title="Bấm để chuyển nhanh giữa Đã ký và Chưa Ký">
               ${statusText}
             </span>
           </td>
@@ -3542,21 +3437,17 @@
             </div>
           </td>
           <td style="text-align: center;" onclick="event.stopPropagation()">
-            <div style="display: flex; gap: 0.35rem; justify-content: center;">
-              <button type="button" class="btn-primary" onclick="openAdjustModal('${unit.id}')" style="padding: 0.35rem 0.65rem; font-size: 0.76rem;" title="Xem chi tiết và chỉnh sửa hợp đồng">
+            <div style="display: flex; gap: 0.4rem; justify-content: center;">
+              <button type="button" class="btn-primary" onclick="openAdjustModal('${unit.id}')" style="padding: 0.35rem 0.65rem; font-size: 0.76rem;" title="Xem chi tiết và chỉnh sửa">
                 ⚙️ Điều chỉnh
               </button>
-              <button type="button" class="btn-secondary" onclick="openSignModal('${unit.id}', '${firstContract.id}')" style="padding: 0.35rem 0.55rem; font-size: 0.76rem;" title="Ký số CA">
-                ✍️
-              </button>
-              <button type="button" class="btn-icon" onclick="openPdfModal('${unit.id}', '${firstContract.id}')" title="Xem bản PDF">
+              <button type="button" class="btn-icon" onclick="openPdfModal('${unit.id}', '${firstContract.id}')" title="Xem bản hợp đồng">
                 📄
               </button>
             </div>
           </td>
         `;
 
-        // Click row opens modal
         tr.onclick = () => openAdjustModal(unit.id);
         tbody.appendChild(tr);
       });
@@ -3565,7 +3456,7 @@
     }
 
     // =========================================================================
-    // CHARTS RENDERING (Sleek, Clean, Executive Quality)
+    // CHARTS RENDERING
     // =========================================================================
     function setChart1Mode(mode) {
       currentChart1Mode = mode;
@@ -3585,7 +3476,6 @@
       const yearFilter = document.getElementById('filter-year')?.value || 'all';
 
       if (currentChart1Mode === 'region') {
-        // Sum revenue by 7 regions
         const regions = ['Bến Cát', 'Dầu Tiếng', 'Dĩ An', 'Phú Giáo', 'Tân Uyên', 'Thủ Dầu Một', 'Thuận An'];
         const regionVals = regions.map(reg => {
           let sum = 0;
@@ -3643,7 +3533,6 @@
         });
 
       } else {
-        // Top 10 Units by Revenue
         const unitSums = units.map(u => {
           let sum = 0;
           u.contracts.forEach(c => {
@@ -3724,7 +3613,7 @@
       statusChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Đã ký số', 'Chờ ký số'],
+          labels: ['Đã ký', 'Chưa Ký'],
           datasets: [{
             data: [signed, pending],
             backgroundColor: ['#0066b3', '#f59e0b'],
@@ -3778,7 +3667,7 @@
       if (filterType === 'expiring') document.getElementById('kpi-card-expiring')?.classList.add('active');
 
       updateTable();
-      showToast(`Đã lọc danh sách theo: ${filterType === 'all' ? 'Tất cả' : filterType === 'signed' ? 'Đã ký số' : filterType === 'pending' ? 'Chờ ký' : 'Cảnh báo hạn'}`);
+      showToast(`Đã lọc danh sách theo: ${filterType === 'all' ? 'Tất cả' : filterType === 'signed' ? 'Đã ký' : filterType === 'pending' ? 'Chưa Ký' : 'Cảnh báo hạn'}`);
     }
 
     function resetAllFilters() {
@@ -3800,7 +3689,7 @@
     }
 
     // =========================================================================
-    // INLINE QUICK ADJUSTMENTS (Thao tác cực nhanh ngay trên bảng)
+    // QUICK ACTIONS DIRECTLY ON TABLE
     // =========================================================================
     function quickEditRegion(unitId) {
       const unit = units.find(u => u.id === unitId);
@@ -3811,31 +3700,27 @@
       unit.khuVuc = regions[nextIdx];
       saveUnitsToStorage();
       updateAllViews();
-      showToast(`Đã chuyển địa bàn của "${unit.name}" thành: ${unit.khuVuc}`, 'success');
+      showToast(`Đã chuyển địa bàn "${unit.name}" thành: ${unit.khuVuc}`, 'success');
     }
 
     function quickToggleStatus(unitId) {
       const unit = units.find(u => u.id === unitId);
       if (!unit || unit.contracts.length === 0) return;
+      
       const allSigned = unit.contracts.every(c => c.status === 'signed');
       const newStatus = allSigned ? 'pending' : 'signed';
+      
       unit.contracts.forEach(c => {
         c.status = newStatus;
-        c.ms1Done = newStatus === 'signed';
-        c.ms2Done = newStatus === 'signed';
-        c.ms3Done = newStatus === 'signed';
-        if (newStatus === 'signed') {
-          c.signedBy = 'VNPT Bình Dương (Mã CA: GP2-1002517)';
-          c.signedTime = '28/10/2026 10:30:00';
-        }
       });
+      
       saveUnitsToStorage();
       updateAllViews();
-      showToast(`Đã cập nhật trạng thái của "${unit.name}" thành: ${newStatus === 'signed' ? 'Đã ký số' : 'Chờ ký'}`, 'success');
+      showToast(`Đã chuyển "${unit.name}" sang trạng thái: ${newStatus === 'signed' ? 'Đã ký' : 'Chưa Ký'}`, 'success');
     }
 
     // =========================================================================
-    // MODAL 1: UNIFIED ADJUSTMENT POPUP (Popup Điều chỉnh)
+    // MODAL 1: UNIFIED ADJUSTMENT POPUP
     // =========================================================================
     function openAdjustModal(unitId) {
       editingUnitId = unitId;
@@ -3854,14 +3739,12 @@
       document.getElementById('modal-input-am').value = unit.am || unit.contracts[0]?.am || '';
       document.getElementById('modal-input-cds').value = unit.contracts[0]?.cdsCode || '';
 
-      // Milestones
       const c0 = unit.contracts[0] || {};
       document.getElementById('modal-ms1').checked = !!c0.ms1Done;
       document.getElementById('modal-ms2').checked = !!c0.ms2Done;
       document.getElementById('modal-ms3').checked = !!c0.ms3Done;
 
       renderModalContractsList(unit);
-
       document.getElementById('adjust-unit-modal').classList.add('active');
     }
 
@@ -3878,7 +3761,6 @@
         const card = document.createElement('div');
         card.className = 'contract-edit-card';
 
-        // Convert DD/MM/YYYY to YYYY-MM-DD for date input
         const toInputDate = (dStr) => {
           if (!dStr) return '';
           const p = dStr.split('/');
@@ -3891,11 +3773,8 @@
               Hợp đồng #${idx + 1}: <span style="font-family: monospace;">${c.code || 'Chưa nhập số HĐ'}</span>
             </span>
             <div style="display: flex; gap: 0.35rem;">
-              <button type="button" class="btn-secondary" onclick="openSignModal('${unit.id}', '${c.id}')" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">
-                ✍️ Ký số
-              </button>
               <button type="button" class="btn-secondary" onclick="openPdfModal('${unit.id}', '${c.id}')" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">
-                📄 Xem PDF
+                📄 Xem chi tiết HĐ
               </button>
               ${unit.contracts.length > 1 ? `
                 <button type="button" class="btn-icon" onclick="deleteContractFromUnit('${c.id}')" style="color: var(--color-danger);" title="Xóa hợp đồng này">
@@ -3930,11 +3809,10 @@
               <input type="date" class="form-input c-input-end" data-id="${c.id}" value="${toInputDate(c.endDate)}">
             </div>
             <div>
-              <label class="form-label">Trạng thái ký</label>
+              <label class="form-label">Trạng thái HĐ</label>
               <select class="form-select c-input-status" data-id="${c.id}" style="width: 100%;">
-                <option value="signed" ${c.status === 'signed' ? 'selected' : ''}>Đã ký số</option>
-                <option value="pending" ${c.status === 'pending' ? 'selected' : ''}>Chờ ký</option>
-                <option value="almost_signed" ${c.status === 'almost_signed' ? 'selected' : ''}>Sắp ký HĐ</option>
+                <option value="signed" ${c.status === 'signed' ? 'selected' : ''}>Đã ký</option>
+                <option value="pending" ${c.status === 'pending' ? 'selected' : ''}>Chưa Ký</option>
               </select>
             </div>
           </div>
@@ -3972,8 +3850,6 @@
         ms1Done: false,
         ms2Done: false,
         ms3Done: false,
-        signedBy: '',
-        signedTime: '',
         salesUnit: 'VNPT ' + unit.khuVuc,
         am: unit.am || '',
         tpm: 'Lê Trung Kiên',
@@ -3997,7 +3873,6 @@
       const unit = units.find(u => u.id === editingUnitId);
       if (!unit) return;
 
-      // Update General fields
       unit.mst = document.getElementById('modal-input-mst').value.trim();
       unit.am = document.getElementById('modal-input-am').value.trim();
       const salesUnit = document.getElementById('modal-input-sales-unit').value.trim();
@@ -4007,14 +3882,12 @@
       const ms2 = document.getElementById('modal-ms2').checked;
       const ms3 = document.getElementById('modal-ms3').checked;
 
-      // Format date input YYYY-MM-DD -> DD/MM/YYYY
       const fromInputDate = (dVal) => {
         if (!dVal) return '';
         const p = dVal.split('-');
         return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : dVal;
       };
 
-      // Update contracts from DOM inputs
       document.querySelectorAll('.c-input-code').forEach(input => {
         const cid = input.getAttribute('data-id');
         const c = unit.contracts.find(item => item.id === cid);
@@ -4049,10 +3922,10 @@
       });
 
       document.querySelectorAll('.c-input-status').forEach(select => {
-        const cid = input = select.getAttribute('data-id');
+        const cid = select.getAttribute('data-id');
         const c = unit.contracts.find(item => item.id === cid);
         if (c) {
-          c.status = select.value;
+          c.status = select.value === 'signed' ? 'signed' : 'pending';
           c.ms1Done = ms1;
           c.ms2Done = ms2;
           c.ms3Done = ms3;
@@ -4060,95 +3933,17 @@
           c.am = unit.am;
           c.cdsCode = cds;
           c.mst = unit.mst;
-          if (c.status === 'signed' && !c.signedBy) {
-            c.signedBy = 'VNPT Bình Dương (Mã CA: GP2-1002517)';
-            c.signedTime = '28/10/2026 10:30:00';
-          }
         }
       });
 
       saveUnitsToStorage();
       closeAdjustModal();
       updateAllViews();
-      showToast(`Đã lưu toàn bộ thông tin đơn vị "${unit.name}" thành công!`, 'success');
+      showToast(`Đã lưu thay đổi cho đơn vị "${unit.name}" thành công!`, 'success');
     }
 
     // =========================================================================
-    // MODAL 2: DIGITAL SIGNING SIMULATOR
-    // =========================================================================
-    function openSignModal(unitId, contractId) {
-      const unit = units.find(u => u.id === unitId);
-      if (!unit) return;
-      const c = unit.contracts.find(item => item.id === contractId) || unit.contracts[0];
-      if (!c) return;
-
-      signingTarget = { unitId, contractId: c.id, method: 'token' };
-
-      document.getElementById('sign-modal-unit-name').textContent = unit.name;
-      document.getElementById('sign-modal-contract-code').textContent = c.code || 'HĐ-2026';
-
-      // Reset steps
-      document.getElementById('sign-step-method').classList.remove('hidden');
-      document.getElementById('sign-step-pin').classList.add('hidden');
-      document.getElementById('sign-step-progress').classList.add('hidden');
-      document.getElementById('sign-pin-input').value = '';
-
-      document.getElementById('sign-modal').classList.add('active');
-    }
-
-    function closeSignModal() {
-      document.getElementById('sign-modal').classList.remove('active');
-    }
-
-    function proceedToPinInput(method) {
-      signingTarget.method = method;
-      document.getElementById('sign-step-method').classList.add('hidden');
-      document.getElementById('sign-step-pin').classList.remove('hidden');
-      document.getElementById('pin-prompt-label').textContent = method === 'token' 
-        ? 'Nhập mã PIN USB Token VNPT-CA (Mặc định: 123456):' 
-        : 'Nhập mã PIN VNPT SmartCA trên thiết bị:';
-      document.getElementById('sign-pin-input').focus();
-    }
-
-    function backToSignMethod() {
-      document.getElementById('sign-step-pin').classList.add('hidden');
-      document.getElementById('sign-step-method').classList.remove('hidden');
-    }
-
-    function executeDigitalSign() {
-      const pin = document.getElementById('sign-pin-input').value.trim();
-      if (!pin) {
-        alert('Vui lòng nhập mã PIN ký số!');
-        return;
-      }
-
-      document.getElementById('sign-step-pin').classList.add('hidden');
-      document.getElementById('sign-step-progress').classList.remove('hidden');
-
-      setTimeout(() => {
-        const unit = units.find(u => u.id === signingTarget.unitId);
-        if (unit) {
-          const c = unit.contracts.find(item => item.id === signingTarget.contractId);
-          if (c) {
-            c.status = 'signed';
-            c.ms1Done = true;
-            c.ms2Done = true;
-            c.ms3Done = true;
-            c.signedBy = signingTarget.method === 'token' ? 'VNPT Bình Dương (Mã Token: VNPT-PKI-8821)' : 'VNPT Bình Dương (SmartCA GP2-1002517)';
-            c.signedTime = '28/10/2026 10:35:00';
-          }
-        }
-
-        saveUnitsToStorage();
-        closeSignModal();
-        updateAllViews();
-        if (editingUnitId) openAdjustModal(editingUnitId);
-        showToast('Ký số điện tử thành công! Chứng thư số đã được ghim vào văn bản.', 'success');
-      }, 1200);
-    }
-
-    // =========================================================================
-    // MODAL 3: PDF VIEWER & DOWNLOAD
+    // MODAL 2: PDF VIEWER
     // =========================================================================
     function openPdfModal(unitId, contractId) {
       const unit = units.find(u => u.id === unitId);
@@ -4166,12 +3961,26 @@
       document.getElementById('pdf-doc-start').textContent = c.date || '01/01/2026';
       document.getElementById('pdf-doc-end').textContent = c.endDate || '31/12/2026';
 
-      const stampBox = document.getElementById('pdf-stamp-box');
-      if (c.status === 'signed') {
-        stampBox.style.display = 'flex';
-        document.getElementById('pdf-stamp-time').textContent = `Thời gian: ${c.signedTime || '01/01/2026 09:00:00'}`;
+      const isSigned = c.status === 'signed';
+      const content = document.getElementById('pdf-stamp-content');
+      const icon = document.getElementById('pdf-stamp-icon');
+      const title = document.getElementById('pdf-stamp-title');
+      const sub = document.getElementById('pdf-stamp-status-sub');
+
+      if (isSigned) {
+        content.style.borderColor = '#0066b3';
+        content.style.background = '#eff6ff';
+        icon.textContent = '✅';
+        title.textContent = 'HỢP ĐỒNG ĐÃ KÝ';
+        title.style.color = '#0066b3';
+        sub.textContent = 'Hợp đồng đã có đầy đủ hiệu lực thực hiện';
       } else {
-        stampBox.style.display = 'none';
+        content.style.borderColor = '#f59e0b';
+        content.style.background = '#fefce8';
+        icon.textContent = '⏳';
+        title.textContent = 'HỢP ĐỒNG CHƯA KÝ';
+        title.style.color = '#b45309';
+        sub.textContent = 'Đang chờ ký và hoàn thiện thủ tục';
       }
 
       document.getElementById('pdf-modal').classList.add('active');
@@ -4182,14 +3991,14 @@
     }
 
     function downloadSimulatedPdf() {
-      showToast('Đang tạo và tải tệp hợp đồng PDF về máy...', 'info');
+      showToast('Đang tải văn bản hợp đồng về máy...', 'info');
       setTimeout(() => {
-        showToast('Đã tải xuống thành công tệp hợp đồng PDF!', 'success');
-      }, 800);
+        showToast('Đã tải xuống thành công tệp hợp đồng!', 'success');
+      }, 600);
     }
 
     // =========================================================================
-    // MODAL 4: ADD CONTRACT MODAL
+    // MODAL 3: ADD CONTRACT MODAL
     // =========================================================================
     function openAddContractModal() {
       document.getElementById('add-unit-name').value = '';
@@ -4248,8 +4057,6 @@
           ms1Done: status === 'signed',
           ms2Done: status === 'signed',
           ms3Done: status === 'signed',
-          signedBy: status === 'signed' ? 'VNPT Bình Dương (Mã CA: GP2-1002517)' : '',
-          signedTime: status === 'signed' ? '28/10/2026 10:00:00' : '',
           salesUnit: 'VNPT ' + region,
           am: '',
           tpm: 'Lê Trung Kiên',
@@ -4265,7 +4072,7 @@
     }
 
     // =========================================================================
-    // BATCH SELECTION & ACTIONS
+    // BATCH ACTIONS
     // =========================================================================
     function toggleSelectAll(isChecked) {
       const filtered = getFilteredUnits();
@@ -4307,25 +4114,21 @@
       }
     }
 
-    function batchSignSelected() {
+    function batchMarkStatus(newStatus) {
       if (selectedUnitIds.size === 0) return;
-      if (confirm(`Bạn có chắc chắn muốn Ký số điện tử cho toàn bộ ${selectedUnitIds.size} đơn vị đang chọn không?`)) {
+      const label = newStatus === 'signed' ? 'Đã ký' : 'Chưa Ký';
+      if (confirm(`Đánh dấu trạng thái "${label}" cho ${selectedUnitIds.size} đơn vị đang chọn?`)) {
         units.forEach(u => {
           if (selectedUnitIds.has(u.id)) {
             u.contracts.forEach(c => {
-              c.status = 'signed';
-              c.ms1Done = true;
-              c.ms2Done = true;
-              c.ms3Done = true;
-              c.signedBy = 'VNPT Bình Dương (Mã CA: GP2-1002517)';
-              c.signedTime = '28/10/2026 10:40:00';
+              c.status = newStatus;
             });
           }
         });
         saveUnitsToStorage();
         clearBatchSelection();
         updateAllViews();
-        showToast('Ký số hàng loạt thành công!', 'success');
+        showToast(`Đã chuyển ${selectedUnitIds.size} đơn vị sang: ${label}!`, 'success');
       }
     }
 
@@ -4347,11 +4150,11 @@
     }
 
     // =========================================================================
-    // EXPORT TO EXCEL / CSV
+    // EXPORT TO EXCEL
     // =========================================================================
     function exportToExcel() {
       let csv = "\uFEFF"; // UTF-8 BOM
-      csv += "STT,Tên Đơn Vị Thụ Hưởng,Địa Bàn,Mã Số Thuế,Chuyên Viên AM,Phụ Trách TPM,Mã Hợp Đồng,Gói Dịch Vụ,Giá Trị Hợp Đồng (VNĐ),Ngày Hiệu Lực,Ngày Hết Hạn,Trạng Thái Ký\n";
+      csv += "STT,Tên Đơn Vị Thụ Hưởng,Địa Bàn,Mã Số Thuế,Chuyên Viên AM,Phụ Trách TPM,Mã Hợp Đồng,Gói Dịch Vụ,Giá Trị Hợp Đồng (VNĐ),Ngày Hiệu Lực,Ngày Hết Hạn,Trạng Thái\n";
 
       let idx = 1;
       units.forEach(u => {
@@ -4369,7 +4172,7 @@
             parseNumericValue(c.value),
             clean(c.date),
             clean(c.endDate),
-            clean(c.status === 'signed' ? 'Đã ký số' : 'Chờ ký')
+            clean(c.status === 'signed' ? 'Đã ký' : 'Chưa Ký')
           ].join(',') + "\n";
         });
       });
@@ -4382,7 +4185,7 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast('Đã xuất file Excel / CSV dữ liệu hợp đồng thành công!', 'success');
+      showToast('Đã xuất file Excel dữ liệu hợp đồng thành công!', 'success');
     }
 
     function exportSelected() {
@@ -4393,7 +4196,7 @@
       units.forEach(u => {
         if (selectedUnitIds.has(u.id)) {
           u.contracts.forEach(c => {
-            csv += `${idx++},"${u.name}","${u.khuVuc}","${c.code}","${c.package}",${parseNumericValue(c.value)},"${c.status}"\n`;
+            csv += `${idx++},"${u.name}","${u.khuVuc}","${c.code}","${c.package}",${parseNumericValue(c.value)},"${c.status === 'signed' ? 'Đã ký' : 'Chưa Ký'}"\n`;
           });
         }
       });
@@ -4408,7 +4211,6 @@
       showToast('Đã xuất danh sách các đơn vị đã chọn!', 'success');
     }
 
-    // Khôi phục Database từ file gốc
     function resetDatabase() {
       if (confirm('Khôi phục cơ sở dữ liệu hợp đồng về mặc định từ file DS_KHACHHANG (1).xlsx?\nTất cả các chỉnh sửa cục bộ trong trình duyệt sẽ được làm mới.')) {
         localStorage.removeItem('vnpt_his_units');
@@ -4423,7 +4225,6 @@
       }
     }
 
-    // Keyboard ESC closes modals
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
