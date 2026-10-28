@@ -1101,7 +1101,7 @@
         </button>
       </div>
       <div style="font-size: 0.76rem; font-weight: 600; color: var(--color-text-muted); background: #ffffff; padding: 0.4rem 0.85rem; border-radius: 20px; border: 1px solid var(--color-surface-border);">
-        💡 Mô hình phân bổ chuẩn theo thời hạn hợp đồng (IFRS 15 / VAS)
+        💡 Doanh thu HĐ chuẩn hóa theo gói 12 tháng năm 2026 (VD: BV Mỹ Phước 669,6 tr = 55,8 tr/tháng)
       </div>
     </div>
 
@@ -4650,9 +4650,35 @@
     // Mathematical model for linear revenue recognition across contract duration
     function getContractRevenueModel(c) {
       const val = parseNumericValue(c.value);
-      let s = parseVnDate(c.date) || new Date(2026, 0, 1);
-      let e = parseVnDate(c.endDate) || new Date(2026, 11, 31);
+      let s = parseVnDate(c.date);
+      let e = parseVnDate(c.endDate);
+
+      // Check if single-day lump sum contract (e.g. Columbia Asian RIS/PACS)
+      if (s && e && s.getTime() === e.getTime()) {
+        const y = s.getFullYear();
+        const m = s.getMonth() + 1;
+        const monthlyMap = {};
+        monthlyMap[`${y}-${m}`] = val;
+        const yearlyMap = {};
+        yearlyMap[y] = val;
+        return {
+          val,
+          start: s,
+          end: e,
+          totalMonths: 1,
+          monthlyVal: val,
+          monthlyMap,
+          yearlyMap
+        };
+      }
+
+      if (!s) s = new Date(2026, 0, 1);
+      if (!e) e = new Date(2026, 11, 31);
       if (e < s) e = s;
+
+      // Business Rule: Giá trị hợp đồng trong file tính theo chu kỳ 12 tháng của năm 2026!
+      // (Ví dụ BV Mỹ Phước: 669.6 tr là gói 12 tháng năm 2026 -> 55.8 tr/tháng, đủ 12 tháng = 669.6 tr)
+      const monthlyVal = val / 12.0;
 
       const startY = s.getFullYear();
       const startM = s.getMonth() + 1;
@@ -4660,7 +4686,6 @@
       const endM = e.getMonth() + 1;
 
       const totalMonths = Math.max(1, (endY - startY) * 12 + (endM - startM) + 1);
-      const monthlyVal = val / totalMonths;
 
       const monthlyMap = {};
       const yearlyMap = {};
