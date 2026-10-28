@@ -909,7 +909,152 @@
       .table-controls-bar { flex-direction: column; align-items: stretch; }
       .search-input-wrap { max-width: 100%; }
     }
+  
+    /* ==========================================================================
+       REVENUE ALLOCATION & MATRIX STYLES
+       ========================================================================== */
+    .nav-segmented-tabs {
+      display: inline-flex;
+      background: #ffffff;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--color-surface-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-tab-btn {
+      border: none;
+      background: transparent;
+      padding: 0.5rem 1.25rem;
+      font-family: var(--font-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--vnpt-blue);
+      background: var(--vnpt-soft-bg);
+    }
+
+    .nav-tab-btn.active {
+      background: var(--vnpt-blue);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(0, 102, 179, 0.25);
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    .matrix-table thead {
+      background-color: #f8fafc;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .matrix-table th {
+      padding: 0.7rem 0.55rem;
+      font-weight: 700;
+      color: var(--vnpt-blue-dark);
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      border-bottom: 2px solid #cbd5e1;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .matrix-table th.text-left { text-align: left; }
+    .matrix-table th.text-right { text-align: right; }
+
+    .matrix-table td {
+      padding: 0.6rem 0.55rem;
+      border-bottom: 1px solid #edf2f7;
+      vertical-align: middle;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .matrix-table td.text-left { text-align: left; }
+    .matrix-table td.text-right { text-align: right; }
+
+    .matrix-table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .matrix-cell-val {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #eff6ff;
+      color: var(--vnpt-blue);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.73rem;
+      border: 1px solid #bfdbfe;
+    }
+
+    .matrix-total-row {
+      background-color: var(--vnpt-soft-bg) !important;
+      border-top: 2px solid var(--vnpt-blue) !important;
+      font-weight: 800 !important;
+      position: sticky;
+      bottom: 0;
+      z-index: 5;
+    }
+
+    .matrix-total-row td {
+      color: var(--vnpt-blue-dark) !important;
+      padding: 0.75rem 0.55rem !important;
+      font-size: 0.8rem !important;
+    }
+
+    .sticky-col-1 {
+      position: sticky;
+      left: 0;
+      background: #ffffff;
+      z-index: 2;
+      text-align: center !important;
+      width: 40px;
+    }
+
+    .sticky-col-2 {
+      position: sticky;
+      left: 40px;
+      background: #ffffff;
+      z-index: 2;
+      text-align: left !important;
+      box-shadow: 2px 0 4px -2px rgba(0,0,0,0.06);
+      min-width: 220px;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .matrix-table thead .sticky-col-1,
+    .matrix-table thead .sticky-col-2 {
+      background: #f8fafc;
+      z-index: 12;
+    }
+
+    .matrix-total-row .sticky-col-1,
+    .matrix-total-row .sticky-col-2 {
+      background: var(--vnpt-soft-bg);
+      z-index: 7;
+    }
   </style>
+
 </head>
 <body>
 
@@ -944,6 +1089,25 @@
         </button>
       </div>
     </header>
+
+    <!-- Top View Switcher (Tabs) -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 1rem; flex-wrap: wrap;">
+      <div class="nav-segmented-tabs">
+        <button type="button" class="nav-tab-btn active" id="tab-btn-contracts" onclick="switchMainTab('contracts')">
+          📋 Quản lý Danh sách Hợp đồng
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab-btn-revenue" onclick="switchMainTab('revenue')">
+          📊 Phân tích &amp; Phân rã Doanh thu (Theo Tháng / Năm)
+        </button>
+      </div>
+      <div style="font-size: 0.76rem; font-weight: 600; color: var(--color-text-muted); background: #ffffff; padding: 0.4rem 0.85rem; border-radius: 20px; border: 1px solid var(--color-surface-border);">
+        💡 Mô hình phân bổ chuẩn theo thời hạn hợp đồng (IFRS 15 / VAS)
+      </div>
+    </div>
+
+    <!-- WRAPPER FOR TAB 1: CONTRACTS LIST -->
+    <div id="tab-content-contracts">
+
 
     <!-- 4 Interactive KPI Summary Cards (Click to filter) -->
     <section class="stats-grid" aria-label="Thống kê tổng quan hợp đồng">
@@ -1004,6 +1168,9 @@
             </button>
             <button type="button" class="chart-toggle-btn" id="btn-chart-top10" onclick="setChart1Mode('top10')">
               🏥 Top 10 Đơn vị
+            </button>
+            <button type="button" class="chart-toggle-btn" id="btn-chart-monthly" onclick="setChart1Mode('monthly')">
+              📈 Doanh thu 12 Tháng
             </button>
           </div>
         </div>
@@ -1138,9 +1305,141 @@
         <button type="button" class="btn-primary" onclick="resetAllFilters()">Đặt lại tất cả bộ lọc</button>
       </div>
 
-    </section>
+        </section>
+    </div><!-- /tab-content-contracts -->
+
+    <!-- =========================================================================
+         TAB 2: REVENUE RECOGNITION & ALLOCATION WORKSPACE (THÁNG / NĂM)
+         ========================================================================= -->
+    <div id="tab-content-revenue" class="hidden">
+      
+      <!-- Revenue KPI Cards -->
+      <section class="stats-grid" aria-label="Thống kê phân rã doanh thu">
+        <div class="kpi-card kpi-total">
+          <div class="kpi-header">
+            <span class="kpi-label">Doanh thu Phân bổ trong Kỳ</span>
+            <span class="kpi-icon">💰</span>
+          </div>
+          <span class="kpi-value" id="rev-stat-period-val" style="color: var(--vnpt-blue);">0 tỷ VND</span>
+          <span class="kpi-sub" id="rev-stat-period-sub">Tổng doanh thu được ghi nhận</span>
+        </div>
+
+        <div class="kpi-card kpi-signed">
+          <div class="kpi-header">
+            <span class="kpi-label">Doanh thu Bình quân</span>
+            <span class="kpi-icon">📈</span>
+          </div>
+          <span class="kpi-value" id="rev-stat-avg-val" style="color: #0066b3;">0 tr VND</span>
+          <span class="kpi-sub" id="rev-stat-avg-sub">Bình quân / tháng</span>
+        </div>
+
+        <div class="kpi-card kpi-pending">
+          <div class="kpi-header">
+            <span class="kpi-label">Kỳ Đỉnh điểm (Peak)</span>
+            <span class="kpi-icon">⚡</span>
+          </div>
+          <span class="kpi-value" id="rev-stat-peak-val" style="color: #b45309;">-</span>
+          <span class="kpi-sub" id="rev-stat-peak-sub">Tháng có doanh thu cao nhất</span>
+        </div>
+
+        <div class="kpi-card kpi-warning">
+          <div class="kpi-header">
+            <span class="kpi-label">Hợp đồng Đóng góp</span>
+            <span class="kpi-icon">📑</span>
+          </div>
+          <span class="kpi-value" id="rev-stat-active-cnt" style="color: #c2410c;">0</span>
+          <span class="kpi-sub" id="rev-stat-active-sub">Hợp đồng có hiệu lực trong kỳ</span>
+        </div>
+      </section>
+
+      <!-- Revenue Chart & Trends -->
+      <section class="dash-card" style="padding: 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
+          <div style="font-size: 0.95rem; font-weight: 700; color: var(--vnpt-blue-dark); display: flex; align-items: center; gap: 0.5rem;">
+            <span>📊</span>
+            <span id="rev-chart-title">Biểu đồ Phân bổ Doanh thu theo 12 Tháng</span>
+          </div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted);">
+            Đơn vị tính: Triệu VNĐ
+          </div>
+        </div>
+        <div style="height: 300px; position: relative;">
+          <canvas id="rev-trend-chart"></canvas>
+        </div>
+      </section>
+
+      <!-- Revenue Matrix Table Section -->
+      <section class="table-section">
+        
+        <!-- Controls Bar for Matrix -->
+        <div class="table-controls-bar">
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <!-- Period mode toggle -->
+            <div class="chart-toggle-group">
+              <button type="button" class="chart-toggle-btn active" id="btn-period-month" onclick="setRevenuePeriodMode('month')">
+                📅 Theo Tháng trong năm
+              </button>
+              <button type="button" class="chart-toggle-btn" id="btn-period-year" onclick="setRevenuePeriodMode('year')">
+                📆 Theo Vòng đời các Năm
+              </button>
+            </div>
+
+            <!-- Year Select (active in Month mode) -->
+            <select id="rev-year-select" class="form-select" onchange="renderRevenueAnalysis()">
+              <option value="2026" selected>Năm 2026</option>
+              <option value="2027">Năm 2027</option>
+              <option value="2025">Năm 2025</option>
+              <option value="2028">Năm 2028</option>
+            </select>
+
+            <!-- Region Filter -->
+            <select id="rev-region-select" class="form-select" onchange="renderRevenueAnalysis()">
+              <option value="all">📍 Tất cả Địa bàn (7 đơn vị)</option>
+              <option value="Bến Cát">Bến Cát</option>
+              <option value="Dầu Tiếng">Dầu Tiếng</option>
+              <option value="Dĩ An">Dĩ An</option>
+              <option value="Phú Giáo">Phú Giáo</option>
+              <option value="Tân Uyên">Tân Uyên</option>
+              <option value="Thủ Dầu Một">Thủ Dầu Một</option>
+              <option value="Thuận An">Thuận An</option>
+            </select>
+
+            <!-- Status Filter -->
+            <select id="rev-status-select" class="form-select" onchange="renderRevenueAnalysis()">
+              <option value="all">⚡ Tất cả trạng thái</option>
+              <option value="signed">Đã ký</option>
+              <option value="pending">Chưa Ký</option>
+            </select>
+          </div>
+
+          <div>
+            <button type="button" class="btn-primary" onclick="exportRevenueMatrixToExcel()">
+              📥 Xuất Ma trận Doanh thu Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- Matrix Table Container -->
+        <div class="table-responsive" style="max-height: 560px; overflow-y: auto;">
+          <table class="matrix-table" id="matrix-data-table">
+            <thead id="matrix-thead">
+              <!-- Rendered dynamically -->
+            </thead>
+            <tbody id="matrix-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+            <tfoot id="matrix-tfoot">
+              <!-- Rendered dynamically -->
+            </tfoot>
+          </table>
+        </div>
+
+      </section>
+
+    </div><!-- /tab-content-revenue -->
 
   </div><!-- /portal-container -->
+
 
   <!-- Sticky Batch Action Bar -->
   <div class="batch-bar" id="batch-bar">
@@ -3479,11 +3778,16 @@
     // =========================================================================
     function setChart1Mode(mode) {
       currentChart1Mode = mode;
-      document.getElementById('btn-chart-region').classList.toggle('active', mode === 'region');
-      document.getElementById('btn-chart-top10').classList.toggle('active', mode === 'top10');
-      document.getElementById('chart1-title-text').textContent = mode === 'region' 
-        ? 'Phân bổ Doanh thu theo 7 Địa bàn (tỷ VND)' 
-        : 'Top 10 Đơn vị có Doanh thu Cao nhất (tỷ VND)';
+      document.getElementById('btn-chart-region')?.classList.toggle('active', mode === 'region');
+      document.getElementById('btn-chart-top10')?.classList.toggle('active', mode === 'top10');
+      document.getElementById('btn-chart-monthly')?.classList.toggle('active', mode === 'monthly');
+
+      const titleEl = document.getElementById('chart1-title-text');
+      if (titleEl) {
+        if (mode === 'region') titleEl.textContent = 'Phân bổ Doanh thu theo 7 Địa bàn (tỷ VND)';
+        else if (mode === 'top10') titleEl.textContent = 'Top 10 Đơn vị có Doanh thu Cao nhất (tỷ VND)';
+        else titleEl.textContent = 'Xu hướng Phân bổ Doanh thu 12 Tháng Năm 2026 (Triệu VNĐ)';
+      }
       renderRevenueChart();
     }
 
@@ -3604,6 +3908,57 @@
               y: {
                 grid: { display: false },
                 ticks: { font: { family: 'Be Vietnam Pro', size: 10, weight: '600' } }
+              }
+            }
+          }
+        });
+      } else if (currentChart1Mode === 'monthly') {
+        const year = 2026;
+        const monthSums = new Array(12).fill(0);
+        units.forEach(u => {
+          u.contracts.forEach(c => {
+            const m = getContractRevenueModel(c);
+            for (let i = 1; i <= 12; i++) {
+              monthSums[i - 1] += m.monthlyMap[`${year}-${i}`] || 0;
+            }
+          });
+        });
+
+        revenueChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['T01', 'T02', 'T03', 'T04', 'T05', 'T06', 'T07', 'T08', 'T09', 'T10', 'T11', 'T12'],
+            datasets: [{
+              label: 'Doanh thu phân bổ (Triệu VNĐ)',
+              data: monthSums.map(v => Math.round(v / 1e6)),
+              backgroundColor: '#0066b3',
+              borderRadius: 6,
+              hoverBackgroundColor: '#005299'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => ` Doanh thu: ${ctx.raw.toLocaleString('vi-VN')} triệu VND`
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Be Vietnam Pro', size: 11, weight: '600' } }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: '#f1f5f9' },
+                ticks: {
+                  font: { family: 'Be Vietnam Pro', size: 10 },
+                  callback: (val) => val >= 1000 ? (val / 1000).toFixed(1) + ' tỷ' : val + ' tr'
+                }
               }
             }
           }
@@ -4251,6 +4606,495 @@
     });
 
     // Initialize Page
+    
+    // =========================================================================
+    // TAB SWITCHING & REVENUE DECOMPOSITION ENGINE (THÁNG / NĂM)
+    // =========================================================================
+    let currentMainTab = 'contracts'; // 'contracts' or 'revenue'
+    let currentRevenuePeriodMode = 'month'; // 'month' or 'year'
+    let revTrendChartInstance = null;
+
+    function switchMainTab(tabName) {
+      currentMainTab = tabName;
+      document.getElementById('tab-btn-contracts')?.classList.toggle('active', tabName === 'contracts');
+      document.getElementById('tab-btn-revenue')?.classList.toggle('active', tabName === 'revenue');
+      
+      const tabContracts = document.getElementById('tab-content-contracts');
+      const tabRevenue = document.getElementById('tab-content-revenue');
+
+      if (tabName === 'contracts') {
+        tabContracts?.classList.remove('hidden');
+        tabRevenue?.classList.add('hidden');
+        renderRevenueChart();
+        renderStatusChart();
+      } else {
+        tabContracts?.classList.add('hidden');
+        tabRevenue?.classList.remove('hidden');
+        renderRevenueAnalysis();
+      }
+    }
+
+    function setRevenuePeriodMode(mode) {
+      currentRevenuePeriodMode = mode;
+      document.getElementById('btn-period-month')?.classList.toggle('active', mode === 'month');
+      document.getElementById('btn-period-year')?.classList.toggle('active', mode === 'year');
+      
+      const yearSelect = document.getElementById('rev-year-select');
+      if (yearSelect) {
+        yearSelect.style.display = mode === 'month' ? 'inline-block' : 'none';
+      }
+
+      renderRevenueAnalysis();
+    }
+
+    // Mathematical model for linear revenue recognition across contract duration
+    function getContractRevenueModel(c) {
+      const val = parseNumericValue(c.value);
+      let s = parseVnDate(c.date) || new Date(2026, 0, 1);
+      let e = parseVnDate(c.endDate) || new Date(2026, 11, 31);
+      if (e < s) e = s;
+
+      const startY = s.getFullYear();
+      const startM = s.getMonth() + 1;
+      const endY = e.getFullYear();
+      const endM = e.getMonth() + 1;
+
+      const totalMonths = Math.max(1, (endY - startY) * 12 + (endM - startM) + 1);
+      const monthlyVal = val / totalMonths;
+
+      const monthlyMap = {};
+      const yearlyMap = {};
+
+      let curY = startY;
+      let curM = startM;
+      for (let i = 0; i < totalMonths; i++) {
+        const mKey = `${curY}-${curM}`;
+        monthlyMap[mKey] = (monthlyMap[mKey] || 0) + monthlyVal;
+        yearlyMap[curY] = (yearlyMap[curY] || 0) + monthlyVal;
+
+        curM++;
+        if (curM > 12) {
+          curM = 1;
+          curY++;
+        }
+      }
+
+      return {
+        val,
+        start: s,
+        end: e,
+        totalMonths,
+        monthlyVal,
+        monthlyMap,
+        yearlyMap
+      };
+    }
+
+    function formatShortMoney(num) {
+      if (!num || num === 0) return '—';
+      if (num >= 1e9) {
+        return (num / 1e9).toFixed(2) + ' tỷ';
+      } else if (num >= 1e6) {
+        return (num / 1e6).toFixed(1) + ' tr';
+      }
+      return num.toLocaleString('vi-VN');
+    }
+
+    function renderRevenueAnalysis() {
+      const regionFilter = document.getElementById('rev-region-select')?.value || 'all';
+      const statusFilter = document.getElementById('rev-status-select')?.value || 'all';
+      const selectedYear = parseInt(document.getElementById('rev-year-select')?.value || '2026', 10);
+
+      // Filter contracts
+      const rows = [];
+      units.forEach(u => {
+        if (regionFilter !== 'all' && u.khuVuc !== regionFilter) return;
+
+        u.contracts.forEach(c => {
+          if (statusFilter !== 'all' && c.status !== statusFilter) return;
+
+          const model = getContractRevenueModel(c);
+          rows.push({
+            unitName: u.name,
+            khuVuc: u.khuVuc || 'Bình Dương',
+            code: c.code || 'HĐ-2026',
+            package: c.package || 'Hệ sinh thái Y tế số',
+            dateStr: `${c.date || '01/01/2026'} → ${c.endDate || '31/12/2026'}`,
+            status: c.status,
+            ...model
+          });
+        });
+      });
+
+      // Update Chart Title
+      const chartTitleEl = document.getElementById('rev-chart-title');
+      if (chartTitleEl) {
+        chartTitleEl.textContent = currentRevenuePeriodMode === 'month'
+          ? `Biểu đồ Phân bổ Doanh thu theo 12 Tháng — Năm ${selectedYear}`
+          : 'Biểu đồ Phân bổ Doanh thu theo Vòng đời các Năm (2025 - 2028)';
+      }
+
+      // Calculations based on mode
+      if (currentRevenuePeriodMode === 'month') {
+        renderMonthlyMatrix(rows, selectedYear);
+      } else {
+        renderYearlyMatrix(rows);
+      }
+    }
+
+    function renderMonthlyMatrix(rows, year) {
+      const thead = document.getElementById('matrix-thead');
+      const tbody = document.getElementById('matrix-tbody');
+      const tfoot = document.getElementById('matrix-tfoot');
+      if (!thead || !tbody || !tfoot) return;
+
+      // 1. Build Thead
+      let thHtml = `
+        <tr>
+          <th class="sticky-col-1">STT</th>
+          <th class="sticky-col-2">Đơn vị thụ hưởng</th>
+          <th style="width: 100px;">Địa bàn</th>
+          <th style="width: 160px;" class="text-left">Số hợp đồng</th>
+          <th style="width: 120px;" class="text-right">Tổng giá trị</th>
+      `;
+      for (let m = 1; m <= 12; m++) {
+        thHtml += `<th style="width: 75px;">T${m < 10 ? '0' + m : m}</th>`;
+      }
+      thHtml += `<th style="width: 130px;" class="text-right">Tổng Năm ${year}</th></tr>`;
+      thead.innerHTML = thHtml;
+
+      // 2. Build Tbody & accumulate column totals
+      const monthTotals = new Array(12).fill(0);
+      let grandYearTotal = 0;
+      let activeContractsCount = 0;
+
+      let tbodyHtml = '';
+      rows.forEach((r, idx) => {
+        let rowYearSum = 0;
+        let monthCells = '';
+
+        for (let m = 1; m <= 12; m++) {
+          const mVal = r.monthlyMap[`${year}-${m}`] || 0;
+          monthTotals[m - 1] += mVal;
+          rowYearSum += mVal;
+
+          if (mVal > 0) {
+            monthCells += `<td><span class="matrix-cell-val" title="${formatVnd(Math.round(mVal))}">${formatShortMoney(mVal)}</span></td>`;
+          } else {
+            monthCells += `<td><span style="color: #cbd5e1;">—</span></td>`;
+          }
+        }
+
+        if (rowYearSum > 0) {
+          activeContractsCount++;
+          grandYearTotal += rowYearSum;
+        }
+
+        tbodyHtml += `
+          <tr>
+            <td class="sticky-col-1" style="font-weight: 700; color: var(--color-text-muted);">${idx + 1}</td>
+            <td class="sticky-col-2" style="font-weight: 700;" title="${r.unitName}">
+              ${r.unitName}
+            </td>
+            <td><span class="region-pill" style="font-size: 0.7rem; padding: 1px 6px;">${r.khuVuc}</span></td>
+            <td class="text-left" style="font-family: monospace; font-size: 0.74rem; color: var(--vnpt-blue); font-weight: 600;" title="${r.code}">
+              ${r.code}
+            </td>
+            <td class="text-right" style="font-weight: 700; font-variant-numeric: tabular-nums;">
+              ${formatShortMoney(r.val)}
+            </td>
+            ${monthCells}
+            <td class="text-right" style="font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">
+              ${formatShortMoney(rowYearSum)}
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = tbodyHtml;
+
+      // 3. Build Tfoot (Summary Row)
+      let tfootHtml = `
+        <tr class="matrix-total-row">
+          <td class="sticky-col-1">∑</td>
+          <td class="sticky-col-2" style="font-weight: 800; color: var(--vnpt-blue-dark);">TỔNG DOANH THU TOÀN TỈNH</td>
+          <td>—</td>
+          <td>—</td>
+          <td class="text-right" style="font-weight: 800;">${(rows.reduce((acc, r) => acc + r.val, 0) / 1e9).toFixed(2)} tỷ</td>
+      `;
+      for (let m = 0; m < 12; m++) {
+        tfootHtml += `<td><strong style="color: var(--vnpt-blue);">${formatShortMoney(monthTotals[m])}</strong></td>`;
+      }
+      tfootHtml += `<td class="text-right"><strong style="color: var(--vnpt-blue); font-size: 0.85rem;">${(grandYearTotal / 1e9).toFixed(2)} tỷ</strong></td></tr>`;
+      tfoot.innerHTML = tfootHtml;
+
+      // 4. Update Financial KPIs
+      const avgMonthly = grandYearTotal / 12;
+      let peakMonthIdx = 0;
+      let peakVal = 0;
+      monthTotals.forEach((val, idx) => {
+        if (val > peakVal) {
+          peakVal = val;
+          peakMonthIdx = idx + 1;
+        }
+      });
+
+      document.getElementById('rev-stat-period-val').textContent = (grandYearTotal / 1e9).toFixed(2) + ' tỷ VND';
+      document.getElementById('rev-stat-period-sub').textContent = `Tổng phân bổ trong năm ${year}`;
+
+      document.getElementById('rev-stat-avg-val').textContent = (avgMonthly / 1e6).toFixed(1) + ' tr VND';
+      document.getElementById('rev-stat-avg-sub').textContent = 'Bình quân ghi nhận / tháng';
+
+      document.getElementById('rev-stat-peak-val').textContent = `Tháng ${peakMonthIdx < 10 ? '0' + peakMonthIdx : peakMonthIdx}`;
+      document.getElementById('rev-stat-peak-sub').textContent = `Đỉnh điểm: ${(peakVal / 1e6).toFixed(1)} tr VND`;
+
+      document.getElementById('rev-stat-active-cnt').textContent = `${activeContractsCount} / ${rows.length}`;
+      document.getElementById('rev-stat-active-sub').textContent = `Hợp đồng ghi nhận thu năm ${year}`;
+
+      // 5. Render Trend Chart (12 Months)
+      renderRevenueTrendChart(
+        ['T01', 'T02', 'T03', 'T04', 'T05', 'T06', 'T07', 'T08', 'T09', 'T10', 'T11', 'T12'],
+        monthTotals.map(v => Math.round(v / 1e6)),
+        `Doanh thu theo Tháng Năm ${year} (Triệu VNĐ)`
+      );
+    }
+
+    function renderYearlyMatrix(rows) {
+      const thead = document.getElementById('matrix-thead');
+      const tbody = document.getElementById('matrix-tbody');
+      const tfoot = document.getElementById('matrix-tfoot');
+      if (!thead || !tbody || !tfoot) return;
+
+      const years = [2025, 2026, 2027, 2028];
+
+      // 1. Thead
+      let thHtml = `
+        <tr>
+          <th class="sticky-col-1">STT</th>
+          <th class="sticky-col-2">Đơn vị thụ hưởng</th>
+          <th style="width: 100px;">Địa bàn</th>
+          <th style="width: 170px;" class="text-left">Số hợp đồng</th>
+          <th style="width: 130px;" class="text-right">Tổng giá trị HĐ</th>
+      `;
+      years.forEach(y => {
+        thHtml += `<th style="width: 130px;" class="text-right">Năm ${y}</th>`;
+      });
+      thHtml += `<th style="width: 140px;" class="text-right">Tổng Vòng Đời</th></tr>`;
+      thead.innerHTML = thHtml;
+
+      // 2. Tbody
+      const yearTotals = [0, 0, 0, 0];
+      let grandLifeTotal = 0;
+
+      let tbodyHtml = '';
+      rows.forEach((r, idx) => {
+        let rowSum = 0;
+        let yearCells = '';
+
+        years.forEach((y, yIdx) => {
+          const yVal = r.yearlyMap[y] || 0;
+          yearTotals[yIdx] += yVal;
+          rowSum += yVal;
+
+          if (yVal > 0) {
+            yearCells += `<td class="text-right"><span class="matrix-cell-val" title="${formatVnd(Math.round(yVal))}">${formatShortMoney(yVal)}</span></td>`;
+          } else {
+            yearCells += `<td class="text-right"><span style="color: #cbd5e1;">—</span></td>`;
+          }
+        });
+
+        grandLifeTotal += rowSum;
+
+        tbodyHtml += `
+          <tr>
+            <td class="sticky-col-1" style="font-weight: 700; color: var(--color-text-muted);">${idx + 1}</td>
+            <td class="sticky-col-2" style="font-weight: 700;" title="${r.unitName}">${r.unitName}</td>
+            <td><span class="region-pill" style="font-size: 0.7rem; padding: 1px 6px;">${r.khuVuc}</span></td>
+            <td class="text-left" style="font-family: monospace; font-size: 0.74rem; color: var(--vnpt-blue); font-weight: 600;" title="${r.code}">${r.code}</td>
+            <td class="text-right" style="font-weight: 700; font-variant-numeric: tabular-nums;">${formatVnd(r.val)}</td>
+            ${yearCells}
+            <td class="text-right" style="font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">${formatVnd(Math.round(rowSum))}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = tbodyHtml;
+
+      // 3. Tfoot
+      let tfootHtml = `
+        <tr class="matrix-total-row">
+          <td class="sticky-col-1">∑</td>
+          <td class="sticky-col-2" style="font-weight: 800; color: var(--vnpt-blue-dark);">TỔNG DOANH THU TOÀN TỈNH</td>
+          <td>—</td>
+          <td>—</td>
+          <td class="text-right" style="font-weight: 800;">${(rows.reduce((acc, r) => acc + r.val, 0) / 1e9).toFixed(2)} tỷ</td>
+      `;
+      years.forEach((y, yIdx) => {
+        tfootHtml += `<td class="text-right"><strong style="color: var(--vnpt-blue); font-size: 0.82rem;">${(yearTotals[yIdx] / 1e9).toFixed(2)} tỷ</strong></td>`;
+      });
+      tfootHtml += `<td class="text-right"><strong style="color: var(--vnpt-blue); font-size: 0.85rem;">${(grandLifeTotal / 1e9).toFixed(2)} tỷ</strong></td></tr>`;
+      tfoot.innerHTML = tfootHtml;
+
+      // 4. Update KPIs
+      document.getElementById('rev-stat-period-val').textContent = (grandLifeTotal / 1e9).toFixed(2) + ' tỷ VND';
+      document.getElementById('rev-stat-period-sub').textContent = 'Tổng phân bổ toàn bộ 4 năm';
+
+      document.getElementById('rev-stat-avg-val').textContent = (grandLifeTotal / 4 / 1e9).toFixed(2) + ' tỷ VND';
+      document.getElementById('rev-stat-avg-sub').textContent = 'Bình quân ghi nhận / năm';
+
+      document.getElementById('rev-stat-peak-val').textContent = 'Năm 2026';
+      document.getElementById('rev-stat-peak-sub').textContent = `Đỉnh điểm: ${(yearTotals[1] / 1e9).toFixed(2)} tỷ VND (67.6%)`;
+
+      document.getElementById('rev-stat-active-cnt').textContent = `${rows.length} / ${rows.length}`;
+      document.getElementById('rev-stat-active-sub').textContent = 'Toàn bộ hợp đồng trong hệ thống';
+
+      // 5. Render Yearly Trend Chart
+      renderRevenueTrendChart(
+        ['Năm 2025', 'Năm 2026', 'Năm 2027', 'Năm 2028'],
+        yearTotals.map(v => Math.round(v / 1e6)),
+        'Doanh thu Phân bổ theo từng Năm (Triệu VNĐ)'
+      );
+    }
+
+    function renderRevenueTrendChart(labels, values, datasetLabel) {
+      const ctx = document.getElementById('rev-trend-chart');
+      if (!ctx) return;
+      if (revTrendChartInstance) revTrendChartInstance.destroy();
+
+      revTrendChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: datasetLabel,
+            data: values,
+            backgroundColor: '#0066b3',
+            hoverBackgroundColor: '#005299',
+            borderRadius: 6,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const val = ctx.raw;
+                  if (val >= 1000) {
+                    return ` Doanh thu: ${(val / 1000).toFixed(2)} tỷ VND (${val.toLocaleString('vi-VN')} tr)`;
+                  }
+                  return ` Doanh thu: ${val.toLocaleString('vi-VN')} triệu VND`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: 'Be Vietnam Pro', size: 11, weight: '600' } }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: '#f1f5f9' },
+              ticks: {
+                font: { family: 'Be Vietnam Pro', size: 10 },
+                callback: (val) => val >= 1000 ? (val / 1000).toFixed(1) + ' tỷ' : val + ' tr'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function exportRevenueMatrixToExcel() {
+      const regionFilter = document.getElementById('rev-region-select')?.value || 'all';
+      const statusFilter = document.getElementById('rev-status-select')?.value || 'all';
+      const selectedYear = parseInt(document.getElementById('rev-year-select')?.value || '2026', 10);
+
+      const rows = [];
+      units.forEach(u => {
+        if (regionFilter !== 'all' && u.khuVuc !== regionFilter) return;
+        u.contracts.forEach(c => {
+          if (statusFilter !== 'all' && c.status !== statusFilter) return;
+          const model = getContractRevenueModel(c);
+          rows.push({
+            unitName: u.name,
+            khuVuc: u.khuVuc || 'Bình Dương',
+            code: c.code || '',
+            package: c.package || '',
+            status: c.status === 'signed' ? 'Đã ký' : 'Chưa Ký',
+            ...model
+          });
+        });
+      });
+
+      let csv = "\uFEFF"; // UTF-8 BOM
+      const clean = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
+
+      if (currentRevenuePeriodMode === 'month') {
+        csv += `STT,Đơn Vị Thụ Hưởng,Địa Bàn,Số Hợp Đồng,Gói Dịch Vụ,Trạng Thái,Tổng Giá Trị HĐ,`;
+        for (let m = 1; m <= 12; m++) csv += `T${m < 10 ? '0' + m : m}_${selectedYear},`;
+        csv += `Tổng_Năm_${selectedYear}\n`;
+
+        rows.forEach((r, idx) => {
+          let rowSum = 0;
+          let mCols = [];
+          for (let m = 1; m <= 12; m++) {
+            const v = Math.round(r.monthlyMap[`${selectedYear}-${m}`] || 0);
+            rowSum += v;
+            mCols.push(v);
+          }
+          csv += [
+            idx + 1,
+            clean(r.unitName),
+            clean(r.khuVuc),
+            clean(r.code),
+            clean(r.package),
+            clean(r.status),
+            r.val,
+            ...mCols,
+            rowSum
+          ].join(',') + "\n";
+        });
+
+      } else {
+        csv += `STT,Đơn Vị Thụ Hưởng,Địa Bàn,Số Hợp Đồng,Gói Dịch Vụ,Trạng Thái,Tổng Giá Trị HĐ,Năm_2025,Năm_2026,Năm_2027,Năm_2028,Tổng_Vòng_Đời\n`;
+        const years = [2025, 2026, 2027, 2028];
+
+        rows.forEach((r, idx) => {
+          let rowSum = 0;
+          let yCols = [];
+          years.forEach(y => {
+            const v = Math.round(r.yearlyMap[y] || 0);
+            rowSum += v;
+            yCols.push(v);
+          });
+          csv += [
+            idx + 1,
+            clean(r.unitName),
+            clean(r.khuVuc),
+            clean(r.code),
+            clean(r.package),
+            clean(r.status),
+            r.val,
+            ...yCols,
+            rowSum
+          ].join(',') + "\n";
+        });
+      }
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `PhanRa_DoanhThu_VNPT_HIS_${currentRevenuePeriodMode}_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Đã xuất Ma trận Phân rã Doanh thu Excel thành công!', 'success');
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       updateAllViews();
     });
