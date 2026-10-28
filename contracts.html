@@ -909,6 +909,26 @@
                 </td>
               </tr>
               <tr>
+                <td>Mã số thuế:</td>
+                <td id="detail-mst" style="font-weight: 600; font-family: monospace; font-size: 0.82rem;">-</td>
+              </tr>
+              <tr>
+                <td>Đơn vị bán hàng:</td>
+                <td id="detail-sales-unit" style="font-weight: 600; color: var(--vnpt-blue);">-</td>
+              </tr>
+              <tr>
+                <td>Chuyên viên AM:</td>
+                <td id="detail-am" style="font-weight: 600;">-</td>
+              </tr>
+              <tr>
+                <td>Phụ trách TPM:</td>
+                <td id="detail-tpm" style="font-weight: 600;">Lê Trung Kiên</td>
+              </tr>
+              <tr>
+                <td>Mã dự án CDS:</td>
+                <td id="detail-cds" style="font-family: monospace; font-size: 0.78rem; color: var(--color-text-muted);">-</td>
+              </tr>
+              <tr>
                 <td>Tệp đính kèm:</td>
                 <td id="detail-filename" style="word-break: break-all; font-family: monospace; font-size: 0.78rem; color: var(--vnpt-blue); font-weight: 600;">-</td>
               </tr>
@@ -1038,1327 +1058,1705 @@
   <script>
     // Data representation representing the organized contract life cycle by Beneficiary Unit
     let units = [
+  {
+    "id": "tram_y_te_phuong_ben_cat",
+    "name": "Trạm y tế Phường Bến Cát",
+    "avatar": "TT",
+    "khuVuc": "Bến Cát",
+    "mst": "3703433732",
+    "am": "Nguyễn Thành Thái",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
       {
-            "id": "tyt_phuong_ben_cat",
-            "name": "TYT Phường Bến Cát",
-            "avatar": "BC",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_ben_cat-1",
-                        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT BEN CAT",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Bến Cát",
-                        "fileName": "HD_2026_tyt_phuong_ben_cat.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "tyt_phuong_thoi_hoa",
-            "name": "TYT Phường Thới Hòa",
-            "avatar": "TH",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_thoi_hoa-1",
-                        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT THOI HOA",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Thới Hòa",
-                        "fileName": "HD_2026_tyt_phuong_thoi_hoa.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "18,000,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "tyt_phuong_hoa_loi",
-            "name": "TYT Phường Hòa Lợi",
-            "avatar": "HL",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_hoa_loi-1",
-                        "code": "20260101-02/HĐ/VNPTBCT.VNPTHCM-TYT HOA LOI",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Hòa Lợi",
-                        "fileName": "TRAM Y TE PHUONG HOA LOI.pdf",
-                        "fileSize": "39.2 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "tyt_phuong_tay_nam",
-            "name": "TYT Phường Tây Nam",
-            "avatar": "TN",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_tay_nam-1",
-                        "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTTAYNAM",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tây Nam",
-                        "fileName": "TYT TÂY NAM- Hợp đồng HIS_1.pdf",
-                        "fileSize": "5.04 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "tyt_phuong_long_nguyen",
-            "name": "TYT Phường Long Nguyên",
-            "avatar": "LN",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_long_nguyen-1",
-                        "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTLONGNGUYEN",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Long Nguyên",
-                        "fileName": "TYT LONG NGYEN - HOP DONG HIS_1.pdf",
-                        "fileSize": "4.72 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": ""
-      },
-      {
-            "id": "tyt_phuong_phu_an",
-            "name": "TYT Phường Phú An",
-            "avatar": "PA",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_phu_an-1",
-                        "code": "20260101-02/HĐ/VNPTBCT.VNPTHCM-TYT PHU AN",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Phú An",
-                        "fileName": "TRAM Y TE PHUONG PHU AN.pdf",
-                        "fileSize": "2.53 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "tyt_xa_bau_bang",
-            "name": "TYT Xã Bàu Bàng",
-            "avatar": "BB",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_bau_bang-1",
-                        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT BAUBANG",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Bàu Bàng",
-                        "fileName": "HD_2026_tyt_xa_bau_bang.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "18,000,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": ""
-      },
-      {
-            "id": "tyt_xa_tru_van_tho",
-            "name": "TYT Xã Trừ Văn Thố",
-            "avatar": "TV",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_tru_van_tho-1",
-                        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYTTRUVANTHO",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Trừ Văn Thố",
-                        "fileName": "HD_2026_tyt_xa_tru_van_tho.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": ""
-      },
-      {
-            "id": "tyt_xa_phu_giao",
-            "name": "TYT Xã Phú Giáo",
-            "avatar": "PG",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_phu_giao-1",
-                        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHUGIAO",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Phú Giáo",
-                        "fileName": "TTYT PHÚ GIÁO- VNPT HIS.pdf",
-                        "fileSize": "6.23 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "32,400,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Phú Giáo"
-      },
-      {
-            "id": "tyt_xa_phuoc_thanh",
-            "name": "TYT Xã Phước Thành",
-            "avatar": "PT",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_phuoc_thanh-1",
-                        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHUOCTHANH",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Phước Thành",
-                        "fileName": "TTYT PHƯỚC THÀNH -VNPT HIS.pdf",
-                        "fileSize": "5.64 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "32,400,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Phú Giáo"
-      },
-      {
-            "id": "tyt_xa_an_long",
-            "name": "TYT Xã An Long",
-            "avatar": "AL",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_an_long-1",
-                        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT ANLONG",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã An Long",
-                        "fileName": "TTYT AN LONG-VNPT HIS.pdf",
-                        "fileSize": "5.75 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "32,400,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Phú Giáo"
-      },
-      {
-            "id": "tyt_xa_phuoc_hoa",
-            "name": "TYT Xã Phước Hòa",
-            "avatar": "PH",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_phuoc_hoa-1",
-                        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHUOCHOA",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Phước Hòa",
-                        "fileName": "TTYT PHƯỚC HOÀ- VNPT HIS.pdf",
-                        "fileSize": "5.95 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Phú Giáo"
-      },
-      {
-            "id": "tyt_phuong_tan_hiep",
-            "name": "TYT Phường Tân Hiệp",
-            "avatar": "TH",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_tan_hiep-1",
-                        "code": "20260120/VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/nhitp",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tân Hiệp",
-                        "fileName": "HD_2026_tyt_phuong_tan_hiep.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Tân Uyên"
-      },
-      {
-            "id": "tyt_phuong_tan_uyen",
-            "name": "TYT Phường Tân Uyên",
-            "avatar": "TU",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_tan_uyen-1",
-                        "code": "20260120/VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/nhitp",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tân Uyên",
-                        "fileName": "HD_2026_tyt_phuong_tan_uyen.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "39,600,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Tân Uyên"
-      },
-      {
-            "id": "tyt_phuong_vinh_tan",
-            "name": "TYT Phường Vĩnh Tân",
-            "avatar": "VT",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_vinh_tan-1",
-                        "code": "20260120/VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/nhitp",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Vĩnh Tân",
-                        "fileName": "HD_2026_tyt_phuong_vinh_tan.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Tân Uyên"
-      },
-      {
-            "id": "tyt_phuong_binh_co",
-            "name": "TYT Phường Bình Cơ",
-            "avatar": "BC",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_binh_co-1",
-                        "code": "20260120/VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/nhitp",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Bình Cơ",
-                        "fileName": "HD_2026_tyt_phuong_binh_co.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": ""
-      },
-      {
-            "id": "tyt_xa_bac_tan_uyen",
-            "name": "TYT Xã Bắc Tân Uyên",
-            "avatar": "BT",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_bac_tan_uyen-1",
-                        "code": "260105-01/ VNPT TP.HCM- VNPT.TU/HĐDV HMIS LYPTL",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Bắc Tân Uyên",
-                        "fileName": "VNP005060_1_20250609_103654_HỢP ĐỒNG HMIS TTYT BTU.pdf",
-                        "fileSize": "0.59 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "16,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Tân Uyên"
-      },
-      {
-            "id": "tyt_xa_thuong_tan",
-            "name": "TYT Xã Thường Tân",
-            "avatar": "TT",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_thuong_tan-1",
-                        "code": "VNPT TP.HCM –VNPT TUN/ HĐDV – VNPT HIS/lyptl",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Thường Tân",
-                        "fileName": "HD_2026_tyt_xa_thuong_tan.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "16,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": ""
-      },
-      {
-            "id": "tyt_phuong_chanh_phu_hoa",
-            "name": "TYT Phường Chánh Phú Hòa",
-            "avatar": "CP",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_chanh_phu_hoa-1",
-                        "code": "260225-01/ VNPT TP.HCM- VNPT.TU/HĐDV HMIS LYPTL",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Chánh Phú Hòa",
-                        "fileName": "HD_2026_tyt_phuong_chanh_phu_hoa.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "tyt_phuong_binh_hoa",
-            "name": "TYT Phường Bình Hòa",
-            "avatar": "BH",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_binh_hoa-1",
-                        "code": "20260205/HĐ/VNPTTAN.VNPTHCM-TYTPHUONGBINHHOA",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Bình Hòa",
-                        "fileName": "TYT BINH HOA.pdf",
-                        "fileSize": "27.29 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "18,000,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thuận An"
-      },
-      {
-            "id": "tyt_phuong_lai_thieu",
-            "name": "TYT Phường Lái Thiêu",
-            "avatar": "LT",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_lai_thieu-1",
-                        "code": "20260205/HĐ/VNPTTAN.VNPTHCM-TYTPHUONGLAITHIEU",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Lái Thiêu",
-                        "fileName": "TYT LAI THIEU.pdf",
-                        "fileSize": "3.95 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "32,400,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thuận An"
-      },
-      {
-            "id": "tyt_phuong_thuan_an",
-            "name": "TYT Phường Thuận An",
-            "avatar": "TA",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_thuan_an-1",
-                        "code": "20260402/37034254/VNPTTHUANAN/VNPT027226",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Thuận An",
-                        "fileName": "HD_2026_tyt_phuong_thuan_an.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thuận An"
-      },
-      {
-            "id": "tyt_phuong_thuan_giao",
-            "name": "TYT Phường Thuận Giao",
-            "avatar": "TG",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_thuan_giao-1",
-                        "code": "20260205/HĐ/VNPTTAN.VNPTHCM-TYTPHUONGTHUANGIAO",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Thuận Giao",
-                        "fileName": "TYT THUAN GIAO.pdf",
-                        "fileSize": "4.28 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thuận An"
-      },
-      {
-            "id": "tyt_phuong_tan_khanh",
-            "name": "TYT Phường Tân Khánh",
-            "avatar": "TK",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_tan_khanh-1",
-                        "code": "20260301/HĐ/VNPTTAN.VNPTHCM-TYTTANKHANH",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tân Khánh",
-                        "fileName": "TYT TAN KHANH.pdf",
-                        "fileSize": "7.11 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "19,800,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Tân Uyên"
-      },
-      {
-            "id": "tyt_xa_dau_tieng",
-            "name": "TYT Xã Dầu Tiếng",
-            "avatar": "DT",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_dau_tieng-1",
-                        "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTDAUTIENG",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Dầu Tiếng",
-                        "fileName": "TYT DAU TIENG - HOP DONG HIS.pdf",
-                        "fileSize": "2.62 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "39,600,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Dầu Tiếng"
-      },
-      {
-            "id": "tyt_xa_long_hoa",
-            "name": "TYT Xã Long Hòa",
-            "avatar": "LH",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_long_hoa-1",
-                        "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTLONGHOA",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Long Hòa",
-                        "fileName": "TYT LONG HOA - HOP DONG HIS 2026_1.pdf",
-                        "fileSize": "3.84 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Dầu Tiếng"
-      },
-      {
-            "id": "tyt_xa_minh_thanh",
-            "name": "TYT Xã Minh Thạnh",
-            "avatar": "MT",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_minh_thanh-1",
-                        "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTMINHTHANH",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Minh Thạnh",
-                        "fileName": "TYT MINH THANH - HOP DONG HIS 012026_1.pdf",
-                        "fileSize": "4.75 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "32,400,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Dầu Tiếng"
-      },
-      {
-            "id": "tyt_xa_thanh_an",
-            "name": "TYT Xã Thanh An",
-            "avatar": "TA",
-            "contracts": [
-                  {
-                        "id": "tyt_xa_thanh_an-1",
-                        "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYTTHANHAN",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Xã Thanh An",
-                        "fileName": "TYT THANH AN -HOP DONG HIS _1.pdf",
-                        "fileSize": "4.64 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Dầu Tiếng"
-      },
-      {
-            "id": "tyt_phuong_binh_duong",
-            "name": "TYT Phường Bình Dương",
-            "avatar": "BD",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_binh_duong-1",
-                        "code": "20260130/HĐ/VNPTTDM.VNPTHCM-TYTBINH DUONG",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Bình Dương",
-                        "fileName": "HD_2026_tyt_phuong_binh_duong.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thủ Dầu Một"
-      },
-      {
-            "id": "tyt_phuong_chanh_hiep",
-            "name": "TYT Phường Chánh Hiệp",
-            "avatar": "CH",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_chanh_hiep-1",
-                        "code": "20260125/3703433073/VNPTTDM/VNPT027189",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Chánh Hiệp",
-                        "fileName": "TYT CHANH HIEP.pdf",
-                        "fileSize": "2.11 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thủ Dầu Một"
-      },
-      {
-            "id": "tyt_phuong_phu_loi",
-            "name": "TYT Phường Phú Lợi",
-            "avatar": "PL",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_phu_loi-1",
-                        "code": "20260120/3703432369/VNPTTDM/VNPT027189",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Phú Lợi",
-                        "fileName": "BP-30M31_20260323_140607.pdf",
-                        "fileSize": "2.28 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "25,200,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thủ Dầu Một"
-      },
-      {
-            "id": "tyt_phuong_thu_dau_mot",
-            "name": "TYT Phường Thủ Dầu Một",
-            "avatar": "TD",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_thu_dau_mot-1",
-                        "code": "HĐ-32/2026/TD",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Thủ Dầu Một",
-                        "fileName": "HD_2026_tyt_phuong_thu_dau_mot.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "108,000,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thủ Dầu Một"
-      },
-      {
-            "id": "tyt_phuong_an_phu",
-            "name": "TYT Phường An Phú",
-            "avatar": "AP",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_an_phu-1",
-                        "code": "20260205/3703427802/VNPT.DAN/VNPT027134",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường An Phú",
-                        "fileName": "TYT AN PHÚ.pdf",
-                        "fileSize": "5.43 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "18,000,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thuận An"
-      },
-      {
-            "id": "tyt_phuong_di_an",
-            "name": "TYT Phường Dĩ An",
-            "avatar": "DA",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_di_an-1",
-                        "code": "20260316/3703430971/VNPT.DAN/CTV074880",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Dĩ An",
-                        "fileName": "HD_2026_tyt_phuong_di_an.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "35,400,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Dĩ An"
-      },
-      {
-            "id": "tyt_phuong_dong_hoa",
-            "name": "TYT Phường Đông Hòa",
-            "avatar": "DH",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_dong_hoa-1",
-                        "code": "20260327-01/3703435659/VNPT.DAN/VNPT027135/HĐDV",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Đông Hòa",
-                        "fileName": "HD_2026_tyt_phuong_dong_hoa.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "36,600,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Dĩ An"
-      },
-      {
-            "id": "tyt_phuong_tan_dong_hiep",
-            "name": "TYT Phường Tân Đông Hiệp",
-            "avatar": "TD",
-            "contracts": [
-                  {
-                        "id": "tyt_phuong_tan_dong_hiep-1",
-                        "code": "20260330/3703436638/VNPTDA/CTV082841",
-                        "name": "Hợp đồng cung cấp dịch vụ thông tin quản lý trạm y tế HMIS - TYT Phường Tân Đông Hiệp",
-                        "fileName": "HD_2026_tyt_phuong_tan_dong_hiep.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
-                        "value": "18,000,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Dĩ An"
-      },
-      {
-            "id": "cong_ty_tnhh_phong_kham_da_khoa_sai_gon_tan_binh",
-            "name": "CÔNG TY TNHH PHÒNG KHÁM ĐA KHOA SÀI GÒN - TÂN BÌNH",
-            "avatar": "SG",
-            "contracts": [
-                  {
-                        "id": "cong_ty_tnhh_phong_kham_da_khoa_sai_gon_tan_binh-1",
-                        "code": "HĐ-37/2026/SG",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY TNHH PHÒNG KHÁM ĐA KHOA SÀI GÒN - TÂN BÌNH",
-                        "fileName": "VNP037608_1_20250822_024328_Úp_BBNT_HĐ_PHIẾU YC_PK TÂN BÌNH.pdf",
-                        "fileSize": "10.61 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "42,000,000 VND",
-                        "date": "22/08/2025",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "22/08/2025 10:00:00"
-                  }
-            ],
-            "khuVuc": "Phú Giáo"
-      },
-      {
-            "id": "benh_vien_y_hoc_co_truyen_tinh_binh_duong",
-            "name": "BỆNH VIỆN Y HỌC CỔ TRUYỀN TỈNH BÌNH DƯƠNG",
-            "avatar": "BD",
-            "contracts": [
-                  {
-                        "id": "benh_vien_y_hoc_co_truyen_tinh_binh_duong-1",
-                        "code": "HĐ-38/2026/BD",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - BỆNH VIỆN Y HỌC CỔ TRUYỀN TỈNH BÌNH DƯƠNG",
-                        "fileName": "HĐ KT YHCT_FN 14052025.pdf",
-                        "fileSize": "25.74 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "153,000,000 VND",
-                        "date": "14/05/2025",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "14/05/2025 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thủ Dầu Một"
-      },
-      {
-            "id": "benh_vien_sai_gon_binh_duong",
-            "name": "BỆNH VIỆN SÀI GÒN BÌNH DƯƠNG",
-            "avatar": "BD",
-            "contracts": [
-                  {
-                        "id": "benh_vien_sai_gon_binh_duong-1",
-                        "code": "HĐ-39/2026/BD",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - BỆNH VIỆN SÀI GÒN BÌNH DƯƠNG",
-                        "fileName": "HOP DONG BVSG HIS 01_10_2025.pdf",
-                        "fileSize": "3.42 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "102,000,000 VND",
-                        "date": "01/10/2025",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/10/2025 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thủ Dầu Một"
-      },
-      {
-            "id": "cong_ty_co_phan_benh_vien_my_phuoc",
-            "name": "CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC",
-            "avatar": "MP",
-            "contracts": [
-                  {
-                        "id": "cong_ty_co_phan_benh_vien_my_phuoc-1-2026",
-                        "code": "HĐ-40/2026/MP",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC (Nam 1)",
-                        "fileName": "VNP005069_1_20250709_114003_HĐ HIS BV MY PHƯỚC.pdf",
-                        "fileSize": "2.49 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "183,000,000 VND",
-                        "date": "09/07/2025",
-                        "endDate": "08/07/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "09/07/2025 10:00:00"
-                  },
-                  {
-                        "id": "cong_ty_co_phan_benh_vien_my_phuoc-1-2027",
-                        "code": "HĐ-40/2026/MP",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC (Nam 2)",
-                        "fileName": "VNP005069_1_20250709_114003_HĐ HIS BV MY PHƯỚC.pdf",
-                        "fileSize": "2.49 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "183,000,000 VND",
-                        "date": "09/07/2025",
-                        "endDate": "08/07/2027",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "09/07/2025 10:00:00"
-                  },
-                  {
-                        "id": "cong_ty_co_phan_benh_vien_my_phuoc-1-2028",
-                        "code": "HĐ-40/2026/MP",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN MỸ PHƯỚC (Nam 3)",
-                        "fileName": "VNP005069_1_20250709_114003_HĐ HIS BV MY PHƯỚC.pdf",
-                        "fileSize": "2.49 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "183,000,000 VND",
-                        "date": "09/07/2025",
-                        "endDate": "08/07/2028",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "09/07/2025 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "cong_ty_co_phan_benh_vien_da_khoa_nam_anh",
-            "name": "CÔNG TY CỔ PHẦN BỆNH VIỆN ĐA KHOA NĂM ANH",
-            "avatar": "DK",
-            "contracts": [
-                  {
-                        "id": "cong_ty_co_phan_benh_vien_da_khoa_nam_anh-1",
-                        "code": "HĐ-41/2026/DK",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - CÔNG TY CỔ PHẦN BỆNH VIỆN ĐA KHOA NĂM ANH",
-                        "fileName": "VNP004979_1_20231113_060503_HIS_LIS_Nam Anh_2023.pdf",
-                        "fileSize": "3.62 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "30,600,000 VND",
-                        "date": "13/11/2023",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "13/11/2023 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thủ Dầu Một"
-      },
-      {
-            "id": "trung_tam_y_te_kv_ben_cat",
-            "name": "Trung Tâm Y Tế KV Bến Cát",
-            "avatar": "BC",
-            "contracts": [
-                  {
-                        "id": "trung_tam_y_te_kv_ben_cat-1",
-                        "code": "20260406/3700673831/VNPT BCT/VNPT027139/HDDV YTS",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Bến Cát",
-                        "fileName": "TTYT_BCT_2026_HIS_LIS_Hợp đồng đã ký 2026.pdf",
-                        "fileSize": "4.11 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "233,280,000 VND",
-                        "date": "01/04/2026",
-                        "endDate": "31/03/2027",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/04/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "trung_tam_y_te_kv_phu_giao",
-            "name": "Trung Tâm Y Tế KV Phú Giáo",
-            "avatar": "PG",
-            "contracts": [
-                  {
-                        "id": "trung_tam_y_te_kv_phu_giao-1",
-                        "code": "HĐ-43/2026/PG",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Phú Giáo",
-                        "fileName": "TTYT , HĐ, BBNT.pdf",
-                        "fileSize": "10.47 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "226,800,000 VND",
-                        "date": "12/05/2025",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "12/05/2025 10:00:00"
-                  }
-            ],
-            "khuVuc": "Phú Giáo"
-      },
-      {
-            "id": "trung_tam_y_te_kv_tan_uyen",
-            "name": "Trung Tâm Y Tế KV Tân Uyên",
-            "avatar": "TU",
-            "contracts": [
-                  {
-                        "id": "trung_tam_y_te_kv_tan_uyen-1",
-                        "code": "HĐ-44/2026/TU",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Tân Uyên",
-                        "fileName": "HDG 20260120 HIS LIS RIS_PACS TTYT TUN.pdf",
-                        "fileSize": "4.52 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "1,619,000,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Tân Uyên"
-      },
-      {
-            "id": "trung_tam_y_te_kv_bac_tan_uyen",
-            "name": "Trung Tâm Y Tế KV Bắc Tân Uyên",
-            "avatar": "BT",
-            "contracts": [
-                  {
-                        "id": "trung_tam_y_te_kv_bac_tan_uyen-1",
-                        "code": "HĐ-45/2026/BT",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Bắc Tân Uyên",
-                        "fileName": "CTV033214_1_20250709_110716_HỢP ĐỒNG HIS TTYT HUYỆN BẮC TÂN UYÊN.pdf",
-                        "fileSize": "3.16 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "24,000,000 VND",
-                        "date": "09/07/2025",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "09/07/2025 10:00:00"
-                  }
-            ],
-            "khuVuc": "Tân Uyên"
-      },
-      {
-            "id": "trung_tam_y_te_kv_dau_tieng",
-            "name": "Trung Tâm Y Tế KV Dầu Tiếng",
-            "avatar": "DT",
-            "contracts": [
-                  {
-                        "id": "trung_tam_y_te_kv_dau_tieng-1",
-                        "code": "HĐ-46/2026/DT",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Dầu Tiếng",
-                        "fileName": "TTYT_DTG_HĐ His-Lis-Ris, Pacs_2026.pdf",
-                        "fileSize": "6.48 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "402,000,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Dầu Tiếng"
-      },
-      {
-            "id": "trung_tam_y_te_kv_thuan_an",
-            "name": "Trung Tâm Y tế KV Thuận An",
-            "avatar": "TA",
-            "contracts": [
-                  {
-                        "id": "trung_tam_y_te_kv_thuan_an-1",
-                        "code": "HĐ-47/2026/TA",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y tế KV Thuận An",
-                        "fileName": "hop dong da ky HIS LIS TTYT TA.pdf",
-                        "fileSize": "10.51 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "1,800,000,000 VND",
-                        "date": "10/06/2025",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "10/06/2025 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thuận An"
-      },
-      {
-            "id": "trung_tam_y_te_kv_bau_bang",
-            "name": "Trung Tâm Y Tế KV Bàu Bàng",
-            "avatar": "BB",
-            "contracts": [
-                  {
-                        "id": "trung_tam_y_te_kv_bau_bang-1",
-                        "code": "20260403/3702272634 /VNPT PGO/CTV091408/HDDV YTS",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Trung Tâm Y Tế KV Bàu Bàng",
-                        "fileName": "2026_TTYT Bàu Bàng.pdf",
-                        "fileSize": "18.54 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "116,640,000 VND",
-                        "date": "04/04/2026",
-                        "endDate": "",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "04/04/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": ""
-      },
-      {
-            "id": "benh_vien_ben_san",
-            "name": "Bệnh viện Bến Sắn",
-            "avatar": "BS",
-            "contracts": [
-                  {
-                        "id": "benh_vien_ben_san-1",
-                        "code": "20260401/HĐKT/BENHVIENBENSAN- VNPTТР.НСМ-VNPT.TU/KHANHNN)",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - Bệnh viện Bến Sắn",
-                        "fileName": "Hop dong thau ben san.pdf",
-                        "fileSize": "6.31 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "211,370,000 VND",
-                        "date": "01/04/2026",
-                        "endDate": "31/12/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/04/2026 10:00:00"
-                  },
-                  {
-                        "id": "benh_vien_ben_san-2",
-                        "code": "HDBDG0904072514/VNPT VNP-VNPT TUN/HĐ VNPT EMR",
-                        "name": "Hợp đồng thuê phần mềm Bệnh án điện tử EMR - Bệnh viện Bến Sắn",
-                        "fileName": "Hop dong phan mem 3 thang (01-03.2026).pdf",
-                        "fileSize": "5.37 MB",
-                        "package": "Hệ thống Bệnh án điện tử EMR",
-                        "value": "4,944,000 VND",
-                        "date": "01/01/2026",
-                        "endDate": "31/03/2026",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/01/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Bến Cát"
-      },
-      {
-            "id": "bv_columbia_asian",
-            "name": "BV Columbia Asian",
-            "avatar": "CA",
-            "contracts": [
-                  {
-                        "id": "bv_columbia_asian-1",
-                        "code": "HĐ-51/2026/CA",
-                        "name": "Hợp đồng thuê dịch vụ công nghệ thông tin y tế (HIS & LIS) - BV Columbia Asian",
-                        "fileName": "HD_2026_bv_columbia_asian.pdf",
-                        "fileSize": "1.5 MB",
-                        "package": "Hệ thống thông tin bệnh viện HIS L2",
-                        "value": "90,000,000 VND",
-                        "date": "01/04/2026",
-                        "endDate": "31/03/2027",
-                        "status": "signed",
-                        "ms1Done": true,
-                        "ms2Done": true,
-                        "ms3Done": true,
-                        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
-                        "signedTime": "01/04/2026 10:00:00"
-                  }
-            ],
-            "khuVuc": "Thuận An"
+        "id": "tram_y_te_phuong_ben_cat-1",
+        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT BEN CAT",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Phường Bến Cát",
+        "fileName": "HD_2026_tram_y_te_phuong_ben_cat_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/03/2026",
+        "endDate": "28/02/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/03/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1258",
+        "salesUnit": "VNPT Bến Cát",
+        "am": "Nguyễn Thành Thái",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703433732"
       }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_hoa_loi",
+    "name": "Trạm y tế Phường Hòa Lợi",
+    "avatar": "TT",
+    "khuVuc": "Bến Cát",
+    "mst": "3703432746",
+    "am": "Nguyễn Thành Thái",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_hoa_loi-1",
+        "code": "20260101-02/HĐ/VNPTBCT.VNPTHCM-TYT HOA LOI",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Phường Hòa Lợi",
+        "fileName": "HD_2026_tram_y_te_phuong_hoa_loi_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1259",
+        "salesUnit": "VNPT Bến Cát",
+        "am": "Nguyễn Thành Thái",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703432746"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_phu_an",
+    "name": "Trạm y tế Phường Phú An",
+    "avatar": "TT",
+    "khuVuc": "Bến Cát",
+    "mst": "3703427898",
+    "am": "Nguyễn Thành Thái",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_phu_an-1",
+        "code": "20260101-02/HĐ/VNPTBCT.VNPTHCM-TYT PHU AN",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Phường Phú An",
+        "fileName": "HD_2026_tram_y_te_phuong_phu_an_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1260",
+        "salesUnit": "VNPT Bến Cát",
+        "am": "Nguyễn Thành Thái",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703427898"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_thoi_hoa",
+    "name": "Trạm y tế Phường Thới Hòa",
+    "avatar": "TT",
+    "khuVuc": "Bến Cát",
+    "mst": "3703430185",
+    "am": "Nguyễn Thành Thái",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_thoi_hoa-1",
+        "code": "20260301/HĐ/VNPTBCT-VNPTTHCM-TYT THOI HOA",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Phường Thới Hòa",
+        "fileName": "HD_2026_tram_y_te_phuong_thoi_hoa_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/03/2026",
+        "endDate": "28/02/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/03/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1262",
+        "salesUnit": "VNPT Bến Cát",
+        "am": "Nguyễn Thành Thái",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703430185"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_an_long",
+    "name": "Trạm y tế Xã An Long",
+    "avatar": "TT",
+    "khuVuc": "Phú Giáo",
+    "mst": "3703429750",
+    "am": "Nguyễn Thị Thanh Nga",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_an_long-1",
+        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT AN LONG",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã An Long",
+        "fileName": "HD_2026_tram_y_te_xa_an_long_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "32,400,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "Nguyễn Thị Thanh Nga",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703429750"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_bau_bang",
+    "name": "Trạm y tế Xã Bàu Bàng",
+    "avatar": "TT",
+    "khuVuc": "Phú Giáo",
+    "mst": "3703440497",
+    "am": "Nguyễn Thị Thanh Nga",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_bau_bang-1",
+        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT BAU BANG",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Bàu Bàng",
+        "fileName": "HD_2026_tram_y_te_xa_bau_bang_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "18,000,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1263",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "Nguyễn Thị Thanh Nga",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703440497"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_phu_giao",
+    "name": "Trạm y tế Xã Phú Giáo",
+    "avatar": "TT",
+    "khuVuc": "Phú Giáo",
+    "mst": "3703429775",
+    "am": "Nguyễn Thị Thanh Nga",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_phu_giao-1",
+        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHU GIAO",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Phú Giáo",
+        "fileName": "HD_2026_tram_y_te_xa_phu_giao_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "32,400,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1267",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "Nguyễn Thị Thanh Nga",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703429775"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_phuoc_hoa",
+    "name": "Trạm y tế Xã Phước Hòa",
+    "avatar": "TT",
+    "khuVuc": "Phú Giáo",
+    "mst": "3703429768",
+    "am": "Nguyễn Thị Thanh Nga",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_phuoc_hoa-1",
+        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHUOC HOA",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Phước Hòa",
+        "fileName": "HD_2026_tram_y_te_xa_phuoc_hoa_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1269",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "Nguyễn Thị Thanh Nga",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703429768"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_phuoc_thanh",
+    "name": "Trạm y tế Xã Phước Thành",
+    "avatar": "TT",
+    "khuVuc": "Phú Giáo",
+    "mst": "3703429743",
+    "am": "Nguyễn Thị Thanh Nga",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_phuoc_thanh-1",
+        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT PHUOC THANH",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Phước Thành",
+        "fileName": "HD_2026_tram_y_te_xa_phuoc_thanh_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "32,400,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1270",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "Nguyễn Thị Thanh Nga",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703429743"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_tru_van_tho",
+    "name": "Trạm y tế Xã Trừ Văn Thố",
+    "avatar": "TT",
+    "khuVuc": "Phú Giáo",
+    "mst": "3703436645",
+    "am": "Nguyễn Thị Thanh Nga",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_tru_van_tho-1",
+        "code": "20260101/HĐ/VNPTBCT.VNPTHCM-TYT TRU VAN THO",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Trừ Văn Thố",
+        "fileName": "HD_2026_tram_y_te_xa_tru_van_tho_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/04/2026",
+        "endDate": "31/03/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/04/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1278",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "Nguyễn Thị Thanh Nga",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703436645"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_long_nguyen",
+    "name": "Trạm y tế Phường Long Nguyên",
+    "avatar": "TT",
+    "khuVuc": "Dầu Tiếng",
+    "mst": "3703432739",
+    "am": "Đoàn Tấn Phát",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_long_nguyen-1",
+        "code": "20260101/HD/VNPTDTG.VNPTHCM-TYT LONGNGUYEN",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Phường Long Nguyên",
+        "fileName": "HD_2026_tram_y_te_phuong_long_nguyen_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1277",
+        "salesUnit": "VNPT Dầu Tiếng",
+        "am": "Đoàn Tấn Phát",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703432739"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_tay_nam",
+    "name": "Trạm y tế Phường Tây Nam",
+    "avatar": "TT",
+    "khuVuc": "Dầu Tiếng",
+    "mst": "3703430354",
+    "am": "Đoàn Tấn Phát",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_tay_nam-1",
+        "code": "20260101/HD/VNPTDTG.VNPTHCM-TYT TAYNAM",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Phường Tây Nam",
+        "fileName": "HD_2026_tram_y_te_phuong_tay_nam_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1274",
+        "salesUnit": "VNPT Dầu Tiếng",
+        "am": "Đoàn Tấn Phát",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703430354"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_dau_tieng",
+    "name": "Trạm y tế Xã Dầu Tiếng",
+    "avatar": "TT",
+    "khuVuc": "Dầu Tiếng",
+    "mst": "3703427009",
+    "am": "Đoàn Tấn Phát",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_dau_tieng-1",
+        "code": "2026/3700672644/VNPT TPHCM/VNPT027115/HĐDV YTS",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Dầu Tiếng",
+        "fileName": "HD_2026_tram_y_te_xa_dau_tieng_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "39,600,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1276",
+        "salesUnit": "VNPT Dầu Tiếng",
+        "am": "Đoàn Tấn Phát",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703427009"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_long_hoa",
+    "name": "Trạm y tế Xã Long Hòa",
+    "avatar": "TT",
+    "khuVuc": "Dầu Tiếng",
+    "mst": "3703430192",
+    "am": "Đoàn Tấn Phát",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_long_hoa-1",
+        "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYT LONGHOA",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Long Hòa",
+        "fileName": "HD_2026_tram_y_te_xa_long_hoa_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1275",
+        "salesUnit": "VNPT Dầu Tiếng",
+        "am": "Đoàn Tấn Phát",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703430192"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_minh_thanh",
+    "name": "Trạm y tế Xã Minh Thạnh",
+    "avatar": "TT",
+    "khuVuc": "Dầu Tiếng",
+    "mst": "3703427016",
+    "am": "Đoàn Tấn Phát",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_minh_thanh-1",
+        "code": "20260101/HĐ/VNPTDTG.VNPTHCM-TYT MINHTHANH",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Minh Thạnh",
+        "fileName": "HD_2026_tram_y_te_xa_minh_thanh_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "32,400,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1273",
+        "salesUnit": "VNPT Dầu Tiếng",
+        "am": "Đoàn Tấn Phát",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703427016"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_thanh_an",
+    "name": "Trạm y tế Xã Thanh An",
+    "avatar": "TT",
+    "khuVuc": "Dầu Tiếng",
+    "mst": "3703432739",
+    "am": "Đoàn Tấn Phát",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_thanh_an-1",
+        "code": "20260101/HD/VNPTDTG.VNPTHCM-TYT THANHAN",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Xã Thanh An",
+        "fileName": "HD_2026_tram_y_te_xa_thanh_an_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1271",
+        "salesUnit": "VNPT Dầu Tiếng",
+        "am": "Đoàn Tấn Phát",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703432739"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_binh_co",
+    "name": "Trạm y tế Phường Bình Cơ",
+    "avatar": "TT",
+    "khuVuc": "Tân Uyên",
+    "mst": "3703441726",
+    "am": "Trần Phương Nhi",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_binh_co-1",
+        "code": "20260120/ VNPT TP.HCM -VNPT TUN/ HĐDV – VNPT HIS",
+        "name": "Cung cấp dịch vụ hệ thống thông tin quản lý y tế cho Trạm y tế Phường Bình Cơ",
+        "fileName": "HD_2026_tram_y_te_phuong_binh_co_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "Hệ thống Thông tin Quản lý Y tế",
+        "value": "25,200,000 VND",
+        "date": "20/01/2026",
+        "endDate": "19/01/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "20/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1268",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "Trần Phương Nhi",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703441726"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_chanh_phu_hoa",
+    "name": "Trạm y tế Phường Chánh Phú Hòa",
+    "avatar": "TT",
+    "khuVuc": "Tân Uyên",
+    "mst": "3703436652",
+    "am": "Phạm Thị Luân Lý",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_chanh_phu_hoa-1",
+        "code": "260225-01/ VNPT TP.HCM- VNPT.TU/HĐDV HMIS LYPTL",
+        "name": "Cung cấp dịch vụ hệ thống thông tin quản lý y tế cho Trạm y tế Phường Chánh Phú Hòa",
+        "fileName": "HD_2026_tram_y_te_phuong_chanh_phu_hoa_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+        "value": "25,200,000 VND",
+        "date": "25/02/2026",
+        "endDate": "24/02/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "25/02/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1266",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "Phạm Thị Luân Lý",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703436652"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_tan_hiep",
+    "name": "Trạm y tế Phường Tân Hiệp",
+    "avatar": "TT",
+    "khuVuc": "Tân Uyên",
+    "mst": "",
+    "am": "Trần Phương Nhi",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_tan_hiep-1",
+        "code": "AM KHÔNG CÓ BẢN SCAN HĐ",
+        "name": "Hợp đồng cung cấp dịch vụ Y tế số - Trạm y tế Phường Tân Hiệp",
+        "fileName": "HD_2026_tram_y_te_phuong_tan_hiep_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "",
+        "status": "pending",
+        "ms1Done": false,
+        "ms2Done": false,
+        "ms3Done": false,
+        "signedBy": "",
+        "signedTime": "",
+        "cdsCode": "YTE.2026.10.1279",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "Trần Phương Nhi",
+        "tpm": "Lê Trung Kiên",
+        "mst": ""
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_tan_khanh",
+    "name": "Trạm y tế Phường Tân Khánh",
+    "avatar": "TT",
+    "khuVuc": "Thuận An",
+    "mst": "3703440881",
+    "am": "Triệu Huy Cường",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_tan_khanh-1",
+        "code": "20260301/HD/VNPTTA.VNPTHCM-TYT PHUONGTANKHANH",
+        "name": "Cung cấp dịch vụ hệ thống thông tin quản lý y tế cho Trạm y tế Phường Tân Khánh",
+        "fileName": "HD_2026_tram_y_te_phuong_tan_khanh_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "Hệ thống Thông tin Quản lý Y tế",
+        "value": "39,600,000 VND",
+        "date": "01/03/2026",
+        "endDate": "28/02/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/03/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1272",
+        "salesUnit": "VNPT Thuận An",
+        "am": "Triệu Huy Cường",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703440881"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_tan_uyen",
+    "name": "Trạm y tế Phường Tân Uyên",
+    "avatar": "TT",
+    "khuVuc": "Tân Uyên",
+    "mst": "",
+    "am": "Trần Phương Nhi",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_tan_uyen-1",
+        "code": "AM KHÔNG CÓ BẢN SCAN HĐ",
+        "name": "Hợp đồng cung cấp dịch vụ Y tế số - Trạm y tế Phường Tân Uyên",
+        "fileName": "HD_2026_tram_y_te_phuong_tan_uyen_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "39,600,000 VND",
+        "date": "01/01/2026",
+        "endDate": "",
+        "status": "pending",
+        "ms1Done": false,
+        "ms2Done": false,
+        "ms3Done": false,
+        "signedBy": "",
+        "signedTime": "",
+        "cdsCode": "YTE.2026.10.1265",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "Trần Phương Nhi",
+        "tpm": "Lê Trung Kiên",
+        "mst": ""
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_vinh_tan",
+    "name": "Trạm y tế Phường Vĩnh Tân",
+    "avatar": "TT",
+    "khuVuc": "Tân Uyên",
+    "mst": "",
+    "am": "Trần Phương Nhi",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_vinh_tan-1",
+        "code": "AM KHÔNG CÓ BẢN SCAN HĐ",
+        "name": "Hợp đồng cung cấp dịch vụ Y tế số - Trạm y tế Phường Vĩnh Tân",
+        "fileName": "HD_2026_tram_y_te_phuong_vinh_tan_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "",
+        "status": "pending",
+        "ms1Done": false,
+        "ms2Done": false,
+        "ms3Done": false,
+        "signedBy": "",
+        "signedTime": "",
+        "cdsCode": "YTE.2026.10.1280",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "Trần Phương Nhi",
+        "tpm": "Lê Trung Kiên",
+        "mst": ""
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_bac_tan_uyen",
+    "name": "Trạm y tế Xã Bắc Tân Uyên",
+    "avatar": "TT",
+    "khuVuc": "Tân Uyên",
+    "mst": "3703432351",
+    "am": "Phạm Thị Luân Lý",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_bac_tan_uyen-1",
+        "code": "260105–01/ VNPT TP.HCM- VNPT.TU/HĐDV HMIS LYPTL",
+        "name": "Cung cấp dịch vụ hệ thống thông tin quản lý y tế cho Trạm y tế Xã Bắc Tân Uyên",
+        "fileName": "HD_2026_tram_y_te_xa_bac_tan_uyen_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+        "value": "32,400,000 VND",
+        "date": "05/01/2026",
+        "endDate": "04/01/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "05/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1214",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "Phạm Thị Luân Lý",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703432351"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_xa_thuong_tan",
+    "name": "Trạm y tế Xã Thường Tân",
+    "avatar": "TT",
+    "khuVuc": "Tân Uyên",
+    "mst": "3703433891",
+    "am": "Phạm Thị Luân Lý",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_xa_thuong_tan-1",
+        "code": "260121-01/ VNPT TP.HCM-VNPT.TU/HĐDV HMIS LYPTL",
+        "name": "Cung cấp dịch vụ hệ thống thông tin quản lý y tế cho Trạm y tế Xã Thường Tân",
+        "fileName": "HD_2026_tram_y_te_xa_thuong_tan_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "Hệ thống Quản lý Y tế Cơ sở HMIS",
+        "value": "32,400,000 VND",
+        "date": "21/01/2026",
+        "endDate": "20/01/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "21/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1215",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "Phạm Thị Luân Lý",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703433891"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_binh_duong",
+    "name": "Trạm y tế Phường Bình Dương",
+    "avatar": "TT",
+    "khuVuc": "Thủ Dầu Một",
+    "mst": "3703443201",
+    "am": "Diệp Tuấn Phú",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_binh_duong-1",
+        "code": "20260130/HĐ/VNPTTDM.VNPTHCM-TYT P.BINHDUONG",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Khám chữa bệnh - VNPT HIS cho Trạm y tế Phường Bình Dương",
+        "fileName": "HD_2026_tram_y_te_phuong_binh_duong_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "31/01/2026",
+        "endDate": "30/01/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "31/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1216",
+        "salesUnit": "VNPT TDM",
+        "am": "Diệp Tuấn Phú",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703443201"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_chanh_hiep",
+    "name": "Trạm y tế Phường Chánh Hiệp",
+    "avatar": "TT",
+    "khuVuc": "Thủ Dầu Một",
+    "mst": "3703433073",
+    "am": "Nguyễn Thị Cẩm Vân",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_chanh_hiep-1",
+        "code": "20260125/3703433073/VNPTTDM/VNPT027189",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Phòng khám & Công nghệ thông tin cho Trạm y tế Phường Chánh Hiệp",
+        "fileName": "HD_2026_tram_y_te_phuong_chanh_hiep_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/02/2026",
+        "endDate": "31/01/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/02/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1217",
+        "salesUnit": "VNPT TDM",
+        "am": "Nguyễn Thị Cẩm Vân",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703433073"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_phu_loi",
+    "name": "Trạm y tế Phường Phú Lợi",
+    "avatar": "TT",
+    "khuVuc": "Thủ Dầu Một",
+    "mst": "3703432369",
+    "am": "Nguyễn Thị Cẩm Vân",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_phu_loi-1",
+        "code": "20260120/3703432369/VNPTTĐM/VNPT0272189",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Phòng khám & Công nghệ thông tin cho Trạm y tế Phường Phú Lợi",
+        "fileName": "HD_2026_tram_y_te_phuong_phu_loi_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1218",
+        "salesUnit": "VNPT TDM",
+        "am": "Nguyễn Thị Cẩm Vân",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703432369"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_thu_dau_mot",
+    "name": "Trạm y tế Phường Thủ Dầu Một",
+    "avatar": "TT",
+    "khuVuc": "Thủ Dầu Một",
+    "mst": "3703432344",
+    "am": "Nguyễn Thị Nhật Hà",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_thu_dau_mot-1",
+        "code": "20260101/HĐ/VNPTTĐM.VNPTHCM-TYT P.THUDAUMOT",
+        "name": "Cung cấp dịch vụ hệ thống Quản lý bệnh viện cho Trạm y tế Phường Thủ Dầu Một",
+        "fileName": "HD_2026_tram_y_te_phuong_thu_dau_mot_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "80,400,000 VND",
+        "date": "01/01/2026",
+        "endDate": "31/12/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/01/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1219",
+        "salesUnit": "VNPT TDM",
+        "am": "Nguyễn Thị Nhật Hà",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703432344"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_binh_hoa",
+    "name": "Trạm y tế Phường Bình Hòa",
+    "avatar": "TT",
+    "khuVuc": "Thuận An",
+    "mst": "3703427785",
+    "am": "Huỳnh Minh Châu",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_binh_hoa-1",
+        "code": "20260205/HD/VNPTTA-VNPTHCM-TYT PHUONGBINHHOA",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý bệnh viện - VNPT HIS cho Trạm y tế Phường Bình Hòa",
+        "fileName": "HD_2026_tram_y_te_phuong_binh_hoa_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "18,000,000 VND",
+        "date": "05/02/2026",
+        "endDate": "05/02/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "05/02/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1220",
+        "salesUnit": "VNPT Thuận An",
+        "am": "Huỳnh Minh Châu",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703427785"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_lai_thieu",
+    "name": "Trạm y tế Phường Lái Thiêu",
+    "avatar": "TT",
+    "khuVuc": "Thuận An",
+    "mst": "3703431037",
+    "am": "Huỳnh Minh Châu",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_lai_thieu-1",
+        "code": "20260205/HĐ/VNPTTAN.VNPTHCM-TYTPHUONGLAITHIEU",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý bệnh viện - VNPT HIS cho Trạm y tế Phường Lái Thiêu",
+        "fileName": "HD_2026_tram_y_te_phuong_lai_thieu_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "32,400,000 VND",
+        "date": "05/02/2026",
+        "endDate": "05/02/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "05/02/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1221",
+        "salesUnit": "VNPT Thuận An",
+        "am": "Huỳnh Minh Châu",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703431037"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_thuan_an",
+    "name": "Trạm y tế Phường Thuận An",
+    "avatar": "TT",
+    "khuVuc": "Thuận An",
+    "mst": "3703425410",
+    "am": "Phan Trọng Khương",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_thuan_an-1",
+        "code": "20260204/3703425410/VNPTTHUANAN/VNPT027226",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý Phòng khám & Công nghệ thông tin cho Trạm y tế Phường Thuận An",
+        "fileName": "HD_2026_tram_y_te_phuong_thuan_an_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "01/03/2026",
+        "endDate": "28/02/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/03/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1222",
+        "salesUnit": "VNPT Thuận An",
+        "am": "Phan Trọng Khương",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703425410"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_thuan_giao",
+    "name": "Trạm y tế Phường Thuận Giao",
+    "avatar": "TT",
+    "khuVuc": "Thuận An",
+    "mst": "3703430964",
+    "am": "Huỳnh Minh Châu",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_thuan_giao-1",
+        "code": "20260205/HĐ/VNPTTAN.VNPTHCM-TYTPHUONGTHUANGIAO",
+        "name": "Cung cấp dịch vụ Phần mềm Quản lý bệnh viện - VNPT HIS cho Trạm y tế Phường Thuận Giao",
+        "fileName": "HD_2026_tram_y_te_phuong_thuan_giao_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,200,000 VND",
+        "date": "05/02/2026",
+        "endDate": "05/02/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "05/02/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1223",
+        "salesUnit": "VNPT Thuận An",
+        "am": "Huỳnh Minh Châu",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703430964"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_an_phu",
+    "name": "Trạm y tế Phường An Phú",
+    "avatar": "TT",
+    "khuVuc": "Dĩ An",
+    "mst": "3703427802",
+    "am": "Thái Sinh Thiện",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_an_phu-1",
+        "code": "20260205/3703427802/VNPTDAN/VNPT027134",
+        "name": "Cung cấp dịch vụ phần mềm Quản lý phòng khám & Công nghệ thông tin cho  Trạm y tế Phường An Phú",
+        "fileName": "HD_2026_tram_y_te_phuong_an_phu_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "18,000,000 VND",
+        "date": "01/02/2026",
+        "endDate": "31/01/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/02/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1256",
+        "salesUnit": "VNPT Dĩ An",
+        "am": "Thái Sinh Thiện",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703427802"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_di_an",
+    "name": "Trạm y tế Phường Dĩ An",
+    "avatar": "TT",
+    "khuVuc": "Dĩ An",
+    "mst": "3703430971",
+    "am": "Huỳnh Đoàn Công Khôi",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_di_an-1",
+        "code": "20260316/3703430971/VNPTDA/CTV074880",
+        "name": "Hợp đồng cung cấp và sử dung dịch vụ & Giải pháp công nghệ thông tin cho Trạm y tế Phường Dĩ An",
+        "fileName": "HD_2026_tram_y_te_phuong_di_an_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "35,400,000 VND",
+        "date": "16/03/2026",
+        "endDate": "15/03/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "16/03/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1257",
+        "salesUnit": "VNPT Dĩ An",
+        "am": "Huỳnh Đoàn Công Khôi",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703430971"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_dong_hoa",
+    "name": "Trạm y tế Phường Đông Hòa",
+    "avatar": "TT",
+    "khuVuc": "Dĩ An",
+    "mst": "3703435659",
+    "am": "Nguyễn Thành Đông",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_dong_hoa-1",
+        "code": "20260327-01/3703435659/VNPT.DAN/VNPT027135/HĐDV",
+        "name": "Hợp đồng cung cấp và sử dung dịch vụ & Giải pháp công nghệ thông tin cho Trạm y tế Phường Đông Hòa",
+        "fileName": "HD_2026_tram_y_te_phuong_dong_hoa_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "36,600,000 VND",
+        "date": "27/03/2026",
+        "endDate": "26/03/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "27/03/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1261",
+        "salesUnit": "VNPT Dĩ An",
+        "am": "Nguyễn Thành Đông",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703435659"
+      }
+    ]
+  },
+  {
+    "id": "tram_y_te_phuong_tan_dong_hiep",
+    "name": "Trạm y tế Phường Tân Đông Hiệp",
+    "avatar": "TT",
+    "khuVuc": "Dĩ An",
+    "mst": "3703436638",
+    "am": "Nguyễn Phước Hoàng Khôi",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "tram_y_te_phuong_tan_dong_hiep-1",
+        "code": "20260330/3703436638/VNPTDA/VNPT082841",
+        "name": "Hợp đồng cung cấp và sử dung dịch vụ & Giải pháp công nghệ thông tin cho Trạm y tế Phường Tân Đông Hiệp",
+        "fileName": "HD_2026_tram_y_te_phuong_tan_dong_hiep_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "16,900,000 VND",
+        "date": "29/04/2026",
+        "endDate": "28/04/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "29/04/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.1264",
+        "salesUnit": "VNPT Dĩ An",
+        "am": "Nguyễn Phước Hoàng Khôi",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3703436638"
+      }
+    ]
+  },
+  {
+    "id": "benh_vien_da_khoa_cao_su_dau_tieng",
+    "name": "Bệnh Viện Đa Khoa Cao Su Dầu Tiếng",
+    "avatar": "BV",
+    "khuVuc": "Dầu Tiếng",
+    "mst": "",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "benh_vien_da_khoa_cao_su_dau_tieng-1",
+        "code": "201001-01/VNPTHIS-BVCSDT/TTKD-BDG/2020",
+        "name": "Cung cấp giải pháp phần mềm CNTT",
+        "fileName": "HD_2026_benh_vien_da_khoa_cao_su_dau_tieng_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "232,000,000 VND",
+        "date": "01/01/2026",
+        "endDate": "",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "",
+        "cdsCode": "",
+        "salesUnit": "VNPT Dầu Tiếng",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": ""
+      }
+    ]
+  },
+  {
+    "id": "cong_ty_tnhh_phong_kham_da_khoa_sai_gon_tan_binh",
+    "name": "Công Ty TNHH Phòng Khám Đa Khoa Sài Gòn - Tân Bình",
+    "avatar": "CP",
+    "khuVuc": "Phú Giáo",
+    "mst": "3702712596",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "cong_ty_tnhh_phong_kham_da_khoa_sai_gon_tan_binh-1",
+        "code": "2501/VNPT HIS-PKĐK TAN BINH/TTKD BDG/2025-LTN",
+        "name": "Cung cấp giải pháp phần mềm CNTT",
+        "fileName": "HD_2026_cong_ty_tnhh_phong_kham_da_khoa_sai_gon_tan_binh_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "61,800,000 VND",
+        "date": "01/07/2025",
+        "endDate": "30/06/2028",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/07/2025 09:00:00",
+        "cdsCode": "",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3702712596"
+      }
+    ]
+  },
+  {
+    "id": "benh_vien_y_hoc_co_truyen_tinh_binh_duong",
+    "name": "Bệnh viện Y học Cổ truyền tỉnh Bình Dương",
+    "avatar": "BV",
+    "khuVuc": "Thủ Dầu Một",
+    "mst": "",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "benh_vien_y_hoc_co_truyen_tinh_binh_duong-1",
+        "code": "20260701/3700256161/VNPT TDM/VNPT027160",
+        "name": "Thuê hệ thống phần mềm quản lý bệnh viện HIS, LIS, RIS/PACS.",
+        "fileName": "HD_2026_benh_vien_y_hoc_co_truyen_tinh_binh_duong_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT RIS/PACS - Chẩn đoán hình ảnh",
+        "value": "163,594,296 VND",
+        "date": "01/07/2026",
+        "endDate": "30/06/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/07/2026 09:00:00",
+        "cdsCode": "",
+        "salesUnit": "VNPT Thủ Dầu Một",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": ""
+      }
+    ]
+  },
+  {
+    "id": "benh_vien_sai_gon_binh_duong",
+    "name": "Bệnh viện Sài Gòn Bình Dương",
+    "avatar": "BV",
+    "khuVuc": "Thủ Dầu Một",
+    "mst": "3700711558",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "benh_vien_sai_gon_binh_duong-1",
+        "code": "251001-01/VNPTTP.HCM-VNPT-TDM/HĐDVVNPTHIS-TAINM",
+        "name": "Hợp đồng cung cấp giải pháp phần mềm CNTT",
+        "fileName": "HD_2026_benh_vien_sai_gon_binh_duong_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "102,000,000 VND",
+        "date": "01/01/2026",
+        "endDate": "",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "",
+        "cdsCode": "",
+        "salesUnit": "VNPT Thủ Dầu Một",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3700711558"
+      }
+    ]
+  },
+  {
+    "id": "cong_ty_co_phan_benh_vien_my_phuoc",
+    "name": "Công Ty Cổ Phần Bệnh Viện Mỹ Phước",
+    "avatar": "CC",
+    "khuVuc": "Bến Cát",
+    "mst": "3700696042",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "cong_ty_co_phan_benh_vien_my_phuoc-1",
+        "code": "250801-01/VNPT VNP-BDG PBHBCT/HĐ VNPT RIS/PACS - TLNT",
+        "name": "Cung cấp giải pháp phần mềm CNTT",
+        "fileName": "HD_2026_cong_ty_co_phan_benh_vien_my_phuoc_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT RIS/PACS - Chẩn đoán hình ảnh",
+        "value": "669,600,000 VND",
+        "date": "01/05/2025",
+        "endDate": "30/04/2028",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/05/2025 09:00:00",
+        "cdsCode": "",
+        "salesUnit": "VNPT Bến Cát",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3700696042"
+      }
+    ]
+  },
+  {
+    "id": "cong_ty_co_phan_benh_vien_da_khoa_nam_anh",
+    "name": "Công ty Cổ phần Bệnh viện Đa khoa Năm Anh",
+    "avatar": "CC",
+    "khuVuc": "Thuận An",
+    "mst": "3701412046",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "cong_ty_co_phan_benh_vien_da_khoa_nam_anh-1",
+        "code": "20260807/3701412046/VNPTTHUANAN/VNPT027226",
+        "name": "Cung cấp dịch vụ phần mềm Quản lý phòng khám Nam Anh",
+        "fileName": "HD_2026_cong_ty_co_phan_benh_vien_da_khoa_nam_anh_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "25,920,000 VND",
+        "date": "01/09/2026",
+        "endDate": "31/08/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/09/2026 09:00:00",
+        "cdsCode": "",
+        "salesUnit": "VNPT Thuận An",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3701412046"
+      }
+    ]
+  },
+  {
+    "id": "benh_vien_columbia_asian_binh_duong",
+    "name": "Bệnh viện Columbia Asian Bình Dương",
+    "avatar": "BV",
+    "khuVuc": "Thủ Dầu Một",
+    "mst": "3700952056",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "benh_vien_columbia_asian_binh_duong-1",
+        "code": "260301/HĐ VNPT HIS/VNPTTDM.VNPTHCM-BV COLUMBIA",
+        "name": "Cung cấp dịch vụ CNTT - ứng dụng phần mềm VNPT-His cho Bệnh viện Columbia Asian Bình Dương",
+        "fileName": "HD_2026_benh_vien_columbia_asian_binh_duong_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "180,000,000 VND",
+        "date": "17/04/2026",
+        "endDate": "16/04/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "17/04/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.134",
+        "salesUnit": "VNPT Thủ Dầu Một",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3700952056"
+      },
+      {
+        "id": "benh_vien_columbia_asian_binh_duong-2",
+        "code": "260302/VNPT.HCM-VNPT.TDM/HDDV-VNPTRIS/PACS",
+        "name": "RIS/PACS",
+        "fileName": "HD_2026_benh_vien_columbia_asian_binh_duong_2.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT RIS/PACS - Chẩn đoán hình ảnh",
+        "value": "808,000,000 VND",
+        "date": "02/03/2026",
+        "endDate": "02/03/2026",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "02/03/2026 09:00:00",
+        "cdsCode": "",
+        "salesUnit": "VNPT Thủ Dầu Một",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3700952056"
+      }
+    ]
+  },
+  {
+    "id": "benh_vien_ben_san",
+    "name": "Bệnh viện Bến Sắn",
+    "avatar": "BV",
+    "khuVuc": "Tân Uyên",
+    "mst": "3701544116",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "benh_vien_ben_san-1",
+        "code": "20260401/HĐKT/BENHVIENBENSAN - VNPT.TU/KHANHNN",
+        "name": "Thuê hệ thống phần mềm quản lý bệnh viện, quản lý xét nghiệm. quản lý chuẩn đoán hình ảnh và phần mềm bệnh án điện tử cho Bệnh viện Bến Sắn năm 2026",
+        "fileName": "HD_2026_benh_vien_ben_san_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "358,892,000 VND",
+        "date": "01/04/2026",
+        "endDate": "31/03/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/04/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.135",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3701544116"
+      }
+    ]
+  },
+  {
+    "id": "trung_tam_y_te_kv_ben_cat",
+    "name": "Trung Tâm Y Tế KV Bến Cát",
+    "avatar": "TT",
+    "khuVuc": "Bến Cát",
+    "mst": "3700673831",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "trung_tam_y_te_kv_ben_cat-1",
+        "code": "20260406/3700673831/VNPT BCT/VNPT027139/HDDV YTS",
+        "name": "Gói thầu: Cung cấp (thuê) dịch vụ phần mềm Quản lý bệnh viện VNPT-His, phần mềm quản lý xét nghiệm VNPT Lis cho Trung tâm y tế khu vực Bến Cát",
+        "fileName": "HD_2026_trung_tam_y_te_kv_ben_cat_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "216,000,000 VND",
+        "date": "01/04/2026",
+        "endDate": "31/03/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "01/04/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.130",
+        "salesUnit": "VNPT Bến Cát",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3700673831"
+      }
+    ]
+  },
+  {
+    "id": "trung_tam_y_te_kv_phu_giao",
+    "name": "Trung Tâm Y Tế KV Phú Giáo",
+    "avatar": "TT",
+    "khuVuc": "Phú Giáo",
+    "mst": "3701512805",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "trung_tam_y_te_kv_phu_giao-1",
+        "code": "2026/3701512805/VNPT TPHCM/VNPT027147/HDDV YTS",
+        "name": "Cung cấp (thuê) dịch vụ phần mềm Quản lý bệnh viện VNPT-His, phần mềm quản lý xét nghiệm VNPT Lis cho Trung tâm y tế khu vực Phú Giáo",
+        "fileName": "HD_2026_trung_tam_y_te_kv_phu_giao_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "210,000,000 VND",
+        "date": "04/05/2026",
+        "endDate": "03/05/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "04/05/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.131",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3701512805"
+      }
+    ]
+  },
+  {
+    "id": "trung_tam_y_te_kv_bau_bang",
+    "name": "Trung Tâm Y Tế KV Bàu Bàng",
+    "avatar": "TT",
+    "khuVuc": "Phú Giáo",
+    "mst": "3702272634",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "trung_tam_y_te_kv_bau_bang-1",
+        "code": "20262909/3702272634/VNPT.HCM.PGO/CTV091408",
+        "name": "Thuê phần mềm bệnh án điện tử, phần mềm quản lí khám chữa bệnh, phần mềm quản lí xét nghiệm, phần mềm quản lí hình ảnh và bản quyền phần mềm diệt virus, tường lửa tại Trung tâm Y tế khu vực Bàu Bàng",
+        "fileName": "HD_2026_trung_tam_y_te_kv_bau_bang_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "558,125,000 VND",
+        "date": "29/09/2026",
+        "endDate": "28/09/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "29/09/2026 09:00:00",
+        "cdsCode": "VNPT KV đã nhập",
+        "salesUnit": "VNPT Phú Giáo",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3702272634"
+      }
+    ]
+  },
+  {
+    "id": "trung_tam_y_te_kv_tan_uyen",
+    "name": "Trung Tâm Y Tế KV Tân Uyên",
+    "avatar": "TT",
+    "khuVuc": "Tân Uyên",
+    "mst": "3701503631",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "trung_tam_y_te_kv_tan_uyen-1",
+        "code": "20260120/HĐKT/TTYTKVTU-VNPT TP.HCM-VNPT.TU-EMR/NHITP",
+        "name": "Thuê phần mềm quản lý khám chữa bệnh (HIS, LIS, RIS/PACS) cho Trung Tâm Y Tế Khu Vực Tân Uyên năm 2026\nThuê phần mềm bệnh án điện tử (EMR) cho Trung Tâm Y Tế Khu Vực Tân Uyên năm 2026",
+        "fileName": "HD_2026_trung_tam_y_te_kv_tan_uyen_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT RIS/PACS - Chẩn đoán hình ảnh",
+        "value": "1,619,190,000 VND",
+        "date": "20/01/2026",
+        "endDate": "19/01/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "20/01/2026 09:00:00",
+        "cdsCode": "VNPT KV đã nhập",
+        "salesUnit": "VNPT Tân Uyên",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": "3701503631"
+      }
+    ]
+  },
+  {
+    "id": "trung_tam_y_te_kv_dau_tieng",
+    "name": "Trung Tâm Y Tế KV Dầu Tiếng",
+    "avatar": "TT",
+    "khuVuc": "Dầu Tiếng",
+    "mst": "",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "trung_tam_y_te_kv_dau_tieng-1",
+        "code": "2026/3700672644/VNPT TPHCM/VNPT027115/HĐDV YTS",
+        "name": "Cung cấp (thuê) dịch vụ phần mềm Quản lý bệnh viện VNPT-His, phần mềm quản lý xét nghiệm VNPT Lis và phần mềm Ris, Pacs  cho Trung tâm y tế khu vực Dầu Tiếng",
+        "fileName": "HD_2026_trung_tam_y_te_kv_dau_tieng_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "372,539,815 VND",
+        "date": "20/03/2026",
+        "endDate": "21/03/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "20/03/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.132",
+        "salesUnit": "VNPT Dầu Tiếng",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": ""
+      }
+    ]
+  },
+  {
+    "id": "trung_tam_y_te_kv_thuan_an",
+    "name": "Trung Tâm Y tế KV Thuận An",
+    "avatar": "TT",
+    "khuVuc": "Thuận An",
+    "mst": "",
+    "am": "",
+    "tpm": "Lê Trung Kiên",
+    "contracts": [
+      {
+        "id": "trung_tam_y_te_kv_thuan_an-1",
+        "code": "20261009/3700668020/VNPT.TAN/CTV089764",
+        "name": "Gói thầu mua sắm hệ thống cơ sở hạ tầng công nghệ thông tin và thuê phần mềm quản lý bệnh án điện tử cho Trung Tâm Y tế KV Thuận An",
+        "fileName": "HD_2026_trung_tam_y_te_kv_thuan_an_1.pdf",
+        "fileSize": "1.8 MB",
+        "package": "VNPT HIS - Quản lý Khám chữa bệnh",
+        "value": "1,362,752,660 VND",
+        "date": "08/10/2026",
+        "endDate": "07/10/2027",
+        "status": "signed",
+        "ms1Done": true,
+        "ms2Done": true,
+        "ms3Done": true,
+        "signedBy": "VNPT Bình Dương (Mã CA: GP2-1002517)",
+        "signedTime": "08/10/2026 09:00:00",
+        "cdsCode": "YTE.2026.10.133",
+        "salesUnit": "VNPT Thuận An",
+        "am": "",
+        "tpm": "Lê Trung Kiên",
+        "mst": ""
+      }
+    ]
+  }
 ];
 
-    // Database state management
-    let storedUnits = localStorage.getItem('vnpt_his_units');
-    if (storedUnits) {
+    // Database state management with version control
+    const CURRENT_DB_VERSION = '2026_10_28_ds_khachhang_v2';
+    const storedVersion = localStorage.getItem('vnpt_his_units_version');
+    const storedUnits = localStorage.getItem('vnpt_his_units');
+    
+    if (storedUnits && storedVersion === CURRENT_DB_VERSION) {
       try {
         const parsed = JSON.parse(storedUnits);
         if (parsed.length > 0 && parsed[0].contracts.length > 0 && ('endDate' in parsed[0].contracts[0])) {
           units = parsed;
         } else {
           localStorage.setItem('vnpt_his_units', JSON.stringify(units));
+          localStorage.setItem('vnpt_his_units_version', CURRENT_DB_VERSION);
         }
       } catch (e) {
         console.error("Error parsing stored units:", e);
+        localStorage.setItem('vnpt_his_units', JSON.stringify(units));
+        localStorage.setItem('vnpt_his_units_version', CURRENT_DB_VERSION);
       }
     } else {
       localStorage.setItem('vnpt_his_units', JSON.stringify(units));
+      localStorage.setItem('vnpt_his_units_version', CURRENT_DB_VERSION);
     }
 
-    let selectedUnitId = "trung_tam_y_te_kv_bac_tan_uyen";
+    let selectedUnitId = units[0] ? units[0].id : "tram_y_te_phuong_ben_cat";
     let selectedContractId = null;
     let selectedSignMethod = '';
     let checkedContractIds = [];
@@ -2373,7 +2771,7 @@
 
     function resetDatabase() {
       if (confirm("Bạn có chắc chắn muốn đặt lại cơ sở dữ liệu hợp đồng về mặc định không? Tất cả các ngày hết hạn đã lưu và trạng thái ký sẽ bị xóa.")) {
-        localStorage.removeItem('vnpt_his_units');
+        localStorage.removeItem('vnpt_his_units'); localStorage.removeItem('vnpt_his_units_version');
         location.reload();
       }
     }
@@ -2403,10 +2801,14 @@
         }
 
         u.contracts.forEach(c => {
-          let cYear = '2026';
-          if (c.id.includes('-2027')) cYear = '2027';
-          if (c.id.includes('-2028')) cYear = '2028';
-          if (selectedYear !== 'all' && cYear !== selectedYear) return;
+          let startY = c.date && c.date.includes('/') ? c.date.split('/')[2].trim() : '2026';
+          let endY = c.endDate && c.endDate.includes('/') ? c.endDate.split('/')[2].trim() : startY;
+          if (selectedYear !== 'all') {
+            const y = parseInt(selectedYear, 10);
+            const sy = parseInt(startY, 10) || 2026;
+            const ey = parseInt(endY, 10) || sy;
+            if (y < sy || y > ey) return;
+          }
 
           totalCount++;
           let valNum = 0;
@@ -2612,10 +3014,14 @@
         let unitValueSum = 0;
 
         unit.contracts.forEach(c => {
-          let cYear = '2026';
-          if (c.id.includes('-2027')) cYear = '2027';
-          if (c.id.includes('-2028')) cYear = '2028';
-          if (selectedYear !== 'all' && cYear !== selectedYear) return;
+          let startY = c.date && c.date.includes('/') ? c.date.split('/')[2].trim() : '2026';
+          let endY = c.endDate && c.endDate.includes('/') ? c.endDate.split('/')[2].trim() : startY;
+          if (selectedYear !== 'all') {
+            const y = parseInt(selectedYear, 10);
+            const sy = parseInt(startY, 10) || 2026;
+            const ey = parseInt(endY, 10) || sy;
+            if (y < sy || y > ey) return;
+          }
 
           validContractsCount++;
           if (c.status === 'pending') pendingCount++;
@@ -2960,6 +3366,18 @@
       document.getElementById('detail-end-date').innerHTML = c.endDate
         ? c.endDate
         : '<span style="color: var(--color-text-muted); font-style: italic; font-size: 0.8rem;">Chưa có (Nhấp ✏️ để sửa)</span>';
+      
+      const elMst = document.getElementById('detail-mst');
+      if (elMst) elMst.textContent = c.mst || '—';
+      const elSales = document.getElementById('detail-sales-unit');
+      if (elSales) elSales.textContent = c.salesUnit || '—';
+      const elAm = document.getElementById('detail-am');
+      if (elAm) elAm.textContent = c.am || '—';
+      const elTpm = document.getElementById('detail-tpm');
+      if (elTpm) elTpm.textContent = c.tpm || 'Lê Trung Kiên';
+      const elCds = document.getElementById('detail-cds');
+      if (elCds) elCds.textContent = c.cdsCode || '—';
+
       document.getElementById('detail-filename').textContent = `${c.fileName} (${c.fileSize})`;
 
       document.getElementById('end-date-edit-container').classList.add('hidden');
@@ -3537,10 +3955,14 @@
 
         let sum = 0;
         u.contracts.forEach(c => {
-          let cYear = '2026';
-          if (c.id.includes('-2027')) cYear = '2027';
-          if (c.id.includes('-2028')) cYear = '2028';
-          if (selectedYear !== 'all' && cYear !== selectedYear) return;
+          let startY = c.date && c.date.includes('/') ? c.date.split('/')[2].trim() : '2026';
+          let endY = c.endDate && c.endDate.includes('/') ? c.endDate.split('/')[2].trim() : startY;
+          if (selectedYear !== 'all') {
+            const y = parseInt(selectedYear, 10);
+            const sy = parseInt(startY, 10) || 2026;
+            const ey = parseInt(endY, 10) || sy;
+            if (y < sy || y > ey) return;
+          }
 
           if (c.status !== 'pending') {
             if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
@@ -3578,10 +4000,14 @@
         }
 
         u.contracts.forEach(c => {
-          let cYear = '2026';
-          if (c.id.includes('-2027')) cYear = '2027';
-          if (c.id.includes('-2028')) cYear = '2028';
-          if (selectedYear !== 'all' && cYear !== selectedYear) return;
+          let startY = c.date && c.date.includes('/') ? c.date.split('/')[2].trim() : '2026';
+          let endY = c.endDate && c.endDate.includes('/') ? c.endDate.split('/')[2].trim() : startY;
+          if (selectedYear !== 'all') {
+            const y = parseInt(selectedYear, 10);
+            const sy = parseInt(startY, 10) || 2026;
+            const ey = parseInt(endY, 10) || sy;
+            if (y < sy || y > ey) return;
+          }
 
           if (c.status === 'signed') signedCount++;
           else if (c.status === 'almost_signed') almostSignedCount++;
