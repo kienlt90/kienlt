@@ -2755,9 +2755,7 @@
           alert("Tải xuống hoàn tất! Hãy sao chép file 'contracts.html' vừa tải xuống đè lên file cũ trong thư mục code kienlt90 để cập nhật vĩnh viễn.");
         })
         .catch(err => {
-          alert('Lỗi xuất file tự động: ' + err.message + '
-
-Dữ liệu vẫn được lưu tạm thời trên trình duyệt của bạn.');
+          alert(`Lỗi xuất file tự động: ${err.message}\n\nDữ liệu vẫn được lưu tạm thời trên trình duyệt của bạn.`);
         });
     }
 
