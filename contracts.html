@@ -3,510 +3,746 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUẢN LÝ HỢP ĐỒNG - KIENLT90 Portal</title>
+  <meta name="theme-color" content="#0066b3">
+  <title>Quản Lý Hợp Đồng CNTT Y Tế — VNPT Portal</title>
   <!-- Google Fonts: Be Vietnam Pro -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Stylesheet -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Base Stylesheet -->
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Custom Scoped Styles for Contracts Module */
-    .portal-container {
-      max-width: 100% !important;
-      width: 100% !important;
-      padding: 1.5rem 2.5rem !important;
-      box-sizing: border-box;
+    /* ==========================================================================
+       VNPT FLAT MODERN DESIGN SYSTEM (BLUE & WHITE)
+       Compliant with Web Interface Guidelines
+       ========================================================================== */
+    :root,
+    body,
+    body.portal-body,
+    body.light-theme {
+      --font-primary: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+      --font-heading: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+
+      /* VNPT Brand Blue & Crisp White Palette */
+      --vnpt-blue: #0066b3;
+      --vnpt-blue-hover: #005299;
+      --vnpt-blue-dark: #003f75;
+      --vnpt-cyan: #0088e8;
+      --vnpt-soft-bg: #f0f6fc;
+      --vnpt-soft-hover: #e4f0fb;
+      --vnpt-soft-border: #c5dcf2;
+
+      /* Flat Light VNPT Surface Variables */
+      --color-bg: #f3f7fb;
+      --color-bg-secondary: #ffffff;
+      --color-surface: #ffffff;
+      --color-surface-border: #d8e3ef;
+      --color-surface-hover: #f5f9fd;
+
+      --color-text-primary: #0f2942;
+      --color-text-secondary: #334e68;
+      --color-text-muted: #627d98;
+
+      --color-primary: #0066b3;
+      --color-primary-hover: #005299;
+      --color-primary-glow: rgba(0, 102, 179, 0.14);
+
+      --color-accent: #0066b3;
+      --color-accent-hover: #004b87;
+
+      --color-danger: #dc2626;
+      --color-danger-bg: #fef2f2;
+      --color-danger-border: #fecaca;
+
+      --shadow-sm: 0 1px 2px rgba(15, 41, 66, 0.04);
+      --shadow-md: 0 2px 4px rgba(15, 41, 66, 0.06);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 53, 102, 0.12), 0 4px 10px -3px rgba(0, 53, 102, 0.06);
     }
-    .contracts-layout {
-      display: grid;
-      grid-template-columns: 300px 1fr;
-      gap: 1.5rem;
-      margin-top: 1.8rem;
-      transition: grid-template-columns 0.3s ease;
+
+    html, body.portal-body {
+      background-color: var(--color-bg) !important;
+      color: var(--color-text-primary) !important;
+      font-family: var(--font-primary);
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
     }
-    .contracts-layout.sidebar-collapsed {
-      grid-template-columns: 80px 1fr;
-    }
-    .sidebar-collapsed #sidebar-title,
-    .sidebar-collapsed #unit-search-wrapper,
-    .sidebar-collapsed .unit-name,
-    .sidebar-collapsed .unit-meta {
+
+    /* Hide legacy dark neon blobs completely for clean flat aesthetic */
+    .bg-glow-container {
       display: none !important;
     }
-    .sidebar-collapsed .unit-card {
-      justify-content: center;
-      padding: 0.85rem 0.5rem;
+
+    .portal-container {
+      max-width: 1440px !important;
+      width: 100% !important;
+      margin: 0 auto !important;
+      padding: 1.25rem 1.75rem 2.5rem !important;
+      box-sizing: border-box;
     }
-    .sidebar-collapsed .unit-avatar {
-      margin: 0;
+
+    /* Flat Card Override */
+    .glass-card {
+      background: #ffffff !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border: 1px solid var(--color-surface-border) !important;
+      border-radius: 10px !important;
+      box-shadow: var(--shadow-sm) !important;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
     }
-    .sidebar-collapsed #sidebar-card {
-      padding: 1.5rem 0.85rem !important;
+
+    .glass-card:hover {
+      transform: none !important;
+      border-color: #b8cfe6 !important;
+      box-shadow: var(--shadow-md) !important;
     }
-    .btn-icon {
-      background: none;
-      border: none;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 0.25rem;
-      border-radius: 6px;
-      display: inline-flex;
+
+    /* Top VNPT Header Bar */
+    .dash-header.glass-card {
+      background: #ffffff !important;
+      border-top: 4px solid var(--vnpt-blue) !important;
+      padding: 0.9rem 1.4rem !important;
+      display: flex;
       align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-    .btn-icon:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--color-text-primary);
-    }
-    body.light-theme .btn-icon:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
-    .premium-table th {
-      white-space: nowrap;
-    }
-    
-    /* Unit cards styles */
-    .unit-card {
+
+    .dash-brand {
       display: flex;
       align-items: center;
       gap: 0.85rem;
-      padding: 0.85rem 1rem;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--color-surface-border);
-      cursor: pointer;
-      transition: all 0.25s ease;
-      margin-bottom: 0.75rem;
     }
-    
-    .unit-card:hover {
-      border-color: var(--color-primary);
-      background: rgba(255, 255, 255, 0.04);
-      transform: translateY(-1px);
-    }
-    
-    body.light-theme .unit-card:hover {
-      background: rgba(0, 0, 0, 0.015);
-    }
-    
-    .unit-card.active {
-      background: rgba(6, 182, 212, 0.06);
-      border-color: var(--color-primary);
-      box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
-    }
-    
-    body.light-theme .unit-card.active {
-      background: rgba(37, 99, 235, 0.05);
-      border-color: var(--color-primary);
-    }
-    
-    .unit-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-      color: #FFFFFF;
-      font-weight: 700;
-      font-size: 0.95rem;
+
+    .vnpt-badge-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: var(--vnpt-blue);
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: none;
     }
-    
-    .unit-info {
-      flex-grow: 1;
-      min-width: 0;
+
+    .vnpt-badge-box:hover {
+      background: var(--vnpt-blue-hover);
     }
-    
-    .unit-name {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--color-text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+    .brand-title-wrap h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--vnpt-blue-dark);
+      margin: 0;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
     }
-    
-    .unit-meta {
-      font-size: 0.75rem;
+
+    .brand-title-wrap p {
+      font-size: 0.76rem;
       color: var(--color-text-muted);
-      margin-top: 0.15rem;
+      font-weight: 500;
+      margin: 0.15rem 0 0 0;
+    }
+
+    .header-actions {
       display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Flat Buttons */
+    .btn-primary,
+    .btn-secondary {
+      font-family: var(--font-primary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.52rem 0.95rem;
+      border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+      text-decoration: none;
+      margin: 0;
+      box-shadow: none !important;
+    }
+
+    .btn-primary {
+      background-color: var(--vnpt-blue) !important;
+      color: #ffffff !important;
+      border: 1px solid var(--vnpt-blue) !important;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--vnpt-blue-hover) !important;
+      border-color: var(--vnpt-blue-hover) !important;
+      transform: none !important;
+    }
+
+    .btn-secondary {
+      background-color: #ffffff !important;
+      color: var(--color-text-secondary) !important;
+      border: 1px solid var(--color-surface-border) !important;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--vnpt-soft-bg) !important;
+      color: var(--vnpt-blue) !important;
+      border-color: var(--vnpt-soft-border) !important;
+      transform: none !important;
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.35rem;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn-icon:hover {
+      background: var(--vnpt-soft-bg);
+      color: var(--vnpt-blue);
+      border-color: var(--vnpt-soft-border);
+    }
+
+    /* Accessible Focus States */
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--vnpt-blue) !important;
+      outline-offset: 2px !important;
+    }
+
+    /* Form Controls */
+    .form-input {
+      font-family: var(--font-primary);
+      background-color: #ffffff !important;
+      color: var(--color-text-primary) !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 7px !important;
+      padding: 0.5rem 0.75rem !important;
+      font-size: 0.82rem !important;
+      font-weight: 500;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: none !important;
+    }
+
+    .form-input:hover {
+      border-color: #94a3b8 !important;
+    }
+
+    .form-input:focus {
+      border-color: var(--vnpt-blue) !important;
+      box-shadow: 0 0 0 3px rgba(0, 102, 179, 0.12) !important;
+      outline: none;
+    }
+
+    /* KPI Summary Grid */
+    .stats-grid {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
+      border-top: 3px solid var(--vnpt-blue);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kpi-card.kpi-signed {
+      border-top-color: #16a34a;
+    }
+
+    .kpi-card.kpi-pending {
+      border-top-color: #d97706;
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--color-text-muted);
+    }
+
+    .kpi-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--color-text-primary);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.2;
+    }
+
+    .kpi-sub {
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-text-secondary);
+    }
+
+    /* Charts Layout */
+    .charts-container {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+    }
+
+    .section-heading {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--vnpt-blue-dark);
+      margin: 0 0 0.85rem 0;
+      border-left: 3.5px solid var(--vnpt-blue);
+      padding-left: 0.65rem;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
     }
-    
+
+    /* Flat Modern Data Table */
+    .table-responsive {
+      overflow-x: auto;
+      border: 1px solid var(--color-surface-border);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .premium-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .premium-table thead th {
+      background-color: var(--vnpt-soft-bg) !important;
+      color: var(--vnpt-blue-dark) !important;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 0.75rem 0.9rem;
+      border-bottom: 1px solid var(--vnpt-soft-border) !important;
+      white-space: nowrap;
+    }
+
+    .premium-table tbody td {
+      padding: 0.72rem 0.9rem;
+      border-bottom: 1px solid #edf2f7;
+      color: var(--color-text-primary);
+      vertical-align: middle;
+    }
+
+    .premium-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .contract-row {
+      cursor: pointer;
+      transition: background-color 0.12s ease;
+    }
+
+    .contract-row:hover {
+      background-color: var(--vnpt-soft-bg) !important;
+    }
+
+    .contract-row.selected {
+      background-color: #e6f2ff !important;
+      border-left: 3px solid var(--vnpt-blue);
+    }
+
+    /* Unit Avatar (Flat VNPT Badge) */
+    .unit-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background-color: var(--vnpt-soft-bg);
+      border: 1px solid var(--vnpt-soft-border);
+      color: var(--vnpt-blue);
+      font-weight: 700;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: none !important;
+    }
+
+    /* Flat Status Pills */
     .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.78rem;
+      gap: 0.3rem;
+      padding: 0.24rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
       font-weight: 700;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
-    
+
     .status-signed {
-      background-color: rgba(34, 197, 94, 0.08);
-      color: #22c55e;
-      border: 1px solid rgba(34, 197, 94, 0.2);
+      background-color: #ecfdf5;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
     }
-    
+
     .status-pending {
-      background-color: rgba(234, 179, 8, 0.08);
-      color: #eab308;
-      border: 1px solid rgba(234, 179, 8, 0.2);
+      background-color: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
     }
-    
+
     .status-draft {
-      background-color: rgba(255, 255, 255, 0.05);
-      color: var(--color-text-secondary);
-      border: 1px solid var(--color-surface-border);
+      background-color: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
     }
-    
+
     .status-danger {
-      background-color: var(--color-danger-bg);
-      color: var(--color-danger);
-      border: 1px solid var(--color-danger-border);
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
     }
-    
+
     .status-almost {
-      background-color: rgba(59, 130, 246, 0.08);
-      color: #3b82f6;
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      background-color: #eff6ff;
+      color: #0066b3;
+      border: 1px solid #bfdbfe;
     }
-    
+
     .view-container {
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition: opacity 0.2s ease;
       opacity: 1;
-      transform: translateY(0);
     }
-    
+
     .view-container.hidden {
       display: none !important;
       opacity: 0;
-      transform: translateY(10px);
     }
-    
-    .contract-row {
-      cursor: pointer;
-      transition: background 0.2s;
+
+    /* Detail Info Table */
+    .xml-info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
     }
-    
-    .contract-row:hover {
-      background: rgba(255, 255, 255, 0.02) !important;
+
+    .xml-info-table td {
+      padding: 0.55rem 0.4rem;
+      border-bottom: 1px solid #edf2f7;
+      color: var(--color-text-primary);
     }
-    
-    .contract-row.selected {
-      background: rgba(6, 182, 212, 0.05) !important;
-      border-left: 3px solid var(--color-primary);
+
+    .xml-info-table td:first-child {
+      color: var(--color-text-muted);
+      font-weight: 600;
+      width: 120px;
     }
-    
-    body.light-theme .contract-row:hover {
-      background: rgba(0, 0, 0, 0.015) !important;
-    }
-    
-    body.light-theme .contract-row.selected {
-      background: rgba(37, 99, 235, 0.05) !important;
-    }
-    
+
     /* Milestones List */
     .milestone-list {
       list-style: none;
       padding-left: 1rem;
-      border-left: 2px solid var(--color-surface-border);
+      border-left: 2px solid #cbd5e1;
       display: flex;
       flex-direction: column;
-      gap: 1.2rem;
-      margin-top: 1rem;
+      gap: 0.95rem;
+      margin-top: 0.75rem;
     }
-    
+
     .milestone-item {
       position: relative;
     }
-    
+
     .milestone-item::before {
       content: '';
       position: absolute;
-      left: -1.45rem;
-      top: 0.25rem;
-      width: 12px;
-      height: 12px;
+      left: -1.4rem;
+      top: 0.2rem;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background: var(--color-surface-border);
-      border: 2px solid var(--color-surface);
+      background: #cbd5e1;
+      border: 2px solid #ffffff;
     }
-    
+
     .milestone-item.done::before {
-      background: #22c55e;
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+      background: #16a34a;
+      box-shadow: 0 0 0 3px #dcfce7;
     }
-    
+
     .milestone-title {
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.82rem;
+      font-weight: 700;
       color: var(--color-text-primary);
     }
-    
+
     .milestone-desc {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: var(--color-text-muted);
-      margin-top: 0.15rem;
+      margin-top: 0.1rem;
     }
-    
-    /* Digital Signature stamp */
+
+    /* Digital Signature Stamp */
     .digital-stamp {
-      border: 2px dashed #22c55e;
-      background: rgba(34, 197, 94, 0.04);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-top: 1.5rem;
+      border: 1.5px dashed #16a34a;
+      background: #f0fdf4;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-top: 0.5rem;
       display: flex;
       align-items: center;
-      gap: 1rem;
-      animation: stamp-fade-in 0.4s ease-out;
+      gap: 0.85rem;
     }
-    
-    @keyframes stamp-fade-in {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    
-    /* Modal styles */
+
+    /* Modals */
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(8px);
+      inset: 0;
+      background: rgba(15, 41, 66, 0.45);
       z-index: 200;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 1rem;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.2s ease;
     }
-    
+
     .modal-overlay.active {
       opacity: 1;
       pointer-events: auto;
     }
-    
+
     .modal-card {
       width: 100%;
-      max-width: 500px;
-      padding: 2.2rem;
-      border-radius: 24px;
-      box-shadow: var(--shadow-lg);
-      transform: translateY(20px);
-      transition: transform 0.3s ease;
+      max-width: 480px;
+      padding: 1.5rem;
+      border-radius: 10px !important;
+      background: #ffffff !important;
+      border: 1px solid var(--color-surface-border) !important;
+      border-top: 4px solid var(--vnpt-blue) !important;
+      box-shadow: var(--shadow-lg) !important;
     }
-    
-    .modal-overlay.active .modal-card {
-      transform: translateY(0);
-    }
-    
+
     .signing-method-btn {
       display: flex;
       align-items: center;
-      gap: 1.2rem;
+      gap: 1rem;
       width: 100%;
-      padding: 1.2rem;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1.5px solid var(--color-surface-border);
+      padding: 1rem;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
       color: var(--color-text-primary);
       text-align: left;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 1rem;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+      margin-bottom: 0.75rem;
     }
-    
+
     .signing-method-btn:hover {
-      border-color: var(--color-primary);
-      background: rgba(6, 182, 212, 0.05);
+      border-color: var(--vnpt-blue);
+      background: var(--vnpt-soft-bg);
     }
-    
-    body.light-theme .signing-method-btn {
-      background: rgba(0, 0, 0, 0.01);
-    }
-    
-    body.light-theme .signing-method-btn:hover {
-      background: rgba(37, 99, 235, 0.04);
-    }
-    
-    /* Signature progress animation */
+
     .signing-progress {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem 0;
+      padding: 1.5rem 0;
       text-align: center;
-    }
-    
-    .signing-spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(6, 182, 212, 0.15);
-      border-radius: 50%;
-      border-top-color: var(--color-primary);
-      animation: spin 1s linear infinite;
-      margin-bottom: 1.5rem;
-    }
-    
-    .input-pin-field {
-      width: 100%;
-      padding: 0.9rem 1.2rem;
-      border-radius: 10px;
-      border: 1.5px solid var(--color-surface-border);
-      background: var(--color-bg);
-      color: var(--color-text-primary);
-      font-size: 1rem;
-      letter-spacing: 0.3rem;
-      text-align: center;
-      outline: none;
-      margin-bottom: 1.5rem;
-    }
-    
-    .input-pin-field:focus {
-      border-color: var(--color-primary);
     }
 
-    /* Charts layout styles */
-    .charts-container {
-      margin-top: 1.5rem;
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1.5rem;
+    .signing-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3.5px solid var(--vnpt-soft-border);
+      border-radius: 50%;
+      border-top-color: var(--vnpt-blue);
+      animation: spin 0.9s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    .input-pin-field {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: var(--color-text-primary);
+      font-size: 1.1rem;
+      letter-spacing: 0.35rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .input-pin-field:focus {
+      border-color: var(--vnpt-blue);
+      background: #ffffff;
+      outline: none;
     }
 
     @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
       .charts-container {
         grid-template-columns: 1fr;
+      }
+      #detail-workspace {
+        flex-direction: column;
+      }
+      #detail-panel {
+        width: 100% !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .portal-container {
+        padding: 0.75rem 1rem 2rem !important;
       }
     }
   </style>
 </head>
-<body class="portal-body">
+<body class="portal-body light-theme">
   <script>
-    // Theme Initializer to prevent flash of light
-    (function() {
-      const theme = localStorage.getItem('vnpt_his_theme') || 'dark';
-      if (theme === 'light') {
-        document.body.classList.add('light-theme');
-      }
-    })();
+    // Force VNPT Light Blue-White Theme for flat modern consistency
+    localStorage.setItem('vnpt_his_theme', 'light');
   </script>
-
-  <!-- Floating animated background blobs -->
-  <div class="bg-glow-container">
-    <div class="glow-blob blob-1"></div>
-    <div class="glow-blob blob-2"></div>
-    <div class="glow-blob blob-3"></div>
-  </div>
 
   <!-- Main Container -->
   <main class="portal-container" id="app-container">
     
-    <!-- Portal Header -->
+    <!-- Portal Header (Flat VNPT Blue & White) -->
     <header class="dash-header glass-card">
       <div class="dash-brand">
-        <svg class="vnpt-logo-mini" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" onclick="window.close()" style="cursor: pointer;">
-          <defs>
-            <linearGradient id="logo-grad-mini" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#06b6d4" stop-opacity="1" />
-              <stop offset="100%" stop-color="#3b82f6" stop-opacity="1" />
-            </linearGradient>
-          </defs>
-          <path d="M 100 15 L 173.6 57.5 L 173.6 142.5 L 100 185 L 26.4 142.5 L 26.4 57.5 Z" fill="none" stroke="url(#logo-grad-mini)" stroke-width="6" opacity="0.4" />
-          <path d="M 100 90 A 22 22 0 1 0 56 90 A 22 22 0 0 0 100 90 L 100 120 C 100 135, 88 145, 70 145" fill="none" stroke="url(#logo-grad-mini)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M 154 102.5 A 22 30 0 1 1 110 102.5 A 22 30 0 1 1 154 102.5" fill="none" stroke="var(--color-text-primary)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <h2 style="font-family: var(--font-heading); font-weight: 700; font-size: 1.3rem;">QUẢN LÝ HỢP ĐỒNG</h2>
-      </div>
-      <div class="user-profile">
-        <button class="btn-secondary" onclick="exportUpdatedHTML()" style="margin-left: 0; margin-right: 1rem;" title="Xuất file HTML đã cập nhật để lưu hoặc commit Git">📥 Xuất File HTML</button>
-        <button class="btn-secondary" onclick="resetDatabase()" style="margin-left: 0; margin-right: 1rem;">🔄 Reset Dữ liệu</button>
-        <button class="btn-secondary" onclick="window.close()" style="margin-left: 0; margin-right: 1rem;">🏠 Quay lại Portal</button>
-        <!-- Theme Toggle Button -->
-        <button id="theme-toggle-btn" class="btn-theme-toggle" onclick="toggleTheme()" title="Đổi giao diện">
-          <span id="theme-icon">☀️</span>
+        <button type="button" class="vnpt-badge-box" onclick="window.location.href='main.html'" title="Về Cổng chính KIENLT90 Portal" aria-label="Về Cổng chính KIENLT90 Portal">
+          VNPT
         </button>
+        <div class="brand-title-wrap">
+          <h1>QUẢN LÝ HỢP ĐỒNG CNTT Y TẾ</h1>
+          <p>Hệ sinh thái Y tế số VNPT (HIS • LIS • RIS/PACS • EMR) — Quản lý &amp; Ký số tập trung</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-secondary" onclick="exportUpdatedHTML()" title="Xuất file HTML đã cập nhật để lưu hoặc commit Git">
+          📥 Xuất File HTML
+        </button>
+        <button type="button" class="btn-secondary" onclick="resetDatabase()" title="Khôi phục dữ liệu mặc định">
+          🔄 Reset Dữ liệu
+        </button>
+        <a href="main.html" class="btn-primary" title="Quay lại Cổng chính">
+          🏠 Cổng chính Portal
+        </a>
       </div>
     </header>
 
     <!-- Dashboard View Container -->
     <div id="dashboard-view" class="view-container">
       <!-- Statistics Overview Panel -->
-      <div class="stats-container glass-card" style="margin-top: 1.2rem; padding: 1.2rem 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; border: 1px solid var(--color-surface-border); border-radius: 16px; background: rgba(255, 255, 255, 0.01);">
-        <div class="stat-card" style="display: flex; flex-direction: column; gap: 0.25rem;">
-          <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Tổng số Hợp đồng</span>
-          <span id="stat-total-cnt" style="font-size: 1.6rem; font-weight: 800; color: var(--color-text-primary);">0</span>
-          <span style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600;">100% Hoạt động</span>
+      <section class="stats-grid" aria-label="Thống kê tổng quan hợp đồng">
+        <div class="kpi-card">
+          <span class="kpi-label">Tổng số Hợp đồng</span>
+          <span id="stat-total-cnt" class="kpi-value">0</span>
+          <span class="kpi-sub" style="color: var(--vnpt-blue);">100% Đang theo dõi</span>
         </div>
-        <div class="stat-card" style="display: flex; flex-direction: column; gap: 0.25rem; border-left: 1px solid var(--color-surface-border); padding-left: 1.5rem;">
-          <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Tổng Giá trị Dự án</span>
-          <span id="stat-total-val" style="font-size: 1.6rem; font-weight: 800; color: var(--color-accent);">0 tỷ VND</span>
-          <span style="font-size: 0.75rem; color: var(--color-text-muted);">Hệ sinh thái Y tế số VNPT</span>
+        <div class="kpi-card">
+          <span class="kpi-label">Tổng Giá trị Dự án</span>
+          <span id="stat-total-val" class="kpi-value" style="color: var(--vnpt-blue);">0 tỷ VND</span>
+          <span class="kpi-sub">Hệ sinh thái Y tế số VNPT</span>
         </div>
-        <div class="stat-card" style="display: flex; flex-direction: column; gap: 0.25rem; border-left: 1px solid var(--color-surface-border); padding-left: 1.5rem;">
-          <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Hợp đồng đã Ký số</span>
-          <span id="stat-signed-cnt" style="font-size: 1.6rem; font-weight: 800; color: #22c55e;">0</span>
-          <span id="stat-signed-val" style="font-size: 0.75rem; color: #22c55e; font-weight: 600;">0 tỷ VND (0%)</span>
+        <div class="kpi-card kpi-signed">
+          <span class="kpi-label">Hợp đồng đã Ký số</span>
+          <span id="stat-signed-cnt" class="kpi-value" style="color: #15803d;">0</span>
+          <span id="stat-signed-val" class="kpi-sub" style="color: #15803d;">0 tỷ VND (0%)</span>
         </div>
-        <div class="stat-card" style="display: flex; flex-direction: column; gap: 0.25rem; border-left: 1px solid var(--color-surface-border); padding-left: 1.5rem;">
-          <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 500;">Hợp đồng Chờ Ký</span>
-          <span id="stat-pending-cnt" style="font-size: 1.6rem; font-weight: 800; color: #eab308;">0</span>
-          <span id="stat-pending-val" style="font-size: 0.75rem; color: #eab308; font-weight: 600;">0 tỷ VND (0%)</span>
+        <div class="kpi-card kpi-pending">
+          <span class="kpi-label">Hợp đồng Chờ Ký</span>
+          <span id="stat-pending-cnt" class="kpi-value" style="color: #b45309;">0</span>
+          <span id="stat-pending-val" class="kpi-sub" style="color: #b45309;">0 tỷ VND (0%)</span>
         </div>
-      </div>
+      </section>
       
       <!-- Charts Panel -->
-      <div class="charts-container">
+      <section class="charts-container" aria-label="Biểu đồ phân tích hợp đồng">
         <!-- Chart 1: Revenue by Unit -->
-        <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; height: 350px;">
-          <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; margin: 0 0 1rem 0; border-left: 4px solid var(--color-primary); padding-left: 0.6rem;">
-            Doanh thu Hợp đồng theo Đơn vị (tỷ VND)
-          </h4>
-          <div style="flex-grow: 1; position: relative; height: 260px;">
+        <div class="glass-card" style="padding: 1.25rem; display: flex; flex-direction: column; height: 340px;">
+          <h2 class="section-heading">
+            <span>Doanh thu Hợp đồng theo Đơn vị (tỷ VND)</span>
+          </h2>
+          <div style="flex-grow: 1; position: relative; height: 255px;">
             <canvas id="revenue-chart"></canvas>
           </div>
         </div>
         
         <!-- Chart 2: Status Distribution -->
-        <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; height: 350px;">
-          <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; margin: 0 0 1rem 0; border-left: 4px solid var(--color-primary); padding-left: 0.6rem;">
-            Trạng thái Biên bản Hợp đồng
-          </h4>
-          <div style="flex-grow: 1; position: relative; display: flex; justify-content: center; align-items: center; height: 260px;">
+        <div class="glass-card" style="padding: 1.25rem; display: flex; flex-direction: column; height: 340px;">
+          <h2 class="section-heading">
+            <span>Tỷ lệ Trạng thái Hợp đồng</span>
+          </h2>
+          <div style="flex-grow: 1; position: relative; display: flex; justify-content: center; align-items: center; height: 255px;">
             <canvas id="status-chart"></canvas>
           </div>
         </div>
-      </div>
+      </section>
       
       <!-- Units Master Card -->
-      <div class="glass-card" style="margin-top: 1.5rem; padding: 1.5rem; display: flex; flex-direction: column; min-height: 520px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; gap: 1rem; flex-wrap: wrap;">
-          <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; border-left: 4px solid var(--color-primary); padding-left: 0.6rem; margin: 0; white-space: nowrap;">
-            Theo dõi hợp đồng theo Đơn vị thụ hưởng
-          </h3>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn-primary" onclick="openAddContractModal()" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; margin: 0; display: flex; align-items: center; gap: 4px;">➕ Thêm Hợp đồng</button>
-            <select id="dashboard-year-select" class="form-input" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; margin: 0; width: 130px; cursor: pointer; color: var(--color-text-primary); background-color: var(--color-bg-secondary);">
+      <section class="glass-card" style="margin-top: 1rem; padding: 1.25rem; display: flex; flex-direction: column; min-height: 500px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
+          <h2 class="section-heading" style="margin: 0;">
+            <span>Danh sách Hợp đồng theo Đơn vị thụ hưởng</span>
+          </h2>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+            <button type="button" class="btn-primary" onclick="openAddContractModal()">
+              ➕ Thêm Hợp đồng
+            </button>
+            <select id="dashboard-year-select" aria-label="Lọc theo năm" class="form-input" style="width: 135px; cursor: pointer;">
               <option value="all">Tất cả các năm</option>
               <option value="2026" selected>Năm 2026</option>
               <option value="2027">Năm 2027</option>
               <option value="2028">Năm 2028</option>
             </select>
-            <select id="dashboard-region-filter" class="form-input" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; margin: 0; width: 150px; cursor: pointer; color: var(--color-text-primary); background-color: var(--color-bg-secondary);">
+            <select id="dashboard-region-filter" aria-label="Lọc theo khu vực" class="form-input" style="width: 165px; cursor: pointer;">
               <option value="all" selected>Tất cả khu vực</option>
               <option value="Bến Cát">Bến Cát</option>
               <option value="Bàu Bàng">Bàu Bàng</option>
@@ -518,27 +754,27 @@
               <option value="Dĩ An">Dĩ An</option>
               <option value="Thủ Dầu Một">Thủ Dầu Một</option>
             </select>
-            <select id="dashboard-sort-by" class="form-input" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; margin: 0; width: 150px; cursor: pointer; color: var(--color-text-primary); background-color: var(--color-bg-secondary);">
+            <select id="dashboard-sort-by" aria-label="Sắp xếp danh sách" class="form-input" style="width: 165px; cursor: pointer;">
               <option value="khuVuc" selected>Sắp xếp: Khu vực</option>
               <option value="name">Sắp xếp: Tên đơn vị</option>
               <option value="value">Sắp xếp: Giá trị thầu</option>
             </select>
-            <input type="text" id="dashboard-unit-search" class="form-input" style="padding: 0.55rem 0.9rem; font-size: 0.82rem; border-radius: 8px; width: 220px; margin: 0;" placeholder="🔍 Tìm kiếm đơn vị y tế...">
+            <input type="search" id="dashboard-unit-search" aria-label="Tìm kiếm đơn vị y tế" class="form-input" style="width: 230px;" placeholder="🔍 Tìm kiếm đơn vị y tế…">
           </div>
         </div>
         
         <div class="table-responsive" style="flex-grow: 1;">
-          <table class="premium-table" style="font-size: 0.85rem; width: 100%;">
+          <table class="premium-table">
             <thead>
               <tr>
-                <th style="width: 50px; text-align: center;">STT</th>
-                <th style="width: 250px;">Đơn vị thụ hưởng</th>
-                <th style="width: 120px; text-align: center;">Khu vực</th>
-                <th style="width: 100px; text-align: center;">Số văn bản</th>
-                <th style="width: 150px; text-align: center;">Trạng thái ký số</th>
-                <th style="width: 160px; text-align: right;">Tổng giá trị thầu</th>
-                <th style="width: 160px; text-align: center;">Thời hạn hợp đồng</th>
-                <th style="width: 120px; text-align: center;">Thao tác</th>
+                <th style="width: 52px; text-align: center;">STT</th>
+                <th style="min-width: 240px; text-align: left;">Đơn vị thụ hưởng</th>
+                <th style="width: 140px; text-align: center;">Khu vực</th>
+                <th style="width: 105px; text-align: center;">Số văn bản</th>
+                <th style="width: 155px; text-align: center;">Trạng thái ký số</th>
+                <th style="width: 165px; text-align: right;">Tổng giá trị thầu</th>
+                <th style="width: 155px; text-align: center;">Thời hạn hợp đồng</th>
+                <th style="width: 130px; text-align: center;">Thao tác</th>
               </tr>
             </thead>
             <tbody id="dashboard-units-tbody">
@@ -546,40 +782,47 @@
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
     </div>
 
     <!-- Detail View Container (Initially Hidden) -->
     <div id="detail-view" class="view-container hidden">
       <!-- Navigation Header -->
-      <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.2rem; flex-wrap: wrap;">
-        <button class="btn-secondary" onclick="switchView('dashboard')" style="padding: 0.5rem 1rem; font-size: 0.82rem; border-radius: 8px; margin: 0; display: inline-flex; align-items: center; gap: 0.35rem;">
-          ◀ Quay lại Tổng quan
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; background: #ffffff; padding: 0.85rem 1.25rem; border: 1px solid var(--color-surface-border); border-radius: 10px;">
+        <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
+          <button type="button" class="btn-secondary" onclick="switchView('dashboard')">
+            ◀ Quay lại Tổng quan
+          </button>
+          <h2 id="detail-unit-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--vnpt-blue-dark); margin: 0;">
+            Hợp đồng tại Đơn vị
+          </h2>
+        </div>
+        <button type="button" class="btn-primary" onclick="openAddContractModal()">
+          ➕ Thêm Hợp đồng cho Đơn vị
         </button>
-        <h3 id="detail-unit-title" style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--color-text-primary); margin: 0;">
-          Hợp đồng tại Bệnh viện Bến Sắn
-        </h3>
       </div>
       
       <!-- Workspace Container (Contracts Table + Details Panel) -->
-      <div style="display: flex; gap: 1.2rem; margin-top: 1.5rem; align-items: stretch; position: relative; min-width: 0;">
+      <div id="detail-workspace" style="display: flex; gap: 1rem; margin-top: 1rem; align-items: stretch; position: relative; min-width: 0;">
         
         <!-- Left: Contracts Table Card -->
-        <div class="glass-card" id="table-card" style="padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; min-height: 520px; transition: all 0.3s ease; min-width: 0;">
-          <h3 style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; border-left: 4px solid var(--color-accent); padding-left: 0.6rem;" id="selected-unit-title">
+        <div class="glass-card" id="table-card" style="padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; min-height: 500px; min-width: 0;">
+          <h3 class="section-heading" id="selected-unit-title">
             Danh sách văn bản / hợp đồng
           </h3>
           
           <div class="table-responsive" style="flex-grow: 1;">
-            <table class="premium-table" style="font-size: 0.85rem; width: 100%;">
+            <table class="premium-table">
               <thead>
                 <tr>
-                  <th style="width: 40px; text-align: center;"><input type="checkbox" id="check-all-contracts" style="transform: scale(1.1); cursor: pointer;"></th>
-                  <th style="width: 140px;">Mã hợp đồng</th>
-                  <th>Tên hợp đồng / nội dung</th>
-                  <th style="width: 120px;">Giá trị</th>
-                  <th style="width: 110px;">Ngày hết hạn</th>
-                  <th style="text-align: center; width: 90px;">Trạng thái</th>
+                  <th style="width: 42px; text-align: center;">
+                    <input type="checkbox" id="check-all-contracts" aria-label="Chọn tất cả hợp đồng" style="transform: scale(1.1); cursor: pointer; accent-color: var(--vnpt-blue);">
+                  </th>
+                  <th style="width: 150px; text-align: left;">Mã hợp đồng</th>
+                  <th style="text-align: left;">Tên hợp đồng / Nội dung</th>
+                  <th style="width: 135px; text-align: right;">Giá trị</th>
+                  <th style="width: 115px; text-align: center;">Ngày hết hạn</th>
+                  <th style="text-align: center; width: 110px;">Trạng thái</th>
                 </tr>
               </thead>
               <tbody id="contracts-tbody">
@@ -588,182 +831,182 @@
             </table>
           </div>
           
-          <!-- Sum Container (glowing banner) -->
-          <div id="selected-sum-container" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.2rem; background: rgba(6, 182, 212, 0.06); border: 1px dashed var(--color-primary); border-radius: 10px; margin-top: 1rem; transition: all 0.25s;">
+          <!-- Sum Container (Flat VNPT Highlight Banner) -->
+          <div id="selected-sum-container" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.15rem; background: var(--vnpt-soft-bg); border: 1px solid var(--vnpt-soft-border); border-left: 4px solid var(--vnpt-blue); border-radius: 8px; margin-top: 1rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <span style="font-size: 1.1rem;">💰</span>
-              <span style="font-weight: 600; font-size: 0.82rem; color: var(--color-text-primary);">Tổng doanh thu 2026 các hợp đồng tích chọn:</span>
+              <span style="font-size: 1.05rem;">💰</span>
+              <span style="font-weight: 700; font-size: 0.84rem; color: var(--vnpt-blue-dark);">Tổng giá trị các hợp đồng đang tích chọn:</span>
             </div>
-            <span id="selected-sum-value" style="font-size: 1.1rem; font-weight: 800; color: var(--color-accent);">0 VND</span>
+            <span id="selected-sum-value" style="font-size: 1.1rem; font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">0 VND</span>
           </div>
         </div>
 
         <!-- Right: Contract Detail Card -->
-        <div class="glass-card hidden" id="detail-panel" style="width: 420px; flex-shrink: 0; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; min-height: 520px; position: relative; transition: all 0.3s ease;">
+        <div class="glass-card hidden" id="detail-panel" style="width: 410px; flex-shrink: 0; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; min-height: 500px; position: relative;">
           <!-- Close button for details -->
-          <button id="btn-close-details" style="position: absolute; top: 1.2rem; right: 1.2rem; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--color-text-muted); z-index: 10;" title="Đóng bảng chi tiết">&times;</button>
+          <button type="button" id="btn-close-details" aria-label="Đóng bảng chi tiết" style="position: absolute; top: 1rem; right: 1rem; background: #f1f5f9; border: 1px solid #cbd5e1; width: 28px; height: 28px; border-radius: 6px; font-size: 1.1rem; line-height: 1; cursor: pointer; color: var(--color-text-secondary); z-index: 10; display: flex; align-items: center; justify-content: center;" title="Đóng bảng chi tiết">&times;</button>
           
           <!-- Placeholder if nothing selected -->
-          <div id="detail-placeholder" style="text-align: center; color: var(--color-text-muted); padding: 4rem 1rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">📄</div>
-            <h4 style="font-size: 1rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 0.25rem;">Chưa chọn hợp đồng</h4>
-            <p style="font-size: 0.82rem;">Vui lòng chọn một dòng hợp đồng ở giữa để xem chi tiết và ký số.</p>
+          <div id="detail-placeholder" style="text-align: center; color: var(--color-text-muted); padding: 3.5rem 1rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div style="font-size: 2.2rem; margin-bottom: 0.6rem;">📄</div>
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.25rem;">Chưa chọn hợp đồng</h4>
+            <p style="font-size: 0.8rem;">Vui lòng chọn một dòng hợp đồng bên trái để xem chi tiết và thực hiện ký số.</p>
           </div>
           
           <!-- Detailed Info (hidden by default) -->
-          <div id="detail-content" class="hidden" style="display: flex; flex-direction: column; gap: 1.2rem; flex-grow: 1;">
+          <div id="detail-content" class="hidden" style="display: flex; flex-direction: column; gap: 1rem; flex-grow: 1;">
             <div>
               <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                 <span class="status-pill" id="detail-status-pill">Chờ ký</span>
-                <button id="btn-edit-status" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; padding: 0.1rem; opacity: 0.7; transition: opacity 0.2s;" title="Chỉnh sửa trạng thái">✏️</button>
-                <div id="status-edit-container" class="hidden" style="display: flex; align-items: center; gap: 0.25rem; background: var(--color-surface); padding: 0.2rem; border-radius: 4px; box-shadow: var(--shadow-sm); z-index: 10;">
-                  <select id="select-status" class="form-input" style="padding: 0.2rem 0.4rem; font-size: 0.75rem; border-radius: 4px; width: 140px; margin: 0; cursor: pointer; color: var(--color-text-primary); background-color: var(--color-bg-secondary);">
+                <button type="button" id="btn-edit-status" class="btn-icon" aria-label="Chỉnh sửa trạng thái" title="Chỉnh sửa trạng thái">✏️</button>
+                <div id="status-edit-container" class="hidden" style="display: flex; align-items: center; gap: 0.3rem; background: #f8fafc; padding: 0.25rem; border: 1px solid #cbd5e1; border-radius: 6px; z-index: 10;">
+                  <select id="select-status" aria-label="Chọn trạng thái hợp đồng" class="form-input" style="padding: 0.25rem 0.5rem !important; font-size: 0.75rem !important; width: 135px; cursor: pointer;">
                     <option value="signed">Đã ký số</option>
                     <option value="pending">Chờ ký</option>
                     <option value="almost_signed">Sắp ký hợp đồng</option>
                   </select>
-                  <button id="btn-save-status" class="btn-primary" style="padding: 0.2rem 0.4rem; font-size: 0.7rem; border-radius: 4px; margin: 0;">Lưu</button>
-                  <button id="btn-cancel-status" class="btn-secondary" style="padding: 0.2rem 0.4rem; font-size: 0.7rem; border-radius: 4px; margin: 0;">Hủy</button>
+                  <button type="button" id="btn-save-status" class="btn-primary" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Lưu</button>
+                  <button type="button" id="btn-cancel-status" class="btn-secondary" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Hủy</button>
                 </div>
               </div>
-              <h3 id="detail-contract-name" style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; margin-top: 0.6rem; margin-bottom: 0.25rem; color: var(--color-text-primary); line-height: 1.3; padding-right: 1.5rem;">
-                TTYT Huyện Bàu Bàng
+              <h3 id="detail-contract-name" style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin-top: 0.6rem; margin-bottom: 0.2rem; color: var(--vnpt-blue-dark); line-height: 1.35; padding-right: 1.8rem;">
+                Tên hợp đồng
               </h3>
-              <p id="detail-contract-code" style="font-family: monospace; font-size: 0.8rem; color: var(--color-text-muted);">
-                HD-2026-TTYT-BB
+              <p id="detail-contract-code" style="font-family: monospace; font-size: 0.78rem; color: var(--color-text-muted); font-weight: 600;">
+                HD-2026
               </p>
             </div>
             
             <table class="xml-info-table">
               <tr>
-                <td style="width: 100px;">Gói dịch vụ:</td>
-                <td id="detail-package">-</td>
+                <td>Gói dịch vụ:</td>
+                <td id="detail-package" style="font-weight: 600;">-</td>
               </tr>
               <tr>
-                <td>Đơn vị ký:</td>
-                <td>Chi nhánh VNPT Bình Dương</td>
+                <td>Đơn vị thực hiện:</td>
+                <td style="font-weight: 600; color: var(--vnpt-blue);">VNPT Bình Dương</td>
               </tr>
               <tr>
-                <td>Giá trị thầu:</td>
-                <td id="detail-value" style="font-weight: 700; color: var(--color-accent);">-</td>
+                <td>Giá trị hợp đồng:</td>
+                <td id="detail-value" style="font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">-</td>
               </tr>
               <tr>
                 <td>Ngày hiệu lực:</td>
-                <td id="detail-date">-</td>
+                <td id="detail-date" style="font-variant-numeric: tabular-nums;">-</td>
               </tr>
               <tr>
                 <td>Ngày hết hạn:</td>
                 <td>
                   <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; position: relative; width: 100%;">
-                    <span id="detail-end-date" style="font-weight: 600;">-</span>
-                    <button id="btn-edit-end-date" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; padding: 0.1rem; opacity: 0.7; transition: opacity 0.2s;" title="Chỉnh sửa ngày hết hạn">✏️</button>
-                    <div id="end-date-edit-container" class="hidden" style="display: flex; align-items: center; gap: 0.25rem; position: absolute; right: 0; background: var(--color-surface); padding: 0.2rem; border-radius: 4px; z-index: 10; box-shadow: var(--shadow-sm);">
-                      <input type="date" id="input-end-date" class="form-input" style="padding: 0.2rem 0.4rem; font-size: 0.75rem; border-radius: 4px; width: 110px;">
-                      <button id="btn-save-end-date" class="btn-primary" style="padding: 0.2rem 0.4rem; font-size: 0.7rem; border-radius: 4px;">Lưu</button>
-                      <button id="btn-cancel-end-date" class="btn-secondary" style="padding: 0.2rem 0.4rem; font-size: 0.7rem; border-radius: 4px;">Hủy</button>
+                    <span id="detail-end-date" style="font-weight: 700; font-variant-numeric: tabular-nums;">-</span>
+                    <button type="button" id="btn-edit-end-date" class="btn-icon" aria-label="Chỉnh sửa ngày hết hạn" title="Chỉnh sửa ngày hết hạn">✏️</button>
+                    <div id="end-date-edit-container" class="hidden" style="display: flex; align-items: center; gap: 0.25rem; position: absolute; right: 0; background: #ffffff; padding: 0.25rem; border: 1px solid #cbd5e1; border-radius: 6px; z-index: 10; box-shadow: var(--shadow-md);">
+                      <input type="date" id="input-end-date" aria-label="Ngày hết hạn mới" class="form-input" style="padding: 0.2rem 0.4rem !important; font-size: 0.75rem !important; width: 125px;">
+                      <button type="button" id="btn-save-end-date" class="btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;">Lưu</button>
+                      <button type="button" id="btn-cancel-end-date" class="btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;">Hủy</button>
                     </div>
                   </div>
                 </td>
               </tr>
               <tr>
                 <td>Tệp đính kèm:</td>
-                <td id="detail-filename" style="word-break: break-all; font-family: monospace; font-size: 0.8rem; color: var(--color-primary); font-weight: 600;">-</td>
+                <td id="detail-filename" style="word-break: break-all; font-family: monospace; font-size: 0.78rem; color: var(--vnpt-blue); font-weight: 600;">-</td>
               </tr>
             </table>
             
             <!-- Implementation Milestones -->
             <div>
-              <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text-primary);">
-                Mốc dự án thanh toán
+              <h4 style="font-family: var(--font-heading); font-size: 0.84rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--vnpt-blue-dark); text-transform: uppercase; letter-spacing: 0.02em;">
+                Mốc tiến độ &amp; Thanh toán
               </h4>
               <ul class="milestone-list">
                 <li class="milestone-item done" id="ms-1">
-                  <div class="milestone-title">Đặt cọc & Biên bản thỏa thuận (30%)</div>
+                  <div class="milestone-title">Khởi tạo &amp; Biên bản thỏa thuận (30%)</div>
                   <div class="milestone-desc">Đã hoàn thành bàn giao hồ sơ dự án sơ bộ.</div>
                 </li>
                 <li class="milestone-item" id="ms-2">
-                  <div class="milestone-title">Nghiệm thu phần mềm & Ký kết hợp đồng (40%)</div>
+                  <div class="milestone-title">Nghiệm thu phần mềm &amp; Ký số hợp đồng (40%)</div>
                   <div class="milestone-desc" id="ms-2-desc">Yêu cầu hoàn thành thủ tục ký số USB Token/SmartCA.</div>
                 </li>
                 <li class="milestone-item" id="ms-3">
-                  <div class="milestone-title">Nghiệm thu triển khai thực tế & Thanh lý (30%)</div>
-                  <div class="milestone-desc">Đang đợi chạy thử nghiệm hệ thống HIS L2.</div>
+                  <div class="milestone-title">Nghiệm thu vận hành thực tế &amp; Thanh lý (30%)</div>
+                  <div class="milestone-desc">Vận hành chính thức hệ thống CNTT Y tế.</div>
                 </li>
               </ul>
             </div>
             
             <!-- Digital Signature Stamp Display -->
             <div id="detail-stamp-container"></div>
-            
-          </div>
-        </div>
-        
-      </div>
+
+            <!-- Action Buttons -->
+            <div style="margin-top: auto; padding-top: 0.5rem; display: flex; flex-direction: column; gap: 0.55rem;">
+              <button type="button" class="btn-primary" id="btn-show-sign-modal" style="padding: 0.75rem 1rem; width: 100%; font-weight: 700;">
+                ✍️ Ký điện tử (VNPT-CA / SmartCA)
               </button>
-              <button class="btn-secondary" id="btn-download-pdf" style="padding: 1rem; border-radius: 12px; width: 100%; margin-left: 0; font-weight: 600;">
+              <button type="button" class="btn-secondary" id="btn-download-pdf" style="padding: 0.7rem 1rem; width: 100%; font-weight: 600;">
                 📥 Tải tệp tin hợp đồng PDF
               </button>
             </div>
           </div>
         </div>
-
+        
       </div>
     </div>
 
   </main>
 
   <!-- MODAL DIALOG FOR SIGNING -->
-  <div class="modal-overlay" id="sign-modal">
+  <div class="modal-overlay" id="sign-modal" role="dialog" aria-modal="true" aria-labelledby="sign-modal-title">
     <div class="modal-card glass-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary);">✍️ Tiến trình ký điện tử</h3>
-        <button onclick="closeModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0;">
+        <h3 id="sign-modal-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 800; color: var(--vnpt-blue-dark); margin: 0;">✍️ Tiến trình Ký số Điện tử VNPT</h3>
+        <button type="button" onclick="closeModal()" aria-label="Đóng cửa sổ ký số" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
       </div>
 
       <!-- Step 1: Selection -->
       <div id="modal-step-selection">
-        <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">
-          Chọn giải pháp chữ ký số để thực hiện ký số pháp lý lên hợp đồng y tế:
+        <p style="font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 1rem; line-height: 1.5;">
+          Chọn phương thức chữ ký số VNPT để ký pháp lý lên hợp đồng dịch vụ CNTT y tế:
         </p>
         
-        <button class="signing-method-btn" onclick="startSigning('token')">
-          <span style="font-size: 2.2rem;">🔌</span>
+        <button type="button" class="signing-method-btn" onclick="startSigning('token')">
+          <span style="font-size: 1.9rem;">🔌</span>
           <div>
-            <h4 style="font-size: 0.92rem; font-weight: 700;">Chữ ký số USB Token (VNPT-CA)</h4>
-            <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.15rem;">Cắm USB Token phần cứng để kết nối chứng thư số.</p>
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--vnpt-blue-dark); margin: 0;">Chữ ký số USB Token (VNPT-CA)</h4>
+            <p style="font-size: 0.76rem; color: var(--color-text-muted); margin: 0.15rem 0 0 0;">Kết nối thiết bị USB Token phần cứng để ký chứng thư số.</p>
           </div>
         </button>
 
-        <button class="signing-method-btn" onclick="startSigning('smartca')">
-          <span style="font-size: 2.2rem;">📱</span>
+        <button type="button" class="signing-method-btn" onclick="startSigning('smartca')">
+          <span style="font-size: 1.9rem;">📱</span>
           <div>
-            <h4 style="font-size: 0.92rem; font-weight: 700;">Chữ ký số từ xa (VNPT SmartCA)</h4>
-            <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.15rem;">Xác thực giao dịch ký số trên ứng dụng SmartCA di động.</p>
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--vnpt-blue-dark); margin: 0;">Chữ ký số từ xa (VNPT SmartCA)</h4>
+            <p style="font-size: 0.76rem; color: var(--color-text-muted); margin: 0.15rem 0 0 0;">Xác thực giao dịch ký số tức thời trên ứng dụng VNPT SmartCA.</p>
           </div>
         </button>
       </div>
 
       <!-- Step 2: USB Token PIN Input -->
       <div id="modal-step-pin" class="hidden">
-        <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1rem; text-align: center;">
-          Nhập mã PIN của thiết bị USB Token phần cứng:
-        </p>
-        <input type="password" class="input-pin-field" id="token-pin" maxlength="8" placeholder="••••••••">
+        <label for="token-pin" style="display: block; font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 0.85rem; text-align: center; font-weight: 600;">
+          Nhập mã PIN của thiết bị USB Token VNPT-CA:
+        </label>
+        <input type="password" class="input-pin-field" id="token-pin" maxlength="8" placeholder="••••••••" autocomplete="off">
         <div style="display: flex; gap: 0.6rem;">
-          <button class="btn-secondary" onclick="goBackToSelection()" style="flex: 1; padding: 0.8rem; margin-left: 0;">Quay lại</button>
-          <button class="btn-primary" onclick="submitTokenPin()" style="flex: 2; padding: 0.8rem;">Xác thực & Ký số</button>
+          <button type="button" class="btn-secondary" onclick="goBackToSelection()" style="flex: 1; padding: 0.7rem;">Quay lại</button>
+          <button type="button" class="btn-primary" onclick="submitTokenPin()" style="flex: 2; padding: 0.7rem;">Xác thực &amp; Ký số</button>
         </div>
       </div>
 
       <!-- Step 3: SmartCA Wait Confirmation -->
       <div id="modal-step-smartca-wait" class="hidden">
-        <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1.5rem; text-align: center; line-height: 1.5;">
-          Đã gửi yêu cầu xác thực ký số về số điện thoại đăng ký SmartCA của bạn.<br>
-          <strong>Vui lòng mở ứng dụng VNPT SmartCA trên điện thoại để duyệt.</strong>
+        <p style="font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 1.2rem; text-align: center; line-height: 1.5;">
+          Đã gửi yêu cầu xác thực ký số về tài khoản <strong>VNPT SmartCA</strong> của bạn.<br>
+          <strong style="color: var(--vnpt-blue);">Vui lòng mở ứng dụng VNPT SmartCA trên điện thoại để phê duyệt.</strong>
         </p>
         <div class="signing-progress">
           <div class="signing-spinner"></div>
-          <span style="font-size: 0.82rem; font-weight: 600; color: var(--color-accent); animation: pulse 1.5s infinite;">Đang chờ phê duyệt trên thiết bị di động...</span>
+          <span style="font-size: 0.82rem; font-weight: 600; color: var(--vnpt-blue);">Đang chờ phê duyệt trên thiết bị di động…</span>
         </div>
       </div>
 
@@ -771,20 +1014,20 @@
       <div id="modal-step-progress" class="hidden">
         <div class="signing-progress">
           <div class="signing-spinner"></div>
-          <h4 id="progress-status" style="font-size: 0.9rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.35rem;">Đang kết nối thiết bị...</h4>
-          <p id="progress-sub" style="font-size: 0.78rem; color: var(--color-text-muted);">Vui lòng giữ kết nối Internet.</p>
+          <h4 id="progress-status" style="font-size: 0.9rem; font-weight: 700; color: var(--vnpt-blue-dark); margin-bottom: 0.3rem;">Đang kết nối thiết bị…</h4>
+          <p id="progress-sub" style="font-size: 0.78rem; color: var(--color-text-muted); margin: 0;">Vui lòng giữ kết nối mạng ổn định.</p>
         </div>
       </div>
 
       <!-- Step 5: Success message -->
       <div id="modal-step-success" class="hidden">
-        <div style="text-align: center; padding: 1rem 0;">
-          <div style="font-size: 3rem; margin-bottom: 1rem; color: #22c55e;">🎉</div>
-          <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.5rem;">Ký số thành công!</h4>
-          <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
-            Hợp đồng đã được áp dụng chữ ký điện tử mã hóa SHA-256 an toàn từ VNPT-CA. Trạng thái hợp đồng đã được cập nhật thành công.
+        <div style="text-align: center; padding: 0.75rem 0;">
+          <div style="font-size: 2.6rem; margin-bottom: 0.75rem;">✅</div>
+          <h4 style="font-size: 1.05rem; font-weight: 800; color: #15803d; margin-bottom: 0.4rem;">Ký số hợp đồng thành công!</h4>
+          <p style="font-size: 0.83rem; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+            Hợp đồng đã được đóng dấu chữ ký điện tử chuẩn SHA-256 từ VNPT-CA và cập nhật trạng thái pháp lý.
           </p>
-          <button class="btn-primary" onclick="closeModal()" style="padding: 0.8rem 2rem;">Đóng</button>
+          <button type="button" class="btn-primary" onclick="closeModal()" style="padding: 0.65rem 2rem;">Hoàn tất</button>
         </div>
       </div>
 
@@ -794,7 +1037,7 @@
   <!-- Scripts -->
   <script>
     // Data representation representing the organized contract life cycle by Beneficiary Unit
-                    let units = [
+    let units = [
       {
             "id": "tyt_phuong_ben_cat",
             "name": "TYT Phường Bến Cát",
@@ -2103,11 +2346,9 @@
     if (storedUnits) {
       try {
         const parsed = JSON.parse(storedUnits);
-        // Migration check: verify if the first contract has an endDate property
         if (parsed.length > 0 && parsed[0].contracts.length > 0 && ('endDate' in parsed[0].contracts[0])) {
           units = parsed;
         } else {
-          console.log("Migration: localStorage does not have endDate fields, reloading defaults...");
           localStorage.setItem('vnpt_his_units', JSON.stringify(units));
         }
       } catch (e) {
@@ -2120,22 +2361,13 @@
     let selectedUnitId = "trung_tam_y_te_kv_bac_tan_uyen";
     let selectedContractId = null;
     let selectedSignMethod = '';
-    let checkedContractIds = []; // Stores IDs of checked contracts
+    let checkedContractIds = [];
     let editingUnitIdForKhuVuc = null;
 
     function toggleTheme() {
-      const currentTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('vnpt_his_theme', newTheme);
-      
-      const themeIcon = document.getElementById('theme-icon');
-      if (newTheme === 'light') {
-        document.body.classList.add('light-theme');
-        if (themeIcon) themeIcon.textContent = '🌙';
-      } else {
-        document.body.classList.remove('light-theme');
-        if (themeIcon) themeIcon.textContent = '☀️';
-      }
+      // Keep VNPT flat light theme active
+      localStorage.setItem('vnpt_his_theme', 'light');
+      document.body.classList.add('light-theme');
       updateCharts();
     }
 
@@ -2158,10 +2390,9 @@
       let signedVal = 0;
       let pendingCount = 0;
       let pendingVal = 0;
-      let grandTotalVal = 0; // Sum of all contract values (including pending) for percentage base
+      let grandTotalVal = 0;
 
       units.forEach(u => {
-        // Filter by region
         if (selectedRegion !== 'all') {
           const unitKv = (u.khuVuc || '').trim();
           if (selectedRegion === 'empty') {
@@ -2180,7 +2411,7 @@
           totalCount++;
           let valNum = 0;
           if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-            valNum = parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+            valNum = parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
           }
           if (c.status === 'signed') {
             signedCount++;
@@ -2192,7 +2423,6 @@
           
           grandTotalVal += valNum;
           
-          // Exclude pending from totalVal (doanh thu tổng) as requested: "chờ ký thì ko tính vào tổng doanh thu"
           if (c.status !== 'pending') {
             totalVal += valNum;
           }
@@ -2213,19 +2443,15 @@
       if (statPendingVal) statPendingVal.textContent = (pendingVal / 1e9).toFixed(2) + ' tỷ VND (' + (pendingVal / (grandTotalVal || 1) * 100).toFixed(1) + '%)';
     }
 
-
-    // Helper to get selected unit
     function getSelectedUnit() {
       return units.find(u => u.id === selectedUnitId);
     }
 
-    // Helper to get selected contract
     function getSelectedContract() {
       const u = getSelectedUnit();
       return u ? u.contracts.find(c => c.id === selectedContractId) : null;
     }
 
-    // Helper to calculate expiration status of a contract relative to 2026-06-11
     function getExpirationStatus(endDateStr) {
       if (!endDateStr) return { text: 'Chưa có', class: 'status-draft' };
       
@@ -2233,13 +2459,13 @@
       if (parts.length !== 3) return { text: 'Chưa có', class: 'status-draft' };
       
       const day = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1; // 0-indexed month
+      const month = parseInt(parts[1], 10) - 1;
       const year = parseInt(parts[2], 10);
       const endDate = new Date(year, month, day);
       
-      const currentDate = new Date(2026, 5, 11); // June 11, 2026
-      endDate.setHours(0,0,0,0);
-      currentDate.setHours(0,0,0,0);
+      const currentDate = new Date(2026, 5, 11);
+      endDate.setHours(0, 0, 0, 0);
+      currentDate.setHours(0, 0, 0, 0);
       
       const diffTime = endDate.getTime() - currentDate.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -2253,7 +2479,6 @@
       }
     }
 
-    // Helper to calculate aggregate expiration status of a unit
     function getUnitExpirationStatus(contracts) {
       if (!contracts || contracts.length === 0) return { text: 'Không có HĐ', class: 'status-draft' };
       
@@ -2274,7 +2499,6 @@
       return { text: 'Chưa có ngày hết hạn', class: 'status-draft' };
     }
 
-    // Populate region filter dropdown options dynamically from units database
     function populateRegionFilterOptions() {
       const select = document.getElementById('dashboard-region-filter');
       if (!select) return;
@@ -2282,13 +2506,11 @@
       const currentSelected = select.value;
       select.innerHTML = '';
       
-      // Default: All
       const optAll = document.createElement('option');
       optAll.value = 'all';
       optAll.textContent = 'Tất cả khu vực';
       select.appendChild(optAll);
       
-      // List of 7 official regions
       const officialRegions = [
         "Thủ Dầu Một",
         "Bến Cát",
@@ -2299,7 +2521,6 @@
         "Dĩ An"
       ];
       
-      // Sort and populate official regions
       officialRegions.sort((a, b) => a.localeCompare(b, 'vi')).forEach(r => {
         const opt = document.createElement('option');
         opt.value = r;
@@ -2307,13 +2528,11 @@
         select.appendChild(opt);
       });
       
-      // Check if there are any units with unassigned/empty regions or regions outside the 7
       let hasEmpty = units.some(u => {
         const kv = (u.khuVuc || '').trim();
         return !kv || !officialRegions.includes(kv);
       });
       
-      // Add empty option if any unit is unassigned
       if (hasEmpty) {
         const optEmpty = document.createElement('option');
         optEmpty.value = 'empty';
@@ -2321,12 +2540,10 @@
         select.appendChild(optEmpty);
       }
       
-      // Restore previous selection if it still exists, otherwise default to all
       const exists = Array.from(select.options).some(opt => opt.value === currentSelected);
       select.value = exists ? currentSelected : 'all';
     }
 
-    // Render Dashboard Units Summary Table
     function renderDashboardUnitsTable(filterText = '') {
       const tbody = document.getElementById('dashboard-units-tbody');
       if (!tbody) return;
@@ -2339,7 +2556,6 @@
       
       let index = 1;
       
-      // Filter units
       let filteredUnits = units.filter(unit => {
         if (query && !unit.name.toLowerCase().includes(query)) return false;
         if (regionFilter !== 'all') {
@@ -2353,7 +2569,6 @@
         return true;
       });
       
-      // Sort units
       filteredUnits.sort((a, b) => {
         if (sortBy === 'khuVuc') {
           const kvA = a.khuVuc || '';
@@ -2375,7 +2590,7 @@
               if (selectedYear !== 'all' && cYear !== selectedYear) return;
               if (c.status !== 'pending') {
                 if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-                  sum += parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+                  sum += parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
                 }
               }
             });
@@ -2409,27 +2624,27 @@
 
           if (c.status !== 'pending') {
             if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-              unitValueSum += parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+              unitValueSum += parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
             }
           }
         });
         
-        if (validContractsCount === 0) return; // Skip unit if no contracts for this year
+        if (validContractsCount === 0) return;
         const total = validContractsCount;
         
         let statusBadgeText = `${signedCount}/${total} Đã ký`;
-        let badgeColor = 'var(--color-text-muted)';
+        let statusPillClass = 'status-draft';
         if (almostSignedCount > 0 && pendingCount > 0) {
           statusBadgeText = `${almostSignedCount} sắp ký, ${pendingCount} chờ ký`;
-          badgeColor = '#3b82f6';
+          statusPillClass = 'status-almost';
         } else if (almostSignedCount > 0) {
-          statusBadgeText = `${almostSignedCount}/${total} sắp ký`;
-          badgeColor = '#3b82f6';
+          statusBadgeText = `${almostSignedCount}/${total} Sắp ký`;
+          statusPillClass = 'status-almost';
         } else if (pendingCount > 0) {
-          statusBadgeText = `${pendingCount}/${total} chờ ký`;
-          badgeColor = '#eab308';
+          statusBadgeText = `${pendingCount}/${total} Chờ ký`;
+          statusPillClass = 'status-pending';
         } else if (signedCount === total) {
-          badgeColor = '#22c55e';
+          statusPillClass = 'status-signed';
         }
         
         const expStatus = getUnitExpirationStatus(unit.contracts);
@@ -2442,30 +2657,30 @@
         };
         
         tr.innerHTML = `
-          <td style="text-align: center;"><strong>${index++}</strong></td>
-          <td style="font-weight: 600; color: var(--color-text-primary);">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <div class="unit-avatar" style="width: 32px; height: 32px; font-size: 0.85rem; box-shadow: none;">${unit.avatar}</div>
+          <td style="text-align: center; color: var(--color-text-muted); font-weight: 700;">${index++}</td>
+          <td style="font-weight: 700; color: var(--color-text-primary);">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div class="unit-avatar">${unit.avatar}</div>
               <span>${unit.name}</span>
             </div>
           </td>
-          <td style="text-align: center; font-weight: 500; color: var(--color-text-secondary);">
+          <td style="text-align: center; font-weight: 600; color: var(--color-text-secondary);">
             <span id="display-khuvuc-${unit.id}">${unit.khuVuc || 'Chưa thiết lập'}</span>
-            <button class="btn-icon" onclick="event.stopPropagation(); editUnitKhuVuc('${unit.id}')" style="margin-left: 4px; padding: 2px;" title="Sửa khu vực">✏️</button>
+            <button type="button" class="btn-icon" aria-label="Sửa khu vực ${unit.name}" onclick="event.stopPropagation(); editUnitKhuVuc('${unit.id}')" style="margin-left: 4px;" title="Sửa khu vực">✏️</button>
           </td>
-          <td style="text-align: center;">${total} văn bản</td>
-          <td style="text-align: center;"><span style="color: ${badgeColor}; font-weight: 700;">${statusBadgeText}</span></td>
-          <td style="text-align: right; font-weight: 700; color: var(--color-accent);">${unitValueSum > 0 ? unitValueSum.toLocaleString('vi-VN') + ' VND' : 'Theo đơn giá'}</td>
+          <td style="text-align: center; font-weight: 600;">${total} văn bản</td>
+          <td style="text-align: center;"><span class="status-pill ${statusPillClass}">${statusBadgeText}</span></td>
+          <td style="text-align: right; font-weight: 800; color: var(--vnpt-blue);">${unitValueSum > 0 ? unitValueSum.toLocaleString('vi-VN') + ' VND' : 'Theo đơn giá'}</td>
           <td style="text-align: center;"><span class="status-pill ${expStatus.class}">${expStatus.text}</span></td>
           <td style="text-align: center;" onclick="event.stopPropagation();">
-            <button class="btn-primary" onclick="selectUnit('${unit.id}'); switchView('detail');" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 6px;">📄 Xem hợp đồng</button>
+            <button type="button" class="btn-primary" onclick="selectUnit('${unit.id}'); switchView('detail');" style="padding: 0.38rem 0.75rem; font-size: 0.76rem; border-radius: 6px;">📄 Chi tiết</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
       
       if (tbody.children.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 2rem;">Không tìm thấy đơn vị nào phù hợp.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 2.25rem;">Không tìm thấy đơn vị y tế nào phù hợp.</td></tr>';
       }
     }
 
@@ -2503,19 +2718,14 @@
       const newKv = select ? select.value : '';
       
       unit.khuVuc = newKv;
-      
-      // Save to localStorage
       localStorage.setItem('vnpt_his_units', JSON.stringify(units));
-      
-      // Update region filter dropdown
       populateRegionFilterOptions();
-      
-      // Render table again
       renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
-      
       closeEditKhuVucModal();
       
-      alert(`Đã cập nhật địa bàn/khu vực của ${unit.name} thành: "${unit.khuVuc || 'Chưa thiết lập'}"\n\n👉 Nhấn nút "Xuất File HTML" ở thanh tiêu đề trên cùng để tải xuống và thay thế file contracts.html!`);
+      alert(`Đã cập nhật địa bàn/khu vực của ${unit.name} thành: "${unit.khuVuc || 'Chưa thiết lập'}"
+
+👉 Nhấn nút "Xuất File HTML" ở thanh tiêu đề trên cùng để tải xuống và lưu cố định.`);
     }
 
     function exportUpdatedHTML() {
@@ -2545,16 +2755,16 @@
           alert("Tải xuống hoàn tất! Hãy sao chép file 'contracts.html' vừa tải xuống đè lên file cũ trong thư mục code kienlt90 để cập nhật vĩnh viễn.");
         })
         .catch(err => {
-          alert('Lỗi xuất file tự động: ' + err.message + '\n\nDữ liệu vẫn được lưu tạm thời trên trình duyệt của bạn.');
+          alert('Lỗi xuất file tự động: ' + err.message + '
+
+Dữ liệu vẫn được lưu tạm thời trên trình duyệt của bạn.');
         });
     }
 
-    // Select Unit
     function selectUnit(unitId) {
       selectedUnitId = unitId;
-      selectedContractId = null; // Reset selection in table
+      selectedContractId = null;
       
-      // Auto-check all contracts of this unit by default
       const unit = units.find(u => u.id === selectedUnitId);
       if (unit) {
         checkedContractIds = unit.contracts.map(c => c.id);
@@ -2562,11 +2772,10 @@
         checkedContractIds = [];
       }
 
-      // Hide detail panel by default when switching units
       document.getElementById('detail-panel').classList.add('hidden');
 
       if (unit) {
-        document.getElementById('detail-unit-title').innerHTML = `Hợp đồng tại <strong>${unit.name}</strong>`;
+        document.getElementById('detail-unit-title').innerHTML = `Đơn vị thụ hưởng: <strong style="color: var(--vnpt-blue);">${unit.name}</strong>`;
       }
 
       renderContractsTable();
@@ -2591,7 +2800,6 @@
       }
     }
 
-    // Toggle single contract checkbox
     function toggleContractCheck(contractId, isChecked) {
       if (isChecked) {
         if (!checkedContractIds.includes(contractId)) {
@@ -2605,7 +2813,6 @@
       updateMasterCheckboxState();
     }
 
-    // Toggle Select All checkbox
     function toggleSelectAllContracts(masterCheckbox) {
       const unit = getSelectedUnit();
       if (!unit) return;
@@ -2613,23 +2820,19 @@
       const currentUnitContractIds = unit.contracts.map(c => c.id);
       
       if (masterCheckbox.checked) {
-        // Add all current unit contract IDs
         currentUnitContractIds.forEach(id => {
           if (!checkedContractIds.includes(id)) {
             checkedContractIds.push(id);
           }
         });
       } else {
-        // Remove all current unit contract IDs
         checkedContractIds = checkedContractIds.filter(id => !currentUnitContractIds.includes(id));
       }
       
-      // Re-render table checkboxes
       renderContractsTable();
       updateCheckedSum();
     }
 
-    // Update the master checkbox checked/indeterminate state
     function updateMasterCheckboxState() {
       const masterCheckbox = document.getElementById('check-all-contracts');
       if (!masterCheckbox) return;
@@ -2657,7 +2860,6 @@
       }
     }
 
-    // Calculate sum of checked contracts and update display
     function updateCheckedSum() {
       let sum = 0;
       units.forEach(u => {
@@ -2665,7 +2867,7 @@
           if (checkedContractIds.includes(c.id)) {
             let valNum = 0;
             if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp')) {
-              valNum = parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+              valNum = parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
             }
             sum += valNum;
           }
@@ -2674,31 +2876,28 @@
       
       document.getElementById('selected-sum-value').textContent = sum.toLocaleString('vi-VN') + ' VND';
       
-      // Glow effect if sum > 0
       const sumContainer = document.getElementById('selected-sum-container');
       if (sum > 0) {
-        sumContainer.style.boxShadow = '0 0 15px rgba(6, 182, 212, 0.15)';
-        sumContainer.style.background = 'rgba(6, 182, 212, 0.09)';
+        sumContainer.style.background = '#e4f0fb';
+        sumContainer.style.borderColor = '#93c5fd';
       } else {
-        sumContainer.style.boxShadow = 'none';
-        sumContainer.style.background = 'rgba(6, 182, 212, 0.06)';
+        sumContainer.style.background = '#f0f6fc';
+        sumContainer.style.borderColor = '#c5dcf2';
       }
     }
 
-    // Render Contracts Table
     function renderContractsTable() {
       const tbody = document.getElementById('contracts-tbody');
       tbody.innerHTML = '';
 
       const unit = getSelectedUnit();
       if (!unit || unit.contracts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-muted);">Không có văn bản nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 2rem;">Không có văn bản hợp đồng nào.</td></tr>';
         updateMasterCheckboxState();
         return;
       }
 
-      // Update unit title header
-      document.getElementById('selected-unit-title').innerHTML = `Danh sách văn bản / hợp đồng tại <strong>${unit.name}</strong>`;
+      document.getElementById('selected-unit-title').innerHTML = `Danh sách văn bản / hợp đồng — <strong>${unit.name}</strong>`;
 
       unit.contracts.forEach(c => {
         const isChecked = checkedContractIds.includes(c.id);
@@ -2718,19 +2917,21 @@
           statusText = 'Chờ ký';
         } else if (c.status === 'almost_signed') {
           statusClass = 'status-almost';
-          statusText = 'Sắp ký hợp đồng';
+          statusText = 'Sắp ký HĐ';
         }
 
-        const expDateDisplay = c.endDate ? c.endDate : '<span style="color: var(--color-text-muted); font-size: 0.8rem; font-style: italic;">Chưa có (✏️)</span>';
+        const expDateDisplay = c.endDate
+          ? c.endDate
+          : '<span style="color: var(--color-text-muted); font-size: 0.78rem; font-style: italic;">Chưa có (✏️)</span>';
 
         tr.innerHTML = `
           <td style="text-align: center;" onclick="event.stopPropagation();">
-            <input type="checkbox" class="contract-check" data-id="${c.id}" ${isChecked ? 'checked' : ''} style="transform: scale(1.1); cursor: pointer;" onclick="toggleContractCheck('${c.id}', this.checked)">
+            <input type="checkbox" class="contract-check" aria-label="Chọn hợp đồng ${c.code}" data-id="${c.id}" ${isChecked ? 'checked' : ''} style="transform: scale(1.1); cursor: pointer; accent-color: var(--vnpt-blue);" onclick="toggleContractCheck('${c.id}', this.checked)">
           </td>
-          <td><strong>${c.code}</strong></td>
+          <td style="font-family: monospace; font-size: 0.79rem; font-weight: 700; color: var(--vnpt-blue-dark);">${c.code}</td>
           <td style="font-weight: 600; color: var(--color-text-primary);" title="${c.name}">${c.name}</td>
-          <td style="font-weight: 700; color: var(--color-accent);">${c.value}</td>
-          <td style="font-weight: 500;">${expDateDisplay}</td>
+          <td style="text-align: right; font-weight: 800; color: var(--vnpt-blue);">${c.value}</td>
+          <td style="text-align: center; font-weight: 600;">${expDateDisplay}</td>
           <td style="text-align: center;"><span class="status-pill ${statusClass}">${statusText}</span></td>
         `;
         tbody.appendChild(tr);
@@ -2739,12 +2940,10 @@
       updateMasterCheckboxState();
     }
 
-    // Select contract
     function selectContract(contractId) {
       selectedContractId = contractId;
       renderContractsTable();
 
-      // Show detail panel
       const detailPanel = document.getElementById('detail-panel');
       detailPanel.classList.remove('hidden');
       
@@ -2760,15 +2959,15 @@
       document.getElementById('detail-package').textContent = c.package;
       document.getElementById('detail-value').textContent = c.value;
       document.getElementById('detail-date').textContent = c.date;
-      document.getElementById('detail-end-date').innerHTML = c.endDate ? c.endDate : '<span style="color: var(--color-text-muted); font-style: italic; font-size: 0.85rem;">Chưa có (Nhấp ✏️ để sửa)</span>';
+      document.getElementById('detail-end-date').innerHTML = c.endDate
+        ? c.endDate
+        : '<span style="color: var(--color-text-muted); font-style: italic; font-size: 0.8rem;">Chưa có (Nhấp ✏️ để sửa)</span>';
       document.getElementById('detail-filename').textContent = `${c.fileName} (${c.fileSize})`;
 
-      // Reset inline date picker elements
       document.getElementById('end-date-edit-container').classList.add('hidden');
       document.getElementById('detail-end-date').classList.remove('hidden');
       document.getElementById('btn-edit-end-date').classList.remove('hidden');
 
-      // Reset status edit elements
       const statusEditContainer = document.getElementById('status-edit-container');
       if (statusEditContainer) statusEditContainer.classList.add('hidden');
       const btnEditStatus = document.getElementById('btn-edit-status');
@@ -2776,36 +2975,33 @@
       const detailStatusPill = document.getElementById('detail-status-pill');
       if (detailStatusPill) detailStatusPill.classList.remove('hidden');
 
-      // Status pill in details
       const pill = document.getElementById('detail-status-pill');
       if (pill) {
         pill.textContent = c.status === 'signed' ? 'Đã ký số' : c.status === 'pending' ? 'Chờ ký' : c.status === 'almost_signed' ? 'Sắp ký hợp đồng' : 'Đang soạn thảo';
         pill.className = `status-pill ${c.status === 'signed' ? 'status-signed' : c.status === 'pending' ? 'status-pending' : c.status === 'almost_signed' ? 'status-almost' : 'status-draft'}`;
       }
 
-      // Update Milestones
       updateMilestone('ms-1', c.ms1Done);
       updateMilestone('ms-2', c.ms2Done);
       updateMilestone('ms-3', c.ms3Done);
 
       const ms2Desc = document.getElementById('ms-2-desc');
       if (c.status === 'signed') {
-        ms2Desc.textContent = "Hợp đồng đã được ký số hợp pháp.";
+        ms2Desc.textContent = "Hợp đồng đã được ký số pháp lý.";
       } else {
         ms2Desc.textContent = "Yêu cầu hoàn thành thủ tục ký số USB Token/SmartCA.";
       }
 
-      // Hide/Show digital signature stamp
       const stampContainer = document.getElementById('detail-stamp-container');
       if (c.status === 'signed') {
         stampContainer.innerHTML = `
           <div class="digital-stamp">
-            <span style="font-size: 2.2rem;">🛡️</span>
-            <div style="font-size: 0.8rem; line-height: 1.4;">
-              <div style="color: #22c55e; font-weight: 800; font-size: 0.88rem; text-transform: uppercase;">Chữ ký số hợp lệ</div>
-              <div style="color: var(--color-text-primary); font-weight: 600;">Ký bởi: Lê Trung Kiên</div>
+            <span style="font-size: 1.9rem;">🛡️</span>
+            <div style="font-size: 0.78rem; line-height: 1.45;">
+              <div style="color: #15803d; font-weight: 800; font-size: 0.82rem; text-transform: uppercase;">Chữ ký số VNPT-CA Hợp lệ</div>
+              <div style="color: var(--color-text-primary); font-weight: 700;">Ký bởi: Lê Trung Kiên</div>
               <div style="color: var(--color-text-muted); font-size: 0.72rem;">Đơn vị cấp phát: ${c.signedBy || 'VNPT-CA'}</div>
-              <div style="color: var(--color-text-muted); font-size: 0.72rem;">Thời gian ký: ${c.signedTime || '10/06/2026'}</div>
+              <div style="color: var(--color-text-muted); font-size: 0.72rem; font-variant-numeric: tabular-nums;">Thời gian ký: ${c.signedTime || '01/01/2026 10:00:00'}</div>
             </div>
           </div>
         `;
@@ -2813,12 +3009,13 @@
         stampContainer.innerHTML = '';
       }
 
-      // Show/Hide sign button
       const signBtn = document.getElementById('btn-show-sign-modal');
-      if (c.status === 'pending' || c.status === 'almost_signed') {
-        signBtn.style.display = 'block';
-      } else {
-        signBtn.style.display = 'none';
+      if (signBtn) {
+        if (c.status === 'pending' || c.status === 'almost_signed') {
+          signBtn.style.display = 'inline-flex';
+        } else {
+          signBtn.style.display = 'none';
+        }
       }
     }
 
@@ -2829,7 +3026,6 @@
       }
     }
 
-    // Modal Control
     function openSignModal() {
       document.getElementById('sign-modal').classList.add('active');
       switchModalStep('selection');
@@ -2848,15 +3044,12 @@
       document.getElementById('modal-step-success').classList.toggle('hidden', step !== 'success');
     }
 
-    // Start signing flow
     function startSigning(method) {
       selectedSignMethod = method;
       if (method === 'token') {
         switchModalStep('pin');
       } else {
         switchModalStep('smartca-wait');
-        
-        // Simulate phone confirmation approval in 3 seconds
         setTimeout(() => {
           runSigningProgressAnimation();
         }, 3000);
@@ -2870,13 +3063,12 @@
     function submitTokenPin() {
       const pin = document.getElementById('token-pin').value;
       if (pin !== '12345678') {
-        alert("Mã PIN USB Token không chính xác! Thử lại với mã mặc định 12345678");
+        alert("Mã PIN USB Token không chính xác! Vui lòng thử lại với mã mặc định 12345678.");
         return;
       }
       runSigningProgressAnimation();
     }
 
-    // Progress animation simulator
     function runSigningProgressAnimation() {
       switchModalStep('progress');
       
@@ -2884,11 +3076,11 @@
       const subEl = document.getElementById('progress-sub');
       
       const steps = [
-        { status: "Đang kết nối dịch vụ chữ ký số...", sub: "Kiểm tra chứng thư số..." },
-        { status: "Đang tạo mã hash SHA-256...", sub: "Chuẩn hóa tài liệu..." },
-        { status: "Đang áp dụng chữ ký điện tử...", sub: "Mã hóa khóa bí mật..." },
-        { status: "Đang kiểm tra chứng thư số (VNPT-CA)...", sub: "Xác thực danh tính..." },
-        { status: "Đồng bộ hóa tài liệu ký số lên máy chủ...", sub: "Lưu trữ đám mây..." }
+        { status: "Đang kết nối dịch vụ chữ ký số VNPT-CA…", sub: "Kiểm tra chứng thư số…" },
+        { status: "Đang tạo mã băm SHA-256…", sub: "Chuẩn hóa tài liệu PDF…" },
+        { status: "Đang đóng dấu chữ ký điện tử…", sub: "Mã hóa khóa bí mật…" },
+        { status: "Đang xác thực chứng thư số (VNPT-CA)…", sub: "Kiểm tra hiệu lực pháp lý…" },
+        { status: "Đồng bộ hóa tài liệu ký số lên hệ thống…", sub: "Lưu trữ bảo mật…" }
       ];
 
       let stepIdx = 0;
@@ -2901,10 +3093,9 @@
           clearInterval(interval);
           completeSigning();
         }
-      }, 1000);
+      }, 900);
     }
 
-    // Complete signature
     function completeSigning() {
       const c = getSelectedContract();
       if (c) {
@@ -2921,17 +3112,14 @@
         }
         c.signedTime = formattedDate;
 
-        // Persist to localStorage
         localStorage.setItem('vnpt_his_units', JSON.stringify(units));
 
-        // Refresh lists and details
         renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
         renderContractsTable();
         updateGlobalStats();
         updateCharts();
         selectContract(selectedContractId);
         
-        // Show success modal step
         switchModalStep('success');
       }
     }
@@ -2940,42 +3128,24 @@
       return n < 10 ? '0' + n : n;
     }
 
-    // Setup DOM Event Listeners on Load
     document.addEventListener('DOMContentLoaded', () => {
-      // Populate region filter dropdown dynamically
+      document.body.classList.add('light-theme');
       populateRegionFilterOptions();
-
-      // Initialize layout rendering
       updateGlobalStats();
       renderDashboardUnitsTable();
       updateCharts();
       switchView('dashboard');
 
-      // Theme initializer setup
-      const savedTheme = localStorage.getItem('vnpt_his_theme') || 'dark';
-      const themeIcon = document.getElementById('theme-icon');
-      if (savedTheme === 'light') {
-        document.body.classList.add('light-theme');
-        if (themeIcon) themeIcon.textContent = '🌙';
-      } else {
-        document.body.classList.remove('light-theme');
-        if (themeIcon) themeIcon.textContent = '☀️';
-      }
-
-      // Listen to theme storage events
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'vnpt_his_theme') {
-          const newTheme = e.newValue || 'dark';
-          if (newTheme === 'light') {
-            document.body.classList.add('light-theme');
-            if (themeIcon) themeIcon.textContent = '🌙';
-          } else {
-            document.body.classList.remove('light-theme');
-            if (themeIcon) themeIcon.textContent = '☀️';
-          }
-          updateCharts();
+      // Keyboard Escape support for modals
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeModal();
+          closeAddContractModal();
+          closeEditKhuVucModal();
         }
-        // In case units database changes in other tab
+      });
+
+      window.addEventListener('storage', (e) => {
         if (e.key === 'vnpt_his_units') {
           const stored = localStorage.getItem('vnpt_his_units');
           if (stored) {
@@ -2994,7 +3164,6 @@
         }
       });
 
-      // Unit search filter on dashboard
       const dashboardSearchInput = document.getElementById('dashboard-unit-search');
       if (dashboardSearchInput) {
         dashboardSearchInput.addEventListener('input', (e) => {
@@ -3002,7 +3171,6 @@
         });
       }
 
-      // Year filter on dashboard
       const dashboardYearSelect = document.getElementById('dashboard-year-select');
       if (dashboardYearSelect) {
         dashboardYearSelect.addEventListener('change', () => {
@@ -3012,7 +3180,6 @@
         });
       }
 
-      // Region filter on dashboard
       const dashboardRegionFilter = document.getElementById('dashboard-region-filter');
       if (dashboardRegionFilter) {
         dashboardRegionFilter.addEventListener('change', () => {
@@ -3022,7 +3189,6 @@
         });
       }
 
-      // Sort by filter on dashboard
       const dashboardSortBy = document.getElementById('dashboard-sort-by');
       if (dashboardSortBy) {
         dashboardSortBy.addEventListener('change', () => {
@@ -3030,7 +3196,6 @@
         });
       }
 
-      // Details panel close
       const btnCloseDetails = document.getElementById('btn-close-details');
       if (btnCloseDetails) {
         btnCloseDetails.addEventListener('click', () => {
@@ -3040,7 +3205,6 @@
         });
       }
 
-      // Check all contracts checkbox
       const checkAllBox = document.getElementById('check-all-contracts');
       if (checkAllBox) {
         checkAllBox.addEventListener('click', (e) => {
@@ -3048,7 +3212,6 @@
         });
       }
 
-      // Date editing triggers
       const btnEditEndDate = document.getElementById('btn-edit-end-date');
       const btnCancelEndDate = document.getElementById('btn-cancel-end-date');
       const btnSaveEndDate = document.getElementById('btn-save-end-date');
@@ -3061,7 +3224,6 @@
           const c = getSelectedContract();
           if (!c) return;
 
-          // Pre-fill input value (HTML input type date needs YYYY-MM-DD)
           if (c.endDate) {
             const parts = c.endDate.split('/');
             if (parts.length === 3) {
@@ -3073,7 +3235,6 @@
             inputEndDate.value = '';
           }
 
-          // Show input form
           detailEndDate.classList.add('hidden');
           btnEditEndDate.classList.add('hidden');
           editContainer.classList.remove('hidden');
@@ -3093,7 +3254,7 @@
           const c = getSelectedContract();
           if (!c) return;
 
-          const dateVal = inputEndDate.value; // YYYY-MM-DD
+          const dateVal = inputEndDate.value;
           if (dateVal) {
             const parts = dateVal.split('-');
             c.endDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
@@ -3101,22 +3262,20 @@
             c.endDate = '';
           }
 
-          // Save to localStorage
           localStorage.setItem('vnpt_his_units', JSON.stringify(units));
 
-          // Reset UI elements
-          detailEndDate.innerHTML = c.endDate ? c.endDate : '<span style="color: var(--color-text-muted); font-style: italic; font-size: 0.85rem;">Chưa có (Nhấp ✏️ để sửa)</span>';
+          detailEndDate.innerHTML = c.endDate
+            ? c.endDate
+            : '<span style="color: var(--color-text-muted); font-style: italic; font-size: 0.8rem;">Chưa có (Nhấp ✏️ để sửa)</span>';
           editContainer.classList.add('hidden');
           detailEndDate.classList.remove('hidden');
           btnEditEndDate.classList.remove('hidden');
 
-          // Refresh table cells and stats
           renderContractsTable();
           updateCheckedSum();
         });
       }
 
-      // Status editing triggers
       const btnEditStatus = document.getElementById('btn-edit-status');
       const btnCancelStatus = document.getElementById('btn-cancel-status');
       const btnSaveStatus = document.getElementById('btn-save-status');
@@ -3133,7 +3292,6 @@
             selectStatus.value = c.status || 'pending';
           }
 
-          // Show select input form
           detailStatusPill.classList.add('hidden');
           btnEditStatus.classList.add('hidden');
           statusEditContainer.classList.remove('hidden');
@@ -3157,7 +3315,6 @@
           const newStatus = selectStatus ? selectStatus.value : 'pending';
           c.status = newStatus;
 
-          // If updating status, make sure milestones align nicely
           if (newStatus === 'signed') {
             c.ms1Done = true;
             c.ms2Done = true;
@@ -3177,25 +3334,20 @@
             }
           }
 
-          // Save to localStorage
           localStorage.setItem('vnpt_his_units', JSON.stringify(units));
 
-          // Hide input form and update pill
           statusEditContainer.classList.add('hidden');
           detailStatusPill.classList.remove('hidden');
           btnEditStatus.classList.remove('hidden');
 
-          // Refresh details card
           selectContract(c.id);
-
-          // Refresh dashboard & contract tables
           updateGlobalStats();
+          updateCharts();
           renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
           renderContractsTable();
         });
       }
 
-      // USB Token pin submit click listener
       const tokenPinInput = document.getElementById('token-pin');
       if (tokenPinInput) {
         tokenPinInput.addEventListener('keypress', (e) => {
@@ -3212,24 +3364,22 @@
         });
       }
 
-      // Download PDF button click listener
       const btnDownloadPdf = document.getElementById('btn-download-pdf');
       if (btnDownloadPdf) {
         btnDownloadPdf.addEventListener('click', () => {
           const c = getSelectedContract();
           if (c) {
-            alert(`Đang chuẩn bị tải xuống hợp đồng PDF: ${c.fileName}\n(Giả lập xuất tệp lưu trữ thành công)`);
+            alert(`Đang chuẩn bị tải xuống hợp đồng PDF: ${c.fileName}
+(Giả lập xuất tệp lưu trữ thành công)`);
           }
         });
       }
     });
 
-    // Add Contract Modal Controls and submission
     function openAddContractModal() {
       const modal = document.getElementById('add-contract-modal');
       if (!modal) return;
 
-      // Populate units select dropdown
       const unitSelect = document.getElementById('add-contract-unit');
       if (unitSelect) {
         unitSelect.innerHTML = '';
@@ -3239,11 +3389,9 @@
           opt.textContent = u.name;
           unitSelect.appendChild(opt);
         });
-        // Pre-select the currently active unit
         unitSelect.value = selectedUnitId || (units.length > 0 ? units[0].id : '');
       }
 
-      // Reset input fields
       const codeInput = document.getElementById('add-contract-code');
       const nameInput = document.getElementById('add-contract-name');
       const valueInput = document.getElementById('add-contract-value');
@@ -3348,10 +3496,10 @@
       }
 
       targetUnit.contracts.push(newContract);
-
       localStorage.setItem('vnpt_his_units', JSON.stringify(units));
 
       updateGlobalStats();
+      updateCharts();
       renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
 
       if (selectedUnitId === unitId) {
@@ -3370,18 +3518,16 @@
       const selectedYear = yearSelect ? yearSelect.value : '2026';
       const regionSelect = document.getElementById('dashboard-region-filter');
       const selectedRegion = regionSelect ? regionSelect.value : 'all';
-      const isLightTheme = document.body.classList.contains('light-theme');
-      
-      const textColor = isLightTheme ? '#1e293b' : '#e2e8f0';
-      const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
-      const tooltipBg = isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)';
-      const tooltipColor = isLightTheme ? '#0f172a' : '#f8fafc';
-      const tooltipBorder = isLightTheme ? '#e2e8f0' : '#334155';
- 
+
+      const textColor = '#1e293b';
+      const gridColor = '#e2e8f0';
+      const tooltipBg = '#ffffff';
+      const tooltipColor = '#0f2942';
+      const tooltipBorder = '#cbd5e1';
+
       // 1. Calculate revenue by unit (excluding pending)
       const unitData = [];
       units.forEach(u => {
-        // Filter by region
         if (selectedRegion !== 'all') {
           const unitKv = (u.khuVuc || '').trim();
           if (selectedRegion === 'empty') {
@@ -3390,43 +3536,40 @@
             if (unitKv !== selectedRegion) return;
           }
         }
- 
+
         let sum = 0;
         u.contracts.forEach(c => {
           let cYear = '2026';
           if (c.id.includes('-2027')) cYear = '2027';
           if (c.id.includes('-2028')) cYear = '2028';
           if (selectedYear !== 'all' && cYear !== selectedYear) return;
- 
-          // Exclude pending from revenue as requested: "chờ ký thì ko tính vào tổng doanh thu"
+
           if (c.status !== 'pending') {
             if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-              sum += parseInt(c.value.replace(/[^0-9]/g, '')) || 0;
+              sum += parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
             }
           }
         });
         if (sum > 0) {
           unitData.push({
             name: u.name.replace('Trung tâm Y tế ', 'TTYT ').replace('Trung tâm y tế ', 'TTYT ').replace('Bệnh viện ', 'BV '),
-            value: sum / 1e9 // Convert to Billion VND
+            value: sum / 1e9
           });
         }
       });
- 
-      // Sort descending
+
       unitData.sort((a, b) => b.value - a.value);
- 
+
       const unitLabels = unitData.map(d => d.name);
       const unitValues = unitData.map(d => d.value);
- 
+
       // 2. Status distribution
       let signedCount = 0;
       let almostSignedCount = 0;
       let pendingCount = 0;
       let draftCount = 0;
- 
+
       units.forEach(u => {
-        // Filter by region
         if (selectedRegion !== 'all') {
           const unitKv = (u.khuVuc || '').trim();
           if (selectedRegion === 'empty') {
@@ -3435,13 +3578,13 @@
             if (unitKv !== selectedRegion) return;
           }
         }
- 
+
         u.contracts.forEach(c => {
           let cYear = '2026';
           if (c.id.includes('-2027')) cYear = '2027';
           if (c.id.includes('-2028')) cYear = '2028';
           if (selectedYear !== 'all' && cYear !== selectedYear) return;
- 
+
           if (c.status === 'signed') signedCount++;
           else if (c.status === 'almost_signed') almostSignedCount++;
           else if (c.status === 'pending') pendingCount++;
@@ -3449,7 +3592,7 @@
         });
       });
 
-      // 3. Render Revenue Chart
+      // 3. Render Revenue Chart (VNPT Flat Blue)
       const revCtx = document.getElementById('revenue-chart');
       if (revCtx) {
         if (revenueChartInstance) {
@@ -3463,17 +3606,17 @@
             datasets: [{
               label: 'Doanh thu (tỷ VND)',
               data: unitValues.length > 0 ? unitValues : [0],
-              backgroundColor: 'rgba(59, 130, 246, 0.85)',
-              borderColor: '#3b82f6',
-              borderWidth: 1,
-              borderRadius: 6,
-              hoverBackgroundColor: 'rgba(59, 130, 246, 1)'
+              backgroundColor: '#0066b3',
+              borderColor: '#005299',
+              borderWidth: 0,
+              borderRadius: 4,
+              hoverBackgroundColor: '#004b87'
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            indexAxis: 'y', // Horizontal bar chart
+            indexAxis: 'y',
             plugins: {
               legend: { display: false },
               tooltip: {
@@ -3497,7 +3640,7 @@
               },
               y: {
                 grid: { display: false },
-                ticks: { color: textColor, font: { family: 'Be Vietnam Pro', size: 11 } }
+                ticks: { color: textColor, font: { family: 'Be Vietnam Pro', size: 11, weight: '600' } }
               }
             }
           }
@@ -3518,28 +3661,28 @@
         if (signedCount > 0) {
           statusLabels.push('Đã ký số');
           statusData.push(signedCount);
-          statusColors.push('#22c55e'); // Green
+          statusColors.push('#16a34a');
         }
         if (almostSignedCount > 0) {
           statusLabels.push('Sắp ký');
           statusData.push(almostSignedCount);
-          statusColors.push('#3b82f6'); // Blue
+          statusColors.push('#0066b3');
         }
         if (pendingCount > 0) {
           statusLabels.push('Chờ ký');
           statusData.push(pendingCount);
-          statusColors.push('#eab308'); // Yellow
+          statusColors.push('#d97706');
         }
         if (draftCount > 0) {
           statusLabels.push('Soạn thảo');
           statusData.push(draftCount);
-          statusColors.push('#64748b'); // Gray
+          statusColors.push('#64748b');
         }
 
         if (statusData.length === 0) {
           statusLabels.push('Trống');
           statusData.push(1);
-          statusColors.push('rgba(255, 255, 255, 0.1)');
+          statusColors.push('#e2e8f0');
         }
 
         statusChartInstance = new Chart(statusCtx, {
@@ -3549,7 +3692,8 @@
             datasets: [{
               data: statusData,
               backgroundColor: statusColors,
-              borderWidth: 0,
+              borderColor: '#ffffff',
+              borderWidth: 2,
               hoverOffset: 4
             }]
           },
@@ -3561,9 +3705,9 @@
                 position: 'bottom',
                 labels: {
                   color: textColor,
-                  font: { family: 'Be Vietnam Pro', size: 11 },
+                  font: { family: 'Be Vietnam Pro', size: 11, weight: '600' },
                   boxWidth: 12,
-                  padding: 15
+                  padding: 14
                 }
               },
               tooltip: {
@@ -3575,7 +3719,7 @@
                 padding: 10
               }
             },
-            cutout: '65%'
+            cutout: '64%'
           }
         });
       }
@@ -3583,39 +3727,39 @@
   </script>
 
   <!-- MODAL DIALOG FOR ADDING CONTRACT -->
-  <div class="modal-overlay" id="add-contract-modal">
-    <div class="modal-card glass-card" style="width: 450px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary);">Bổ sung Hợp đồng mới</h3>
-        <button onclick="closeAddContractModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+  <div class="modal-overlay" id="add-contract-modal" role="dialog" aria-modal="true" aria-labelledby="add-contract-modal-title">
+    <div class="modal-card glass-card" style="max-width: 460px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0;">
+        <h3 id="add-contract-modal-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 800; color: var(--vnpt-blue-dark); margin: 0;">➕ Bổ sung Hợp đồng mới</h3>
+        <button type="button" onclick="closeAddContractModal()" aria-label="Đóng cửa sổ thêm hợp đồng" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="display: flex; flex-direction: column; gap: 0.9rem;">
         <div>
-          <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Đơn vị thụ hưởng</label>
-          <select id="add-contract-unit" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;">
+          <label for="add-contract-unit" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Đơn vị thụ hưởng</label>
+          <select id="add-contract-unit" class="form-input" style="width: 100%;">
           </select>
         </div>
         <div>
-          <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Mã hợp đồng</label>
-          <input type="text" id="add-contract-code" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;" placeholder="Ví dụ: HD-99/2026/XYZ">
+          <label for="add-contract-code" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Mã hợp đồng</label>
+          <input type="text" id="add-contract-code" class="form-input" style="width: 100%;" placeholder="Ví dụ: HD-99/2026/VNPT…">
         </div>
         <div>
-          <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Tên hợp đồng / Nội dung</label>
-          <input type="text" id="add-contract-name" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;" placeholder="Hợp đồng HIS LIS...">
+          <label for="add-contract-name" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Tên hợp đồng / Nội dung</label>
+          <input type="text" id="add-contract-name" class="form-input" style="width: 100%;" placeholder="Hợp đồng cung cấp dịch vụ HIS/LIS…">
         </div>
         <div>
-          <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Giá trị</label>
-          <input type="text" id="add-contract-value" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;" placeholder="Ví dụ: 50,000,000 VND">
+          <label for="add-contract-value" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Giá trị hợp đồng</label>
+          <input type="text" id="add-contract-value" class="form-input" style="width: 100%;" placeholder="Ví dụ: 50,000,000 VND">
         </div>
-        <div style="display: flex; gap: 1rem;">
+        <div style="display: flex; gap: 0.85rem;">
           <div style="flex: 1;">
-            <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Ngày ký</label>
-            <input type="date" id="add-contract-date" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;">
+            <label for="add-contract-date" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Ngày ký</label>
+            <input type="date" id="add-contract-date" class="form-input" style="width: 100%;">
           </div>
           <div style="flex: 1;">
-            <label style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Trạng thái</label>
-            <select id="add-contract-status" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px;">
+            <label for="add-contract-status" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Trạng thái</label>
+            <select id="add-contract-status" class="form-input" style="width: 100%;">
               <option value="signed">Đã ký số</option>
               <option value="pending">Chờ ký</option>
               <option value="almost_signed">Sắp ký hợp đồng</option>
@@ -3623,25 +3767,25 @@
           </div>
         </div>
       </div>
-      <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.8rem;">
-        <button class="btn-secondary" onclick="closeAddContractModal()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Hủy</button>
-        <button class="btn-primary" onclick="submitAddContract()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Lưu Hợp đồng</button>
+      <div style="margin-top: 1.35rem; padding-top: 0.85rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 0.6rem;">
+        <button type="button" class="btn-secondary" onclick="closeAddContractModal()">Hủy</button>
+        <button type="button" class="btn-primary" onclick="submitAddContract()">Lưu Hợp đồng</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL DIALOG FOR EDITING REGION -->
-  <div class="modal-overlay" id="edit-khuvuc-modal">
-    <div class="modal-card glass-card" style="width: 380px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--color-text-primary);">Cập nhật Khu vực</h3>
-        <button onclick="closeEditKhuVucModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+  <div class="modal-overlay" id="edit-khuvuc-modal" role="dialog" aria-modal="true" aria-labelledby="edit-khuvuc-modal-title">
+    <div class="modal-card glass-card" style="max-width: 390px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0;">
+        <h3 id="edit-khuvuc-modal-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 800; color: var(--vnpt-blue-dark); margin: 0;">📍 Cập nhật Khu vực</h3>
+        <button type="button" onclick="closeEditKhuVucModal()" aria-label="Đóng cửa sổ cập nhật khu vực" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="display: flex; flex-direction: column; gap: 0.85rem;">
         <div>
-          <label style="font-size: 0.82rem; color: var(--color-text-secondary); margin-bottom: 0.4rem; display: block; font-weight: 600;" id="edit-khuvuc-unit-name">Đơn vị y tế</label>
-          <select id="edit-khuvuc-select" class="form-input" style="width: 100%; padding: 0.6rem; border-radius: 6px; background-color: var(--color-bg-secondary); color: var(--color-text-primary);">
+          <label for="edit-khuvuc-select" style="font-size: 0.82rem; color: var(--color-text-secondary); margin-bottom: 0.4rem; display: block; font-weight: 700;" id="edit-khuvuc-unit-name">Đơn vị y tế</label>
+          <select id="edit-khuvuc-select" class="form-input" style="width: 100%;">
             <option value="">-- Chưa thiết lập (Để trống) --</option>
             <option value="Thủ Dầu Một">Thủ Dầu Một</option>
             <option value="Bến Cát">Bến Cát</option>
@@ -3653,9 +3797,9 @@
           </select>
         </div>
       </div>
-      <div style="margin-top: 1.8rem; display: flex; justify-content: flex-end; gap: 0.8rem;">
-        <button class="btn-secondary" onclick="closeEditKhuVucModal()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Hủy</button>
-        <button class="btn-primary" onclick="submitEditKhuVuc()" style="padding: 0.6rem 1.2rem; border-radius: 6px;">Cập nhật</button>
+      <div style="margin-top: 1.35rem; padding-top: 0.85rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 0.6rem;">
+        <button type="button" class="btn-secondary" onclick="closeEditKhuVucModal()">Hủy</button>
+        <button type="button" class="btn-primary" onclick="submitEditKhuVuc()">Cập nhật</button>
       </div>
     </div>
   </div>
