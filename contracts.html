@@ -9,22 +9,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Base Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* ==========================================================================
-       VNPT FLAT MODERN DESIGN SYSTEM (BLUE & WHITE)
-       Compliant with Web Interface Guidelines
+       VNPT FLAT MODERN DESIGN SYSTEM (ONEPAGE BLUE & WHITE)
+       Executive UI / One-page experience with Modals
        ========================================================================== */
-    :root,
-    body,
-    body.portal-body,
-    body.light-theme {
-      --font-primary: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
-      --font-heading: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+    :root {
+      --font-primary: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 
-      /* VNPT Brand Blue & Crisp White Palette */
+      /* VNPT Blue & White Core Palette */
       --vnpt-blue: #0066b3;
       --vnpt-blue-hover: #005299;
       --vnpt-blue-dark: #003f75;
@@ -33,82 +29,76 @@
       --vnpt-soft-hover: #e4f0fb;
       --vnpt-soft-border: #c5dcf2;
 
-      /* Flat Light VNPT Surface Variables */
+      /* Surface Colors */
       --color-bg: #f3f7fb;
-      --color-bg-secondary: #ffffff;
       --color-surface: #ffffff;
       --color-surface-border: #d8e3ef;
       --color-surface-hover: #f5f9fd;
 
+      /* Text Colors */
       --color-text-primary: #0f2942;
       --color-text-secondary: #334e68;
       --color-text-muted: #627d98;
 
-      --color-primary: #0066b3;
-      --color-primary-hover: #005299;
-      --color-primary-glow: rgba(0, 102, 179, 0.14);
+      /* Semantic Status Colors */
+      --color-success: #15803d;
+      --color-success-bg: #f0fdf4;
+      --color-success-border: #bbf7d0;
 
-      --color-accent: #0066b3;
-      --color-accent-hover: #004b87;
+      --color-warning: #b45309;
+      --color-warning-bg: #fefce8;
+      --color-warning-border: #fef08a;
 
       --color-danger: #dc2626;
       --color-danger-bg: #fef2f2;
       --color-danger-border: #fecaca;
 
-      --shadow-sm: 0 1px 2px rgba(15, 41, 66, 0.04);
-      --shadow-md: 0 2px 4px rgba(15, 41, 66, 0.06);
-      --shadow-lg: 0 10px 25px -5px rgba(0, 53, 102, 0.12), 0 4px 10px -3px rgba(0, 53, 102, 0.06);
+      --color-info: #0284c7;
+      --color-info-bg: #f0f9ff;
+      --color-info-border: #bae6fd;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(15, 41, 66, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(15, 41, 66, 0.08), 0 2px 4px -2px rgba(15, 41, 66, 0.05);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 53, 102, 0.12), 0 8px 10px -6px rgba(0, 53, 102, 0.06);
+      --shadow-modal: 0 20px 40px -10px rgba(15, 41, 66, 0.25), 0 0 0 1px rgba(15, 41, 66, 0.05);
     }
 
-    html, body.portal-body {
-      background-color: var(--color-bg) !important;
-      color: var(--color-text-primary) !important;
-      font-family: var(--font-primary);
-      -webkit-font-smoothing: antialiased;
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    /* Hide legacy dark neon blobs completely for clean flat aesthetic */
-    .bg-glow-container {
-      display: none !important;
+    html, body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-primary);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
     }
 
     .portal-container {
-      max-width: 1440px !important;
-      width: 100% !important;
-      margin: 0 auto !important;
-      padding: 1.25rem 1.75rem 2.5rem !important;
-      box-sizing: border-box;
-    }
-
-    /* Flat Card Override */
-    .glass-card {
-      background: #ffffff !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      border: 1px solid var(--color-surface-border) !important;
-      border-radius: 10px !important;
-      box-shadow: var(--shadow-sm) !important;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
-    }
-
-    .glass-card:hover {
-      transform: none !important;
-      border-color: #b8cfe6 !important;
-      box-shadow: var(--shadow-md) !important;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.25rem 1.75rem 3rem;
     }
 
     /* Top VNPT Header Bar */
-    .dash-header.glass-card {
-      background: #ffffff !important;
-      border-top: 4px solid var(--vnpt-blue) !important;
-      padding: 0.9rem 1.4rem !important;
+    .dash-header {
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
+      border-top: 4px solid var(--vnpt-blue);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
       flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
     }
 
     .dash-brand {
@@ -117,7 +107,7 @@
       gap: 0.85rem;
     }
 
-    .vnpt-badge-box {
+    .vnpt-logo-badge {
       width: 44px;
       height: 44px;
       border-radius: 8px;
@@ -127,408 +117,672 @@
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       letter-spacing: -0.3px;
       flex-shrink: 0;
-      cursor: pointer;
-      border: none;
-    }
-
-    .vnpt-badge-box:hover {
-      background: var(--vnpt-blue-hover);
+      box-shadow: 0 2px 4px rgba(0, 102, 179, 0.2);
     }
 
     .brand-title-wrap h1 {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: var(--vnpt-blue-dark);
-      margin: 0;
       letter-spacing: -0.01em;
       line-height: 1.25;
     }
 
     .brand-title-wrap p {
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       color: var(--color-text-muted);
       font-weight: 500;
-      margin: 0.15rem 0 0 0;
+      margin-top: 0.15rem;
     }
 
     .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.35rem 0.75rem;
+      background: var(--vnpt-soft-bg);
+      border: 1px solid var(--vnpt-soft-border);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      color: var(--vnpt-blue-dark);
+      font-weight: 600;
+    }
+
+    .user-pill-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--vnpt-blue);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background-color: var(--vnpt-blue);
+      color: #ffffff;
+      border: 1px solid var(--vnpt-blue-hover);
+      border-radius: 6px;
+      padding: 0.5rem 0.95rem;
+      font-family: var(--font-primary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--vnpt-blue-hover);
+      box-shadow: 0 2px 4px rgba(0, 102, 179, 0.25);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background-color: #ffffff;
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-surface-border);
+      border-radius: 6px;
+      padding: 0.5rem 0.95rem;
+      font-family: var(--font-primary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-surface-hover);
+      border-color: #b8cfe6;
+      color: var(--color-text-primary);
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      transition: background-color 0.15s, border-color 0.15s;
+    }
+
+    .btn-icon:hover {
+      background-color: var(--vnpt-soft-bg);
+      border-color: var(--vnpt-soft-border);
+      color: var(--vnpt-blue);
+    }
+
+    /* Cards */
+    .dash-card {
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .dash-card:hover {
+      border-color: #b8cfe6;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* KPI Summary Cards Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
+      border-radius: 10px;
+      padding: 1.15rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      user-select: none;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--vnpt-blue);
+    }
+
+    .kpi-card.active {
+      border-color: var(--vnpt-blue);
+      box-shadow: 0 0 0 2px rgba(0, 102, 179, 0.15), var(--shadow-md);
+      background: #fbfdff;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .kpi-total::before { background: var(--vnpt-blue); }
+    .kpi-signed::before { background: #15803d; }
+    .kpi-pending::before { background: #f59e0b; }
+    .kpi-warning::before { background: #c2410c; }
+
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.35rem;
+    }
+
+    .kpi-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--color-text-muted);
+    }
+
+    .kpi-icon {
+      font-size: 1.15rem;
+    }
+
+    .kpi-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 0.2rem;
+    }
+
+    .kpi-sub {
+      font-size: 0.76rem;
+      color: var(--color-text-muted);
+      font-weight: 500;
+    }
+
+    /* Charts Section */
+    .charts-container {
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .chart-card {
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      height: 360px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chart-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .chart-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--vnpt-blue-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Segmented switch for chart */
+    .chart-toggle-group {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 2px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .chart-toggle-btn {
+      border: none;
+      background: transparent;
+      padding: 0.28rem 0.65rem;
+      font-family: var(--font-primary);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .chart-toggle-btn.active {
+      background: #ffffff;
+      color: var(--vnpt-blue);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      font-weight: 700;
+    }
+
+    .chart-body {
+      flex-grow: 1;
+      position: relative;
+      min-height: 0;
+    }
+
+    /* Custom Doughnut Legend */
+    .donut-legend-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .donut-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.55rem;
+      background: var(--vnpt-soft-bg);
+      border-radius: 6px;
+      border: 1px solid var(--vnpt-soft-border);
+      cursor: pointer;
+      transition: background-color 0.12s;
+    }
+
+    .donut-legend-item:hover {
+      background: var(--vnpt-soft-hover);
+    }
+
+    .donut-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* Table & Controls Section */
+    .table-section {
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .table-controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex-grow: 1;
+      max-width: 320px;
+      min-width: 220px;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      padding: 0.5rem 0.75rem 0.5rem 2.15rem;
+      border: 1px solid var(--color-surface-border);
+      border-radius: 6px;
+      font-family: var(--font-primary);
+      font-size: 0.82rem;
+      color: var(--color-text-primary);
+      background: #ffffff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .search-input-wrap input:focus {
+      border-color: var(--vnpt-blue);
+      box-shadow: 0 0 0 3px rgba(0, 102, 179, 0.12);
+      outline: none;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+
+    .filters-cluster {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       flex-wrap: wrap;
     }
 
-    /* Flat Buttons */
-    .btn-primary,
-    .btn-secondary {
+    .form-select {
+      border: 1px solid var(--color-surface-border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
       font-family: var(--font-primary);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.52rem 0.95rem;
-      border-radius: 7px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-      white-space: nowrap;
-      text-decoration: none;
-      margin: 0;
-      box-shadow: none !important;
-    }
-
-    .btn-primary {
-      background-color: var(--vnpt-blue) !important;
-      color: #ffffff !important;
-      border: 1px solid var(--vnpt-blue) !important;
-    }
-
-    .btn-primary:hover {
-      background-color: var(--vnpt-blue-hover) !important;
-      border-color: var(--vnpt-blue-hover) !important;
-      transform: none !important;
-    }
-
-    .btn-secondary {
-      background-color: #ffffff !important;
-      color: var(--color-text-secondary) !important;
-      border: 1px solid var(--color-surface-border) !important;
-    }
-
-    .btn-secondary:hover {
-      background-color: var(--vnpt-soft-bg) !important;
-      color: var(--vnpt-blue) !important;
-      border-color: var(--vnpt-soft-border) !important;
-      transform: none !important;
-    }
-
-    .btn-icon {
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 0.2rem 0.35rem;
-      border-radius: 5px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    }
-
-    .btn-icon:hover {
-      background: var(--vnpt-soft-bg);
-      color: var(--vnpt-blue);
-      border-color: var(--vnpt-soft-border);
-    }
-
-    /* Accessible Focus States */
-    button:focus-visible,
-    select:focus-visible,
-    input:focus-visible,
-    a:focus-visible {
-      outline: 2px solid var(--vnpt-blue) !important;
-      outline-offset: 2px !important;
-    }
-
-    /* Form Controls */
-    .form-input {
-      font-family: var(--font-primary);
-      background-color: #ffffff !important;
-      color: var(--color-text-primary) !important;
-      border: 1px solid #cbd5e1 !important;
-      border-radius: 7px !important;
-      padding: 0.5rem 0.75rem !important;
-      font-size: 0.82rem !important;
+      font-size: 0.8rem;
       font-weight: 500;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: none !important;
+      color: var(--color-text-primary);
+      background-color: #ffffff;
+      cursor: pointer;
+      transition: border-color 0.15s;
     }
 
-    .form-input:hover {
-      border-color: #94a3b8 !important;
-    }
-
-    .form-input:focus {
-      border-color: var(--vnpt-blue) !important;
-      box-shadow: 0 0 0 3px rgba(0, 102, 179, 0.12) !important;
+    .form-select:focus {
+      border-color: var(--vnpt-blue);
       outline: none;
     }
 
-    /* KPI Summary Grid */
-    .stats-grid {
-      margin-top: 1rem;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-    }
-
-    .kpi-card {
-      background: #ffffff;
-      border: 1px solid var(--color-surface-border);
-      border-top: 3px solid var(--vnpt-blue);
-      border-radius: 10px;
-      padding: 1rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .kpi-card.kpi-signed {
-      border-top-color: #16a34a;
-    }
-
-    .kpi-card.kpi-pending {
-      border-top-color: #d97706;
-    }
-
-    .kpi-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: var(--color-text-muted);
-    }
-
-    .kpi-value {
-      font-size: 1.55rem;
-      font-weight: 800;
-      color: var(--color-text-primary);
-      font-variant-numeric: tabular-nums;
-      line-height: 1.2;
-    }
-
-    .kpi-sub {
-      font-size: 0.75rem;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      color: var(--color-text-secondary);
-    }
-
-    /* Charts Layout */
-    .charts-container {
-      margin-top: 1rem;
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1rem;
-    }
-
-    .section-heading {
-      font-family: var(--font-heading);
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--vnpt-blue-dark);
-      margin: 0 0 0.85rem 0;
-      border-left: 3.5px solid var(--vnpt-blue);
-      padding-left: 0.65rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* Flat Modern Data Table */
+    /* Premium Data Table */
     .table-responsive {
+      width: 100%;
       overflow-x: auto;
-      border: 1px solid var(--color-surface-border);
+      border: 1px solid #edf2f7;
       border-radius: 8px;
-      background: #ffffff;
     }
 
     .premium-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.84rem;
-      font-variant-numeric: tabular-nums;
+      font-size: 0.82rem;
+      text-align: left;
     }
 
-    .premium-table thead th {
-      background-color: var(--vnpt-soft-bg) !important;
-      color: var(--vnpt-blue-dark) !important;
+    .premium-table thead {
+      background-color: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .premium-table th {
+      padding: 0.75rem 0.85rem;
       font-weight: 700;
-      font-size: 0.75rem;
+      color: var(--vnpt-blue-dark);
       text-transform: uppercase;
+      font-size: 0.72rem;
       letter-spacing: 0.03em;
-      padding: 0.75rem 0.9rem;
-      border-bottom: 1px solid var(--vnpt-soft-border) !important;
       white-space: nowrap;
     }
 
-    .premium-table tbody td {
-      padding: 0.72rem 0.9rem;
+    .premium-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .premium-table th.sortable:hover {
+      color: var(--vnpt-blue);
+      background-color: #f1f5f9;
+    }
+
+    .sort-indicator {
+      display: inline-block;
+      margin-left: 3px;
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+    }
+
+    .premium-table tbody tr {
       border-bottom: 1px solid #edf2f7;
-      color: var(--color-text-primary);
+      transition: background-color 0.12s ease;
+      cursor: pointer;
+    }
+
+    .premium-table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .premium-table td {
+      padding: 0.75rem 0.85rem;
       vertical-align: middle;
     }
 
-    .premium-table tbody tr:last-child td {
-      border-bottom: none;
+    /* Unit Cell */
+    .unit-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
-    .contract-row {
-      cursor: pointer;
-      transition: background-color 0.12s ease;
-    }
-
-    .contract-row:hover {
-      background-color: var(--vnpt-soft-bg) !important;
-    }
-
-    .contract-row.selected {
-      background-color: #e6f2ff !important;
-      border-left: 3px solid var(--vnpt-blue);
-    }
-
-    /* Unit Avatar (Flat VNPT Badge) */
     .unit-avatar {
       width: 32px;
       height: 32px;
-      border-radius: 6px;
-      background-color: var(--vnpt-soft-bg);
-      border: 1px solid var(--vnpt-soft-border);
+      border-radius: 8px;
+      background: var(--vnpt-soft-bg);
       color: var(--vnpt-blue);
-      font-weight: 700;
-      font-size: 0.78rem;
-      display: inline-flex;
+      border: 1px solid var(--vnpt-soft-border);
+      display: flex;
       align-items: center;
       justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
       flex-shrink: 0;
-      box-shadow: none !important;
     }
 
-    /* Flat Status Pills */
+    .unit-info-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .unit-name {
+      font-weight: 700;
+      color: var(--color-text-primary);
+      line-height: 1.3;
+    }
+
+    .unit-meta {
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: monospace;
+    }
+
+    /* Region Pill */
+    .region-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 12px;
+      background: #f1f5f9;
+      color: var(--color-text-secondary);
+      font-size: 0.76rem;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .region-pill:hover {
+      border-color: var(--vnpt-blue);
+      background: var(--vnpt-soft-bg);
+      color: var(--vnpt-blue);
+    }
+
+    /* Status Pills */
     .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      padding: 0.24rem 0.65rem;
-      border-radius: 6px;
-      font-size: 0.75rem;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 12px;
+      font-size: 0.74rem;
       font-weight: 700;
       white-space: nowrap;
-      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+      transition: opacity 0.12s;
+    }
+
+    .status-pill:hover {
+      opacity: 0.85;
     }
 
     .status-signed {
-      background-color: #ecfdf5;
+      background-color: #eff6ff;
+      color: var(--vnpt-blue);
+      border: 1px solid #bfdbfe;
+    }
+
+    .status-pending {
+      background-color: #fefce8;
+      color: #b45309;
+      border: 1px solid #fef08a;
+    }
+
+    .status-almost {
+      background-color: #f0fdf4;
       color: #15803d;
       border: 1px solid #bbf7d0;
     }
 
-    .status-pending {
-      background-color: #fffbeb;
-      color: #b45309;
-      border: 1px solid #fde68a;
-    }
-
     .status-draft {
-      background-color: #f1f5f9;
-      color: #475569;
+      background-color: #f8fafc;
+      color: #64748b;
       border: 1px solid #cbd5e1;
     }
 
-    .status-danger {
+    /* Expiration Status Badge */
+    .exp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .exp-active {
+      background-color: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .exp-warning {
+      background-color: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #ffedd5;
+    }
+
+    .exp-expired {
       background-color: #fef2f2;
       color: #dc2626;
       border: 1px solid #fecaca;
     }
 
-    .status-almost {
-      background-color: #eff6ff;
-      color: #0066b3;
-      border: 1px solid #bfdbfe;
-    }
-
-    .view-container {
-      transition: opacity 0.2s ease;
-      opacity: 1;
-    }
-
-    .view-container.hidden {
-      display: none !important;
-      opacity: 0;
-    }
-
-    /* Detail Info Table */
-    .xml-info-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-    }
-
-    .xml-info-table td {
-      padding: 0.55rem 0.4rem;
-      border-bottom: 1px solid #edf2f7;
-      color: var(--color-text-primary);
-    }
-
-    .xml-info-table td:first-child {
-      color: var(--color-text-muted);
-      font-weight: 600;
-      width: 120px;
-    }
-
-    /* Milestones List */
-    .milestone-list {
-      list-style: none;
-      padding-left: 1rem;
-      border-left: 2px solid #cbd5e1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.95rem;
-      margin-top: 0.75rem;
-    }
-
-    .milestone-item {
-      position: relative;
-    }
-
-    .milestone-item::before {
-      content: '';
-      position: absolute;
-      left: -1.4rem;
-      top: 0.2rem;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #cbd5e1;
-      border: 2px solid #ffffff;
-    }
-
-    .milestone-item.done::before {
-      background: #16a34a;
-      box-shadow: 0 0 0 3px #dcfce7;
-    }
-
-    .milestone-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--color-text-primary);
-    }
-
-    .milestone-desc {
-      font-size: 0.74rem;
-      color: var(--color-text-muted);
-      margin-top: 0.1rem;
-    }
-
-    /* Digital Signature Stamp */
-    .digital-stamp {
-      border: 1.5px dashed #16a34a;
-      background: #f0fdf4;
+    /* Sticky Batch Bar */
+    .batch-bar {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
+      border-top: 3px solid var(--vnpt-blue);
       border-radius: 8px;
-      padding: 0.85rem 1rem;
-      margin-top: 0.5rem;
+      padding: 0.75rem 1.25rem;
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 1rem;
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Modals */
+    .batch-bar.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #ffffff;
+      border: 1px solid var(--color-surface-border);
+      border-left: 4px solid var(--vnpt-blue);
+      border-radius: 8px;
+      padding: 0.85rem 1.15rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      pointer-events: auto;
+      transform: translateX(120%);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.toast-success { border-left-color: #15803d; }
+    .toast.toast-warning { border-left-color: #f59e0b; }
+    .toast.toast-error { border-left-color: #dc2626; }
+
+    /* Modal Dialogs */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -549,514 +803,687 @@
     }
 
     .modal-card {
-      width: 100%;
-      max-width: 480px;
-      padding: 1.5rem;
-      border-radius: 10px !important;
-      background: #ffffff !important;
-      border: 1px solid var(--color-surface-border) !important;
-      border-top: 4px solid var(--vnpt-blue) !important;
-      box-shadow: var(--shadow-lg) !important;
-    }
-
-    .signing-method-btn {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-      padding: 1rem;
-      border-radius: 8px;
       background: #ffffff;
+      border-radius: 12px;
       border: 1px solid var(--color-surface-border);
-      color: var(--color-text-primary);
-      text-align: left;
-      cursor: pointer;
-      transition: background-color 0.15s ease, border-color 0.15s ease;
-      margin-bottom: 0.75rem;
-    }
-
-    .signing-method-btn:hover {
-      border-color: var(--vnpt-blue);
-      background: var(--vnpt-soft-bg);
-    }
-
-    .signing-progress {
+      box-shadow: var(--shadow-modal);
+      width: 100%;
+      max-width: 520px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem 0;
-      text-align: center;
+      max-height: 90vh;
+      overflow: hidden;
+      animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .signing-spinner {
-      width: 48px;
-      height: 48px;
-      border: 3.5px solid var(--vnpt-soft-border);
-      border-radius: 50%;
-      border-top-color: var(--vnpt-blue);
-      animation: spin 0.9s linear infinite;
-      margin-bottom: 1rem;
+    .modal-card.modal-lg {
+      max-width: 900px;
     }
 
-    .input-pin-field {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      border: 1px solid #cbd5e1;
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header {
+      padding: 1rem 1.5rem;
       background: #f8fafc;
-      color: var(--color-text-primary);
-      font-size: 1.1rem;
-      letter-spacing: 0.35rem;
-      text-align: center;
-      margin-bottom: 1.25rem;
-      font-variant-numeric: tabular-nums;
+      border-bottom: 1px solid var(--color-surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
     }
 
-    .input-pin-field:focus {
+    .modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--vnpt-blue-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .modal-body {
+      padding: 1.25rem 1.5rem;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      background: #f8fafc;
+      border-top: 1px solid var(--color-surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.65rem;
+    }
+
+    /* Form Fields in Modal */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--color-surface-border);
+      border-radius: 6px;
+      font-family: var(--font-primary);
+      font-size: 0.82rem;
+      color: var(--color-text-primary);
+      background-color: #ffffff;
+      transition: border-color 0.15s;
+    }
+
+    .form-input:focus {
       border-color: var(--vnpt-blue);
-      background: #ffffff;
       outline: none;
     }
 
+    /* Contract Edit Item in Modal */
+    .contract-edit-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .contract-edit-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Responsive */
     @media (max-width: 1024px) {
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .charts-container {
-        grid-template-columns: 1fr;
-      }
-      #detail-workspace {
-        flex-direction: column;
-      }
-      #detail-panel {
-        width: 100% !important;
-      }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .charts-container { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 640px) {
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-      .portal-container {
-        padding: 0.75rem 1rem 2rem !important;
-      }
+      .stats-grid { grid-template-columns: 1fr; }
+      .portal-container { padding: 0.75rem 1rem 2rem; }
+      .dash-header { flex-direction: column; align-items: flex-start; }
+      .header-actions { width: 100%; justify-content: space-between; }
+      .table-controls-bar { flex-direction: column; align-items: stretch; }
+      .search-input-wrap { max-width: 100%; }
     }
   </style>
 </head>
-<body class="portal-body light-theme">
-  <script>
-    // Force VNPT Light Blue-White Theme for flat modern consistency
-    localStorage.setItem('vnpt_his_theme', 'light');
-  </script>
+<body>
 
-  <!-- Main Container -->
-  <main class="portal-container" id="app-container">
+  <!-- Floating Toast Notifications -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="portal-container">
     
-    <!-- Portal Header (Flat VNPT Blue & White) -->
-    <header class="dash-header glass-card">
+    <!-- Top Executive Header -->
+    <header class="dash-header">
       <div class="dash-brand">
-        <button type="button" class="vnpt-badge-box" onclick="window.location.href='main.html'" title="Về Cổng chính KIENLT90 Portal" aria-label="Về Cổng chính KIENLT90 Portal">
-          VNPT
-        </button>
+        <div class="vnpt-logo-badge">VNPT</div>
         <div class="brand-title-wrap">
-          <h1>QUẢN LÝ HỢP ĐỒNG CNTT Y TẾ</h1>
-          <p>Hệ sinh thái Y tế số VNPT (HIS • LIS • RIS/PACS • EMR) — Quản lý &amp; Ký số tập trung</p>
+          <h1>Quản Lý Hợp Đồng &amp; Doanh Thu CNTT Y Tế</h1>
+          <p>Dữ liệu hợp đồng thụ hưởng VNPT HIS / LIS / RIS / EMR — Địa bàn Bình Dương</p>
         </div>
       </div>
+      
       <div class="header-actions">
-        <button type="button" class="btn-secondary" onclick="exportUpdatedHTML()" title="Xuất file HTML đã cập nhật để lưu hoặc commit Git">
-          📥 Xuất File HTML
+        <div class="user-pill" title="Phụ trách giải pháp TPM">
+          <div class="user-pill-avatar">K</div>
+          <span>TPM: Lê Trung Kiên</span>
+        </div>
+        <button type="button" class="btn-primary" onclick="openAddContractModal()">
+          ➕ Thêm Hợp đồng
         </button>
-        <button type="button" class="btn-secondary" onclick="resetDatabase()" title="Khôi phục dữ liệu mặc định">
-          🔄 Reset Dữ liệu
+        <button type="button" class="btn-secondary" onclick="exportToExcel()" title="Xuất dữ liệu 50 đơn vị & 51 hợp đồng ra Excel">
+          📥 Xuất Excel
         </button>
-        <a href="main.html" class="btn-primary" title="Quay lại Cổng chính">
-          🏠 Cổng chính Portal
-        </a>
+        <button type="button" class="btn-icon" onclick="resetDatabase()" title="Khôi phục dữ liệu gốc từ file DS_KHACHHANG (1).xlsx">
+          🔄
+        </button>
       </div>
     </header>
 
-    <!-- Dashboard View Container -->
-    <div id="dashboard-view" class="view-container">
-      <!-- Statistics Overview Panel -->
-      <section class="stats-grid" aria-label="Thống kê tổng quan hợp đồng">
-        <div class="kpi-card">
-          <span class="kpi-label">Tổng số Hợp đồng</span>
-          <span id="stat-total-cnt" class="kpi-value">0</span>
-          <span class="kpi-sub" style="color: var(--vnpt-blue);">100% Đang theo dõi</span>
-        </div>
-        <div class="kpi-card">
+    <!-- 4 Interactive KPI Summary Cards (Click to filter) -->
+    <section class="stats-grid" aria-label="Thống kê tổng quan hợp đồng">
+      <!-- Total Value Card -->
+      <div class="kpi-card kpi-total active" id="kpi-card-all" onclick="setKpiFilter('all')">
+        <div class="kpi-header">
           <span class="kpi-label">Tổng Giá trị Dự án</span>
-          <span id="stat-total-val" class="kpi-value" style="color: var(--vnpt-blue);">0 tỷ VND</span>
-          <span class="kpi-sub">Hệ sinh thái Y tế số VNPT</span>
+          <span class="kpi-icon">📊</span>
         </div>
-        <div class="kpi-card kpi-signed">
+        <span class="kpi-value" id="stat-total-val" style="color: var(--vnpt-blue);">7.99 tỷ VND</span>
+        <span class="kpi-sub" id="stat-total-sub">50 đơn vị · 51 hợp đồng</span>
+      </div>
+
+      <!-- Signed Card -->
+      <div class="kpi-card kpi-signed" id="kpi-card-signed" onclick="setKpiFilter('signed')">
+        <div class="kpi-header">
           <span class="kpi-label">Hợp đồng đã Ký số</span>
-          <span id="stat-signed-cnt" class="kpi-value" style="color: #15803d;">0</span>
-          <span id="stat-signed-val" class="kpi-sub" style="color: #15803d;">0 tỷ VND (0%)</span>
+          <span class="kpi-icon">✅</span>
         </div>
-        <div class="kpi-card kpi-pending">
+        <span class="kpi-value" id="stat-signed-cnt" style="color: #15803d;">48</span>
+        <span class="kpi-sub" id="stat-signed-val" style="color: #15803d;">7.90 tỷ VND (94.1%)</span>
+      </div>
+
+      <!-- Pending Card -->
+      <div class="kpi-card kpi-pending" id="kpi-card-pending" onclick="setKpiFilter('pending')">
+        <div class="kpi-header">
           <span class="kpi-label">Hợp đồng Chờ Ký</span>
-          <span id="stat-pending-cnt" class="kpi-value" style="color: #b45309;">0</span>
-          <span id="stat-pending-val" class="kpi-sub" style="color: #b45309;">0 tỷ VND (0%)</span>
+          <span class="kpi-icon">⏳</span>
         </div>
-      </section>
+        <span class="kpi-value" id="stat-pending-cnt" style="color: #b45309;">3</span>
+        <span class="kpi-sub" id="stat-pending-val" style="color: #b45309;">89.4 tr VND (5.9%)</span>
+      </div>
+
+      <!-- Warning Expiring Card -->
+      <div class="kpi-card kpi-warning" id="kpi-card-expiring" onclick="setKpiFilter('expiring')">
+        <div class="kpi-header">
+          <span class="kpi-label">Cảnh báo Thời hạn HĐ</span>
+          <span class="kpi-icon">⚠️</span>
+        </div>
+        <span class="kpi-value" id="stat-warning-cnt" style="color: #c2410c;">0</span>
+        <span class="kpi-sub" id="stat-warning-sub" style="color: #c2410c;">Cần gia hạn / tái ký</span>
+      </div>
+    </section>
+
+    <!-- Executive Analytics Charts (Clean, Sleek, Professional) -->
+    <section class="charts-container" aria-label="Biểu đồ phân tích">
       
-      <!-- Charts Panel -->
-      <section class="charts-container" aria-label="Biểu đồ phân tích hợp đồng">
-        <!-- Chart 1: Revenue by Unit -->
-        <div class="glass-card" style="padding: 1.25rem; display: flex; flex-direction: column; height: 340px;">
-          <h2 class="section-heading">
-            <span>Doanh thu Hợp đồng theo Đơn vị (tỷ VND)</span>
-          </h2>
-          <div style="flex-grow: 1; position: relative; height: 255px;">
-            <canvas id="revenue-chart"></canvas>
+      <!-- Chart 1: Revenue by Region / Top 10 Units -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div class="chart-card-title">
+            <span>📈</span>
+            <span id="chart1-title-text">Phân bổ Doanh thu theo 7 Địa bàn (tỷ VND)</span>
           </div>
-        </div>
-        
-        <!-- Chart 2: Status Distribution -->
-        <div class="glass-card" style="padding: 1.25rem; display: flex; flex-direction: column; height: 340px;">
-          <h2 class="section-heading">
-            <span>Tỷ lệ Trạng thái Hợp đồng</span>
-          </h2>
-          <div style="flex-grow: 1; position: relative; display: flex; justify-content: center; align-items: center; height: 255px;">
-            <canvas id="status-chart"></canvas>
-          </div>
-        </div>
-      </section>
-      
-      <!-- Units Master Card -->
-      <section class="glass-card" style="margin-top: 1rem; padding: 1.25rem; display: flex; flex-direction: column; min-height: 500px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
-          <h2 class="section-heading" style="margin: 0;">
-            <span>Danh sách Hợp đồng theo Đơn vị thụ hưởng</span>
-          </h2>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-            <button type="button" class="btn-primary" onclick="openAddContractModal()">
-              ➕ Thêm Hợp đồng
+          <div class="chart-toggle-group">
+            <button type="button" class="chart-toggle-btn active" id="btn-chart-region" onclick="setChart1Mode('region')">
+              🏢 Theo 7 Địa bàn
             </button>
-            <select id="dashboard-year-select" aria-label="Lọc theo năm" class="form-input" style="width: 135px; cursor: pointer;">
-              <option value="all">Tất cả các năm</option>
-              <option value="2026" selected>Năm 2026</option>
-              <option value="2027">Năm 2027</option>
-              <option value="2028">Năm 2028</option>
-            </select>
-            <select id="dashboard-region-filter" aria-label="Lọc theo khu vực" class="form-input" style="width: 165px; cursor: pointer;">
-              <option value="all" selected>Tất cả khu vực</option>
-              <option value="Bến Cát">Bến Cát</option>
-              <option value="Bàu Bàng">Bàu Bàng</option>
-              <option value="Dầu Tiếng">Dầu Tiếng</option>
-              <option value="Phú Giáo">Phú Giáo</option>
-              <option value="Tân Uyên">Tân Uyên</option>
-              <option value="Bắc Tân Uyên">Bắc Tân Uyên</option>
-              <option value="Thuận An">Thuận An</option>
-              <option value="Dĩ An">Dĩ An</option>
-              <option value="Thủ Dầu Một">Thủ Dầu Một</option>
-            </select>
-            <select id="dashboard-sort-by" aria-label="Sắp xếp danh sách" class="form-input" style="width: 165px; cursor: pointer;">
-              <option value="khuVuc" selected>Sắp xếp: Khu vực</option>
-              <option value="name">Sắp xếp: Tên đơn vị</option>
-              <option value="value">Sắp xếp: Giá trị thầu</option>
-            </select>
-            <input type="search" id="dashboard-unit-search" aria-label="Tìm kiếm đơn vị y tế" class="form-input" style="width: 230px;" placeholder="🔍 Tìm kiếm đơn vị y tế…">
+            <button type="button" class="chart-toggle-btn" id="btn-chart-top10" onclick="setChart1Mode('top10')">
+              🏥 Top 10 Đơn vị
+            </button>
           </div>
         </div>
-        
-        <div class="table-responsive" style="flex-grow: 1;">
-          <table class="premium-table">
-            <thead>
-              <tr>
-                <th style="width: 52px; text-align: center;">STT</th>
-                <th style="min-width: 240px; text-align: left;">Đơn vị thụ hưởng</th>
-                <th style="width: 140px; text-align: center;">Khu vực</th>
-                <th style="width: 105px; text-align: center;">Số văn bản</th>
-                <th style="width: 155px; text-align: center;">Trạng thái ký số</th>
-                <th style="width: 165px; text-align: right;">Tổng giá trị thầu</th>
-                <th style="width: 155px; text-align: center;">Thời hạn hợp đồng</th>
-                <th style="width: 130px; text-align: center;">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody id="dashboard-units-tbody">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
+        <div class="chart-body">
+          <canvas id="revenue-chart"></canvas>
         </div>
-      </section>
-    </div>
-
-    <!-- Detail View Container (Initially Hidden) -->
-    <div id="detail-view" class="view-container hidden">
-      <!-- Navigation Header -->
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; background: #ffffff; padding: 0.85rem 1.25rem; border: 1px solid var(--color-surface-border); border-radius: 10px;">
-        <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
-          <button type="button" class="btn-secondary" onclick="switchView('dashboard')">
-            ◀ Quay lại Tổng quan
-          </button>
-          <h2 id="detail-unit-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--vnpt-blue-dark); margin: 0;">
-            Hợp đồng tại Đơn vị
-          </h2>
-        </div>
-        <button type="button" class="btn-primary" onclick="openAddContractModal()">
-          ➕ Thêm Hợp đồng cho Đơn vị
-        </button>
       </div>
+
+      <!-- Chart 2: Status & Progress Donut -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div class="chart-card-title">
+            <span>🎯</span>
+            <span>Tỷ lệ Ký số &amp; Thực hiện</span>
+          </div>
+          <span style="font-size: 0.72rem; color: var(--color-text-muted); font-weight: 600;">VNPT SmartCA / PKI</span>
+        </div>
+        <div class="chart-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <div style="position: relative; width: 190px; height: 190px;">
+            <canvas id="status-chart"></canvas>
+            <div id="status-donut-center" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none;">
+              <span style="font-size: 1.55rem; font-weight: 800; color: var(--vnpt-blue-dark); line-height: 1;">51</span>
+              <span style="font-size: 0.72rem; font-weight: 600; color: var(--color-text-muted);">Hợp đồng</span>
+            </div>
+          </div>
+          <!-- Custom Legend Cards -->
+          <div class="donut-legend-wrap">
+            <div class="donut-legend-item" onclick="setKpiFilter('signed')" title="Xem danh sách hợp đồng đã ký">
+              <span class="donut-dot" style="background: var(--vnpt-blue);"></span>
+              <span>Đã ký: <strong id="legend-signed-cnt">48</strong> HĐ</span>
+            </div>
+            <div class="donut-legend-item" onclick="setKpiFilter('pending')" title="Xem danh sách hợp đồng chờ ký">
+              <span class="donut-dot" style="background: #f59e0b;"></span>
+              <span>Chờ ký: <strong id="legend-pending-cnt">3</strong> HĐ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Master Contracts Management Table (Onepage) -->
+    <section class="table-section" aria-label="Bảng tổng hợp hợp đồng">
       
-      <!-- Workspace Container (Contracts Table + Details Panel) -->
-      <div id="detail-workspace" style="display: flex; gap: 1rem; margin-top: 1rem; align-items: stretch; position: relative; min-width: 0;">
-        
-        <!-- Left: Contracts Table Card -->
-        <div class="glass-card" id="table-card" style="padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; min-height: 500px; min-width: 0;">
-          <h3 class="section-heading" id="selected-unit-title">
-            Danh sách văn bản / hợp đồng
-          </h3>
-          
-          <div class="table-responsive" style="flex-grow: 1;">
-            <table class="premium-table">
-              <thead>
-                <tr>
-                  <th style="width: 42px; text-align: center;">
-                    <input type="checkbox" id="check-all-contracts" aria-label="Chọn tất cả hợp đồng" style="transform: scale(1.1); cursor: pointer; accent-color: var(--vnpt-blue);">
-                  </th>
-                  <th style="width: 150px; text-align: left;">Mã hợp đồng</th>
-                  <th style="text-align: left;">Tên hợp đồng / Nội dung</th>
-                  <th style="width: 135px; text-align: right;">Giá trị</th>
-                  <th style="width: 115px; text-align: center;">Ngày hết hạn</th>
-                  <th style="text-align: center; width: 110px;">Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody id="contracts-tbody">
-                <!-- Rendered dynamically -->
-              </tbody>
-            </table>
-          </div>
-          
-          <!-- Sum Container (Flat VNPT Highlight Banner) -->
-          <div id="selected-sum-container" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.15rem; background: var(--vnpt-soft-bg); border: 1px solid var(--vnpt-soft-border); border-left: 4px solid var(--vnpt-blue); border-radius: 8px; margin-top: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <span style="font-size: 1.05rem;">💰</span>
-              <span style="font-weight: 700; font-size: 0.84rem; color: var(--vnpt-blue-dark);">Tổng giá trị các hợp đồng đang tích chọn:</span>
-            </div>
-            <span id="selected-sum-value" style="font-size: 1.1rem; font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">0 VND</span>
-          </div>
+      <!-- Table Filter & Search Controls -->
+      <div class="table-controls-bar">
+        <!-- Search Input -->
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="unit-search" placeholder="Tìm theo tên đơn vị, số HĐ, MST, AM..." oninput="handleSearch(this.value)">
         </div>
 
-        <!-- Right: Contract Detail Card -->
-        <div class="glass-card hidden" id="detail-panel" style="width: 410px; flex-shrink: 0; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; min-height: 500px; position: relative;">
-          <!-- Close button for details -->
-          <button type="button" id="btn-close-details" aria-label="Đóng bảng chi tiết" style="position: absolute; top: 1rem; right: 1rem; background: #f1f5f9; border: 1px solid #cbd5e1; width: 28px; height: 28px; border-radius: 6px; font-size: 1.1rem; line-height: 1; cursor: pointer; color: var(--color-text-secondary); z-index: 10; display: flex; align-items: center; justify-content: center;" title="Đóng bảng chi tiết">&times;</button>
-          
-          <!-- Placeholder if nothing selected -->
-          <div id="detail-placeholder" style="text-align: center; color: var(--color-text-muted); padding: 3.5rem 1rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <div style="font-size: 2.2rem; margin-bottom: 0.6rem;">📄</div>
-            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.25rem;">Chưa chọn hợp đồng</h4>
-            <p style="font-size: 0.8rem;">Vui lòng chọn một dòng hợp đồng bên trái để xem chi tiết và thực hiện ký số.</p>
-          </div>
-          
-          <!-- Detailed Info (hidden by default) -->
-          <div id="detail-content" class="hidden" style="display: flex; flex-direction: column; gap: 1rem; flex-grow: 1;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                <span class="status-pill" id="detail-status-pill">Chờ ký</span>
-                <button type="button" id="btn-edit-status" class="btn-icon" aria-label="Chỉnh sửa trạng thái" title="Chỉnh sửa trạng thái">✏️</button>
-                <div id="status-edit-container" class="hidden" style="display: flex; align-items: center; gap: 0.3rem; background: #f8fafc; padding: 0.25rem; border: 1px solid #cbd5e1; border-radius: 6px; z-index: 10;">
-                  <select id="select-status" aria-label="Chọn trạng thái hợp đồng" class="form-input" style="padding: 0.25rem 0.5rem !important; font-size: 0.75rem !important; width: 135px; cursor: pointer;">
-                    <option value="signed">Đã ký số</option>
-                    <option value="pending">Chờ ký</option>
-                    <option value="almost_signed">Sắp ký hợp đồng</option>
-                  </select>
-                  <button type="button" id="btn-save-status" class="btn-primary" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Lưu</button>
-                  <button type="button" id="btn-cancel-status" class="btn-secondary" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Hủy</button>
-                </div>
-              </div>
-              <h3 id="detail-contract-name" style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin-top: 0.6rem; margin-bottom: 0.2rem; color: var(--vnpt-blue-dark); line-height: 1.35; padding-right: 1.8rem;">
-                Tên hợp đồng
-              </h3>
-              <p id="detail-contract-code" style="font-family: monospace; font-size: 0.78rem; color: var(--color-text-muted); font-weight: 600;">
-                HD-2026
-              </p>
-            </div>
-            
-            <table class="xml-info-table">
-              <tr>
-                <td>Gói dịch vụ:</td>
-                <td id="detail-package" style="font-weight: 600;">-</td>
-              </tr>
-              <tr>
-                <td>Đơn vị thực hiện:</td>
-                <td style="font-weight: 600; color: var(--vnpt-blue);">VNPT Bình Dương</td>
-              </tr>
-              <tr>
-                <td>Giá trị hợp đồng:</td>
-                <td id="detail-value" style="font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">-</td>
-              </tr>
-              <tr>
-                <td>Ngày hiệu lực:</td>
-                <td id="detail-date" style="font-variant-numeric: tabular-nums;">-</td>
-              </tr>
-              <tr>
-                <td>Ngày hết hạn:</td>
-                <td>
-                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; position: relative; width: 100%;">
-                    <span id="detail-end-date" style="font-weight: 700; font-variant-numeric: tabular-nums;">-</span>
-                    <button type="button" id="btn-edit-end-date" class="btn-icon" aria-label="Chỉnh sửa ngày hết hạn" title="Chỉnh sửa ngày hết hạn">✏️</button>
-                    <div id="end-date-edit-container" class="hidden" style="display: flex; align-items: center; gap: 0.25rem; position: absolute; right: 0; background: #ffffff; padding: 0.25rem; border: 1px solid #cbd5e1; border-radius: 6px; z-index: 10; box-shadow: var(--shadow-md);">
-                      <input type="date" id="input-end-date" aria-label="Ngày hết hạn mới" class="form-input" style="padding: 0.2rem 0.4rem !important; font-size: 0.75rem !important; width: 125px;">
-                      <button type="button" id="btn-save-end-date" class="btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;">Lưu</button>
-                      <button type="button" id="btn-cancel-end-date" class="btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;">Hủy</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Mã số thuế:</td>
-                <td id="detail-mst" style="font-weight: 600; font-family: monospace; font-size: 0.82rem;">-</td>
-              </tr>
-              <tr>
-                <td>Đơn vị bán hàng:</td>
-                <td id="detail-sales-unit" style="font-weight: 600; color: var(--vnpt-blue);">-</td>
-              </tr>
-              <tr>
-                <td>Chuyên viên AM:</td>
-                <td id="detail-am" style="font-weight: 600;">-</td>
-              </tr>
-              <tr>
-                <td>Phụ trách TPM:</td>
-                <td id="detail-tpm" style="font-weight: 600;">Lê Trung Kiên</td>
-              </tr>
-              <tr>
-                <td>Mã dự án CDS:</td>
-                <td id="detail-cds" style="font-family: monospace; font-size: 0.78rem; color: var(--color-text-muted);">-</td>
-              </tr>
-              <tr>
-                <td>Tệp đính kèm:</td>
-                <td id="detail-filename" style="word-break: break-all; font-family: monospace; font-size: 0.78rem; color: var(--vnpt-blue); font-weight: 600;">-</td>
-              </tr>
-            </table>
-            
-            <!-- Implementation Milestones -->
-            <div>
-              <h4 style="font-family: var(--font-heading); font-size: 0.84rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--vnpt-blue-dark); text-transform: uppercase; letter-spacing: 0.02em;">
-                Mốc tiến độ &amp; Thanh toán
-              </h4>
-              <ul class="milestone-list">
-                <li class="milestone-item done" id="ms-1">
-                  <div class="milestone-title">Khởi tạo &amp; Biên bản thỏa thuận (30%)</div>
-                  <div class="milestone-desc">Đã hoàn thành bàn giao hồ sơ dự án sơ bộ.</div>
-                </li>
-                <li class="milestone-item" id="ms-2">
-                  <div class="milestone-title">Nghiệm thu phần mềm &amp; Ký số hợp đồng (40%)</div>
-                  <div class="milestone-desc" id="ms-2-desc">Yêu cầu hoàn thành thủ tục ký số USB Token/SmartCA.</div>
-                </li>
-                <li class="milestone-item" id="ms-3">
-                  <div class="milestone-title">Nghiệm thu vận hành thực tế &amp; Thanh lý (30%)</div>
-                  <div class="milestone-desc">Vận hành chính thức hệ thống CNTT Y tế.</div>
-                </li>
-              </ul>
-            </div>
-            
-            <!-- Digital Signature Stamp Display -->
-            <div id="detail-stamp-container"></div>
+        <!-- Filters Cluster -->
+        <div class="filters-cluster">
+          <!-- Region Filter -->
+          <select id="filter-region" class="form-select" onchange="handleFiltersChange()">
+            <option value="all">📍 Tất cả Địa bàn (7 đơn vị)</option>
+            <option value="Bến Cát">Bến Cát</option>
+            <option value="Dầu Tiếng">Dầu Tiếng</option>
+            <option value="Dĩ An">Dĩ An</option>
+            <option value="Phú Giáo">Phú Giáo</option>
+            <option value="Tân Uyên">Tân Uyên</option>
+            <option value="Thủ Dầu Một">Thủ Dầu Một</option>
+            <option value="Thuận An">Thuận An</option>
+          </select>
 
-            <!-- Action Buttons -->
-            <div style="margin-top: auto; padding-top: 0.5rem; display: flex; flex-direction: column; gap: 0.55rem;">
-              <button type="button" class="btn-primary" id="btn-show-sign-modal" style="padding: 0.75rem 1rem; width: 100%; font-weight: 700;">
-                ✍️ Ký điện tử (VNPT-CA / SmartCA)
-              </button>
-              <button type="button" class="btn-secondary" id="btn-download-pdf" style="padding: 0.7rem 1rem; width: 100%; font-weight: 600;">
-                📥 Tải tệp tin hợp đồng PDF
-              </button>
-            </div>
-          </div>
+          <!-- Year Filter -->
+          <select id="filter-year" class="form-select" onchange="handleFiltersChange()">
+            <option value="all">📅 Tất cả các năm</option>
+            <option value="2026" selected>Năm 2026</option>
+            <option value="2027">Năm 2027</option>
+            <option value="2028">Năm 2028</option>
+            <option value="2025">Năm 2025</option>
+          </select>
+
+          <!-- Status Filter -->
+          <select id="filter-status" class="form-select" onchange="handleFiltersChange()">
+            <option value="all">⚡ Tất cả trạng thái</option>
+            <option value="signed">Đã ký số</option>
+            <option value="pending">Chờ ký số</option>
+            <option value="expiring">Sắp hết hạn / Cần gia hạn</option>
+          </select>
+
+          <!-- Sort Select -->
+          <select id="sort-by" class="form-select" onchange="handleFiltersChange()">
+            <option value="khuVuc">Sắp xếp: Khu vực</option>
+            <option value="valDesc">Doanh thu: Cao → Thấp</option>
+            <option value="valAsc">Doanh thu: Thấp → Cao</option>
+            <option value="name">Tên đơn vị: A → Z</option>
+            <option value="endDate">Hạn hợp đồng: Gần nhất</option>
+          </select>
+
+          <!-- Reset Filter Button -->
+          <button type="button" class="btn-secondary" onclick="resetAllFilters()" title="Đặt lại bộ lọc">
+            🔄 Đặt lại
+          </button>
         </div>
-        
-      </div>
-    </div>
-
-  </main>
-
-  <!-- MODAL DIALOG FOR SIGNING -->
-  <div class="modal-overlay" id="sign-modal" role="dialog" aria-modal="true" aria-labelledby="sign-modal-title">
-    <div class="modal-card glass-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0;">
-        <h3 id="sign-modal-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 800; color: var(--vnpt-blue-dark); margin: 0;">✍️ Tiến trình Ký số Điện tử VNPT</h3>
-        <button type="button" onclick="closeModal()" aria-label="Đóng cửa sổ ký số" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
       </div>
 
-      <!-- Step 1: Selection -->
-      <div id="modal-step-selection">
-        <p style="font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 1rem; line-height: 1.5;">
-          Chọn phương thức chữ ký số VNPT để ký pháp lý lên hợp đồng dịch vụ CNTT y tế:
-        </p>
-        
-        <button type="button" class="signing-method-btn" onclick="startSigning('token')">
-          <span style="font-size: 1.9rem;">🔌</span>
+      <!-- Main Data Table -->
+      <div class="table-responsive">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;">
+                <input type="checkbox" id="check-all" aria-label="Chọn tất cả" onchange="toggleSelectAll(this.checked)" style="cursor: pointer; transform: scale(1.15);">
+              </th>
+              <th style="width: 45px; text-align: center;">STT</th>
+              <th class="sortable" onclick="sortByHeader('name')">
+                Đơn vị thụ hưởng <span class="sort-indicator" id="sort-ind-name">↕</span>
+              </th>
+              <th class="sortable" onclick="sortByHeader('khuVuc')" style="width: 140px; text-align: center;">
+                Địa bàn <span class="sort-indicator" id="sort-ind-khuVuc">↕</span>
+              </th>
+              <th style="width: 280px;">Số HĐ &amp; Gói dịch vụ</th>
+              <th class="sortable" onclick="sortByHeader('status')" style="width: 130px; text-align: center;">
+                Trạng thái ký <span class="sort-indicator" id="sort-ind-status">↕</span>
+              </th>
+              <th class="sortable" onclick="sortByHeader('valDesc')" style="width: 160px; text-align: right;">
+                Giá trị hợp đồng <span class="sort-indicator" id="sort-ind-val">↕</span>
+              </th>
+              <th class="sortable" onclick="sortByHeader('endDate')" style="width: 140px; text-align: center;">
+                Thời hạn <span class="sort-indicator" id="sort-ind-date">↕</span>
+              </th>
+              <th style="width: 160px; text-align: center;">Thao tác nhanh</th>
+            </tr>
+          </thead>
+          <tbody id="units-tbody">
+            <!-- Dynamic rows rendered here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty state if no results -->
+      <div id="empty-state" class="hidden" style="text-align: center; padding: 3rem 1rem;">
+        <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🔍</span>
+        <h4 style="color: var(--vnpt-blue-dark); font-weight: 700; margin-bottom: 0.35rem;">Không tìm thấy đơn vị phù hợp</h4>
+        <p style="color: var(--color-text-muted); font-size: 0.82rem; margin-bottom: 1rem;">Hãy thử xóa bộ lọc tìm kiếm hoặc chọn địa bàn khác</p>
+        <button type="button" class="btn-primary" onclick="resetAllFilters()">Đặt lại tất cả bộ lọc</button>
+      </div>
+
+    </section>
+
+  </div><!-- /portal-container -->
+
+  <!-- Sticky Batch Action Bar -->
+  <div class="batch-bar" id="batch-bar">
+    <span style="font-size: 0.85rem; font-weight: 700; color: var(--vnpt-blue-dark);" id="batch-selected-count">
+      Đã chọn 0 đơn vị
+    </span>
+    <button type="button" class="btn-primary" onclick="batchSignSelected()">
+      ✍️ Ký số hàng loạt
+    </button>
+    <button type="button" class="btn-secondary" onclick="batchChangeRegion()">
+      📍 Đổi địa bàn
+    </button>
+    <button type="button" class="btn-secondary" onclick="exportSelected()">
+      📥 Xuất Excel đã chọn
+    </button>
+    <button type="button" class="btn-icon" onclick="clearBatchSelection()" title="Bỏ chọn">
+      ✕
+    </button>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 1: Unified Unit & Contract Adjustment Popup (Popup Điều Chỉnh)
+       ========================================================================= -->
+  <div class="modal-overlay" id="adjust-unit-modal" onclick="handleModalOverlayClick(event, 'adjust-unit-modal')">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="unit-avatar" id="modal-unit-avatar" style="width: 36px; height: 36px; font-size: 0.85rem;">BC</div>
           <div>
-            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--vnpt-blue-dark); margin: 0;">Chữ ký số USB Token (VNPT-CA)</h4>
-            <p style="font-size: 0.76rem; color: var(--color-text-muted); margin: 0.15rem 0 0 0;">Kết nối thiết bị USB Token phần cứng để ký chứng thư số.</p>
+            <h3 id="modal-unit-name" style="margin: 0; font-size: 1.1rem;">Trạm y tế Phường Bến Cát</h3>
+            <span id="modal-unit-khuvuc-pill" class="region-pill" style="margin-top: 0.2rem; cursor: pointer;" onclick="promptChangeUnitRegion()">
+              📍 Bến Cát ✏️
+            </span>
           </div>
-        </button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span id="modal-unit-total-val" style="font-size: 1.1rem; font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">25,200,000 VND</span>
+          <button type="button" class="btn-icon" onclick="closeAdjustModal()" style="font-size: 1.1rem;">✕</button>
+        </div>
+      </div>
 
-        <button type="button" class="signing-method-btn" onclick="startSigning('smartca')">
-          <span style="font-size: 1.9rem;">📱</span>
-          <div>
-            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--vnpt-blue-dark); margin: 0;">Chữ ký số từ xa (VNPT SmartCA)</h4>
-            <p style="font-size: 0.76rem; color: var(--color-text-muted); margin: 0.15rem 0 0 0;">Xác thực giao dịch ký số tức thời trên ứng dụng VNPT SmartCA.</p>
+      <div class="modal-body">
+        
+        <!-- General Unit Metadata Grid -->
+        <div style="background: #f8fafc; border: 1px solid var(--color-surface-border); border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
+          <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--vnpt-blue-dark); text-transform: uppercase; margin-bottom: 0.75rem; letter-spacing: 0.02em;">
+            📋 Thông tin Đơn vị &amp; Cán bộ Quản lý
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;">
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label">Mã số thuế (MST)</label>
+              <input type="text" id="modal-input-mst" class="form-input" placeholder="Chưa có MST">
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label">Đơn vị bán hàng</label>
+              <input type="text" id="modal-input-sales-unit" class="form-input" placeholder="VNPT...">
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label">Chuyên viên AM</label>
+              <input type="text" id="modal-input-am" class="form-input" placeholder="Chuyên viên AM">
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label">Phụ trách TPM</label>
+              <input type="text" id="modal-input-tpm" class="form-input" value="Lê Trung Kiên" readonly style="background: #f1f5f9;">
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label">Mã dự án trên CDS</label>
+              <input type="text" id="modal-input-cds" class="form-input" placeholder="YTE.2026...">
+            </div>
           </div>
+        </div>
+
+        <!-- Contracts List for this Unit -->
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <h4 style="font-size: 0.84rem; font-weight: 700; color: var(--vnpt-blue-dark); text-transform: uppercase; letter-spacing: 0.02em;">
+              📑 Danh sách Hợp đồng / Văn bản ({count})
+            </h4>
+            <button type="button" class="btn-primary" onclick="addNewContractToCurrentUnit()" style="padding: 0.35rem 0.7rem; font-size: 0.76rem;">
+              ➕ Thêm hợp đồng
+            </button>
+          </div>
+
+          <!-- Dynamic Contracts Editor Container -->
+          <div id="modal-contracts-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Milestones Checklist -->
+        <div style="background: #f8fafc; border: 1px solid var(--color-surface-border); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+          <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--vnpt-blue-dark); text-transform: uppercase; margin-bottom: 0.6rem;">
+            🚩 Tiến độ Mốc Hợp đồng &amp; Nghiệm thu
+          </h4>
+          <div style="display: flex; gap: 1.25rem; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; cursor: pointer;">
+              <input type="checkbox" id="modal-ms1" style="accent-color: var(--vnpt-blue);">
+              <span>Mốc 1: Khởi tạo hồ sơ &amp; Thỏa thuận (30%)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; cursor: pointer;">
+              <input type="checkbox" id="modal-ms2" style="accent-color: var(--vnpt-blue);">
+              <span>Mốc 2: Triển khai &amp; Nghiệm thu (40%)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; cursor: pointer;">
+              <input type="checkbox" id="modal-ms3" style="accent-color: var(--vnpt-blue);">
+              <span>Mốc 3: Đối soát &amp; Quyết toán (30%)</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeAdjustModal()">Đóng</button>
+        <button type="button" class="btn-primary" onclick="saveUnitAdjustments()">
+          💾 Lưu toàn bộ thay đổi
         </button>
       </div>
-
-      <!-- Step 2: USB Token PIN Input -->
-      <div id="modal-step-pin" class="hidden">
-        <label for="token-pin" style="display: block; font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 0.85rem; text-align: center; font-weight: 600;">
-          Nhập mã PIN của thiết bị USB Token VNPT-CA:
-        </label>
-        <input type="password" class="input-pin-field" id="token-pin" maxlength="8" placeholder="••••••••" autocomplete="off">
-        <div style="display: flex; gap: 0.6rem;">
-          <button type="button" class="btn-secondary" onclick="goBackToSelection()" style="flex: 1; padding: 0.7rem;">Quay lại</button>
-          <button type="button" class="btn-primary" onclick="submitTokenPin()" style="flex: 2; padding: 0.7rem;">Xác thực &amp; Ký số</button>
-        </div>
-      </div>
-
-      <!-- Step 3: SmartCA Wait Confirmation -->
-      <div id="modal-step-smartca-wait" class="hidden">
-        <p style="font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 1.2rem; text-align: center; line-height: 1.5;">
-          Đã gửi yêu cầu xác thực ký số về tài khoản <strong>VNPT SmartCA</strong> của bạn.<br>
-          <strong style="color: var(--vnpt-blue);">Vui lòng mở ứng dụng VNPT SmartCA trên điện thoại để phê duyệt.</strong>
-        </p>
-        <div class="signing-progress">
-          <div class="signing-spinner"></div>
-          <span style="font-size: 0.82rem; font-weight: 600; color: var(--vnpt-blue);">Đang chờ phê duyệt trên thiết bị di động…</span>
-        </div>
-      </div>
-
-      <!-- Step 4: Signing Progress animation -->
-      <div id="modal-step-progress" class="hidden">
-        <div class="signing-progress">
-          <div class="signing-spinner"></div>
-          <h4 id="progress-status" style="font-size: 0.9rem; font-weight: 700; color: var(--vnpt-blue-dark); margin-bottom: 0.3rem;">Đang kết nối thiết bị…</h4>
-          <p id="progress-sub" style="font-size: 0.78rem; color: var(--color-text-muted); margin: 0;">Vui lòng giữ kết nối mạng ổn định.</p>
-        </div>
-      </div>
-
-      <!-- Step 5: Success message -->
-      <div id="modal-step-success" class="hidden">
-        <div style="text-align: center; padding: 0.75rem 0;">
-          <div style="font-size: 2.6rem; margin-bottom: 0.75rem;">✅</div>
-          <h4 style="font-size: 1.05rem; font-weight: 800; color: #15803d; margin-bottom: 0.4rem;">Ký số hợp đồng thành công!</h4>
-          <p style="font-size: 0.83rem; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
-            Hợp đồng đã được đóng dấu chữ ký điện tử chuẩn SHA-256 từ VNPT-CA và cập nhật trạng thái pháp lý.
-          </p>
-          <button type="button" class="btn-primary" onclick="closeModal()" style="padding: 0.65rem 2rem;">Hoàn tất</button>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- =========================================================================
+       MODAL 2: Digital Signing Modal (VNPT SmartCA / Token PKI)
+       ========================================================================= -->
+  <div class="modal-overlay" id="sign-modal" onclick="handleModalOverlayClick(event, 'sign-modal')">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✍️ Ký số Văn bản Hợp đồng</h3>
+        <button type="button" class="btn-icon" onclick="closeSignModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.82rem; color: var(--color-text-secondary); margin-bottom: 1rem;">
+          Đơn vị: <strong id="sign-modal-unit-name" style="color: var(--vnpt-blue);">...</strong><br>
+          Số HĐ: <span id="sign-modal-contract-code" style="font-family: monospace; font-weight: 600;">...</span>
+        </p>
+
+        <!-- Method Selection Step -->
+        <div id="sign-step-method">
+          <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Chọn phương thức ký số CA:</label>
+          <div class="signing-method-btn" onclick="proceedToPinInput('token')" style="border: 1px solid var(--color-surface-border); padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.65rem; cursor: pointer;">
+            <div style="font-size: 1.5rem;">🔑</div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.84rem; color: var(--vnpt-blue-dark);">VNPT-CA USB Token (PKI)</div>
+              <div style="font-size: 0.74rem; color: var(--color-text-muted);">Chứng thư số ký qua thiết bị phần cứng cắm máy</div>
+            </div>
+          </div>
+          <div class="signing-method-btn" onclick="proceedToPinInput('smartca')" style="border: 1px solid var(--color-surface-border); padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer;">
+            <div style="font-size: 1.5rem;">📱</div>
+            <div>
+              <div style="font-weight: 700; font-size: 0.84rem; color: var(--vnpt-blue-dark);">VNPT SmartCA (Ký số từ xa)</div>
+              <div style="font-size: 0.74rem; color: var(--color-text-muted);">Xác thực ký qua ứng dụng VNPT SmartCA trên di động</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PIN Step -->
+        <div id="sign-step-pin" class="hidden">
+          <label class="form-label" id="pin-prompt-label">Nhập mã PIN Token (Mặc định: 123456):</label>
+          <input type="password" id="sign-pin-input" class="form-input" style="letter-spacing: 0.3rem; text-align: center; font-size: 1.2rem; font-weight: 800; margin-top: 0.5rem;" maxlength="8" placeholder="••••••">
+          <div style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: flex-end;">
+            <button type="button" class="btn-secondary" onclick="backToSignMethod()">Quay lại</button>
+            <button type="button" class="btn-primary" onclick="executeDigitalSign()">Xác nhận Ký số</button>
+          </div>
+        </div>
+
+        <!-- Progress Spinner Step -->
+        <div id="sign-step-progress" class="hidden" style="text-align: center; padding: 2rem 1rem;">
+          <div style="width: 44px; height: 44px; border: 3px solid var(--vnpt-soft-border); border-top-color: var(--vnpt-blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem;"></div>
+          <div style="font-weight: 700; color: var(--vnpt-blue-dark); font-size: 0.9rem;" id="sign-progress-text">Đang kết nối hệ thống chứng thực VNPT CA...</div>
+          <p style="font-size: 0.76rem; color: var(--color-text-muted); margin-top: 0.35rem;">Vui lòng giữ kết nối internet ổn định</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: PDF Document Viewer & Stamp Simulator
+       ========================================================================= -->
+  <div class="modal-overlay" id="pdf-modal" onclick="handleModalOverlayClick(event, 'pdf-modal')">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3 id="pdf-modal-title">📄 Hợp đồng Cung cấp Dịch vụ CNTT Y Tế</h3>
+        <button type="button" class="btn-icon" onclick="closePdfModal()">✕</button>
+      </div>
+      <div class="modal-body" style="background: #525659; padding: 1.5rem; display: flex; justify-content: center;">
+        
+        <!-- Simulated Paper Sheet -->
+        <div style="background: #ffffff; width: 100%; max-width: 680px; min-height: 520px; padding: 2.5rem; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-family: 'Times New Roman', serif; font-size: 1rem; line-height: 1.6; color: #111827;">
+          
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <p style="font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin: 0;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
+            <p style="font-size: 0.85rem; font-weight: bold; margin: 0;">Độc lập - Tự do - Hạnh phúc</p>
+            <p style="margin: 0.35rem 0 0;">──────────</p>
+          </div>
+
+          <h2 id="pdf-doc-title" style="text-align: center; font-size: 1.15rem; font-weight: bold; text-transform: uppercase; margin-bottom: 1.5rem; color: #1e3a8a;">
+            HỢP ĐỒNG CUNG CẤP DỊCH VỤ PHẦN MỀM Y TẾ
+          </h2>
+
+          <p style="text-align: center; font-style: italic; font-size: 0.85rem; margin-bottom: 1.5rem;" id="pdf-doc-code">
+            Số: 20260101/HĐ/VNPTBCT.VNPTHCM-TYT BEN CAT
+          </p>
+
+          <div style="font-size: 0.9rem; margin-bottom: 1rem;">
+            <p><strong>Bên A (Bên sử dụng):</strong> <span id="pdf-doc-unit-name">Trạm y tế Phường Bến Cát</span></p>
+            <p><strong>Mã số thuế:</strong> <span id="pdf-doc-mst">3703433732</span></p>
+            <p><strong>Bên B (Bên cung cấp):</strong> VIỄN THÔNG BÌNH DƯƠNG - VNPT TỈNH BÌNH DƯƠNG</p>
+            <p><strong>Gói dịch vụ cung cấp:</strong> <span id="pdf-doc-package">VNPT HIS - Phần mềm Quản lý Khám chữa bệnh</span></p>
+            <p><strong>Tổng giá trị hợp đồng:</strong> <strong id="pdf-doc-value" style="color: #1e3a8a;">25,200,000 VND</strong></p>
+            <p><strong>Thời hạn thực hiện:</strong> Từ ngày <span id="pdf-doc-start">01/01/2026</span> đến ngày <span id="pdf-doc-end">31/12/2026</span></p>
+          </div>
+
+          <!-- Digital Stamp Stamp Box -->
+          <div id="pdf-stamp-box" style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+            <div style="border: 2px dashed #16a34a; background: #f0fdf4; border-radius: 8px; padding: 0.75rem 1rem; width: 260px; font-family: var(--font-primary);">
+              <div style="display: flex; align-items: center; gap: 0.4rem; color: #16a34a; font-weight: 700; font-size: 0.8rem; margin-bottom: 0.2rem;">
+                <span>🛡️</span>
+                <span>CHỨNG THƯ SỐ ĐÃ KÝ</span>
+              </div>
+              <div style="font-size: 0.72rem; color: #1f2937;">Ký bởi: <strong>VNPT Bình Dương</strong></div>
+              <div style="font-size: 0.68rem; color: #4b5563;" id="pdf-stamp-time">Thời gian: 01/01/2026 09:00:00</div>
+              <div style="font-size: 0.66rem; color: #6b7280; font-family: monospace;">Mã CA: GP2-1002517</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closePdfModal()">Đóng</button>
+        <button type="button" class="btn-primary" onclick="downloadSimulatedPdf()">
+          📥 Tải bản PDF chính thức
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 4: Add New Unit / Contract Modal
+       ========================================================================= -->
+  <div class="modal-overlay" id="add-modal" onclick="handleModalOverlayClick(event, 'add-modal')">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>➕ Thêm Hợp Đồng / Đơn Vị Mới</h3>
+        <button type="button" class="btn-icon" onclick="closeAddModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Tên đơn vị thụ hưởng (*)</label>
+          <input type="text" id="add-unit-name" class="form-input" placeholder="Ví dụ: Trạm y tế Phường X...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Địa bàn / Khu vực (*)</label>
+          <select id="add-unit-region" class="form-select" style="width: 100%;">
+            <option value="Bến Cát">Bến Cát</option>
+            <option value="Dầu Tiếng">Dầu Tiếng</option>
+            <option value="Dĩ An">Dĩ An</option>
+            <option value="Phú Giáo">Phú Giáo</option>
+            <option value="Tân Uyên">Tân Uyên</option>
+            <option value="Thủ Dầu Một">Thủ Dầu Một</option>
+            <option value="Thuận An">Thuận An</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Số / Mã hợp đồng (*)</label>
+          <input type="text" id="add-contract-code" class="form-input" placeholder="2026.../HĐ/VNPT...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gói dịch vụ CNTT (*)</label>
+          <select id="add-contract-package" class="form-select" style="width: 100%;">
+            <option value="VNPT HIS - Quản lý Khám chữa bệnh">VNPT HIS - Quản lý Khám chữa bệnh</option>
+            <option value="Hệ thống Quản lý Y tế Cơ sở HMIS">Hệ thống Quản lý Y tế Cơ sở HMIS</option>
+            <option value="VNPT RIS/PACS - Chẩn đoán hình ảnh">VNPT RIS/PACS - Chẩn đoán hình ảnh</option>
+            <option value="VNPT EMR - Bệnh án điện tử">VNPT EMR - Bệnh án điện tử</option>
+            <option value="VNPT LIS - Xét nghiệm">VNPT LIS - Xét nghiệm</option>
+          </select>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">Giá trị (VNĐ)</label>
+            <input type="number" id="add-contract-val" class="form-input" placeholder="25200000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Trạng thái ký</label>
+            <select id="add-contract-status" class="form-select" style="width: 100%;">
+              <option value="signed">Đã ký số</option>
+              <option value="pending">Chờ ký</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">Ngày hiệu lực</label>
+            <input type="date" id="add-contract-start" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ngày hết hạn</label>
+            <input type="date" id="add-contract-end" class="form-input">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeAddModal()">Hủy</button>
+        <button type="button" class="btn-primary" onclick="submitAddNewContract()">
+          ➕ Thêm vào hệ thống
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyframe animation for spinner -->
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <!-- =========================================================================
+       JAVASCRIPT ENGINE (ONPAGE ARCHITECTURE)
+       ========================================================================= -->
   <script>
-    // Data representation representing the organized contract life cycle by Beneficiary Unit
+    // Database of 50 units and 51 contracts from DS_KHACHHANG (1).xlsx
     let units = [
   {
     "id": "tram_y_te_phuong_ben_cat",
@@ -2732,22 +3159,22 @@
   }
 ];
 
-    // Database state management with version control
-    const CURRENT_DB_VERSION = '2026_10_28_ds_khachhang_v2';
+    // Database version control
+    const CURRENT_DB_VERSION = '2026_10_28_ds_khachhang_v4_onepage';
     const storedVersion = localStorage.getItem('vnpt_his_units_version');
     const storedUnits = localStorage.getItem('vnpt_his_units');
-    
+
     if (storedUnits && storedVersion === CURRENT_DB_VERSION) {
       try {
         const parsed = JSON.parse(storedUnits);
-        if (parsed.length > 0 && parsed[0].contracts.length > 0 && ('endDate' in parsed[0].contracts[0])) {
+        if (parsed.length > 0 && parsed[0].contracts) {
           units = parsed;
         } else {
           localStorage.setItem('vnpt_his_units', JSON.stringify(units));
           localStorage.setItem('vnpt_his_units_version', CURRENT_DB_VERSION);
         }
       } catch (e) {
-        console.error("Error parsing stored units:", e);
+        console.error("Lỗi đọc cache:", e);
         localStorage.setItem('vnpt_his_units', JSON.stringify(units));
         localStorage.setItem('vnpt_his_units_version', CURRENT_DB_VERSION);
       }
@@ -2756,1285 +3183,493 @@
       localStorage.setItem('vnpt_his_units_version', CURRENT_DB_VERSION);
     }
 
-    let selectedUnitId = units[0] ? units[0].id : "tram_y_te_phuong_ben_cat";
-    let selectedContractId = null;
-    let selectedSignMethod = '';
-    let checkedContractIds = [];
-    let editingUnitIdForKhuVuc = null;
-
-    function toggleTheme() {
-      // Keep VNPT flat light theme active
-      localStorage.setItem('vnpt_his_theme', 'light');
-      document.body.classList.add('light-theme');
-      updateCharts();
+    function saveUnitsToStorage() {
+      localStorage.setItem('vnpt_his_units', JSON.stringify(units));
+      localStorage.setItem('vnpt_his_units_version', CURRENT_DB_VERSION);
     }
 
-    function resetDatabase() {
-      if (confirm("Bạn có chắc chắn muốn đặt lại cơ sở dữ liệu hợp đồng về mặc định không? Tất cả các ngày hết hạn đã lưu và trạng thái ký sẽ bị xóa.")) {
-        localStorage.removeItem('vnpt_his_units'); localStorage.removeItem('vnpt_his_units_version');
-        location.reload();
-      }
-    }
+    // State Variables
+    let currentKpiFilter = 'all'; // 'all', 'signed', 'pending', 'expiring'
+    let currentSearchQuery = '';
+    let currentChart1Mode = 'region'; // 'region' or 'top10'
+    let currentSortColumn = 'khuVuc';
+    let currentSortOrder = 'asc'; // 'asc' or 'desc'
+    let selectedUnitIds = new Set();
+    let editingUnitId = null;
+    let signingTarget = { unitId: null, contractId: null, method: 'token' };
 
-    function updateGlobalStats() {
-      const yearSelect = document.getElementById('dashboard-year-select');
-      const selectedYear = yearSelect ? yearSelect.value : '2026';
-      const regionSelect = document.getElementById('dashboard-region-filter');
-      const selectedRegion = regionSelect ? regionSelect.value : 'all';
+    // Chart instances
+    let revenueChartInstance = null;
+    let statusChartInstance = null;
 
-      let totalCount = 0;
-      let totalVal = 0;
-      let signedCount = 0;
-      let signedVal = 0;
-      let pendingCount = 0;
-      let pendingVal = 0;
-      let grandTotalVal = 0;
+    // Toast Notification Utility
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      let icon = 'ℹ️';
+      if (type === 'success') icon = '✅';
+      if (type === 'warning') icon = '⚠️';
+      if (type === 'error') icon = '❌';
 
-      units.forEach(u => {
-        if (selectedRegion !== 'all') {
-          const unitKv = (u.khuVuc || '').trim();
-          if (selectedRegion === 'empty') {
-            if (unitKv !== '') return;
-          } else {
-            if (unitKv !== selectedRegion) return;
-          }
-        }
+      toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+      container.appendChild(toast);
 
-        u.contracts.forEach(c => {
-          let startY = c.date && c.date.includes('/') ? c.date.split('/')[2].trim() : '2026';
-          let endY = c.endDate && c.endDate.includes('/') ? c.endDate.split('/')[2].trim() : startY;
-          if (selectedYear !== 'all') {
-            const y = parseInt(selectedYear, 10);
-            const sy = parseInt(startY, 10) || 2026;
-            const ey = parseInt(endY, 10) || sy;
-            if (y < sy || y > ey) return;
-          }
-
-          totalCount++;
-          let valNum = 0;
-          if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-            valNum = parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
-          }
-          if (c.status === 'signed') {
-            signedCount++;
-            signedVal += valNum;
-          } else {
-            pendingCount++;
-            pendingVal += valNum;
-          }
-          
-          grandTotalVal += valNum;
-          
-          if (c.status !== 'pending') {
-            totalVal += valNum;
-          }
-        });
+      requestAnimationFrame(() => {
+        toast.classList.add('show');
       });
 
-      const statTotalCnt = document.getElementById('stat-total-cnt');
-      if (statTotalCnt) statTotalCnt.textContent = totalCount;
-      const statTotalVal = document.getElementById('stat-total-val');
-      if (statTotalVal) statTotalVal.textContent = (totalVal / 1e9).toFixed(2) + ' tỷ VND';
-      const statSignedCnt = document.getElementById('stat-signed-cnt');
-      if (statSignedCnt) statSignedCnt.textContent = signedCount;
-      const statSignedVal = document.getElementById('stat-signed-val');
-      if (statSignedVal) statSignedVal.textContent = (signedVal / 1e9).toFixed(2) + ' tỷ VND (' + (signedVal / (grandTotalVal || 1) * 100).toFixed(1) + '%)';
-      const statPendingCnt = document.getElementById('stat-pending-cnt');
-      if (statPendingCnt) statPendingCnt.textContent = pendingCount;
-      const statPendingVal = document.getElementById('stat-pending-val');
-      if (statPendingVal) statPendingVal.textContent = (pendingVal / 1e9).toFixed(2) + ' tỷ VND (' + (pendingVal / (grandTotalVal || 1) * 100).toFixed(1) + '%)';
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 250);
+      }, 3200);
     }
 
-    function getSelectedUnit() {
-      return units.find(u => u.id === selectedUnitId);
+    // Date & Currency Helpers
+    function parseVnDate(dateStr) {
+      if (!dateStr) return null;
+      const parts = dateStr.split('/');
+      if (parts.length === 3) {
+        const d = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10) - 1;
+        const y = parseInt(parts[2], 10);
+        return new Date(y, m, d);
+      }
+      return null;
     }
 
-    function getSelectedContract() {
-      const u = getSelectedUnit();
-      return u ? u.contracts.find(c => c.id === selectedContractId) : null;
+    function parseNumericValue(valStr) {
+      if (!valStr) return 0;
+      if (typeof valStr === 'number') return valStr;
+      return parseInt(String(valStr).replace(/[^0-9]/g, ''), 10) || 0;
+    }
+
+    function formatVnd(val) {
+      return Number(val).toLocaleString('vi-VN') + ' VND';
     }
 
     function getExpirationStatus(endDateStr) {
-      if (!endDateStr) return { text: 'Chưa có', class: 'status-draft' };
+      if (!endDateStr) return { type: 'unknown', text: 'Chưa có hạn', days: 9999 };
+      const end = parseVnDate(endDateStr);
+      if (!end) return { type: 'unknown', text: 'Chưa có hạn', days: 9999 };
       
-      const parts = endDateStr.split('/');
-      if (parts.length !== 3) return { text: 'Chưa có', class: 'status-draft' };
-      
-      const day = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1;
-      const year = parseInt(parts[2], 10);
-      const endDate = new Date(year, month, day);
-      
-      const currentDate = new Date(2026, 5, 11);
-      endDate.setHours(0, 0, 0, 0);
-      currentDate.setHours(0, 0, 0, 0);
-      
-      const diffTime = endDate.getTime() - currentDate.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
+      // Reference date: current date 2026-10-28
+      const now = new Date(2026, 9, 28);
+      const diffMs = end.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
       if (diffDays < 0) {
-        return { text: 'Quá hạn', class: 'status-danger' };
-      } else if (diffDays <= 30) {
-        return { text: 'Sắp hết hạn', class: 'status-pending' };
+        return { type: 'expired', text: `Quá hạn ${Math.abs(diffDays)} ngày`, days: diffDays };
+      } else if (diffDays <= 60) {
+        return { type: 'warning', text: `Hết hạn sau ${diffDays} ngày`, days: diffDays };
       } else {
-        return { text: 'Còn hiệu lực', class: 'status-signed' };
+        return { type: 'active', text: `Còn ${diffDays} ngày`, days: diffDays };
       }
     }
 
-    function getUnitExpirationStatus(contracts) {
-      if (!contracts || contracts.length === 0) return { text: 'Không có HĐ', class: 'status-draft' };
-      
-      let hasExpired = false;
-      let hasNear = false;
-      let hasActive = false;
-      
-      contracts.forEach(c => {
-        const stat = getExpirationStatus(c.endDate);
-        if (stat.text === 'Quá hạn') hasExpired = true;
-        else if (stat.text === 'Sắp hết hạn') hasNear = true;
-        else if (stat.text === 'Còn hiệu lực') hasActive = true;
+    function getUnitExpirationSummary(unit) {
+      if (!unit.contracts || unit.contracts.length === 0) return { type: 'unknown', text: '—' };
+      let worst = { type: 'active', text: 'Còn hạn', days: 9999 };
+      unit.contracts.forEach(c => {
+        const s = getExpirationStatus(c.endDate);
+        if (s.type === 'expired') worst = s;
+        else if (s.type === 'warning' && worst.type !== 'expired') worst = s;
       });
-      
-      if (hasExpired) return { text: 'Đã quá hạn', class: 'status-danger' };
-      if (hasNear) return { text: 'Sắp hết hạn', class: 'status-pending' };
-      if (hasActive) return { text: 'Còn hiệu lực', class: 'status-signed' };
-      return { text: 'Chưa có ngày hết hạn', class: 'status-draft' };
+      return worst;
     }
 
-    function populateRegionFilterOptions() {
-      const select = document.getElementById('dashboard-region-filter');
-      if (!select) return;
-      
-      const currentSelected = select.value;
-      select.innerHTML = '';
-      
-      const optAll = document.createElement('option');
-      optAll.value = 'all';
-      optAll.textContent = 'Tất cả khu vực';
-      select.appendChild(optAll);
-      
-      const officialRegions = [
-        "Thủ Dầu Một",
-        "Bến Cát",
-        "Phú Giáo",
-        "Tân Uyên",
-        "Dầu Tiếng",
-        "Thuận An",
-        "Dĩ An"
-      ];
-      
-      officialRegions.sort((a, b) => a.localeCompare(b, 'vi')).forEach(r => {
-        const opt = document.createElement('option');
-        opt.value = r;
-        opt.textContent = r;
-        select.appendChild(opt);
-      });
-      
-      let hasEmpty = units.some(u => {
-        const kv = (u.khuVuc || '').trim();
-        return !kv || !officialRegions.includes(kv);
-      });
-      
-      if (hasEmpty) {
-        const optEmpty = document.createElement('option');
-        optEmpty.value = 'empty';
-        optEmpty.textContent = 'Chưa thiết lập (Để trống)';
-        select.appendChild(optEmpty);
+    // Filter Logic for a Unit
+    function isContractActiveInYear(c, selectedYear) {
+      if (selectedYear === 'all') return true;
+      const y = parseInt(selectedYear, 10);
+      let sy = 2026;
+      let ey = 2026;
+      if (c.date && c.date.includes('/')) {
+        sy = parseInt(c.date.split('/')[2], 10) || 2026;
       }
-      
-      const exists = Array.from(select.options).some(opt => opt.value === currentSelected);
-      select.value = exists ? currentSelected : 'all';
+      if (c.endDate && c.endDate.includes('/')) {
+        ey = parseInt(c.endDate.split('/')[2], 10) || sy;
+      } else {
+        ey = sy;
+      }
+      return y >= sy && y <= ey;
     }
 
-    function renderDashboardUnitsTable(filterText = '') {
-      const tbody = document.getElementById('dashboard-units-tbody');
-      if (!tbody) return;
-      
-      tbody.innerHTML = '';
-      const query = filterText.toLowerCase().trim();
-      
-      const regionFilter = document.getElementById('dashboard-region-filter')?.value || 'all';
-      const sortBy = document.getElementById('dashboard-sort-by')?.value || 'khuVuc';
-      
-      let index = 1;
-      
-      let filteredUnits = units.filter(unit => {
-        if (query && !unit.name.toLowerCase().includes(query)) return false;
-        if (regionFilter !== 'all') {
-          const unitKv = (unit.khuVuc || '').trim();
-          if (regionFilter === 'empty') {
-            if (unitKv !== '') return false;
-          } else {
-            if (unitKv !== regionFilter) return false;
-          }
+    function getFilteredUnits() {
+      const regionFilter = document.getElementById('filter-region')?.value || 'all';
+      const yearFilter = document.getElementById('filter-year')?.value || 'all';
+      const statusFilter = document.getElementById('filter-status')?.value || 'all';
+      const q = currentSearchQuery.toLowerCase().trim();
+
+      return units.filter(u => {
+        // Search query
+        if (q) {
+          const matchName = u.name.toLowerCase().includes(q);
+          const matchMst = (u.mst || '').toLowerCase().includes(q);
+          const matchAm = (u.am || '').toLowerCase().includes(q);
+          const matchCode = u.contracts.some(c => (c.code || '').toLowerCase().includes(q));
+          if (!matchName && !matchMst && !matchAm && !matchCode) return false;
         }
+
+        // Region filter
+        if (regionFilter !== 'all') {
+          if (u.khuVuc !== regionFilter) return false;
+        }
+
+        // Year filter: unit must have at least 1 contract active in this year
+        if (yearFilter !== 'all') {
+          const hasYear = u.contracts.some(c => isContractActiveInYear(c, yearFilter));
+          if (!hasYear) return false;
+        }
+
+        // KPI card filter
+        if (currentKpiFilter === 'signed') {
+          const isSigned = u.contracts.length > 0 && u.contracts.every(c => c.status === 'signed');
+          if (!isSigned) return false;
+        } else if (currentKpiFilter === 'pending') {
+          const hasPending = u.contracts.some(c => c.status !== 'signed');
+          if (!hasPending) return false;
+        } else if (currentKpiFilter === 'expiring') {
+          const isExp = getUnitExpirationSummary(u).type !== 'active';
+          if (!isExp) return false;
+        }
+
+        // Status dropdown filter
+        if (statusFilter === 'signed') {
+          if (!u.contracts.every(c => c.status === 'signed')) return false;
+        } else if (statusFilter === 'pending') {
+          if (!u.contracts.some(c => c.status !== 'signed')) return false;
+        } else if (statusFilter === 'expiring') {
+          if (getUnitExpirationSummary(u).type === 'active') return false;
+        }
+
         return true;
       });
-      
-      filteredUnits.sort((a, b) => {
-        if (sortBy === 'khuVuc') {
-          const kvA = a.khuVuc || '';
-          const kvB = b.khuVuc || '';
-          if (kvA !== kvB) return kvA.localeCompare(kvB, 'vi');
+    }
+
+    // Sorting
+    function sortUnits(list) {
+      const sortVal = document.getElementById('sort-by')?.value || currentSortColumn;
+      const sorted = [...list];
+
+      sorted.sort((a, b) => {
+        if (sortVal === 'khuVuc') {
+          const c = (a.khuVuc || '').localeCompare(b.khuVuc || '', 'vi');
+          return c !== 0 ? c : a.name.localeCompare(b.name, 'vi');
+        } else if (sortVal === 'name') {
           return a.name.localeCompare(b.name, 'vi');
-        } else if (sortBy === 'name') {
-          return a.name.localeCompare(b.name, 'vi');
-        } else if (sortBy === 'value') {
-          const yearSelect = document.getElementById('dashboard-year-select');
-          const selectedYear = yearSelect ? yearSelect.value : '2026';
-          
-          const getValSum = (u) => {
-            let sum = 0;
-            u.contracts.forEach(c => {
-              let cYear = '2026';
-              if (c.id.includes('-2027')) cYear = '2027';
-              if (c.id.includes('-2028')) cYear = '2028';
-              if (selectedYear !== 'all' && cYear !== selectedYear) return;
-              if (c.status !== 'pending') {
-                if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-                  sum += parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
-                }
-              }
-            });
-            return sum;
-          };
-          return getValSum(b) - getValSum(a);
+        } else if (sortVal === 'valDesc' || sortVal === 'value') {
+          const sumA = a.contracts.reduce((acc, c) => acc + parseNumericValue(c.value), 0);
+          const sumB = b.contracts.reduce((acc, c) => acc + parseNumericValue(c.value), 0);
+          return sumB - sumA;
+        } else if (sortVal === 'valAsc') {
+          const sumA = a.contracts.reduce((acc, c) => acc + parseNumericValue(c.value), 0);
+          const sumB = b.contracts.reduce((acc, c) => acc + parseNumericValue(c.value), 0);
+          return sumA - sumB;
+        } else if (sortVal === 'endDate') {
+          const dA = getUnitExpirationSummary(a).days;
+          const dB = getUnitExpirationSummary(b).days;
+          return dA - dB;
         }
         return 0;
       });
 
-      filteredUnits.forEach(unit => {
-        const yearSelect = document.getElementById('dashboard-year-select');
-        const selectedYear = yearSelect ? yearSelect.value : '2026';
-
-        let validContractsCount = 0;
-        let pendingCount = 0;
-        let signedCount = 0;
-        let almostSignedCount = 0;
-        let unitValueSum = 0;
-
-        unit.contracts.forEach(c => {
-          let startY = c.date && c.date.includes('/') ? c.date.split('/')[2].trim() : '2026';
-          let endY = c.endDate && c.endDate.includes('/') ? c.endDate.split('/')[2].trim() : startY;
-          if (selectedYear !== 'all') {
-            const y = parseInt(selectedYear, 10);
-            const sy = parseInt(startY, 10) || 2026;
-            const ey = parseInt(endY, 10) || sy;
-            if (y < sy || y > ey) return;
-          }
-
-          validContractsCount++;
-          if (c.status === 'pending') pendingCount++;
-          if (c.status === 'signed') signedCount++;
-          if (c.status === 'almost_signed') almostSignedCount++;
-
-          if (c.status !== 'pending') {
-            if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-              unitValueSum += parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
-            }
-          }
-        });
-        
-        if (validContractsCount === 0) return;
-        const total = validContractsCount;
-        
-        let statusBadgeText = `${signedCount}/${total} Đã ký`;
-        let statusPillClass = 'status-draft';
-        if (almostSignedCount > 0 && pendingCount > 0) {
-          statusBadgeText = `${almostSignedCount} sắp ký, ${pendingCount} chờ ký`;
-          statusPillClass = 'status-almost';
-        } else if (almostSignedCount > 0) {
-          statusBadgeText = `${almostSignedCount}/${total} Sắp ký`;
-          statusPillClass = 'status-almost';
-        } else if (pendingCount > 0) {
-          statusBadgeText = `${pendingCount}/${total} Chờ ký`;
-          statusPillClass = 'status-pending';
-        } else if (signedCount === total) {
-          statusPillClass = 'status-signed';
-        }
-        
-        const expStatus = getUnitExpirationStatus(unit.contracts);
-        
-        const tr = document.createElement('tr');
-        tr.className = 'contract-row';
-        tr.onclick = () => {
-          selectUnit(unit.id);
-          switchView('detail');
-        };
-        
-        tr.innerHTML = `
-          <td style="text-align: center; color: var(--color-text-muted); font-weight: 700;">${index++}</td>
-          <td style="font-weight: 700; color: var(--color-text-primary);">
-            <div style="display: flex; align-items: center; gap: 0.65rem;">
-              <div class="unit-avatar">${unit.avatar}</div>
-              <span>${unit.name}</span>
-            </div>
-          </td>
-          <td style="text-align: center; font-weight: 600; color: var(--color-text-secondary);">
-            <span id="display-khuvuc-${unit.id}">${unit.khuVuc || 'Chưa thiết lập'}</span>
-            <button type="button" class="btn-icon" aria-label="Sửa khu vực ${unit.name}" onclick="event.stopPropagation(); editUnitKhuVuc('${unit.id}')" style="margin-left: 4px;" title="Sửa khu vực">✏️</button>
-          </td>
-          <td style="text-align: center; font-weight: 600;">${total} văn bản</td>
-          <td style="text-align: center;"><span class="status-pill ${statusPillClass}">${statusBadgeText}</span></td>
-          <td style="text-align: right; font-weight: 800; color: var(--vnpt-blue);">${unitValueSum > 0 ? unitValueSum.toLocaleString('vi-VN') + ' VND' : 'Theo đơn giá'}</td>
-          <td style="text-align: center;"><span class="status-pill ${expStatus.class}">${expStatus.text}</span></td>
-          <td style="text-align: center;" onclick="event.stopPropagation();">
-            <button type="button" class="btn-primary" onclick="selectUnit('${unit.id}'); switchView('detail');" style="padding: 0.38rem 0.75rem; font-size: 0.76rem; border-radius: 6px;">📄 Chi tiết</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-      
-      if (tbody.children.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 2.25rem;">Không tìm thấy đơn vị y tế nào phù hợp.</td></tr>';
+      if (currentSortOrder === 'desc' && sortVal !== 'valDesc') {
+        sorted.reverse();
       }
+      return sorted;
     }
 
-    function editUnitKhuVuc(unitId) {
-      const unit = units.find(u => u.id === unitId);
-      if (!unit) return;
-      
-      editingUnitIdForKhuVuc = unitId;
-      
-      const label = document.getElementById('edit-khuvuc-unit-name');
-      if (label) label.textContent = `Đơn vị: ${unit.name}`;
-      
-      const select = document.getElementById('edit-khuvuc-select');
-      if (select) {
-        select.value = unit.khuVuc || '';
-      }
-      
-      const modal = document.getElementById('edit-khuvuc-modal');
-      if (modal) modal.classList.add('active');
-    }
-
-    function closeEditKhuVucModal() {
-      const modal = document.getElementById('edit-khuvuc-modal');
-      if (modal) modal.classList.remove('active');
-      editingUnitIdForKhuVuc = null;
-    }
-
-    function submitEditKhuVuc() {
-      if (!editingUnitIdForKhuVuc) return;
-      
-      const unit = units.find(u => u.id === editingUnitIdForKhuVuc);
-      if (!unit) return;
-      
-      const select = document.getElementById('edit-khuvuc-select');
-      const newKv = select ? select.value : '';
-      
-      unit.khuVuc = newKv;
-      localStorage.setItem('vnpt_his_units', JSON.stringify(units));
-      populateRegionFilterOptions();
-      renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
-      closeEditKhuVucModal();
-      
-      alert(`Đã cập nhật địa bàn/khu vực của ${unit.name} thành: "${unit.khuVuc || 'Chưa thiết lập'}"
-
-👉 Nhấn nút "Xuất File HTML" ở thanh tiêu đề trên cùng để tải xuống và lưu cố định.`);
-    }
-
-    function exportUpdatedHTML() {
-      if (!confirm("Hệ thống sẽ tải xuống file contracts.html mới tích hợp tất cả các khu vực và hợp đồng bạn đã thay đổi. Bạn có muốn tiếp tục?")) {
-        return;
-      }
-      
-      fetch(window.location.href)
-        .then(res => {
-          if (!res.ok) throw new Error('Không thể tải file nguồn HTML.');
-          return res.text();
-        })
-        .then(html => {
-          const newUnitsStr = `let units = ${JSON.stringify(units, null, 2)};`;
-          const updatedHtml = html.replace(/let\s+units\s*=\s*\[[\s\S]*?\];/, newUnitsStr);
-          
-          const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'contracts.html';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          
-          alert("Tải xuống hoàn tất! Hãy sao chép file 'contracts.html' vừa tải xuống đè lên file cũ trong thư mục code kienlt90 để cập nhật vĩnh viễn.");
-        })
-        .catch(err => {
-          alert(`Lỗi xuất file tự động: ${err.message}\n\nDữ liệu vẫn được lưu tạm thời trên trình duyệt của bạn.`);
-        });
-    }
-
-    function selectUnit(unitId) {
-      selectedUnitId = unitId;
-      selectedContractId = null;
-      
-      const unit = units.find(u => u.id === selectedUnitId);
-      if (unit) {
-        checkedContractIds = unit.contracts.map(c => c.id);
+    function sortByHeader(colName) {
+      if (currentSortColumn === colName) {
+        currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
       } else {
-        checkedContractIds = [];
+        currentSortColumn = colName;
+        currentSortOrder = colName === 'valDesc' ? 'desc' : 'asc';
       }
-
-      document.getElementById('detail-panel').classList.add('hidden');
-
-      if (unit) {
-        document.getElementById('detail-unit-title').innerHTML = `Đơn vị thụ hưởng: <strong style="color: var(--vnpt-blue);">${unit.name}</strong>`;
-      }
-
-      renderContractsTable();
-      updateCheckedSum();
+      const select = document.getElementById('sort-by');
+      if (select) select.value = colName;
+      updateTable();
     }
 
-    let currentView = 'dashboard';
-    
-    function switchView(viewName) {
-      currentView = viewName;
-      const dashboardView = document.getElementById('dashboard-view');
-      const detailView = document.getElementById('detail-view');
-      
-      if (viewName === 'dashboard') {
-        dashboardView.classList.remove('hidden');
-        detailView.classList.add('hidden');
-        renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
-      } else {
-        dashboardView.classList.add('hidden');
-        detailView.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }
-    }
+    // Update KPI Cards
+    function updateKpiCards() {
+      const yearFilter = document.getElementById('filter-year')?.value || 'all';
+      const regionFilter = document.getElementById('filter-region')?.value || 'all';
 
-    function toggleContractCheck(contractId, isChecked) {
-      if (isChecked) {
-        if (!checkedContractIds.includes(contractId)) {
-          checkedContractIds.push(contractId);
-        }
-      } else {
-        checkedContractIds = checkedContractIds.filter(id => id !== contractId);
-      }
-      
-      updateCheckedSum();
-      updateMasterCheckboxState();
-    }
+      let totalVal = 0;
+      let totalContracts = 0;
+      let signedCnt = 0;
+      let signedVal = 0;
+      let pendingCnt = 0;
+      let pendingVal = 0;
+      let warningCnt = 0;
 
-    function toggleSelectAllContracts(masterCheckbox) {
-      const unit = getSelectedUnit();
-      if (!unit) return;
-      
-      const currentUnitContractIds = unit.contracts.map(c => c.id);
-      
-      if (masterCheckbox.checked) {
-        currentUnitContractIds.forEach(id => {
-          if (!checkedContractIds.includes(id)) {
-            checkedContractIds.push(id);
-          }
-        });
-      } else {
-        checkedContractIds = checkedContractIds.filter(id => !currentUnitContractIds.includes(id));
-      }
-      
-      renderContractsTable();
-      updateCheckedSum();
-    }
-
-    function updateMasterCheckboxState() {
-      const masterCheckbox = document.getElementById('check-all-contracts');
-      if (!masterCheckbox) return;
-      
-      const unit = getSelectedUnit();
-      if (!unit || unit.contracts.length === 0) {
-        masterCheckbox.checked = false;
-        masterCheckbox.disabled = true;
-        return;
-      }
-      
-      masterCheckbox.disabled = false;
-      const currentUnitContractIds = unit.contracts.map(c => c.id);
-      const checkedInUnit = currentUnitContractIds.filter(id => checkedContractIds.includes(id));
-      
-      if (checkedInUnit.length === 0) {
-        masterCheckbox.checked = false;
-        masterCheckbox.indeterminate = false;
-      } else if (checkedInUnit.length === currentUnitContractIds.length) {
-        masterCheckbox.checked = true;
-        masterCheckbox.indeterminate = false;
-      } else {
-        masterCheckbox.checked = false;
-        masterCheckbox.indeterminate = true;
-      }
-    }
-
-    function updateCheckedSum() {
-      let sum = 0;
       units.forEach(u => {
+        if (regionFilter !== 'all' && u.khuVuc !== regionFilter) return;
+
         u.contracts.forEach(c => {
-          if (checkedContractIds.includes(c.id)) {
-            let valNum = 0;
-            if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp')) {
-              valNum = parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
-            }
-            sum += valNum;
+          if (!isContractActiveInYear(c, yearFilter)) return;
+
+          totalContracts++;
+          const v = parseNumericValue(c.value);
+          totalVal += v;
+
+          if (c.status === 'signed') {
+            signedCnt++;
+            signedVal += v;
+          } else {
+            pendingCnt++;
+            pendingVal += v;
+          }
+
+          const exp = getExpirationStatus(c.endDate);
+          if (exp.type === 'warning' || exp.type === 'expired') {
+            warningCnt++;
           }
         });
       });
-      
-      document.getElementById('selected-sum-value').textContent = sum.toLocaleString('vi-VN') + ' VND';
-      
-      const sumContainer = document.getElementById('selected-sum-container');
-      if (sum > 0) {
-        sumContainer.style.background = '#e4f0fb';
-        sumContainer.style.borderColor = '#93c5fd';
-      } else {
-        sumContainer.style.background = '#f0f6fc';
-        sumContainer.style.borderColor = '#c5dcf2';
-      }
+
+      const totalValBillion = (totalVal / 1e9).toFixed(2);
+      const signedValBillion = (signedVal / 1e9).toFixed(2);
+      const pendingValMillion = (pendingVal / 1e6).toFixed(1);
+      const signedPct = totalContracts > 0 ? ((signedCnt / totalContracts) * 100).toFixed(1) : 0;
+      const pendingPct = totalContracts > 0 ? ((pendingCnt / totalContracts) * 100).toFixed(1) : 0;
+
+      document.getElementById('stat-total-val').textContent = `${totalValBillion} tỷ VND`;
+      document.getElementById('stat-total-sub').textContent = `${units.length} đơn vị · ${totalContracts} hợp đồng`;
+
+      document.getElementById('stat-signed-cnt').textContent = signedCnt;
+      document.getElementById('stat-signed-val').textContent = `${signedValBillion} tỷ VND (${signedPct}%)`;
+
+      document.getElementById('stat-pending-cnt').textContent = pendingCnt;
+      document.getElementById('stat-pending-val').textContent = `${pendingValMillion} tr VND (${pendingPct}%)`;
+
+      document.getElementById('stat-warning-cnt').textContent = warningCnt;
+
+      // Update Donut Legend counts
+      const legSigned = document.getElementById('legend-signed-cnt');
+      if (legSigned) legSigned.textContent = signedCnt;
+      const legPending = document.getElementById('legend-pending-cnt');
+      if (legPending) legPending.textContent = pendingCnt;
+      const centerTotal = document.querySelector('#status-donut-center span:first-child');
+      if (centerTotal) centerTotal.textContent = totalContracts;
     }
 
-    function renderContractsTable() {
-      const tbody = document.getElementById('contracts-tbody');
+    // Update Master Table
+    function updateTable() {
+      const tbody = document.getElementById('units-tbody');
+      const emptyState = document.getElementById('empty-state');
+      if (!tbody) return;
+
+      const filtered = getFilteredUnits();
+      const sorted = sortUnits(filtered);
+
       tbody.innerHTML = '';
-
-      const unit = getSelectedUnit();
-      if (!unit || unit.contracts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 2rem;">Không có văn bản hợp đồng nào.</td></tr>';
-        updateMasterCheckboxState();
+      if (sorted.length === 0) {
+        emptyState.classList.remove('hidden');
         return;
       }
+      emptyState.classList.add('hidden');
 
-      document.getElementById('selected-unit-title').innerHTML = `Danh sách văn bản / hợp đồng — <strong>${unit.name}</strong>`;
-
-      unit.contracts.forEach(c => {
-        const isChecked = checkedContractIds.includes(c.id);
-        const isSelected = c.id === selectedContractId;
-        
+      sorted.forEach((unit, idx) => {
         const tr = document.createElement('tr');
-        tr.className = `contract-row ${isSelected ? 'selected' : ''}`;
-        tr.onclick = () => selectContract(c.id);
+        tr.className = selectedUnitIds.has(unit.id) ? 'selected-row' : '';
+        
+        // Calculate unit sums
+        const unitTotalVal = unit.contracts.reduce((acc, c) => acc + parseNumericValue(c.value), 0);
+        const signedContracts = unit.contracts.filter(c => c.status === 'signed').length;
+        const totalContracts = unit.contracts.length;
+        const isAllSigned = signedContracts === totalContracts && totalContracts > 0;
+        const expSummary = getUnitExpirationSummary(unit);
 
-        let statusClass = 'status-draft';
-        let statusText = 'Đang soạn thảo';
-        if (c.status === 'signed') {
-          statusClass = 'status-signed';
-          statusText = 'Đã ký số';
-        } else if (c.status === 'pending') {
-          statusClass = 'status-pending';
-          statusText = 'Chờ ký';
-        } else if (c.status === 'almost_signed') {
-          statusClass = 'status-almost';
-          statusText = 'Sắp ký HĐ';
-        }
+        const firstContract = unit.contracts[0] || {};
+        const contractCode = firstContract.code || 'Chưa nhập HĐ';
+        const packageName = firstContract.package || 'Hệ thống Y tế số';
 
-        const expDateDisplay = c.endDate
-          ? c.endDate
-          : '<span style="color: var(--color-text-muted); font-size: 0.78rem; font-style: italic;">Chưa có (✏️)</span>';
+        let statusClass = isAllSigned ? 'status-signed' : 'status-pending';
+        let statusText = isAllSigned ? `${signedContracts}/${totalContracts} Đã ký` : `${signedContracts}/${totalContracts} Chờ ký`;
+
+        let expBadgeClass = 'exp-active';
+        if (expSummary.type === 'warning') expBadgeClass = 'exp-warning';
+        if (expSummary.type === 'expired') expBadgeClass = 'exp-expired';
 
         tr.innerHTML = `
-          <td style="text-align: center;" onclick="event.stopPropagation();">
-            <input type="checkbox" class="contract-check" aria-label="Chọn hợp đồng ${c.code}" data-id="${c.id}" ${isChecked ? 'checked' : ''} style="transform: scale(1.1); cursor: pointer; accent-color: var(--vnpt-blue);" onclick="toggleContractCheck('${c.id}', this.checked)">
+          <td style="text-align: center;" onclick="event.stopPropagation()">
+            <input type="checkbox" style="cursor: pointer; transform: scale(1.15);" ${selectedUnitIds.has(unit.id) ? 'checked' : ''} onchange="toggleUnitSelection('${unit.id}', this.checked)">
           </td>
-          <td style="font-family: monospace; font-size: 0.79rem; font-weight: 700; color: var(--vnpt-blue-dark);">${c.code}</td>
-          <td style="font-weight: 600; color: var(--color-text-primary);" title="${c.name}">${c.name}</td>
-          <td style="text-align: right; font-weight: 800; color: var(--vnpt-blue);">${c.value}</td>
-          <td style="text-align: center; font-weight: 600;">${expDateDisplay}</td>
-          <td style="text-align: center;"><span class="status-pill ${statusClass}">${statusText}</span></td>
+          <td style="text-align: center; color: var(--color-text-muted); font-weight: 700;">
+            ${idx + 1}
+          </td>
+          <td>
+            <div class="unit-cell">
+              <div class="unit-avatar">${unit.avatar || 'YT'}</div>
+              <div class="unit-info-wrap">
+                <span class="unit-name">${unit.name}</span>
+                <span class="unit-meta">
+                  <span>MST: ${unit.mst || '—'}</span>
+                  ${unit.am ? `· <span>AM: ${unit.am}</span>` : ''}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td style="text-align: center;" onclick="event.stopPropagation()">
+            <span class="region-pill" onclick="quickEditRegion('${unit.id}')" title="Bấm để đổi khu vực nhanh">
+              📍 ${unit.khuVuc || 'Bình Dương'}
+            </span>
+          </td>
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+              <span style="font-family: monospace; font-size: 0.78rem; font-weight: 700; color: var(--vnpt-blue);">${contractCode}</span>
+              <span style="font-size: 0.72rem; color: var(--color-text-muted);">${packageName}</span>
+            </div>
+          </td>
+          <td style="text-align: center;" onclick="event.stopPropagation()">
+            <span class="status-pill ${statusClass}" onclick="quickToggleStatus('${unit.id}')" title="Bấm để chuyển trạng thái">
+              ${statusText}
+            </span>
+          </td>
+          <td style="text-align: right; font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">
+            ${formatVnd(unitTotalVal)}
+          </td>
+          <td style="text-align: center;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem;">
+              <span class="exp-badge ${expBadgeClass}">${expSummary.text}</span>
+              <span style="font-size: 0.7rem; color: var(--color-text-muted); font-variant-numeric: tabular-nums;">
+                ${firstContract.endDate || '—'}
+              </span>
+            </div>
+          </td>
+          <td style="text-align: center;" onclick="event.stopPropagation()">
+            <div style="display: flex; gap: 0.35rem; justify-content: center;">
+              <button type="button" class="btn-primary" onclick="openAdjustModal('${unit.id}')" style="padding: 0.35rem 0.65rem; font-size: 0.76rem;" title="Xem chi tiết và chỉnh sửa hợp đồng">
+                ⚙️ Điều chỉnh
+              </button>
+              <button type="button" class="btn-secondary" onclick="openSignModal('${unit.id}', '${firstContract.id}')" style="padding: 0.35rem 0.55rem; font-size: 0.76rem;" title="Ký số CA">
+                ✍️
+              </button>
+              <button type="button" class="btn-icon" onclick="openPdfModal('${unit.id}', '${firstContract.id}')" title="Xem bản PDF">
+                📄
+              </button>
+            </div>
+          </td>
         `;
+
+        // Click row opens modal
+        tr.onclick = () => openAdjustModal(unit.id);
         tbody.appendChild(tr);
       });
-      
-      updateMasterCheckboxState();
+
+      updateBatchBar();
     }
 
-    function selectContract(contractId) {
-      selectedContractId = contractId;
-      renderContractsTable();
-
-      const detailPanel = document.getElementById('detail-panel');
-      detailPanel.classList.remove('hidden');
-      
-      document.getElementById('detail-placeholder').classList.add('hidden');
-      const detailContainer = document.getElementById('detail-content');
-      detailContainer.classList.remove('hidden');
-
-      const c = getSelectedContract();
-      if (!c) return;
-
-      document.getElementById('detail-contract-name').textContent = c.name;
-      document.getElementById('detail-contract-code').textContent = c.code;
-      document.getElementById('detail-package').textContent = c.package;
-      document.getElementById('detail-value').textContent = c.value;
-      document.getElementById('detail-date').textContent = c.date;
-      document.getElementById('detail-end-date').innerHTML = c.endDate
-        ? c.endDate
-        : '<span style="color: var(--color-text-muted); font-style: italic; font-size: 0.8rem;">Chưa có (Nhấp ✏️ để sửa)</span>';
-      
-      const elMst = document.getElementById('detail-mst');
-      if (elMst) elMst.textContent = c.mst || '—';
-      const elSales = document.getElementById('detail-sales-unit');
-      if (elSales) elSales.textContent = c.salesUnit || '—';
-      const elAm = document.getElementById('detail-am');
-      if (elAm) elAm.textContent = c.am || '—';
-      const elTpm = document.getElementById('detail-tpm');
-      if (elTpm) elTpm.textContent = c.tpm || 'Lê Trung Kiên';
-      const elCds = document.getElementById('detail-cds');
-      if (elCds) elCds.textContent = c.cdsCode || '—';
-
-      document.getElementById('detail-filename').textContent = `${c.fileName} (${c.fileSize})`;
-
-      document.getElementById('end-date-edit-container').classList.add('hidden');
-      document.getElementById('detail-end-date').classList.remove('hidden');
-      document.getElementById('btn-edit-end-date').classList.remove('hidden');
-
-      const statusEditContainer = document.getElementById('status-edit-container');
-      if (statusEditContainer) statusEditContainer.classList.add('hidden');
-      const btnEditStatus = document.getElementById('btn-edit-status');
-      if (btnEditStatus) btnEditStatus.classList.remove('hidden');
-      const detailStatusPill = document.getElementById('detail-status-pill');
-      if (detailStatusPill) detailStatusPill.classList.remove('hidden');
-
-      const pill = document.getElementById('detail-status-pill');
-      if (pill) {
-        pill.textContent = c.status === 'signed' ? 'Đã ký số' : c.status === 'pending' ? 'Chờ ký' : c.status === 'almost_signed' ? 'Sắp ký hợp đồng' : 'Đang soạn thảo';
-        pill.className = `status-pill ${c.status === 'signed' ? 'status-signed' : c.status === 'pending' ? 'status-pending' : c.status === 'almost_signed' ? 'status-almost' : 'status-draft'}`;
-      }
-
-      updateMilestone('ms-1', c.ms1Done);
-      updateMilestone('ms-2', c.ms2Done);
-      updateMilestone('ms-3', c.ms3Done);
-
-      const ms2Desc = document.getElementById('ms-2-desc');
-      if (c.status === 'signed') {
-        ms2Desc.textContent = "Hợp đồng đã được ký số pháp lý.";
-      } else {
-        ms2Desc.textContent = "Yêu cầu hoàn thành thủ tục ký số USB Token/SmartCA.";
-      }
-
-      const stampContainer = document.getElementById('detail-stamp-container');
-      if (c.status === 'signed') {
-        stampContainer.innerHTML = `
-          <div class="digital-stamp">
-            <span style="font-size: 1.9rem;">🛡️</span>
-            <div style="font-size: 0.78rem; line-height: 1.45;">
-              <div style="color: #15803d; font-weight: 800; font-size: 0.82rem; text-transform: uppercase;">Chữ ký số VNPT-CA Hợp lệ</div>
-              <div style="color: var(--color-text-primary); font-weight: 700;">Ký bởi: Lê Trung Kiên</div>
-              <div style="color: var(--color-text-muted); font-size: 0.72rem;">Đơn vị cấp phát: ${c.signedBy || 'VNPT-CA'}</div>
-              <div style="color: var(--color-text-muted); font-size: 0.72rem; font-variant-numeric: tabular-nums;">Thời gian ký: ${c.signedTime || '01/01/2026 10:00:00'}</div>
-            </div>
-          </div>
-        `;
-      } else {
-        stampContainer.innerHTML = '';
-      }
-
-      const signBtn = document.getElementById('btn-show-sign-modal');
-      if (signBtn) {
-        if (c.status === 'pending' || c.status === 'almost_signed') {
-          signBtn.style.display = 'inline-flex';
-        } else {
-          signBtn.style.display = 'none';
-        }
-      }
+    // =========================================================================
+    // CHARTS RENDERING (Sleek, Clean, Executive Quality)
+    // =========================================================================
+    function setChart1Mode(mode) {
+      currentChart1Mode = mode;
+      document.getElementById('btn-chart-region').classList.toggle('active', mode === 'region');
+      document.getElementById('btn-chart-top10').classList.toggle('active', mode === 'top10');
+      document.getElementById('chart1-title-text').textContent = mode === 'region' 
+        ? 'Phân bổ Doanh thu theo 7 Địa bàn (tỷ VND)' 
+        : 'Top 10 Đơn vị có Doanh thu Cao nhất (tỷ VND)';
+      renderRevenueChart();
     }
 
-    function updateMilestone(id, isDone) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.classList.toggle('done', isDone);
-      }
-    }
+    function renderRevenueChart() {
+      const ctx = document.getElementById('revenue-chart');
+      if (!ctx) return;
+      if (revenueChartInstance) revenueChartInstance.destroy();
 
-    function openSignModal() {
-      document.getElementById('sign-modal').classList.add('active');
-      switchModalStep('selection');
-    }
+      const yearFilter = document.getElementById('filter-year')?.value || 'all';
 
-    function closeModal() {
-      document.getElementById('sign-modal').classList.remove('active');
-      document.getElementById('token-pin').value = '';
-    }
-
-    function switchModalStep(step) {
-      document.getElementById('modal-step-selection').classList.toggle('hidden', step !== 'selection');
-      document.getElementById('modal-step-pin').classList.toggle('hidden', step !== 'pin');
-      document.getElementById('modal-step-smartca-wait').classList.toggle('hidden', step !== 'smartca-wait');
-      document.getElementById('modal-step-progress').classList.toggle('hidden', step !== 'progress');
-      document.getElementById('modal-step-success').classList.toggle('hidden', step !== 'success');
-    }
-
-    function startSigning(method) {
-      selectedSignMethod = method;
-      if (method === 'token') {
-        switchModalStep('pin');
-      } else {
-        switchModalStep('smartca-wait');
-        setTimeout(() => {
-          runSigningProgressAnimation();
-        }, 3000);
-      }
-    }
-
-    function goBackToSelection() {
-      switchModalStep('selection');
-    }
-
-    function submitTokenPin() {
-      const pin = document.getElementById('token-pin').value;
-      if (pin !== '12345678') {
-        alert("Mã PIN USB Token không chính xác! Vui lòng thử lại với mã mặc định 12345678.");
-        return;
-      }
-      runSigningProgressAnimation();
-    }
-
-    function runSigningProgressAnimation() {
-      switchModalStep('progress');
-      
-      const statusEl = document.getElementById('progress-status');
-      const subEl = document.getElementById('progress-sub');
-      
-      const steps = [
-        { status: "Đang kết nối dịch vụ chữ ký số VNPT-CA…", sub: "Kiểm tra chứng thư số…" },
-        { status: "Đang tạo mã băm SHA-256…", sub: "Chuẩn hóa tài liệu PDF…" },
-        { status: "Đang đóng dấu chữ ký điện tử…", sub: "Mã hóa khóa bí mật…" },
-        { status: "Đang xác thực chứng thư số (VNPT-CA)…", sub: "Kiểm tra hiệu lực pháp lý…" },
-        { status: "Đồng bộ hóa tài liệu ký số lên hệ thống…", sub: "Lưu trữ bảo mật…" }
-      ];
-
-      let stepIdx = 0;
-      const interval = setInterval(() => {
-        if (stepIdx < steps.length) {
-          statusEl.textContent = steps[stepIdx].status;
-          subEl.textContent = steps[stepIdx].sub;
-          stepIdx++;
-        } else {
-          clearInterval(interval);
-          completeSigning();
-        }
-      }, 900);
-    }
-
-    function completeSigning() {
-      const c = getSelectedContract();
-      if (c) {
-        c.status = 'signed';
-        c.ms2Done = true;
-        
-        const now = new Date();
-        const formattedDate = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-        
-        if (selectedSignMethod === 'token') {
-          c.signedBy = "Lê Trung Kiên (USB Token GP2-1002517)";
-        } else {
-          c.signedBy = "Lê Trung Kiên (SmartCA Remote ID: VNPT-871971)";
-        }
-        c.signedTime = formattedDate;
-
-        localStorage.setItem('vnpt_his_units', JSON.stringify(units));
-
-        renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
-        renderContractsTable();
-        updateGlobalStats();
-        updateCharts();
-        selectContract(selectedContractId);
-        
-        switchModalStep('success');
-      }
-    }
-
-    function pad(n) {
-      return n < 10 ? '0' + n : n;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.body.classList.add('light-theme');
-      populateRegionFilterOptions();
-      updateGlobalStats();
-      renderDashboardUnitsTable();
-      updateCharts();
-      switchView('dashboard');
-
-      // Keyboard Escape support for modals
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          closeModal();
-          closeAddContractModal();
-          closeEditKhuVucModal();
-        }
-      });
-
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'vnpt_his_units') {
-          const stored = localStorage.getItem('vnpt_his_units');
-          if (stored) {
-            try {
-              units = JSON.parse(stored);
-              populateRegionFilterOptions();
-              renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
-              renderContractsTable();
-              updateGlobalStats();
-              updateCharts();
-              if (selectedContractId) selectContract(selectedContractId);
-            } catch (err) {
-              console.error(err);
+      if (currentChart1Mode === 'region') {
+        // Sum revenue by 7 regions
+        const regions = ['Bến Cát', 'Dầu Tiếng', 'Dĩ An', 'Phú Giáo', 'Tân Uyên', 'Thủ Dầu Một', 'Thuận An'];
+        const regionVals = regions.map(reg => {
+          let sum = 0;
+          units.forEach(u => {
+            if (u.khuVuc === reg) {
+              u.contracts.forEach(c => {
+                if (isContractActiveInYear(c, yearFilter)) {
+                  sum += parseNumericValue(c.value);
+                }
+              });
             }
-          }
-        }
-      });
-
-      const dashboardSearchInput = document.getElementById('dashboard-unit-search');
-      if (dashboardSearchInput) {
-        dashboardSearchInput.addEventListener('input', (e) => {
-          renderDashboardUnitsTable(e.target.value);
-        });
-      }
-
-      const dashboardYearSelect = document.getElementById('dashboard-year-select');
-      if (dashboardYearSelect) {
-        dashboardYearSelect.addEventListener('change', () => {
-          renderDashboardUnitsTable(dashboardSearchInput ? dashboardSearchInput.value : '');
-          updateGlobalStats();
-          updateCharts();
-        });
-      }
-
-      const dashboardRegionFilter = document.getElementById('dashboard-region-filter');
-      if (dashboardRegionFilter) {
-        dashboardRegionFilter.addEventListener('change', () => {
-          renderDashboardUnitsTable(dashboardSearchInput ? dashboardSearchInput.value : '');
-          updateGlobalStats();
-          updateCharts();
-        });
-      }
-
-      const dashboardSortBy = document.getElementById('dashboard-sort-by');
-      if (dashboardSortBy) {
-        dashboardSortBy.addEventListener('change', () => {
-          renderDashboardUnitsTable(dashboardSearchInput ? dashboardSearchInput.value : '');
-        });
-      }
-
-      const btnCloseDetails = document.getElementById('btn-close-details');
-      if (btnCloseDetails) {
-        btnCloseDetails.addEventListener('click', () => {
-          document.getElementById('detail-panel').classList.add('hidden');
-          selectedContractId = null;
-          renderContractsTable();
-        });
-      }
-
-      const checkAllBox = document.getElementById('check-all-contracts');
-      if (checkAllBox) {
-        checkAllBox.addEventListener('click', (e) => {
-          toggleSelectAllContracts(e.target);
-        });
-      }
-
-      const btnEditEndDate = document.getElementById('btn-edit-end-date');
-      const btnCancelEndDate = document.getElementById('btn-cancel-end-date');
-      const btnSaveEndDate = document.getElementById('btn-save-end-date');
-      const inputEndDate = document.getElementById('input-end-date');
-      const detailEndDate = document.getElementById('detail-end-date');
-      const editContainer = document.getElementById('end-date-edit-container');
-
-      if (btnEditEndDate && editContainer) {
-        btnEditEndDate.addEventListener('click', () => {
-          const c = getSelectedContract();
-          if (!c) return;
-
-          if (c.endDate) {
-            const parts = c.endDate.split('/');
-            if (parts.length === 3) {
-              inputEndDate.value = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-            } else {
-              inputEndDate.value = '';
-            }
-          } else {
-            inputEndDate.value = '';
-          }
-
-          detailEndDate.classList.add('hidden');
-          btnEditEndDate.classList.add('hidden');
-          editContainer.classList.remove('hidden');
-        });
-      }
-
-      if (btnCancelEndDate) {
-        btnCancelEndDate.addEventListener('click', () => {
-          editContainer.classList.add('hidden');
-          detailEndDate.classList.remove('hidden');
-          btnEditEndDate.classList.remove('hidden');
-        });
-      }
-
-      if (btnSaveEndDate) {
-        btnSaveEndDate.addEventListener('click', () => {
-          const c = getSelectedContract();
-          if (!c) return;
-
-          const dateVal = inputEndDate.value;
-          if (dateVal) {
-            const parts = dateVal.split('-');
-            c.endDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-          } else {
-            c.endDate = '';
-          }
-
-          localStorage.setItem('vnpt_his_units', JSON.stringify(units));
-
-          detailEndDate.innerHTML = c.endDate
-            ? c.endDate
-            : '<span style="color: var(--color-text-muted); font-style: italic; font-size: 0.8rem;">Chưa có (Nhấp ✏️ để sửa)</span>';
-          editContainer.classList.add('hidden');
-          detailEndDate.classList.remove('hidden');
-          btnEditEndDate.classList.remove('hidden');
-
-          renderContractsTable();
-          updateCheckedSum();
-        });
-      }
-
-      const btnEditStatus = document.getElementById('btn-edit-status');
-      const btnCancelStatus = document.getElementById('btn-cancel-status');
-      const btnSaveStatus = document.getElementById('btn-save-status');
-      const selectStatus = document.getElementById('select-status');
-      const detailStatusPill = document.getElementById('detail-status-pill');
-      const statusEditContainer = document.getElementById('status-edit-container');
-
-      if (btnEditStatus && statusEditContainer) {
-        btnEditStatus.addEventListener('click', () => {
-          const c = getSelectedContract();
-          if (!c) return;
-
-          if (selectStatus) {
-            selectStatus.value = c.status || 'pending';
-          }
-
-          detailStatusPill.classList.add('hidden');
-          btnEditStatus.classList.add('hidden');
-          statusEditContainer.classList.remove('hidden');
-        });
-      }
-
-      if (btnCancelStatus) {
-        btnCancelStatus.addEventListener('click', () => {
-          statusEditContainer.classList.add('hidden');
-          detailStatusPill.classList.remove('hidden');
-          btnEditStatus.classList.remove('hidden');
-        });
-      }
-
-      if (btnSaveStatus) {
-        btnSaveStatus.addEventListener('click', () => {
-          const c = getSelectedContract();
-          if (!c) return;
-
-          const oldStatus = c.status;
-          const newStatus = selectStatus ? selectStatus.value : 'pending';
-          c.status = newStatus;
-
-          if (newStatus === 'signed') {
-            c.ms1Done = true;
-            c.ms2Done = true;
-            c.ms3Done = true;
-            if (!c.signedBy) {
-              c.signedBy = "Lê Trung Kiên (SmartCA Remote ID: VNPT-871971)";
-              const today = new Date();
-              c.signedTime = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()} 09:00:00`;
-            }
-          } else {
-            c.ms1Done = true;
-            c.ms2Done = false;
-            c.ms3Done = false;
-            if (oldStatus === 'signed') {
-              delete c.signedBy;
-              delete c.signedTime;
-            }
-          }
-
-          localStorage.setItem('vnpt_his_units', JSON.stringify(units));
-
-          statusEditContainer.classList.add('hidden');
-          detailStatusPill.classList.remove('hidden');
-          btnEditStatus.classList.remove('hidden');
-
-          selectContract(c.id);
-          updateGlobalStats();
-          updateCharts();
-          renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
-          renderContractsTable();
-        });
-      }
-
-      const tokenPinInput = document.getElementById('token-pin');
-      if (tokenPinInput) {
-        tokenPinInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            submitTokenPin();
-          }
-        });
-      }
-
-      const btnShowSignModal = document.getElementById('btn-show-sign-modal');
-      if (btnShowSignModal) {
-        btnShowSignModal.addEventListener('click', () => {
-          openSignModal();
-        });
-      }
-
-      const btnDownloadPdf = document.getElementById('btn-download-pdf');
-      if (btnDownloadPdf) {
-        btnDownloadPdf.addEventListener('click', () => {
-          const c = getSelectedContract();
-          if (c) {
-            alert(`Đang chuẩn bị tải xuống hợp đồng PDF: ${c.fileName}
-(Giả lập xuất tệp lưu trữ thành công)`);
-          }
-        });
-      }
-    });
-
-    function openAddContractModal() {
-      const modal = document.getElementById('add-contract-modal');
-      if (!modal) return;
-
-      const unitSelect = document.getElementById('add-contract-unit');
-      if (unitSelect) {
-        unitSelect.innerHTML = '';
-        units.forEach(u => {
-          const opt = document.createElement('option');
-          opt.value = u.id;
-          opt.textContent = u.name;
-          unitSelect.appendChild(opt);
-        });
-        unitSelect.value = selectedUnitId || (units.length > 0 ? units[0].id : '');
-      }
-
-      const codeInput = document.getElementById('add-contract-code');
-      const nameInput = document.getElementById('add-contract-name');
-      const valueInput = document.getElementById('add-contract-value');
-      const dateInput = document.getElementById('add-contract-date');
-      const statusSelect = document.getElementById('add-contract-status');
-
-      if (codeInput) codeInput.value = '';
-      if (nameInput) nameInput.value = '';
-      if (valueInput) valueInput.value = '';
-      if (dateInput) {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        dateInput.value = `${yyyy}-${mm}-${dd}`;
-      }
-      if (statusSelect) statusSelect.value = 'signed';
-
-      modal.classList.add('active');
-    }
-
-    function closeAddContractModal() {
-      const modal = document.getElementById('add-contract-modal');
-      if (modal) modal.classList.remove('active');
-    }
-
-    function submitAddContract() {
-      const unitSelect = document.getElementById('add-contract-unit');
-      const codeInput = document.getElementById('add-contract-code');
-      const nameInput = document.getElementById('add-contract-name');
-      const valueInput = document.getElementById('add-contract-value');
-      const dateInput = document.getElementById('add-contract-date');
-      const statusSelect = document.getElementById('add-contract-status');
-
-      const unitId = unitSelect ? unitSelect.value : '';
-      const code = codeInput ? codeInput.value.trim() : '';
-      const name = nameInput ? nameInput.value.trim() : '';
-      const rawValue = valueInput ? valueInput.value.trim() : '';
-      const rawDate = dateInput ? dateInput.value : '';
-      const status = statusSelect ? statusSelect.value : 'signed';
-
-      if (!unitId) {
-        alert('Vui lòng chọn đơn vị thụ hưởng!');
-        return;
-      }
-      if (!name) {
-        alert('Vui lòng nhập tên/nội dung hợp đồng!');
-        return;
-      }
-      if (!rawValue) {
-        alert('Vui lòng nhập giá trị hợp đồng!');
-        return;
-      }
-
-      let formattedDate = '';
-      let year = '2026';
-      if (rawDate) {
-        const parts = rawDate.split('-');
-        if (parts.length === 3) {
-          formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-          year = parts[0];
-        }
-      }
-      if (!formattedDate) {
-        const today = new Date();
-        formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
-        year = String(today.getFullYear());
-      }
-
-      let valueStr = rawValue;
-      if (!valueStr.toUpperCase().includes('VND') && !valueStr.includes('đơn giá') && !valueStr.includes('Đơn giá')) {
-        valueStr = valueStr + ' VND';
-      }
-
-      const targetUnit = units.find(u => u.id === unitId);
-      if (!targetUnit) {
-        alert('Không tìm thấy đơn vị thụ hưởng!');
-        return;
-      }
-
-      const contractId = `${unitId}-${Date.now()}-${year}`;
-
-      const newContract = {
-        id: contractId,
-        code: code || `HD-NEW-${Date.now().toString().slice(-4)}`,
-        name: name,
-        fileName: `HD_${year}_new_${Date.now().toString().slice(-4)}.pdf`,
-        fileSize: "1.0 MB",
-        package: "Hệ thống Quản lý Y tế Cơ sở HMIS",
-        value: valueStr,
-        date: formattedDate,
-        endDate: `31/12/${year}`,
-        status: status,
-        ms1Done: true,
-        ms2Done: status === 'signed',
-        ms3Done: status === 'signed'
-      };
-
-      if (status === 'signed') {
-        newContract.signedBy = "Lê Trung Kiên (SmartCA Remote ID: VNPT-871971)";
-        newContract.signedTime = formattedDate + " 09:00:00";
-      }
-
-      targetUnit.contracts.push(newContract);
-      localStorage.setItem('vnpt_his_units', JSON.stringify(units));
-
-      updateGlobalStats();
-      updateCharts();
-      renderDashboardUnitsTable(document.getElementById('dashboard-unit-search')?.value || '');
-
-      if (selectedUnitId === unitId) {
-        renderContractsTable();
-      }
-
-      closeAddContractModal();
-      alert('Đã bổ sung hợp đồng mới thành công!');
-    }
-
-    let revenueChartInstance = null;
-    let statusChartInstance = null;
-
-    function updateCharts() {
-      const yearSelect = document.getElementById('dashboard-year-select');
-      const selectedYear = yearSelect ? yearSelect.value : '2026';
-      const regionSelect = document.getElementById('dashboard-region-filter');
-      const selectedRegion = regionSelect ? regionSelect.value : 'all';
-
-      const textColor = '#1e293b';
-      const gridColor = '#e2e8f0';
-      const tooltipBg = '#ffffff';
-      const tooltipColor = '#0f2942';
-      const tooltipBorder = '#cbd5e1';
-
-      // 1. Calculate revenue by unit (excluding pending)
-      const unitData = [];
-      units.forEach(u => {
-        if (selectedRegion !== 'all') {
-          const unitKv = (u.khuVuc || '').trim();
-          if (selectedRegion === 'empty') {
-            if (unitKv !== '') return;
-          } else {
-            if (unitKv !== selectedRegion) return;
-          }
-        }
-
-        let sum = 0;
-        u.contracts.forEach(c => {
-          let startY = c.date && c.date.includes('/') ? c.date.split('/')[2].trim() : '2026';
-          let endY = c.endDate && c.endDate.includes('/') ? c.endDate.split('/')[2].trim() : startY;
-          if (selectedYear !== 'all') {
-            const y = parseInt(selectedYear, 10);
-            const sy = parseInt(startY, 10) || 2026;
-            const ey = parseInt(endY, 10) || sy;
-            if (y < sy || y > ey) return;
-          }
-
-          if (c.status !== 'pending') {
-            if (!c.value.includes('Đơn giá') && !c.value.includes('ca chụp') && !c.value.includes('đơn giá') && !c.value.includes('?n giA')) {
-              sum += parseInt(c.value.replace(/[^0-9]/g, ''), 10) || 0;
-            }
-          }
-        });
-        if (sum > 0) {
-          unitData.push({
-            name: u.name.replace('Trung tâm Y tế ', 'TTYT ').replace('Trung tâm y tế ', 'TTYT ').replace('Bệnh viện ', 'BV '),
-            value: sum / 1e9
           });
-        }
-      });
-
-      unitData.sort((a, b) => b.value - a.value);
-
-      const unitLabels = unitData.map(d => d.name);
-      const unitValues = unitData.map(d => d.value);
-
-      // 2. Status distribution
-      let signedCount = 0;
-      let almostSignedCount = 0;
-      let pendingCount = 0;
-      let draftCount = 0;
-
-      units.forEach(u => {
-        if (selectedRegion !== 'all') {
-          const unitKv = (u.khuVuc || '').trim();
-          if (selectedRegion === 'empty') {
-            if (unitKv !== '') return;
-          } else {
-            if (unitKv !== selectedRegion) return;
-          }
-        }
-
-        u.contracts.forEach(c => {
-          let startY = c.date && c.date.includes('/') ? c.date.split('/')[2].trim() : '2026';
-          let endY = c.endDate && c.endDate.includes('/') ? c.endDate.split('/')[2].trim() : startY;
-          if (selectedYear !== 'all') {
-            const y = parseInt(selectedYear, 10);
-            const sy = parseInt(startY, 10) || 2026;
-            const ey = parseInt(endY, 10) || sy;
-            if (y < sy || y > ey) return;
-          }
-
-          if (c.status === 'signed') signedCount++;
-          else if (c.status === 'almost_signed') almostSignedCount++;
-          else if (c.status === 'pending') pendingCount++;
-          else draftCount++;
+          return (sum / 1e9);
         });
-      });
 
-      // 3. Render Revenue Chart (VNPT Flat Blue)
-      const revCtx = document.getElementById('revenue-chart');
-      if (revCtx) {
-        if (revenueChartInstance) {
-          revenueChartInstance.destroy();
-        }
-
-        revenueChartInstance = new Chart(revCtx, {
+        revenueChartInstance = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: unitLabels.length > 0 ? unitLabels : ['Không có dữ liệu'],
+            labels: regions,
             datasets: [{
               label: 'Doanh thu (tỷ VND)',
-              data: unitValues.length > 0 ? unitValues : [0],
+              data: regionVals,
               backgroundColor: '#0066b3',
-              borderColor: '#005299',
-              borderWidth: 0,
+              borderRadius: 6,
+              hoverBackgroundColor: '#005299',
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => ` Doanh thu: ${ctx.raw.toFixed(2)} tỷ VND`
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Be Vietnam Pro', size: 11, weight: '600' } }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: '#f1f5f9' },
+                ticks: {
+                  font: { family: 'Be Vietnam Pro', size: 10 },
+                  callback: (val) => val + ' tỷ'
+                }
+              }
+            }
+          }
+        });
+
+      } else {
+        // Top 10 Units by Revenue
+        const unitSums = units.map(u => {
+          let sum = 0;
+          u.contracts.forEach(c => {
+            if (isContractActiveInYear(c, yearFilter)) {
+              sum += parseNumericValue(c.value);
+            }
+          });
+          return {
+            name: u.name.replace('Trung Tâm Y Tế KV', 'TTYT').replace('Trung Tâm Y tế KV', 'TTYT').replace('Bệnh Viện ', 'BV ').replace('Bệnh viện ', 'BV '),
+            val: sum / 1e9
+          };
+        });
+
+        unitSums.sort((a, b) => b.val - a.val);
+        const top10 = unitSums.slice(0, 10);
+
+        revenueChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: top10.map(d => d.name),
+            datasets: [{
+              label: 'Doanh thu (tỷ VND)',
+              data: top10.map(d => d.val),
+              backgroundColor: '#0066b3',
               borderRadius: 4,
-              hoverBackgroundColor: '#004b87'
+              hoverBackgroundColor: '#005299'
             }]
           },
           options: {
@@ -4044,188 +3679,761 @@
             plugins: {
               legend: { display: false },
               tooltip: {
-                backgroundColor: tooltipBg,
-                titleColor: tooltipColor,
-                bodyColor: tooltipColor,
-                borderColor: tooltipBorder,
-                borderWidth: 1,
-                padding: 10,
                 callbacks: {
-                  label: function(context) {
-                    return `Doanh thu: ${context.parsed.x.toFixed(3)} tỷ VND`;
-                  }
+                  label: (ctx) => ` Doanh thu: ${ctx.raw.toFixed(3)} tỷ VND`
                 }
               }
             },
             scales: {
               x: {
-                grid: { color: gridColor },
-                ticks: { color: textColor, font: { family: 'Be Vietnam Pro', size: 11 } }
+                beginAtZero: true,
+                grid: { color: '#f1f5f9' },
+                ticks: {
+                  font: { family: 'Be Vietnam Pro', size: 10 },
+                  callback: (val) => val + ' tỷ'
+                }
               },
               y: {
                 grid: { display: false },
-                ticks: { color: textColor, font: { family: 'Be Vietnam Pro', size: 11, weight: '600' } }
+                ticks: { font: { family: 'Be Vietnam Pro', size: 10, weight: '600' } }
               }
             }
           }
         });
       }
+    }
 
-      // 4. Render Status Chart
-      const statusCtx = document.getElementById('status-chart');
-      if (statusCtx) {
-        if (statusChartInstance) {
-          statusChartInstance.destroy();
-        }
+    function renderStatusChart() {
+      const ctx = document.getElementById('status-chart');
+      if (!ctx) return;
+      if (statusChartInstance) statusChartInstance.destroy();
 
-        const statusLabels = [];
-        const statusData = [];
-        const statusColors = [];
+      const yearFilter = document.getElementById('filter-year')?.value || 'all';
+      let signed = 0;
+      let pending = 0;
 
-        if (signedCount > 0) {
-          statusLabels.push('Đã ký số');
-          statusData.push(signedCount);
-          statusColors.push('#16a34a');
-        }
-        if (almostSignedCount > 0) {
-          statusLabels.push('Sắp ký');
-          statusData.push(almostSignedCount);
-          statusColors.push('#0066b3');
-        }
-        if (pendingCount > 0) {
-          statusLabels.push('Chờ ký');
-          statusData.push(pendingCount);
-          statusColors.push('#d97706');
-        }
-        if (draftCount > 0) {
-          statusLabels.push('Soạn thảo');
-          statusData.push(draftCount);
-          statusColors.push('#64748b');
-        }
-
-        if (statusData.length === 0) {
-          statusLabels.push('Trống');
-          statusData.push(1);
-          statusColors.push('#e2e8f0');
-        }
-
-        statusChartInstance = new Chart(statusCtx, {
-          type: 'doughnut',
-          data: {
-            labels: statusLabels,
-            datasets: [{
-              data: statusData,
-              backgroundColor: statusColors,
-              borderColor: '#ffffff',
-              borderWidth: 2,
-              hoverOffset: 4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  color: textColor,
-                  font: { family: 'Be Vietnam Pro', size: 11, weight: '600' },
-                  boxWidth: 12,
-                  padding: 14
-                }
-              },
-              tooltip: {
-                backgroundColor: tooltipBg,
-                titleColor: tooltipColor,
-                bodyColor: tooltipColor,
-                borderColor: tooltipBorder,
-                borderWidth: 1,
-                padding: 10
-              }
-            },
-            cutout: '64%'
+      units.forEach(u => {
+        u.contracts.forEach(c => {
+          if (isContractActiveInYear(c, yearFilter)) {
+            if (c.status === 'signed') signed++;
+            else pending++;
           }
         });
+      });
+
+      statusChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Đã ký số', 'Chờ ký số'],
+          datasets: [{
+            data: [signed, pending],
+            backgroundColor: ['#0066b3', '#f59e0b'],
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '74%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.label}: ${ctx.raw} hợp đồng`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateAllViews() {
+      updateKpiCards();
+      renderRevenueChart();
+      renderStatusChart();
+      updateTable();
+    }
+
+    // =========================================================================
+    // SEARCH & FILTER HANDLERS
+    // =========================================================================
+    function handleSearch(val) {
+      currentSearchQuery = val;
+      updateTable();
+    }
+
+    function handleFiltersChange() {
+      updateAllViews();
+    }
+
+    function setKpiFilter(filterType) {
+      currentKpiFilter = filterType;
+      document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active'));
+      
+      if (filterType === 'all') document.getElementById('kpi-card-all')?.classList.add('active');
+      if (filterType === 'signed') document.getElementById('kpi-card-signed')?.classList.add('active');
+      if (filterType === 'pending') document.getElementById('kpi-card-pending')?.classList.add('active');
+      if (filterType === 'expiring') document.getElementById('kpi-card-expiring')?.classList.add('active');
+
+      updateTable();
+      showToast(`Đã lọc danh sách theo: ${filterType === 'all' ? 'Tất cả' : filterType === 'signed' ? 'Đã ký số' : filterType === 'pending' ? 'Chờ ký' : 'Cảnh báo hạn'}`);
+    }
+
+    function resetAllFilters() {
+      currentKpiFilter = 'all';
+      currentSearchQuery = '';
+      document.getElementById('unit-search').value = '';
+      document.getElementById('filter-region').value = 'all';
+      document.getElementById('filter-year').value = '2026';
+      document.getElementById('filter-status').value = 'all';
+      document.getElementById('sort-by').value = 'khuVuc';
+      currentSortColumn = 'khuVuc';
+      currentSortOrder = 'asc';
+
+      document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active'));
+      document.getElementById('kpi-card-all')?.classList.add('active');
+
+      updateAllViews();
+      showToast('Đã đặt lại tất cả bộ lọc về mặc định', 'info');
+    }
+
+    // =========================================================================
+    // INLINE QUICK ADJUSTMENTS (Thao tác cực nhanh ngay trên bảng)
+    // =========================================================================
+    function quickEditRegion(unitId) {
+      const unit = units.find(u => u.id === unitId);
+      if (!unit) return;
+      const regions = ['Bến Cát', 'Dầu Tiếng', 'Dĩ An', 'Phú Giáo', 'Tân Uyên', 'Thủ Dầu Một', 'Thuận An'];
+      const current = unit.khuVuc || 'Bến Cát';
+      const nextIdx = (regions.indexOf(current) + 1) % regions.length;
+      unit.khuVuc = regions[nextIdx];
+      saveUnitsToStorage();
+      updateAllViews();
+      showToast(`Đã chuyển địa bàn của "${unit.name}" thành: ${unit.khuVuc}`, 'success');
+    }
+
+    function quickToggleStatus(unitId) {
+      const unit = units.find(u => u.id === unitId);
+      if (!unit || unit.contracts.length === 0) return;
+      const allSigned = unit.contracts.every(c => c.status === 'signed');
+      const newStatus = allSigned ? 'pending' : 'signed';
+      unit.contracts.forEach(c => {
+        c.status = newStatus;
+        c.ms1Done = newStatus === 'signed';
+        c.ms2Done = newStatus === 'signed';
+        c.ms3Done = newStatus === 'signed';
+        if (newStatus === 'signed') {
+          c.signedBy = 'VNPT Bình Dương (Mã CA: GP2-1002517)';
+          c.signedTime = '28/10/2026 10:30:00';
+        }
+      });
+      saveUnitsToStorage();
+      updateAllViews();
+      showToast(`Đã cập nhật trạng thái của "${unit.name}" thành: ${newStatus === 'signed' ? 'Đã ký số' : 'Chờ ký'}`, 'success');
+    }
+
+    // =========================================================================
+    // MODAL 1: UNIFIED ADJUSTMENT POPUP (Popup Điều chỉnh)
+    // =========================================================================
+    function openAdjustModal(unitId) {
+      editingUnitId = unitId;
+      const unit = units.find(u => u.id === unitId);
+      if (!unit) return;
+
+      document.getElementById('modal-unit-name').textContent = unit.name;
+      document.getElementById('modal-unit-avatar').textContent = unit.avatar || 'YT';
+      document.getElementById('modal-unit-khuvuc-pill').innerHTML = `📍 ${unit.khuVuc || 'Bình Dương'} ✏️`;
+      
+      const totalVal = unit.contracts.reduce((acc, c) => acc + parseNumericValue(c.value), 0);
+      document.getElementById('modal-unit-total-val').textContent = formatVnd(totalVal);
+
+      document.getElementById('modal-input-mst').value = unit.mst || '';
+      document.getElementById('modal-input-sales-unit').value = unit.contracts[0]?.salesUnit || ('VNPT ' + (unit.khuVuc || ''));
+      document.getElementById('modal-input-am').value = unit.am || unit.contracts[0]?.am || '';
+      document.getElementById('modal-input-cds').value = unit.contracts[0]?.cdsCode || '';
+
+      // Milestones
+      const c0 = unit.contracts[0] || {};
+      document.getElementById('modal-ms1').checked = !!c0.ms1Done;
+      document.getElementById('modal-ms2').checked = !!c0.ms2Done;
+      document.getElementById('modal-ms3').checked = !!c0.ms3Done;
+
+      renderModalContractsList(unit);
+
+      document.getElementById('adjust-unit-modal').classList.add('active');
+    }
+
+    function closeAdjustModal() {
+      document.getElementById('adjust-unit-modal').classList.remove('active');
+      editingUnitId = null;
+    }
+
+    function renderModalContractsList(unit) {
+      const container = document.getElementById('modal-contracts-list');
+      container.innerHTML = '';
+
+      unit.contracts.forEach((c, idx) => {
+        const card = document.createElement('div');
+        card.className = 'contract-edit-card';
+
+        // Convert DD/MM/YYYY to YYYY-MM-DD for date input
+        const toInputDate = (dStr) => {
+          if (!dStr) return '';
+          const p = dStr.split('/');
+          return p.length === 3 ? `${p[2]}-${p[1].padStart(2, '0')}-${p[0].padStart(2, '0')}` : '';
+        };
+
+        card.innerHTML = `
+          <div class="contract-edit-header">
+            <span style="font-weight: 700; color: var(--vnpt-blue-dark); font-size: 0.85rem;">
+              Hợp đồng #${idx + 1}: <span style="font-family: monospace;">${c.code || 'Chưa nhập số HĐ'}</span>
+            </span>
+            <div style="display: flex; gap: 0.35rem;">
+              <button type="button" class="btn-secondary" onclick="openSignModal('${unit.id}', '${c.id}')" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">
+                ✍️ Ký số
+              </button>
+              <button type="button" class="btn-secondary" onclick="openPdfModal('${unit.id}', '${c.id}')" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">
+                📄 Xem PDF
+              </button>
+              ${unit.contracts.length > 1 ? `
+                <button type="button" class="btn-icon" onclick="deleteContractFromUnit('${c.id}')" style="color: var(--color-danger);" title="Xóa hợp đồng này">
+                  🗑️
+                </button>
+              ` : ''}
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.4fr 1.6fr 1fr; gap: 0.75rem; margin-bottom: 0.65rem;">
+            <div>
+              <label class="form-label">Số / Mã hợp đồng</label>
+              <input type="text" class="form-input c-input-code" data-id="${c.id}" value="${c.code || ''}">
+            </div>
+            <div>
+              <label class="form-label">Gói dịch vụ</label>
+              <input type="text" class="form-input c-input-package" data-id="${c.id}" value="${c.package || ''}">
+            </div>
+            <div>
+              <label class="form-label">Giá trị (VNĐ)</label>
+              <input type="text" class="form-input c-input-val" data-id="${c.id}" value="${c.value || '0 VND'}">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label class="form-label">Ngày hiệu lực</label>
+              <input type="date" class="form-input c-input-start" data-id="${c.id}" value="${toInputDate(c.date)}">
+            </div>
+            <div>
+              <label class="form-label">Ngày hết hạn</label>
+              <input type="date" class="form-input c-input-end" data-id="${c.id}" value="${toInputDate(c.endDate)}">
+            </div>
+            <div>
+              <label class="form-label">Trạng thái ký</label>
+              <select class="form-select c-input-status" data-id="${c.id}" style="width: 100%;">
+                <option value="signed" ${c.status === 'signed' ? 'selected' : ''}>Đã ký số</option>
+                <option value="pending" ${c.status === 'pending' ? 'selected' : ''}>Chờ ký</option>
+                <option value="almost_signed" ${c.status === 'almost_signed' ? 'selected' : ''}>Sắp ký HĐ</option>
+              </select>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function promptChangeUnitRegion() {
+      const unit = units.find(u => u.id === editingUnitId);
+      if (!unit) return;
+      const regions = ['Bến Cát', 'Dầu Tiếng', 'Dĩ An', 'Phú Giáo', 'Tân Uyên', 'Thủ Dầu Một', 'Thuận An'];
+      const chosen = prompt(`Chọn địa bàn mới cho "${unit.name}":\n(${regions.join(', ')})`, unit.khuVuc || 'Bến Cát');
+      if (chosen && regions.includes(chosen.trim())) {
+        unit.khuVuc = chosen.trim();
+        document.getElementById('modal-unit-khuvuc-pill').innerHTML = `📍 ${unit.khuVuc} ✏️`;
       }
     }
+
+    function addNewContractToCurrentUnit() {
+      const unit = units.find(u => u.id === editingUnitId);
+      if (!unit) return;
+      const newId = `${unit.id}-${unit.contracts.length + 1}`;
+      unit.contracts.push({
+        id: newId,
+        code: `2026/PL/${unit.khuVuc.toUpperCase()}-${unit.contracts.length + 1}`,
+        name: `Phụ lục dịch vụ CNTT Y tế - ${unit.name}`,
+        fileName: `HD_2026_${newId}.pdf`,
+        fileSize: '1.2 MB',
+        package: 'VNPT HIS - Quản lý Khám chữa bệnh',
+        value: '18,000,000 VND',
+        date: '01/01/2026',
+        endDate: '31/12/2026',
+        status: 'pending',
+        ms1Done: false,
+        ms2Done: false,
+        ms3Done: false,
+        signedBy: '',
+        signedTime: '',
+        salesUnit: 'VNPT ' + unit.khuVuc,
+        am: unit.am || '',
+        tpm: 'Lê Trung Kiên',
+        mst: unit.mst || ''
+      });
+      renderModalContractsList(unit);
+      showToast('Đã thêm một hợp đồng mới vào danh sách', 'info');
+    }
+
+    function deleteContractFromUnit(contractId) {
+      const unit = units.find(u => u.id === editingUnitId);
+      if (!unit) return;
+      if (confirm('Bạn có chắc chắn muốn xóa hợp đồng này khỏi đơn vị không?')) {
+        unit.contracts = unit.contracts.filter(c => c.id !== contractId);
+        renderModalContractsList(unit);
+        showToast('Đã xóa hợp đồng', 'warning');
+      }
+    }
+
+    function saveUnitAdjustments() {
+      const unit = units.find(u => u.id === editingUnitId);
+      if (!unit) return;
+
+      // Update General fields
+      unit.mst = document.getElementById('modal-input-mst').value.trim();
+      unit.am = document.getElementById('modal-input-am').value.trim();
+      const salesUnit = document.getElementById('modal-input-sales-unit').value.trim();
+      const cds = document.getElementById('modal-input-cds').value.trim();
+
+      const ms1 = document.getElementById('modal-ms1').checked;
+      const ms2 = document.getElementById('modal-ms2').checked;
+      const ms3 = document.getElementById('modal-ms3').checked;
+
+      // Format date input YYYY-MM-DD -> DD/MM/YYYY
+      const fromInputDate = (dVal) => {
+        if (!dVal) return '';
+        const p = dVal.split('-');
+        return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : dVal;
+      };
+
+      // Update contracts from DOM inputs
+      document.querySelectorAll('.c-input-code').forEach(input => {
+        const cid = input.getAttribute('data-id');
+        const c = unit.contracts.find(item => item.id === cid);
+        if (c) c.code = input.value.trim();
+      });
+
+      document.querySelectorAll('.c-input-package').forEach(input => {
+        const cid = input.getAttribute('data-id');
+        const c = unit.contracts.find(item => item.id === cid);
+        if (c) c.package = input.value.trim();
+      });
+
+      document.querySelectorAll('.c-input-val').forEach(input => {
+        const cid = input.getAttribute('data-id');
+        const c = unit.contracts.find(item => item.id === cid);
+        if (c) {
+          const num = parseNumericValue(input.value);
+          c.value = num > 0 ? formatVnd(num) : input.value.trim();
+        }
+      });
+
+      document.querySelectorAll('.c-input-start').forEach(input => {
+        const cid = input.getAttribute('data-id');
+        const c = unit.contracts.find(item => item.id === cid);
+        if (c) c.date = fromInputDate(input.value);
+      });
+
+      document.querySelectorAll('.c-input-end').forEach(input => {
+        const cid = input.getAttribute('data-id');
+        const c = unit.contracts.find(item => item.id === cid);
+        if (c) c.endDate = fromInputDate(input.value);
+      });
+
+      document.querySelectorAll('.c-input-status').forEach(select => {
+        const cid = input = select.getAttribute('data-id');
+        const c = unit.contracts.find(item => item.id === cid);
+        if (c) {
+          c.status = select.value;
+          c.ms1Done = ms1;
+          c.ms2Done = ms2;
+          c.ms3Done = ms3;
+          c.salesUnit = salesUnit;
+          c.am = unit.am;
+          c.cdsCode = cds;
+          c.mst = unit.mst;
+          if (c.status === 'signed' && !c.signedBy) {
+            c.signedBy = 'VNPT Bình Dương (Mã CA: GP2-1002517)';
+            c.signedTime = '28/10/2026 10:30:00';
+          }
+        }
+      });
+
+      saveUnitsToStorage();
+      closeAdjustModal();
+      updateAllViews();
+      showToast(`Đã lưu toàn bộ thông tin đơn vị "${unit.name}" thành công!`, 'success');
+    }
+
+    // =========================================================================
+    // MODAL 2: DIGITAL SIGNING SIMULATOR
+    // =========================================================================
+    function openSignModal(unitId, contractId) {
+      const unit = units.find(u => u.id === unitId);
+      if (!unit) return;
+      const c = unit.contracts.find(item => item.id === contractId) || unit.contracts[0];
+      if (!c) return;
+
+      signingTarget = { unitId, contractId: c.id, method: 'token' };
+
+      document.getElementById('sign-modal-unit-name').textContent = unit.name;
+      document.getElementById('sign-modal-contract-code').textContent = c.code || 'HĐ-2026';
+
+      // Reset steps
+      document.getElementById('sign-step-method').classList.remove('hidden');
+      document.getElementById('sign-step-pin').classList.add('hidden');
+      document.getElementById('sign-step-progress').classList.add('hidden');
+      document.getElementById('sign-pin-input').value = '';
+
+      document.getElementById('sign-modal').classList.add('active');
+    }
+
+    function closeSignModal() {
+      document.getElementById('sign-modal').classList.remove('active');
+    }
+
+    function proceedToPinInput(method) {
+      signingTarget.method = method;
+      document.getElementById('sign-step-method').classList.add('hidden');
+      document.getElementById('sign-step-pin').classList.remove('hidden');
+      document.getElementById('pin-prompt-label').textContent = method === 'token' 
+        ? 'Nhập mã PIN USB Token VNPT-CA (Mặc định: 123456):' 
+        : 'Nhập mã PIN VNPT SmartCA trên thiết bị:';
+      document.getElementById('sign-pin-input').focus();
+    }
+
+    function backToSignMethod() {
+      document.getElementById('sign-step-pin').classList.add('hidden');
+      document.getElementById('sign-step-method').classList.remove('hidden');
+    }
+
+    function executeDigitalSign() {
+      const pin = document.getElementById('sign-pin-input').value.trim();
+      if (!pin) {
+        alert('Vui lòng nhập mã PIN ký số!');
+        return;
+      }
+
+      document.getElementById('sign-step-pin').classList.add('hidden');
+      document.getElementById('sign-step-progress').classList.remove('hidden');
+
+      setTimeout(() => {
+        const unit = units.find(u => u.id === signingTarget.unitId);
+        if (unit) {
+          const c = unit.contracts.find(item => item.id === signingTarget.contractId);
+          if (c) {
+            c.status = 'signed';
+            c.ms1Done = true;
+            c.ms2Done = true;
+            c.ms3Done = true;
+            c.signedBy = signingTarget.method === 'token' ? 'VNPT Bình Dương (Mã Token: VNPT-PKI-8821)' : 'VNPT Bình Dương (SmartCA GP2-1002517)';
+            c.signedTime = '28/10/2026 10:35:00';
+          }
+        }
+
+        saveUnitsToStorage();
+        closeSignModal();
+        updateAllViews();
+        if (editingUnitId) openAdjustModal(editingUnitId);
+        showToast('Ký số điện tử thành công! Chứng thư số đã được ghim vào văn bản.', 'success');
+      }, 1200);
+    }
+
+    // =========================================================================
+    // MODAL 3: PDF VIEWER & DOWNLOAD
+    // =========================================================================
+    function openPdfModal(unitId, contractId) {
+      const unit = units.find(u => u.id === unitId);
+      if (!unit) return;
+      const c = unit.contracts.find(item => item.id === contractId) || unit.contracts[0];
+      if (!c) return;
+
+      document.getElementById('pdf-modal-title').textContent = `📄 Xem văn bản: ${c.fileName || 'HopDong.pdf'}`;
+      document.getElementById('pdf-doc-title').textContent = c.name || 'HỢP ĐỒNG CUNG CẤP DỊCH VỤ PHẦN MỀM Y TẾ';
+      document.getElementById('pdf-doc-code').textContent = `Số: ${c.code || '2026/HĐ/VNPT'}`;
+      document.getElementById('pdf-doc-unit-name').textContent = unit.name;
+      document.getElementById('pdf-doc-mst').textContent = unit.mst || c.mst || '—';
+      document.getElementById('pdf-doc-package').textContent = c.package || 'Hệ sinh thái Y tế số VNPT';
+      document.getElementById('pdf-doc-value').textContent = c.value || '25,200,000 VND';
+      document.getElementById('pdf-doc-start').textContent = c.date || '01/01/2026';
+      document.getElementById('pdf-doc-end').textContent = c.endDate || '31/12/2026';
+
+      const stampBox = document.getElementById('pdf-stamp-box');
+      if (c.status === 'signed') {
+        stampBox.style.display = 'flex';
+        document.getElementById('pdf-stamp-time').textContent = `Thời gian: ${c.signedTime || '01/01/2026 09:00:00'}`;
+      } else {
+        stampBox.style.display = 'none';
+      }
+
+      document.getElementById('pdf-modal').classList.add('active');
+    }
+
+    function closePdfModal() {
+      document.getElementById('pdf-modal').classList.remove('active');
+    }
+
+    function downloadSimulatedPdf() {
+      showToast('Đang tạo và tải tệp hợp đồng PDF về máy...', 'info');
+      setTimeout(() => {
+        showToast('Đã tải xuống thành công tệp hợp đồng PDF!', 'success');
+      }, 800);
+    }
+
+    // =========================================================================
+    // MODAL 4: ADD CONTRACT MODAL
+    // =========================================================================
+    function openAddContractModal() {
+      document.getElementById('add-unit-name').value = '';
+      document.getElementById('add-contract-code').value = '';
+      document.getElementById('add-contract-val').value = '25200000';
+      document.getElementById('add-contract-start').value = '2026-01-01';
+      document.getElementById('add-contract-end').value = '2026-12-31';
+      document.getElementById('add-modal').classList.add('active');
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').classList.remove('active');
+    }
+
+    function submitAddNewContract() {
+      const name = document.getElementById('add-unit-name').value.trim();
+      const region = document.getElementById('add-unit-region').value;
+      const code = document.getElementById('add-contract-code').value.trim();
+      const pkg = document.getElementById('add-contract-package').value;
+      const val = parseInt(document.getElementById('add-contract-val').value, 10) || 0;
+      const status = document.getElementById('add-contract-status').value;
+      const start = document.getElementById('add-contract-start').value;
+      const end = document.getElementById('add-contract-end').value;
+
+      if (!name || !code) {
+        alert('Vui lòng nhập tên đơn vị và số hợp đồng!');
+        return;
+      }
+
+      const fromInputDate = (dVal) => {
+        if (!dVal) return '';
+        const p = dVal.split('-');
+        return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : dVal;
+      };
+
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+      const newUnit = {
+        id: slug,
+        name: name,
+        avatar: name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase(),
+        khuVuc: region,
+        mst: '',
+        am: '',
+        tpm: 'Lê Trung Kiên',
+        contracts: [{
+          id: `${slug}-1`,
+          code: code,
+          name: `Hợp đồng cung cấp dịch vụ ${pkg} - ${name}`,
+          fileName: `HD_2026_${slug}.pdf`,
+          fileSize: '1.5 MB',
+          package: pkg,
+          value: formatVnd(val),
+          date: fromInputDate(start) || '01/01/2026',
+          endDate: fromInputDate(end) || '31/12/2026',
+          status: status,
+          ms1Done: status === 'signed',
+          ms2Done: status === 'signed',
+          ms3Done: status === 'signed',
+          signedBy: status === 'signed' ? 'VNPT Bình Dương (Mã CA: GP2-1002517)' : '',
+          signedTime: status === 'signed' ? '28/10/2026 10:00:00' : '',
+          salesUnit: 'VNPT ' + region,
+          am: '',
+          tpm: 'Lê Trung Kiên',
+          mst: ''
+        }]
+      };
+
+      units.unshift(newUnit);
+      saveUnitsToStorage();
+      closeAddModal();
+      updateAllViews();
+      showToast(`Đã thêm mới đơn vị "${name}" thành công!`, 'success');
+    }
+
+    // =========================================================================
+    // BATCH SELECTION & ACTIONS
+    // =========================================================================
+    function toggleSelectAll(isChecked) {
+      const filtered = getFilteredUnits();
+      if (isChecked) {
+        filtered.forEach(u => selectedUnitIds.add(u.id));
+      } else {
+        selectedUnitIds.clear();
+      }
+      updateTable();
+    }
+
+    function toggleUnitSelection(unitId, isChecked) {
+      if (isChecked) selectedUnitIds.add(unitId);
+      else selectedUnitIds.delete(unitId);
+      updateTable();
+    }
+
+    function clearBatchSelection() {
+      selectedUnitIds.clear();
+      updateTable();
+    }
+
+    function updateBatchBar() {
+      const bar = document.getElementById('batch-bar');
+      const countEl = document.getElementById('batch-selected-count');
+      const checkAll = document.getElementById('check-all');
+      
+      const count = selectedUnitIds.size;
+      if (count > 0) {
+        bar.classList.add('visible');
+        countEl.textContent = `Đã chọn ${count} đơn vị`;
+      } else {
+        bar.classList.remove('visible');
+      }
+
+      if (checkAll) {
+        const filtered = getFilteredUnits();
+        checkAll.checked = filtered.length > 0 && filtered.every(u => selectedUnitIds.has(u.id));
+      }
+    }
+
+    function batchSignSelected() {
+      if (selectedUnitIds.size === 0) return;
+      if (confirm(`Bạn có chắc chắn muốn Ký số điện tử cho toàn bộ ${selectedUnitIds.size} đơn vị đang chọn không?`)) {
+        units.forEach(u => {
+          if (selectedUnitIds.has(u.id)) {
+            u.contracts.forEach(c => {
+              c.status = 'signed';
+              c.ms1Done = true;
+              c.ms2Done = true;
+              c.ms3Done = true;
+              c.signedBy = 'VNPT Bình Dương (Mã CA: GP2-1002517)';
+              c.signedTime = '28/10/2026 10:40:00';
+            });
+          }
+        });
+        saveUnitsToStorage();
+        clearBatchSelection();
+        updateAllViews();
+        showToast('Ký số hàng loạt thành công!', 'success');
+      }
+    }
+
+    function batchChangeRegion() {
+      if (selectedUnitIds.size === 0) return;
+      const regions = ['Bến Cát', 'Dầu Tiếng', 'Dĩ An', 'Phú Giáo', 'Tân Uyên', 'Thủ Dầu Một', 'Thuận An'];
+      const chosen = prompt(`Chọn địa bàn áp dụng cho ${selectedUnitIds.size} đơn vị:\n(${regions.join(', ')})`);
+      if (chosen && regions.includes(chosen.trim())) {
+        units.forEach(u => {
+          if (selectedUnitIds.has(u.id)) {
+            u.khuVuc = chosen.trim();
+          }
+        });
+        saveUnitsToStorage();
+        clearBatchSelection();
+        updateAllViews();
+        showToast(`Đã chuyển địa bàn ${selectedUnitIds.size} đơn vị thành: ${chosen.trim()}`, 'success');
+      }
+    }
+
+    // =========================================================================
+    // EXPORT TO EXCEL / CSV
+    // =========================================================================
+    function exportToExcel() {
+      let csv = "\uFEFF"; // UTF-8 BOM
+      csv += "STT,Tên Đơn Vị Thụ Hưởng,Địa Bàn,Mã Số Thuế,Chuyên Viên AM,Phụ Trách TPM,Mã Hợp Đồng,Gói Dịch Vụ,Giá Trị Hợp Đồng (VNĐ),Ngày Hiệu Lực,Ngày Hết Hạn,Trạng Thái Ký\n";
+
+      let idx = 1;
+      units.forEach(u => {
+        u.contracts.forEach(c => {
+          const clean = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
+          csv += [
+            idx++,
+            clean(u.name),
+            clean(u.khuVuc),
+            clean(u.mst || c.mst),
+            clean(u.am || c.am),
+            clean(u.tpm || 'Lê Trung Kiên'),
+            clean(c.code),
+            clean(c.package),
+            parseNumericValue(c.value),
+            clean(c.date),
+            clean(c.endDate),
+            clean(c.status === 'signed' ? 'Đã ký số' : 'Chờ ký')
+          ].join(',') + "\n";
+        });
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `DS_HopDong_VNPT_HIS_BinhDuong_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Đã xuất file Excel / CSV dữ liệu hợp đồng thành công!', 'success');
+    }
+
+    function exportSelected() {
+      if (selectedUnitIds.size === 0) return;
+      let csv = "\uFEFF";
+      csv += "STT,Tên Đơn Vị,Địa Bàn,Số HĐ,Gói Dịch Vụ,Giá Trị (VNĐ),Trạng Thái\n";
+      let idx = 1;
+      units.forEach(u => {
+        if (selectedUnitIds.has(u.id)) {
+          u.contracts.forEach(c => {
+            csv += `${idx++},"${u.name}","${u.khuVuc}","${c.code}","${c.package}",${parseNumericValue(c.value)},"${c.status}"\n`;
+          });
+        }
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `DS_DaChon_VNPT_HIS.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Đã xuất danh sách các đơn vị đã chọn!', 'success');
+    }
+
+    // Khôi phục Database từ file gốc
+    function resetDatabase() {
+      if (confirm('Khôi phục cơ sở dữ liệu hợp đồng về mặc định từ file DS_KHACHHANG (1).xlsx?\nTất cả các chỉnh sửa cục bộ trong trình duyệt sẽ được làm mới.')) {
+        localStorage.removeItem('vnpt_his_units');
+        localStorage.removeItem('vnpt_his_units_version');
+        location.reload();
+      }
+    }
+
+    function handleModalOverlayClick(e, modalId) {
+      if (e.target.id === modalId) {
+        document.getElementById(modalId)?.classList.remove('active');
+      }
+    }
+
+    // Keyboard ESC closes modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+      }
+    });
+
+    // Initialize Page
+    window.addEventListener('DOMContentLoaded', () => {
+      updateAllViews();
+    });
   </script>
-
-  <!-- MODAL DIALOG FOR ADDING CONTRACT -->
-  <div class="modal-overlay" id="add-contract-modal" role="dialog" aria-modal="true" aria-labelledby="add-contract-modal-title">
-    <div class="modal-card glass-card" style="max-width: 460px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0;">
-        <h3 id="add-contract-modal-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 800; color: var(--vnpt-blue-dark); margin: 0;">➕ Bổ sung Hợp đồng mới</h3>
-        <button type="button" onclick="closeAddContractModal()" aria-label="Đóng cửa sổ thêm hợp đồng" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 0.9rem;">
-        <div>
-          <label for="add-contract-unit" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Đơn vị thụ hưởng</label>
-          <select id="add-contract-unit" class="form-input" style="width: 100%;">
-          </select>
-        </div>
-        <div>
-          <label for="add-contract-code" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Mã hợp đồng</label>
-          <input type="text" id="add-contract-code" class="form-input" style="width: 100%;" placeholder="Ví dụ: HD-99/2026/VNPT…">
-        </div>
-        <div>
-          <label for="add-contract-name" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Tên hợp đồng / Nội dung</label>
-          <input type="text" id="add-contract-name" class="form-input" style="width: 100%;" placeholder="Hợp đồng cung cấp dịch vụ HIS/LIS…">
-        </div>
-        <div>
-          <label for="add-contract-value" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Giá trị hợp đồng</label>
-          <input type="text" id="add-contract-value" class="form-input" style="width: 100%;" placeholder="Ví dụ: 50,000,000 VND">
-        </div>
-        <div style="display: flex; gap: 0.85rem;">
-          <div style="flex: 1;">
-            <label for="add-contract-date" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Ngày ký</label>
-            <input type="date" id="add-contract-date" class="form-input" style="width: 100%;">
-          </div>
-          <div style="flex: 1;">
-            <label for="add-contract-status" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 0.3rem; display: block;">Trạng thái</label>
-            <select id="add-contract-status" class="form-input" style="width: 100%;">
-              <option value="signed">Đã ký số</option>
-              <option value="pending">Chờ ký</option>
-              <option value="almost_signed">Sắp ký hợp đồng</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top: 1.35rem; padding-top: 0.85rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 0.6rem;">
-        <button type="button" class="btn-secondary" onclick="closeAddContractModal()">Hủy</button>
-        <button type="button" class="btn-primary" onclick="submitAddContract()">Lưu Hợp đồng</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DIALOG FOR EDITING REGION -->
-  <div class="modal-overlay" id="edit-khuvuc-modal" role="dialog" aria-modal="true" aria-labelledby="edit-khuvuc-modal-title">
-    <div class="modal-card glass-card" style="max-width: 390px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0;">
-        <h3 id="edit-khuvuc-modal-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 800; color: var(--vnpt-blue-dark); margin: 0;">📍 Cập nhật Khu vực</h3>
-        <button type="button" onclick="closeEditKhuVucModal()" aria-label="Đóng cửa sổ cập nhật khu vực" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 0.85rem;">
-        <div>
-          <label for="edit-khuvuc-select" style="font-size: 0.82rem; color: var(--color-text-secondary); margin-bottom: 0.4rem; display: block; font-weight: 700;" id="edit-khuvuc-unit-name">Đơn vị y tế</label>
-          <select id="edit-khuvuc-select" class="form-input" style="width: 100%;">
-            <option value="">-- Chưa thiết lập (Để trống) --</option>
-            <option value="Thủ Dầu Một">Thủ Dầu Một</option>
-            <option value="Bến Cát">Bến Cát</option>
-            <option value="Phú Giáo">Phú Giáo</option>
-            <option value="Tân Uyên">Tân Uyên</option>
-            <option value="Dầu Tiếng">Dầu Tiếng</option>
-            <option value="Thuận An">Thuận An</option>
-            <option value="Dĩ An">Dĩ An</option>
-          </select>
-        </div>
-      </div>
-      <div style="margin-top: 1.35rem; padding-top: 0.85rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 0.6rem;">
-        <button type="button" class="btn-secondary" onclick="closeEditKhuVucModal()">Hủy</button>
-        <button type="button" class="btn-primary" onclick="submitEditKhuVuc()">Cập nhật</button>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
