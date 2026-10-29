@@ -1058,7 +1058,62 @@
     .hidden {
       display: none !important;
     }
-</style>
+
+    /* Phân Kỳ Thanh Toán Modal & Controls */
+    .phanky-preset-btn {
+      padding: 0.35rem 0.65rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      border-radius: 6px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334e68;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .phanky-preset-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .phanky-preset-btn.active {
+      background: #166534;
+      color: #ffffff;
+      border-color: #166534;
+    }
+    .month-chk-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0.25rem;
+      border-radius: 6px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #475569;
+    }
+    .month-chk-box:hover {
+      border-color: #94a3b8;
+      background: #f8fafc;
+    }
+    .month-chk-box.active {
+      background: #f0fdf4;
+      border-color: #16a34a;
+      color: #166534;
+      box-shadow: 0 0 0 1px #16a34a;
+    }
+    .phanky-badge:hover {
+      background: #dcfce7 !important;
+      border-color: #86efac !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+  </style>
 
 </head>
 <body>
@@ -1489,6 +1544,16 @@
               </button>
             </div>
 
+            <!-- Calculation Mode Toggle -->
+            <div class="chart-toggle-group" id="group-calc-mode">
+              <button type="button" class="chart-toggle-btn active" id="btn-calc-accrual" onclick="setRevenueCalcMode('accrual')" title="Phân bổ tuyến tính theo chuẩn IFRS/VAS">
+                📊 DT Phân bổ (12 tháng)
+              </button>
+              <button type="button" class="chart-toggle-btn" id="btn-calc-cashflow" onclick="setRevenueCalcMode('cashflow')" title="Dòng tiền thực thu rơi vào các tháng theo Phân kỳ TT">
+                💵 Dòng tiền Phân kỳ TT
+              </button>
+            </div>
+
             <!-- Year Select (active in Month mode) -->
             <select id="rev-year-select" class="form-select" onchange="renderRevenueAnalysis()">
               <option value="2026" selected>Năm 2026</option>
@@ -1580,6 +1645,81 @@
   <!-- =========================================================================
        MODAL 1: Unified Unit & Contract Adjustment Popup (Popup Điều Chỉnh)
        ========================================================================= -->
+    <!-- MODAL: ADJUST PHÂN KỲ THANH TOÁN (FROM DATA TỔNG) -->
+  <div class="modal-overlay" id="phanky-modal" onclick="handleModalOverlayClick(event, 'phanky-modal')">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: #f0fdf4; color: #166534; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid #bbf7d0;">💳</div>
+          <div>
+            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--vnpt-blue-dark);">Sửa Phân Kỳ Thanh Toán</h3>
+            <span id="phanky-modal-unit-name" style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 600;">Đơn vị thụ hưởng...</span>
+          </div>
+        </div>
+        <button type="button" class="btn-icon" onclick="closePhanKyModal()" style="font-size: 1.1rem;">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding: 1.25rem;">
+        <!-- Contract Meta Card -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <div style="font-size: 0.72rem; color: var(--color-text-muted);">Số Hợp đồng</div>
+            <div id="phanky-modal-code" style="font-family: monospace; font-size: 0.82rem; font-weight: 700; color: var(--vnpt-blue);">20260101/...</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.72rem; color: var(--color-text-muted);">Tổng giá trị HĐ</div>
+            <div id="phanky-modal-val" style="font-size: 1rem; font-weight: 800; color: #0066b3;">25,200,000 VND</div>
+          </div>
+        </div>
+
+        <!-- Quick Presets -->
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">
+            ⚡ Chọn mẫu phân kỳ thanh toán nhanh:
+          </label>
+          <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;" id="phanky-preset-group">
+            <button type="button" class="phanky-preset-btn" onclick="applyPhanKyPreset('monthly')">📅 Hàng tháng (12 kỳ)</button>
+            <button type="button" class="phanky-preset-btn" onclick="applyPhanKyPreset('quarterly')">📆 Theo Quý (T3, T6, T9, T12)</button>
+            <button type="button" class="phanky-preset-btn" onclick="applyPhanKyPreset('semi')">📆 6 tháng (T6, T12)</button>
+            <button type="button" class="phanky-preset-btn" onclick="applyPhanKyPreset('t1_t6')">⚡ 2 kỳ (T1, T6)</button>
+            <button type="button" class="phanky-preset-btn" onclick="applyPhanKyPreset('t3_t9')">⚡ 2 kỳ (T3, T9)</button>
+            <button type="button" class="phanky-preset-btn" onclick="applyPhanKyPreset('t5_t11')">⚡ 2 kỳ (T5, T11)</button>
+            <button type="button" class="phanky-preset-btn" onclick="applyPhanKyPreset('t4_t10')">⚡ 2 kỳ (T4, T10)</button>
+            <button type="button" class="phanky-preset-btn" onclick="applyPhanKyPreset('once_t3')">🎯 1 lần (Tháng 3)</button>
+          </div>
+        </div>
+
+        <!-- Detailed Month Checkboxes -->
+        <div style="margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <label style="font-size: 0.82rem; font-weight: 700; color: #1e293b; margin: 0;">
+              🗓️ Chi tiết các tháng thanh toán (Năm 2026):
+            </label>
+            <span style="font-size: 0.72rem; color: #0284c7; cursor: pointer; font-weight: 600;" onclick="toggleAllPhanKyMonths()">Chọn tất cả / Bỏ chọn</span>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem;" id="phanky-month-grid">
+            <!-- Dynamically populated T01..T12 -->
+          </div>
+        </div>
+
+        <!-- Calculation Summary Box -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;">
+          <span style="color: #166534; font-weight: 600;" id="phanky-summary-text">Đã chọn: 2 kỳ thanh toán</span>
+          <span style="color: #15803d; font-weight: 800; font-size: 0.9rem;" id="phanky-per-period-val">~12.600.000 VNĐ / kỳ</span>
+        </div>
+
+      </div>
+
+      <div class="modal-footer" style="padding: 1rem 1.25rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="btn-secondary" onclick="closePhanKyModal()">Hủy</button>
+        <button type="button" class="btn-primary" onclick="savePhanKyModal()" style="background: #166534; border-color: #166534;">
+          💾 Lưu Phân Kỳ & Cập Nhật Sheet
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="adjust-unit-modal" onclick="handleModalOverlayClick(event, 'adjust-unit-modal')">
     <div class="modal-card modal-lg">
       <div class="modal-header">
@@ -3773,7 +3913,7 @@
 ];
 
     // Database version control
-    const CURRENT_DB_VERSION = '2026_10_29_v8_fix_syntax_report';
+    const CURRENT_DB_VERSION = '2026_10_29_v9_editable_phanky';
     const storedVersion = localStorage.getItem('vnpt_his_units_version');
     const storedUnits = localStorage.getItem('vnpt_his_units');
 
@@ -5011,6 +5151,158 @@
     // =========================================================================
     let currentMainTab = 'contracts'; // 'contracts' or 'revenue'
     let currentRevenuePeriodMode = 'month'; // 'month' or 'year'
+    let currentRevenueCalcMode = 'accrual'; // 'accrual' or 'cashflow'
+    let editingPhanKyUnitId = null;
+    let editingPhanKyContractId = null;
+    let tempPhanKyMonths = new Set();
+
+    function setRevenueCalcMode(mode) {
+      currentRevenueCalcMode = mode;
+      document.getElementById('btn-calc-accrual')?.classList.toggle('active', mode === 'accrual');
+      document.getElementById('btn-calc-cashflow')?.classList.toggle('active', mode === 'cashflow');
+      renderRevenueAnalysis();
+      showToast(`Chế độ xem ma trận: ${mode === 'accrual' ? 'Doanh thu phân bổ đều 12 tháng (IFRS/VAS)' : 'Dòng tiền rơi theo Phân kỳ thanh toán'}`, 'info');
+    }
+
+    function openPhanKyModal(unitId, contractId) {
+      const u = units.find(item => item.id === unitId);
+      if (!u) return;
+      const c = u.contracts.find(item => item.id === contractId) || u.contracts[0];
+      if (!c) return;
+
+      editingPhanKyUnitId = unitId;
+      editingPhanKyContractId = c.id;
+
+      document.getElementById('phanky-modal-unit-name').textContent = u.name;
+      document.getElementById('phanky-modal-code').textContent = c.code || 'HĐ-2026';
+      document.getElementById('phanky-modal-val').textContent = formatVnd(parseNumericValue(c.value));
+
+      // Load active months
+      tempPhanKyMonths = new Set(c.activeMonthsTong || [3, 6, 9, 12]);
+      renderPhanKyMonthGrid(parseNumericValue(c.value));
+
+      document.getElementById('phanky-modal').classList.add('active');
+    }
+
+    function closePhanKyModal() {
+      document.getElementById('phanky-modal').classList.remove('active');
+      editingPhanKyUnitId = null;
+      editingPhanKyContractId = null;
+    }
+
+    function renderPhanKyMonthGrid(totalVal) {
+      const grid = document.getElementById('phanky-month-grid');
+      if (!grid) return;
+
+      let html = '';
+      for (let m = 1; m <= 12; m++) {
+        const isChecked = tempPhanKyMonths.has(m);
+        const mStr = m < 10 ? '0' + m : m;
+        html += `
+          <div class="month-chk-box ${isChecked ? 'active' : ''}" onclick="togglePhanKyMonth(${m}, ${totalVal})">
+            <span>T${mStr}</span>
+            <span style="font-size: 0.65rem; font-weight: 500; opacity: 0.85;">${isChecked ? '✓ Đóng' : '—'}</span>
+          </div>
+        `;
+      }
+      grid.innerHTML = html;
+      updatePhanKySummary(totalVal);
+    }
+
+    function togglePhanKyMonth(m, totalVal) {
+      if (tempPhanKyMonths.has(m)) {
+        tempPhanKyMonths.delete(m);
+      } else {
+        tempPhanKyMonths.add(m);
+      }
+      renderPhanKyMonthGrid(totalVal);
+    }
+
+    function toggleAllPhanKyMonths() {
+      const u = units.find(item => item.id === editingPhanKyUnitId);
+      const c = u ? (u.contracts.find(item => item.id === editingPhanKyContractId) || u.contracts[0]) : null;
+      const totalVal = c ? parseNumericValue(c.value) : 0;
+
+      if (tempPhanKyMonths.size === 12) {
+        tempPhanKyMonths.clear();
+      } else {
+        tempPhanKyMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+      }
+      renderPhanKyMonthGrid(totalVal);
+    }
+
+    function applyPhanKyPreset(preset) {
+      const u = units.find(item => item.id === editingPhanKyUnitId);
+      const c = u ? (u.contracts.find(item => item.id === editingPhanKyContractId) || u.contracts[0]) : null;
+      const totalVal = c ? parseNumericValue(c.value) : 0;
+
+      if (preset === 'monthly') tempPhanKyMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+      else if (preset === 'quarterly') tempPhanKyMonths = new Set([3, 6, 9, 12]);
+      else if (preset === 'semi') tempPhanKyMonths = new Set([6, 12]);
+      else if (preset === 't1_t6') tempPhanKyMonths = new Set([1, 6]);
+      else if (preset === 't3_t9') tempPhanKyMonths = new Set([3, 9]);
+      else if (preset === 't5_t11') tempPhanKyMonths = new Set([5, 11]);
+      else if (preset === 't4_t10') tempPhanKyMonths = new Set([4, 10]);
+      else if (preset === 'once_t3') tempPhanKyMonths = new Set([3]);
+
+      renderPhanKyMonthGrid(totalVal);
+    }
+
+    function updatePhanKySummary(totalVal) {
+      const count = tempPhanKyMonths.size;
+      const summaryText = document.getElementById('phanky-summary-text');
+      const perValEl = document.getElementById('phanky-per-period-val');
+      if (summaryText) {
+        summaryText.textContent = `Đã chọn: ${count} kỳ thanh toán trong năm 2026`;
+      }
+      if (perValEl) {
+        if (count > 0) {
+          const perPeriod = Math.round(totalVal / count);
+          perValEl.textContent = `~${formatVnd(perPeriod)} / kỳ`;
+        } else {
+          perValEl.textContent = '0 VNĐ';
+        }
+      }
+    }
+
+    function savePhanKyModal() {
+      if (!editingPhanKyUnitId) return;
+      const u = units.find(item => item.id === editingPhanKyUnitId);
+      if (!u) return;
+      const c = u.contracts.find(item => item.id === editingPhanKyContractId) || u.contracts[0];
+      if (!c) return;
+
+      const activeList = Array.from(tempPhanKyMonths).sort((a, b) => a - b);
+      c.activeMonthsTong = activeList;
+
+      if (activeList.length === 12) {
+        c.phanKyThanhToan = 'Hàng tháng (12 kỳ)';
+      } else if (JSON.stringify(activeList) === JSON.stringify([3, 6, 9, 12])) {
+        c.phanKyThanhToan = 'Theo Quý (T3, T6, T9, T12)';
+      } else if (JSON.stringify(activeList) === JSON.stringify([6, 12])) {
+        c.phanKyThanhToan = '6 tháng / kỳ (T06, T12)';
+      } else if (activeList.length === 1) {
+        c.phanKyThanhToan = `1 lần (Tháng ${activeList[0] < 10 ? '0' + activeList[0] : activeList[0]})`;
+      } else if (activeList.length === 0) {
+        c.phanKyThanhToan = 'Chưa phân kỳ';
+      } else {
+        const mStrs = activeList.map(m => `T${m < 10 ? '0' + m : m}`);
+        c.phanKyThanhToan = `Định kỳ ${activeList.length} kỳ (${mStrs.join(', ')})`;
+      }
+
+      // Save to localStorage
+      try {
+        localStorage.setItem('vnpt_his_units', JSON.stringify(units));
+        localStorage.setItem('vnpt_his_units_version', CURRENT_DB_VERSION);
+      } catch (e) {
+        console.error("Lỗi lưu localStorage:", e);
+      }
+
+      closePhanKyModal();
+      renderRevenueAnalysis();
+      updateTable();
+      showToast(`✅ Đã cập nhật phân kỳ thanh toán cho: ${u.name}!`, 'success');
+    }
     let revTrendChartInstance = null;
     let revRegionChartInstance = null;
 
@@ -5088,34 +5380,38 @@
       if (!e) e = new Date(2026, 11, 31);
       if (e < s) e = s;
 
-      // Business Rule: Giá trị hợp đồng trong file tính theo chu kỳ 12 tháng của năm 2026!
-      // (Ví dụ BV Mỹ Phước: 669.6 tr là gói 12 tháng năm 2026 -> 55.8 tr/tháng, đủ 12 tháng = 669.6 tr)
-      const monthlyVal = val / 12.0;
-
+      // Mode-based allocation: Accrual (VAS 12 months) vs Cash flow (DATA TỔNG active months)
       const startY = s.getFullYear();
       const startM = s.getMonth() + 1;
       const endY = e.getFullYear();
       const endM = e.getMonth() + 1;
-
       const totalMonths = Math.max(1, (endY - startY) * 12 + (endM - startM) + 1);
+      const monthlyVal = val / 12.0;
 
       const monthlyMap = {};
       const yearlyMap = {};
 
-      let curY = startY;
-      let curM = startM;
-      for (let i = 0; i < totalMonths; i++) {
-        const mKey = `${curY}-${curM}`;
-        monthlyMap[mKey] = (monthlyMap[mKey] || 0) + monthlyVal;
-        yearlyMap[curY] = (yearlyMap[curY] || 0) + monthlyVal;
-
-        curM++;
-        if (curM > 12) {
-          curM = 1;
-          curY++;
+      if (currentRevenueCalcMode === 'cashflow' && c.activeMonthsTong && c.activeMonthsTong.length > 0) {
+        const activeCount = c.activeMonthsTong.length;
+        const perPeriod = val / activeCount;
+        c.activeMonthsTong.forEach(m => {
+          monthlyMap['2026-' + m] = perPeriod;
+        });
+        yearlyMap[2026] = val;
+      } else {
+        let curY = startY;
+        let curM = startM;
+        for (let i = 0; i < totalMonths; i++) {
+          const mKey = curY + '-' + curM;
+          monthlyMap[mKey] = (monthlyMap[mKey] || 0) + monthlyVal;
+          yearlyMap[curY] = (yearlyMap[curY] || 0) + monthlyVal;
+          curM++;
+          if (curM > 12) {
+            curM = 1;
+            curY++;
+          }
         }
       }
-
       return {
         val,
         start: s,
@@ -5252,7 +5548,11 @@
             <td class="sticky-col-2" style="font-weight: 700;" title="${r.unitName}">${r.unitName}</td>
             <td><span class="region-pill" style="font-size: 0.7rem; padding: 1px 6px;">${r.khuVuc}</span></td>
             <td class="text-left" style="font-family: monospace; font-size: 0.74rem; color: var(--vnpt-blue); font-weight: 600;" title="${r.code}">${r.code}</td>
-            <td class="text-left"><span style="display: inline-block; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-weight: 600; white-space: nowrap;">${r.phanKyThanhToan}</span></td>
+            <td class="text-left" onclick="openPhanKyModal('${r.unitId}', '${r.contractId}')" style="cursor: pointer;" title="Bấm vào đây để sửa phân kỳ thanh toán trực tiếp trên sheet">
+              <span class="phanky-badge" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 2px 7px; border-radius: 5px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-weight: 700; white-space: nowrap;">
+                💳 ${r.phanKyThanhToan} <span style="font-size: 0.65rem; color: #15803d;">✏️</span>
+              </span>
+            </td>
             <td class="text-right" style="font-weight: 700; font-variant-numeric: tabular-nums;">${formatVnd(r.val)}</td>
             ${monthCells}
             <td class="text-right" style="font-weight: 800; color: var(--vnpt-blue); font-variant-numeric: tabular-nums;">${formatVnd(Math.round(rowYearSum))}</td>
