@@ -3913,7 +3913,7 @@
 ];
 
     // Database version control
-    const CURRENT_DB_VERSION = '2026_10_29_v9_editable_phanky';
+    const CURRENT_DB_VERSION = '2026_10_29_v10_phanky_fixed';
     const storedVersion = localStorage.getItem('vnpt_his_units_version');
     const storedUnits = localStorage.getItem('vnpt_his_units');
 
@@ -5449,11 +5449,14 @@
 
           const model = getContractRevenueModel(c);
           rows.push({
+            unitId: u.id,
+            contractId: c.id,
             unitName: u.name,
             khuVuc: u.khuVuc || 'Bình Dương',
             code: c.code || 'HĐ-2026',
             package: c.package || 'Hệ sinh thái Y tế số',
             phanKyThanhToan: c.phanKyThanhToan || 'Theo Quý (Chuẩn VAS)',
+            activeMonthsTong: c.activeMonthsTong,
             dateStr: `${c.date || '01/01/2026'} → ${c.endDate || '31/12/2026'}`,
             status: c.status,
             ...model
