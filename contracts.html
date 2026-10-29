@@ -3773,7 +3773,7 @@
 ];
 
     // Database version control
-    const CURRENT_DB_VERSION = '2026_10_29_ds_khachhang_v7_data_tong';
+    const CURRENT_DB_VERSION = '2026_10_29_v8_fix_syntax_report';
     const storedVersion = localStorage.getItem('vnpt_his_units_version');
     const storedUnits = localStorage.getItem('vnpt_his_units');
 
@@ -4254,7 +4254,7 @@
           }
         });
 
-      } else {
+      } else if (currentChart1Mode === 'top10') {
         const unitSums = units.map(u => {
           let sum = 0;
           u.contracts.forEach(c => {
