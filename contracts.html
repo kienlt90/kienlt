@@ -3913,7 +3913,7 @@
 ];
 
     // Database version control
-    const CURRENT_DB_VERSION = '2026_10_29_v11_cashflow_default';
+    const CURRENT_DB_VERSION = '2026_10_29_v12_columbia_cashflow_fixed';
     const storedVersion = localStorage.getItem('vnpt_his_units_version');
     const storedUnits = localStorage.getItem('vnpt_his_units');
 
@@ -5357,13 +5357,37 @@
       let s = parseVnDate(c.date);
       let e = parseVnDate(c.endDate);
 
-      // Check if single-day lump sum contract (e.g. Columbia Asian RIS/PACS)
+      const monthlyMap = {};
+      const yearlyMap = {};
+
+      // 1. CASHFLOW MODE (Dòng tiền Phân kỳ TT) -> Always prioritize active payment months!
+      if (currentRevenueCalcMode === 'cashflow') {
+        const activeMonths = (c.activeMonthsTong && c.activeMonthsTong.length > 0)
+          ? c.activeMonthsTong
+          : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        const perPeriod = val / activeMonths.length;
+        activeMonths.forEach(m => {
+          monthlyMap['2026-' + m] = perPeriod;
+        });
+        yearlyMap[2026] = val;
+
+        return {
+          val,
+          start: s,
+          end: e,
+          totalMonths: activeMonths.length,
+          monthlyVal: perPeriod,
+          monthlyMap,
+          yearlyMap
+        };
+      }
+
+      // 2. ACCRUAL MODE (Phân bổ theo thời hạn dịch vụ)
+      // Check if single-day lump sum contract
       if (s && e && s.getTime() === e.getTime()) {
         const y = s.getFullYear();
         const m = s.getMonth() + 1;
-        const monthlyMap = {};
         monthlyMap[`${y}-${m}`] = val;
-        const yearlyMap = {};
         yearlyMap[y] = val;
         return {
           val,
@@ -5380,7 +5404,6 @@
       if (!e) e = new Date(2026, 11, 31);
       if (e < s) e = s;
 
-      // Mode-based allocation: Accrual (VAS 12 months) vs Cash flow (DATA TỔNG active months)
       const startY = s.getFullYear();
       const startM = s.getMonth() + 1;
       const endY = e.getFullYear();
@@ -5388,30 +5411,19 @@
       const totalMonths = Math.max(1, (endY - startY) * 12 + (endM - startM) + 1);
       const monthlyVal = val / 12.0;
 
-      const monthlyMap = {};
-      const yearlyMap = {};
-
-      if (currentRevenueCalcMode === 'cashflow' && c.activeMonthsTong && c.activeMonthsTong.length > 0) {
-        const activeCount = c.activeMonthsTong.length;
-        const perPeriod = val / activeCount;
-        c.activeMonthsTong.forEach(m => {
-          monthlyMap['2026-' + m] = perPeriod;
-        });
-        yearlyMap[2026] = val;
-      } else {
-        let curY = startY;
-        let curM = startM;
-        for (let i = 0; i < totalMonths; i++) {
-          const mKey = curY + '-' + curM;
-          monthlyMap[mKey] = (monthlyMap[mKey] || 0) + monthlyVal;
-          yearlyMap[curY] = (yearlyMap[curY] || 0) + monthlyVal;
-          curM++;
-          if (curM > 12) {
-            curM = 1;
-            curY++;
-          }
+      let curY = startY;
+      let curM = startM;
+      for (let i = 0; i < totalMonths; i++) {
+        const mKey = curY + '-' + curM;
+        monthlyMap[mKey] = (monthlyMap[mKey] || 0) + monthlyVal;
+        yearlyMap[curY] = (yearlyMap[curY] || 0) + monthlyVal;
+        curM++;
+        if (curM > 12) {
+          curM = 1;
+          curY++;
         }
       }
+
       return {
         val,
         start: s,
