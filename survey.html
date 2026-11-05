@@ -397,14 +397,58 @@
 
         /* --- GENERAL ACCESSIBILITY & TOUCH UTILITIES --- */
         html, body {
-            max-width: 100vw;
-            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: clip;
             -webkit-tap-highlight-color: transparent;
             text-rendering: optimizeLegibility;
         }
 
+        .form-container {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        main {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow-x: clip;
+        }
+
+        .form-panel {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .table-responsive {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
+            margin-top: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .table-responsive table {
+            width: 100%;
+            min-width: 500px;
+        }
+
         .mobile-only {
             display: none !important;
+        }
+
+        .table-swipe-hint {
+            display: none;
         }
 
         .desktop-only {
@@ -549,29 +593,42 @@
                 flex-shrink: 0 !important;
             }
 
+            /* Main vertical page container */
             .form-container {
-                grid-template-columns: 1fr !important;
-                gap: 0.75rem !important;
-                margin: 0.5rem auto 1.5rem auto !important;
-                padding: 0 0.75rem !important;
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                margin: 0 auto !important;
+                padding: 0.5rem 0.65rem 2rem 0.65rem !important;
+                box-sizing: border-box !important;
             }
 
             /* Sleek Horizontal Stepper on Mobile (height ~46px) */
             aside {
+                display: block !important;
                 position: sticky !important;
                 top: 52px !important;
                 z-index: 95 !important;
                 background-color: var(--bg-primary) !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                overflow: hidden !important;
                 padding: 0.25rem 0 !important;
-                margin: 0 !important;
+                margin: 0 0 0.5rem 0 !important;
                 height: auto !important;
-                display: block !important;
             }
 
             .sidebar-card {
-                padding: 0.4rem 0.5rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                padding: 0.35rem 0.5rem !important;
+                margin: 0 !important;
                 border-radius: 12px !important;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+                box-sizing: border-box !important;
             }
 
             .sidebar-card > div:first-child {
@@ -579,7 +636,11 @@
             }
 
             .step-list {
+                display: flex !important;
                 flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                width: 100% !important;
+                max-width: 100% !important;
                 overflow-x: auto !important;
                 white-space: nowrap !important;
                 gap: 0.4rem !important;
@@ -619,15 +680,27 @@
                 box-shadow: 0 2px 8px var(--accent-glow) !important;
             }
 
+            main {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+            }
+
             /* Main Form Panel on Mobile */
             .form-panel {
-                padding: 1.25rem 0.85rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                padding: 1.15rem 0.85rem !important;
                 border-radius: 14px !important;
+                box-sizing: border-box !important;
             }
 
             .section-header {
-                margin-bottom: 1rem !important;
-                padding-bottom: 0.5rem !important;
+                margin-bottom: 0.75rem !important;
+                padding-bottom: 0.4rem !important;
             }
 
             .section-title {
@@ -636,7 +709,7 @@
 
             .form-grid {
                 grid-template-columns: 1fr !important;
-                gap: 1rem !important;
+                gap: 0.85rem !important;
             }
 
             /* Prevent iOS auto-zoom by ensuring 16px font-size */
@@ -646,9 +719,55 @@
                 touch-action: manipulation !important;
             }
 
+            .form-group label,
+            .form-group div label {
+                min-width: unset !important;
+            }
+
+            #emr-search-input {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .table-swipe-hint {
+                display: flex !important;
+                font-size: 0.72rem;
+                font-weight: 600;
+                color: var(--accent-color);
+                background-color: var(--accent-glow);
+                border: 1px dashed var(--accent-color);
+                padding: 0.35rem 0.6rem;
+                border-radius: 8px;
+                margin-bottom: 0.4rem;
+                align-items: center;
+                gap: 0.35rem;
+            }
+
+            .table-responsive {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                overscroll-behavior-x: contain !important;
+                margin-top: 0.35rem !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .table-responsive table {
+                min-width: 500px !important;
+            }
+
+            .table-responsive input,
+            .table-responsive select {
+                font-size: 14px !important;
+                min-width: unset !important;
+            }
+
             .form-nav-buttons {
-                margin-top: 1.5rem !important;
-                gap: 0.75rem !important;
+                margin-top: 1.25rem !important;
+                gap: 0.65rem !important;
             }
 
             .form-nav-buttons .btn {
@@ -659,7 +778,6 @@
                 touch-action: manipulation !important;
             }
         }
-
     </style>
 </head>
 <body>
@@ -1563,10 +1681,19 @@
             const btn = document.getElementById(`btn-${stepId}`);
             if (btn) {
                 btn.classList.add('active');
-                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                const stepList = document.querySelector('.step-list');
+                if (stepList && stepList.scrollWidth > stepList.clientWidth) {
+                    const btnOffset = btn.offsetLeft;
+                    const btnWidth = btn.offsetWidth;
+                    const listWidth = stepList.offsetWidth;
+                    stepList.scrollTo({
+                        left: btnOffset - (listWidth / 2) + (btnWidth / 2),
+                        behavior: 'smooth'
+                    });
+                }
             }
             
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 
             if (stepId === 'EMR') {
                 setTimeout(filterEMRTable, 50);
@@ -1666,17 +1793,18 @@
                 tableRowsHtml += `
                     <tr id="dept-row-${idx}">
                         <td><input type="text" class="form-input" style="padding:0.4rem; width:50px;" value="${row['STT'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'STT', this.value)"></td>
-                        <td><input type="text" class="form-input" style="padding:0.5rem; font-weight:700; font-size:0.95rem; width:100%; min-width:450px;" value="${row['Tên khoa nội trú'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'Tên khoa nội trú', this.value)"></td>
+                        <td><input type="text" class="form-input" style="padding:0.5rem; font-weight:700; font-size:0.95rem; width:100%; min-width:200px;" value="${row['Tên khoa nội trú'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'Tên khoa nội trú', this.value)"></td>
                         <td><input type="number" class="form-input" style="padding:0.4rem; width:120px;" value="${row['Số giường'] || row['col_9'] || ''}" onchange="updateTableVal('${stepId}', ${idx}, 'Số giường', this.value)"></td>
                         <td><button class="btn btn-danger" style="padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="removeTableRow('${stepId}', ${idx})">🗑️ Xóa</button></td>
                     </tr>
                 `;
             });
             return `
-                <div style="margin-bottom: 1rem; display:flex; justify-content:space-between; align-items:center;">
+                <div style="margin-bottom: 1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
                     <span style="font-size:0.85rem; color:var(--text-secondary);">Nhập thông số giường bệnh của từng khoa lâm sàng:</span>
                     <button class="btn btn-primary" onclick="addDeptRow('${stepId}')">➕ Thêm khoa mới</button>
                 </div>
+                <div class="table-swipe-hint">👈 Vuốt ngang để xem và nhập đủ các cột của bảng 👉</div>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -1708,10 +1836,11 @@
                 `;
             });
             return `
-                <div style="margin-bottom: 1rem; display:flex; justify-content:space-between; align-items:center;">
+                <div style="margin-bottom: 1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
                     <span style="font-size:0.85rem; color:var(--text-secondary);">Nhập các mốc tiến độ triển khai dự kiến:</span>
                     <button class="btn btn-primary" onclick="addScheduleRow('${stepId}')">➕ Thêm hạng mục</button>
                 </div>
+                <div class="table-swipe-hint">👈 Vuốt ngang để xem và nhập đủ các cột của bảng 👉</div>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -1792,10 +1921,11 @@
                     </div>
                 </div>
 
-                <div class="subsection-title" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="subsection-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
                     <span>2. Danh mục máy xét nghiệm kết nối LIS</span>
                     <button class="btn btn-primary" onclick="addLISAnalyzer()">➕ Thêm máy mới</button>
                 </div>
+                <div class="table-swipe-hint">👈 Vuốt ngang để xem và nhập đủ các cột của bảng 👉</div>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -1884,10 +2014,11 @@
                     </div>
                 </div>
 
-                <div class="subsection-title" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="subsection-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
                     <span>2. Danh mục thiết bị chẩn đoán hình ảnh kết nối PACS</span>
                     <button class="btn btn-primary" onclick="addRISDevice()">➕ Thêm thiết bị</button>
                 </div>
+                <div class="table-swipe-hint">👈 Vuốt ngang để xem và nhập đủ các cột của bảng 👉</div>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -2037,6 +2168,7 @@
                     <button class="btn btn-primary" onclick="addCustomEMRTemplate()">➕ Thêm biểu mẫu khác (Ngoài thông tư)</button>
                 </div>
 
+                <div class="table-swipe-hint">👈 Vuốt ngang để xem và nhập đủ các cột của bảng 👉</div>
                 <div class="table-responsive">
                     <table id="emr-templates-table">
                         <thead>
