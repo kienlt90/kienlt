@@ -1024,15 +1024,32 @@
       const data = await file.arrayBuffer();
       const wb = XLSX.read(data, { type: 'array' });
       
+      const orderedKeys = Object.keys(AppState.tablesData).sort((a, b) => b.length - a.length);
+
       wb.SheetNames.forEach(sname => {
         const normName = sname.toUpperCase().trim();
+        const compactName = normName.replace(/\s+/g, '');
         let targetKey = null;
-        for (const k of Object.keys(AppState.tablesData)) {
-          if (normName === k || normName.includes(k) || normName.endsWith(k)) {
+
+        // 1. Exact match first
+        for (const k of orderedKeys) {
+          if (compactName === k) {
             targetKey = k;
             break;
           }
         }
+
+        // 2. Boundary-safe match (prevents XML11/XML13/XML14 from matching XML1!)
+        if (!targetKey) {
+          for (const k of orderedKeys) {
+            const re = new RegExp('(?:^|[^0-9A-Z])' + k + '(?:$|[^0-9])', 'i');
+            if (re.test(compactName)) {
+              targetKey = k;
+              break;
+            }
+          }
+        }
+
         if (!targetKey) {
           // Special fallback mappings
           if (normName.includes('TONGHOP') || normName.includes('TONG_HOP')) targetKey = 'XML1';
@@ -1058,7 +1075,7 @@
               }
               rowObj._fileName = file.name;
               return rowObj;
-            });
+            }).filter(rowObj => Object.entries(rowObj).some(([k, v]) => k !== '_fileName' && v !== ''));
             AppState.tablesData[targetKey].push(...normalizedRows);
           }
         }
@@ -1095,9 +1112,13 @@
       }
 
       if (!matched) {
-        // Direct single XML file detection
-        for (const k of Object.keys(AppState.tablesData)) {
-          if (xmlText.toUpperCase().includes(`<${k}>`) || fileName.toUpperCase().includes(k)) {
+        // Direct single XML file detection (longest keys first + boundary check)
+        const orderedKeys = Object.keys(AppState.tablesData).sort((a, b) => b.length - a.length);
+        const upperText = xmlText.toUpperCase();
+        const upperFile = fileName.toUpperCase().replace(/\s+/g, '');
+        for (const k of orderedKeys) {
+          const fileRe = new RegExp('(?:^|[^0-9A-Z])' + k + '(?:$|[^0-9])', 'i');
+          if (upperText.includes(`<${k}>`) || fileRe.test(upperFile)) {
             extractXmlNodesToTable(xmlText, k, fileName);
             break;
           }
