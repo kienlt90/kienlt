@@ -35,6 +35,40 @@
       font-weight: 700 !important;
       box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.25);
     }
+
+    /* Column Drag & Drop Builder Styles */
+    .col-draggable {
+      cursor: grab;
+      user-select: none;
+      transition: background-color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+    }
+    .col-draggable:active {
+      cursor: grabbing;
+    }
+    .col-dragging {
+      opacity: 0.45;
+    }
+    th.col-drop-before {
+      box-shadow: inset 3px 0 0 0 #2563eb !important;
+      background-color: #dbeafe !important;
+    }
+    th.col-drop-after {
+      box-shadow: inset -3px 0 0 0 #2563eb !important;
+      background-color: #dbeafe !important;
+    }
+    .col-pill-drop-before {
+      box-shadow: -3px 0 0 0 #2563eb !important;
+    }
+    .col-pill-drop-after {
+      box-shadow: 3px 0 0 0 #2563eb !important;
+    }
+    .th-remove-btn {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    th:hover .th-remove-btn {
+      opacity: 1;
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
@@ -235,7 +269,11 @@
           <span id="txtActiveTableRuleDesc" class="text-xs text-slate-500 italic ml-2 hidden sm:inline"></span>
         </div>
 
-        <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <button id="btnToggleColumnBuilder" class="hidden px-3 py-1.5 bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm" title="Kéo thả sắp xếp hoặc thêm cột từ bảng XML khác (VD: kéo Ngày vào viện từ XML 1 sang XML 3)">
+            <span>🧩 Kéo thả cột</span>
+            <span id="badgeExtraCols" class="hidden px-1.5 py-0.5 text-[10px] rounded-full bg-indigo-600 text-white font-bold">0</span>
+          </button>
           <div class="relative">
             <input type="text" id="searchInput" placeholder="Tìm Mã LK, Bệnh án, Mã DV, Tên, Lỗi..." class="w-64 pl-8 pr-3 py-1.5 bg-white text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -284,7 +322,10 @@
       currentStatusFilter: 'ALL',
       searchQuery: '',
       currentPage: 1,
-      pageSize: 20
+      pageSize: 20,
+      showColumnBuilder: false,
+      columnSearchQuery: '',
+      tableColumns: {} // tableKey -> array of column IDs
     };
 
     const TABLE_NAMES = {
@@ -1231,10 +1272,16 @@
       });
 
       const descEl = document.getElementById('txtActiveTableRuleDesc');
+      const colBtn = document.getElementById('btnToggleColumnBuilder');
       if (tabKey === 'CROSS') {
         descEl.innerText = 'Đối soát toàn vẹn khóa ngoại MA_LK, cân đối tài chính hồ sơ & logic cận lâm sàng.';
+        if (colBtn) colBtn.classList.add('hidden');
       } else {
         descEl.innerText = TABLE_RULES_DESC[tabKey] || '';
+        if (colBtn) {
+          colBtn.classList.remove('hidden');
+          updateColumnBuilderButtonBadge(tabKey);
+        }
       }
 
       renderCurrentTab();
@@ -1338,9 +1385,819 @@
       container.innerHTML = html;
     }
 
+    // ==========================================
+    // DYNAMIC DRAG & DROP COLUMN ENGINE
+    // ==========================================
+    const CUSTOM_COLS_STORAGE_KEY = 'vnpt_xml_custom_columns_v1';
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatDynamicFieldValue(fieldName, val) {
+      if (val === null || val === undefined || val === '') return '<span class="text-slate-300">-</span>';
+      const upper = String(fieldName).toUpperCase();
+      if (/^(NGAY_|THOI_DIEM_|GT_THE_|TU_NGAY|DEN_NGAY)/.test(upper)) {
+        return `<span class="font-mono text-xs">${formatDTDisplay(val)}</span>`;
+      }
+      if (/^(T_|THANH_TIEN|DON_GIA)/.test(upper) && !isNaN(parseFloat(val))) {
+        return `<span class="font-mono font-semibold text-slate-800">${parseFloat(val).toLocaleString()}đ</span>`;
+      }
+      return `<span>${escapeHtml(val)}</span>`;
+    }
+
+    const DEFAULT_TABLE_COLUMNS = {
+      XML1: ['stt', 'MA_LK', 'XML1_HO_TEN', 'XML1_NGAY_SINH', 'XML1_MA_THE', 'XML1_ICD', 'XML1_VAO_RA', 'XML1_TONG_CHI', 'status', 'details'],
+      XML2: ['stt', 'MA_LK', 'XML2_MA_THUOC', 'XML2_TEN_THUOC', 'XML2_SDK', 'XML2_THAU', 'XML2_NGAY_YL', 'XML2_THANH_TIEN', 'status', 'details'],
+      XML3: ['stt', 'MA_LK', 'XML3_MA_DV', 'XML3_TEN_DV', 'XML3_NGAY_YL', 'XML3_TH_YL', 'XML3_KQ', 'status', 'details'],
+      GENERIC: ['stt', 'MA_LK', 'GEN_CONTENT', 'GEN_META', 'status', 'details']
+    };
+
+    const BUILTIN_COLUMNS = {
+      stt: {
+        id: 'stt',
+        label: 'STT',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-12 text-center',
+        tdClass: 'py-2.5 px-3 text-center text-slate-500 font-mono',
+        render: (r, rowNum) => `${rowNum}`
+      },
+      MA_LK: {
+        id: 'MA_LK',
+        label: 'MÃ LK',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28',
+        tdClass: 'py-2.5 px-3 font-bold text-slate-800 font-mono',
+        render: (r) => `${escapeHtml(r.MA_LK || '-')}`
+      },
+      status: {
+        id: 'status',
+        label: 'TRẠNG THÁI',
+        source: 'SELF',
+        thClass: 'py-2.5 px-2 text-center w-24',
+        tdClass: 'py-2.5 px-2 text-center',
+        render: (r, rowNum, ctx) => ctx.badgeHtml
+      },
+      details: {
+        id: 'details',
+        label: 'CHI TIẾT VI PHẠM',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 min-w-[220px]',
+        tdClass: 'py-2.5 px-3 text-xs leading-relaxed',
+        render: (r, rowNum, ctx) => ctx.detailsHtml
+      },
+      // --- XML 1 Builtin ---
+      XML1_HO_TEN: {
+        id: 'XML1_HO_TEN',
+        label: 'HỌ TÊN BỆNH NHÂN',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 min-w-[150px]',
+        tdClass: 'py-2.5 px-3',
+        render: (r) => `
+          <div class="font-bold text-slate-900">${escapeHtml(r.HO_TEN || '-')}</div>
+          <div class="text-[11px] text-slate-400 font-mono">BN: ${escapeHtml(r.MA_BN || '-')} | CCCD: ${escapeHtml(r.SO_CCCD || '-')}</div>
+        `
+      },
+      XML1_NGAY_SINH: {
+        id: 'XML1_NGAY_SINH',
+        label: 'NGÀY SINH / GT',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28',
+        tdClass: 'py-2.5 px-3',
+        render: (r) => `
+          <div class="font-mono text-slate-700">${formatDTDisplay(r.NGAY_SINH)}</div>
+          <div class="text-[11px] text-slate-500">${r.GIOI_TINH === '1' ? 'Nam' : (r.GIOI_TINH === '2' ? 'Nữ' : 'Khác')}</div>
+        `
+      },
+      XML1_MA_THE: {
+        id: 'XML1_MA_THE',
+        label: 'MÃ THẺ BHYT',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-36',
+        tdClass: 'py-2.5 px-3 font-mono text-indigo-700 font-bold text-xs',
+        render: (r) => `${escapeHtml(r.MA_THE_BHYT || r.MA_THE || '-')}`
+      },
+      XML1_ICD: {
+        id: 'XML1_ICD',
+        label: 'ICD BỆNH CHÍNH',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28',
+        tdClass: 'py-2.5 px-3 min-w-[170px]',
+        render: (r) => `
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="px-1.5 py-0.5 rounded font-mono font-bold text-xs bg-blue-100 text-blue-900 border border-blue-200">
+              ${escapeHtml(r.MA_BENH_CHINH || r.MA_BENH || '-')}
+            </span>
+          </div>
+          <div class="text-[11px] text-slate-600 font-medium truncate max-w-[200px] mt-0.5" title="${escapeHtml(r._icdChinhName || 'Chưa xác định tên')}">
+            ${escapeHtml(r._icdChinhName || '')}
+          </div>
+          ${r.MA_BENH_KT ? `<div class="text-[10px] text-slate-400 font-mono truncate max-w-[200px] mt-0.5" title="Kèm theo: ${escapeHtml(r.MA_BENH_KT)}"><span class="font-semibold text-slate-500">KT:</span> ${escapeHtml(r.MA_BENH_KT)}</div>` : ''}
+        `
+      },
+      XML1_VAO_RA: {
+        id: 'XML1_VAO_RA',
+        label: 'VÀO / RA VIỆN',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-32',
+        tdClass: 'py-2.5 px-3 text-xs mono',
+        render: (r) => `
+          <div>${formatDTDisplay(r.NGAY_VAO)}</div>
+          <div class="text-slate-400 text-[10px]">➔ ${formatDTDisplay(r.NGAY_RA)}</div>
+        `
+      },
+      XML1_TONG_CHI: {
+        id: 'XML1_TONG_CHI',
+        label: 'TỔNG CHI BHYT',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-32 text-right',
+        tdClass: 'py-2.5 px-3 text-right font-mono font-bold text-slate-800',
+        render: (r) => `${(parseFloat(r.T_TONGCHI_BH) || 0).toLocaleString()}đ`
+      },
+      // --- XML 2 Builtin ---
+      XML2_MA_THUOC: {
+        id: 'XML2_MA_THUOC',
+        label: 'MÃ THUỐC',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28',
+        tdClass: 'py-2.5 px-3 font-mono text-blue-600 font-semibold',
+        render: (r) => `${escapeHtml(r.MA_THUOC || '-')}`
+      },
+      XML2_TEN_THUOC: {
+        id: 'XML2_TEN_THUOC',
+        label: 'TÊN THUỐC / HÀM LƯỢNG',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 min-w-[180px]',
+        tdClass: 'py-2.5 px-3',
+        render: (r) => `
+          <div class="font-medium text-slate-800">${escapeHtml(r.TEN_THUOC || '-')}</div>
+          <div class="text-[11px] text-slate-400">HL: ${escapeHtml(r.HAM_LUONG || '-')} | ĐD: ${escapeHtml(r.DUONG_DUNG || '-')}</div>
+        `
+      },
+      XML2_SDK: {
+        id: 'XML2_SDK',
+        label: 'SỐ ĐK / GPNK',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28',
+        tdClass: 'py-2.5 px-3 font-mono text-xs',
+        render: (r) => `${escapeHtml(r.SO_DANG_KY || '-')}`
+      },
+      XML2_THAU: {
+        id: 'XML2_THAU',
+        label: 'TT THẦU',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28',
+        tdClass: 'py-2.5 px-3 text-xs font-mono text-slate-600',
+        render: (r) => `${escapeHtml(r.TT_THAU || '-')}`
+      },
+      XML2_NGAY_YL: {
+        id: 'XML2_NGAY_YL',
+        label: 'NGÀY Y LỆNH',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28 text-center',
+        tdClass: 'py-2.5 px-3 text-center text-xs font-mono',
+        render: (r) => `${formatDTDisplay(r.NGAY_YL)}`
+      },
+      XML2_THANH_TIEN: {
+        id: 'XML2_THANH_TIEN',
+        label: 'THÀNH TIỀN',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28 text-right',
+        tdClass: 'py-2.5 px-3 text-right font-mono font-bold',
+        render: (r) => `${(parseFloat(r.THANH_TIEN_BV) || 0).toLocaleString()}đ`
+      },
+      // --- XML 3 Builtin ---
+      XML3_MA_DV: {
+        id: 'XML3_MA_DV',
+        label: 'MÃ DV / VT',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 w-28',
+        tdClass: 'py-2.5 px-3 font-mono text-blue-600 font-semibold',
+        render: (r) => `${escapeHtml(r.MA_DICH_VU || r.MA_VAT_TU || '-')}`
+      },
+      XML3_TEN_DV: {
+        id: 'XML3_TEN_DV',
+        label: 'TÊN DỊCH VỤ KỸ THUẬT / VẬT TƯ',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 min-w-[180px]',
+        tdClass: 'py-2.5 px-3',
+        render: (r) => `
+          <div class="font-medium text-slate-800">${escapeHtml(r.TEN_DICH_VU || r.TEN_VAT_TU || '-')}</div>
+          <div class="text-[11px] text-slate-400">Khoa: ${escapeHtml(r.MA_KHOA || '-')} | BS: ${escapeHtml(r.MA_BAC_SI || '-')}</div>
+        `
+      },
+      XML3_NGAY_YL: {
+        id: 'XML3_NGAY_YL',
+        label: 'NGÀY Y LỆNH',
+        source: 'SELF',
+        thClass: 'py-2.5 px-2.5 w-28 text-center bg-amber-50/50',
+        tdClass: 'py-2.5 px-2.5 text-center text-xs font-mono bg-amber-50/30',
+        render: (r) => `${formatDTDisplay(r.NGAY_YL)}`
+      },
+      XML3_TH_YL: {
+        id: 'XML3_TH_YL',
+        label: 'THỰC HIỆN',
+        source: 'SELF',
+        thClass: 'py-2.5 px-2.5 w-28 text-center bg-sky-50/50',
+        tdClass: 'py-2.5 px-2.5 text-center text-xs font-mono bg-sky-50/30',
+        render: (r) => `${formatDTDisplay(r.NGAY_TH_YL)}`
+      },
+      XML3_KQ: {
+        id: 'XML3_KQ',
+        label: 'KẾT QUẢ',
+        source: 'SELF',
+        thClass: 'py-2.5 px-2.5 w-28 text-center bg-emerald-50/50',
+        tdClass: 'py-2.5 px-2.5 text-center text-xs font-mono bg-emerald-50/30',
+        render: (r) => `${formatDTDisplay(r.NGAY_KQ)}`
+      },
+      // --- GENERIC Builtin ---
+      GEN_CONTENT: {
+        id: 'GEN_CONTENT',
+        label: 'NỘI DUNG / MÃ BẢN GHI',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 min-w-[200px]',
+        tdClass: 'py-2.5 px-3 text-slate-800 font-medium',
+        render: (r) => {
+          const val = r.TEN_CHI_SO || r.DIEN_BIEN_LS || r.CHAN_DOAN_RV || r.SO_CT || r.SO_CHUYENTUYEN || r.SO_GIAYHEN_KL || Object.values(r)[2] || '-';
+          return `${escapeHtml(val)}`;
+        }
+      },
+      GEN_META: {
+        id: 'GEN_META',
+        label: 'THÔNG TIN THỜI GIAN / BÁC SĨ',
+        source: 'SELF',
+        thClass: 'py-2.5 px-3 min-w-[200px]',
+        tdClass: 'py-2.5 px-3 text-xs font-mono text-slate-600',
+        render: (r) => {
+          const val = r.NGAY_KQ || r.THOI_DIEM_DBLS || r.NGAY_VAO || r.TU_NGAY || r.NGAY_HEN_KL || r.MA_BS || '-';
+          return `${formatDTDisplay(val)}`;
+        }
+      },
+      // --- CROSS-XML1 LINKED COLUMNS ---
+      'XML1.NGAY_VAO': {
+        id: 'XML1.NGAY_VAO',
+        label: 'VÀO VIỆN (XML1)',
+        shortLabel: '⏰ Thời gian vào viện (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-2.5 w-32 text-center bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-2.5 text-center text-xs font-mono bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          if (!x1) return '<span class="text-slate-300 italic text-[11px]">Không có XML1</span>';
+          const vaoDt = parseDateTime(x1.NGAY_VAO);
+          const ylDt = parseDateTime(r.NGAY_YL || r.THOI_DIEM_DBLS || r.NGAY_KQ);
+          const isBeforeVao = vaoDt && ylDt && ylDt < vaoDt;
+          return `
+            <div class="${isBeforeVao ? 'text-rose-700 font-bold bg-rose-100/70 rounded px-1 py-0.5' : 'text-indigo-800 font-semibold'}">
+              ${isBeforeVao ? '⚠️ ' : ''}${formatDTDisplay(x1.NGAY_VAO)}
+            </div>
+            ${isBeforeVao ? '<div class="text-[10px] text-rose-600 font-sans">Trước giờ vào viện</div>' : ''}
+          `;
+        }
+      },
+      'XML1.NGAY_RA': {
+        id: 'XML1.NGAY_RA',
+        label: 'RA VIỆN (XML1)',
+        shortLabel: '🏁 Thời gian ra viện (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-2.5 w-32 text-center bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-2.5 text-center text-xs font-mono bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          if (!x1) return '<span class="text-slate-300 italic text-[11px]">Không có XML1</span>';
+          const raDt = parseDateTime(x1.NGAY_RA);
+          const checkDt = parseDateTime(r.NGAY_KQ || r.NGAY_TH_YL || r.NGAY_YL);
+          const isAfterRa = raDt && checkDt && checkDt > raDt;
+          return `
+            <div class="${isAfterRa ? 'text-rose-700 font-bold bg-rose-100/70 rounded px-1 py-0.5' : 'text-indigo-800 font-semibold'}">
+              ${isAfterRa ? '⚠️ ' : ''}${formatDTDisplay(x1.NGAY_RA)}
+            </div>
+            ${isAfterRa ? '<div class="text-[10px] text-rose-600 font-sans">Sau giờ ra viện</div>' : ''}
+          `;
+        }
+      },
+      'XML1.VAO_RA': {
+        id: 'XML1.VAO_RA',
+        label: 'VÀO / RA VIỆN (XML1)',
+        shortLabel: '🏥 Vào / Ra viện (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-3 w-36 bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-3 text-xs mono bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          if (!x1) return '<span class="text-slate-300 italic text-[11px]">Không có XML1</span>';
+          return `
+            <div class="text-indigo-800 font-semibold">${formatDTDisplay(x1.NGAY_VAO)}</div>
+            <div class="text-slate-500 text-[10px]">➔ ${formatDTDisplay(x1.NGAY_RA)}</div>
+          `;
+        }
+      },
+      'XML1.HO_TEN': {
+        id: 'XML1.HO_TEN',
+        label: 'HỌ TÊN BN (XML1)',
+        shortLabel: '👤 Họ tên BN (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-3 min-w-[140px] bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-3 bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          if (!x1) return '<span class="text-slate-300 italic text-[11px]">Không có XML1</span>';
+          return `
+            <div class="font-bold text-slate-800">${escapeHtml(x1.HO_TEN || '-')}</div>
+            <div class="text-[10px] text-slate-400 font-mono">BN: ${escapeHtml(x1.MA_BN || '-')}</div>
+          `;
+        }
+      },
+      'XML1.MA_THE_BHYT': {
+        id: 'XML1.MA_THE_BHYT',
+        label: 'MÃ THẺ BHYT (XML1)',
+        shortLabel: '🪪 Mã thẻ BHYT (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-3 w-36 bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-3 font-mono text-indigo-700 font-bold text-xs bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          if (!x1) return '<span class="text-slate-300 italic text-[11px]">-</span>';
+          return `${escapeHtml(x1.MA_THE_BHYT || x1.MA_THE || '-')}`;
+        }
+      },
+      'XML1.MA_BENH_CHINH': {
+        id: 'XML1.MA_BENH_CHINH',
+        label: 'ICD CHÍNH (XML1)',
+        shortLabel: '🩺 ICD Bệnh chính (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-3 w-32 bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-3 bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          if (!x1) return '<span class="text-slate-300 italic text-[11px]">-</span>';
+          return `
+            <span class="px-1.5 py-0.5 rounded font-mono font-bold text-xs bg-blue-100 text-blue-900 border border-blue-200">${escapeHtml(x1.MA_BENH_CHINH || x1.MA_BENH || '-')}</span>
+            <div class="text-[10px] text-slate-500 truncate max-w-[140px] mt-0.5">${escapeHtml(x1._icdChinhName || '')}</div>
+          `;
+        }
+      },
+      'XML1.MA_LOAI_KCB': {
+        id: 'XML1.MA_LOAI_KCB',
+        label: 'LOẠI KCB (XML1)',
+        shortLabel: '🏷️ Loại KCB (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-3 w-24 text-center bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-3 text-center font-mono text-xs bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          return x1 ? `${escapeHtml(x1.MA_LOAI_KCB || '-')}` : '-';
+        }
+      },
+      'XML1.MA_KHOA': {
+        id: 'XML1.MA_KHOA',
+        label: 'KHOA RV (XML1)',
+        shortLabel: '🏥 Khoa RV (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-3 w-24 text-center bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-3 text-center font-mono text-xs bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          return x1 ? `${escapeHtml(x1.MA_KHOA || '-')}` : '-';
+        }
+      },
+      'XML1.T_TONGCHI_BH': {
+        id: 'XML1.T_TONGCHI_BH',
+        label: 'TỔNG CHI BH (XML1)',
+        shortLabel: '💰 Tổng chi BH (XML1)',
+        source: 'XML1',
+        thClass: 'py-2.5 px-3 w-32 text-right bg-indigo-50/70 text-indigo-900',
+        tdClass: 'py-2.5 px-3 text-right font-mono font-bold text-indigo-800 bg-indigo-50/25',
+        render: (r) => {
+          const x1 = AppState.dossierMap[r.MA_LK];
+          return x1 ? `${(parseFloat(x1.T_TONGCHI_BH) || 0).toLocaleString()}đ` : '-';
+        }
+      }
+    };
+
+    function getColumnDef(colId) {
+      if (BUILTIN_COLUMNS[colId]) return BUILTIN_COLUMNS[colId];
+      if (colId.startsWith('XML1_RAW:')) {
+        const field = colId.slice('XML1_RAW:'.length);
+        return {
+          id: colId,
+          label: `${field} (XML1)`,
+          shortLabel: `${field} (XML1)`,
+          source: 'XML1',
+          field,
+          thClass: 'py-2.5 px-3 bg-indigo-50/70 text-indigo-900',
+          tdClass: 'py-2.5 px-3 text-xs bg-indigo-50/25',
+          render: (r) => {
+            const x1 = AppState.dossierMap[r.MA_LK];
+            if (!x1) return '<span class="text-slate-300 italic">-</span>';
+            return formatDynamicFieldValue(field, x1[field]);
+          }
+        };
+      }
+      if (colId.startsWith('RAW:')) {
+        const field = colId.slice('RAW:'.length);
+        return {
+          id: colId,
+          label: field,
+          shortLabel: field,
+          source: 'SELF',
+          field,
+          thClass: 'py-2.5 px-3',
+          tdClass: 'py-2.5 px-3 text-xs',
+          render: (r) => formatDynamicFieldValue(field, r[field])
+        };
+      }
+      return null;
+    }
+
+    function getDefaultColumnsForTable(tableKey) {
+      return [...(DEFAULT_TABLE_COLUMNS[tableKey] || DEFAULT_TABLE_COLUMNS.GENERIC)];
+    }
+
+    function loadSavedColumnsFromStorage() {
+      try {
+        const raw = localStorage.getItem(CUSTOM_COLS_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            AppState.tableColumns = parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Could not load saved columns:', e);
+      }
+    }
+
+    function saveColumnsToStorage() {
+      try {
+        localStorage.setItem(CUSTOM_COLS_STORAGE_KEY, JSON.stringify(AppState.tableColumns));
+      } catch (e) {
+        console.warn('Could not save columns:', e);
+      }
+    }
+
+    function getActiveColumnsForTable(tableKey) {
+      if (!AppState.tableColumns[tableKey] || !Array.isArray(AppState.tableColumns[tableKey]) || AppState.tableColumns[tableKey].length === 0) {
+        AppState.tableColumns[tableKey] = getDefaultColumnsForTable(tableKey);
+      }
+      return AppState.tableColumns[tableKey].filter(id => !!getColumnDef(id));
+    }
+
+    function updateColumnBuilderButtonBadge(tableKey) {
+      const badge = document.getElementById('badgeExtraCols');
+      if (!badge || !tableKey || tableKey === 'CROSS') return;
+      const active = getActiveColumnsForTable(tableKey);
+      const defaults = getDefaultColumnsForTable(tableKey);
+      const extraCount = active.filter(id => !defaults.includes(id)).length;
+      if (extraCount > 0) {
+        badge.innerText = `+${extraCount}`;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function getAvailableWarehouseColumns(tableKey) {
+      const activeSet = new Set(getActiveColumnsForTable(tableKey));
+
+      // Group 1: XML 1 Linked Columns
+      const xml1PreferredIds = [
+        'XML1.NGAY_VAO',
+        'XML1.NGAY_RA',
+        'XML1.VAO_RA',
+        'XML1.HO_TEN',
+        'XML1.MA_THE_BHYT',
+        'XML1.MA_BENH_CHINH',
+        'XML1.MA_LOAI_KCB',
+        'XML1.MA_KHOA',
+        'XML1.T_TONGCHI_BH'
+      ];
+      const xml1CoveredFields = new Set(['NGAY_VAO', 'NGAY_RA', 'HO_TEN', 'MA_THE_BHYT', 'MA_THE', 'MA_BENH_CHINH', 'MA_BENH', 'MA_LOAI_KCB', 'MA_KHOA', 'T_TONGCHI_BH', 'MA_LK']);
+
+      const xml1Cols = xml1PreferredIds
+        .filter(id => !activeSet.has(id))
+        .map(id => getColumnDef(id));
+
+      // Discover extra fields from loaded XML1 rows
+      const xml1Sample = (AppState.tablesData.XML1 || []).slice(0, 10);
+      const xml1ExtraFields = new Set();
+      xml1Sample.forEach(row => {
+        Object.keys(row).forEach(k => {
+          if (!k.startsWith('_') && !xml1CoveredFields.has(k)) {
+            xml1ExtraFields.add(k);
+          }
+        });
+      });
+      Array.from(xml1ExtraFields).sort().forEach(field => {
+        const colId = `XML1_RAW:${field}`;
+        if (!activeSet.has(colId)) {
+          xml1Cols.push(getColumnDef(colId));
+        }
+      });
+
+      // Group 2: Current table's hidden default columns + raw fields
+      const selfCols = [];
+      getDefaultColumnsForTable(tableKey).forEach(id => {
+        if (!activeSet.has(id)) {
+          selfCols.push(getColumnDef(id));
+        }
+      });
+
+      const selfSample = (AppState.tablesData[tableKey] || []).slice(0, 10);
+      const selfFields = new Set();
+      selfSample.forEach(row => {
+        Object.keys(row).forEach(k => {
+          if (!k.startsWith('_') && k !== 'MA_LK') {
+            selfFields.add(k);
+          }
+        });
+      });
+      Array.from(selfFields).sort().forEach(field => {
+        const colId = `RAW:${field}`;
+        if (!activeSet.has(colId)) {
+          selfCols.push(getColumnDef(colId));
+        }
+      });
+
+      return { xml1Cols, selfCols };
+    }
+
+    function addColumnToTable(tableKey, colId, targetIndex = null) {
+      const cols = [...getActiveColumnsForTable(tableKey)];
+      if (cols.includes(colId)) {
+        // Move to targetIndex if already exists
+        if (targetIndex !== null) {
+          reorderColumnInTable(tableKey, colId, targetIndex);
+        }
+        return;
+      }
+      if (targetIndex !== null && targetIndex >= 0 && targetIndex <= cols.length) {
+        cols.splice(targetIndex, 0, colId);
+      } else {
+        // Insert before 'status' if present so status/details remain on right
+        const statusIdx = cols.indexOf('status');
+        if (statusIdx !== -1) {
+          cols.splice(statusIdx, 0, colId);
+        } else {
+          cols.push(colId);
+        }
+      }
+      AppState.tableColumns[tableKey] = cols;
+      saveColumnsToStorage();
+      updateColumnBuilderButtonBadge(tableKey);
+      const def = getColumnDef(colId);
+      showToast(`Đã thêm cột "${def ? def.label : colId}" vào ${TABLE_NAMES[tableKey]}`, '🧩');
+      renderCurrentTab();
+    }
+
+    function removeColumnFromTable(tableKey, colId) {
+      const cols = [...getActiveColumnsForTable(tableKey)];
+      if (cols.length <= 1) {
+        showToast('Bảng phải giữ ít nhất 1 cột hiển thị!', '⚠️');
+        return;
+      }
+      AppState.tableColumns[tableKey] = cols.filter(id => id !== colId);
+      saveColumnsToStorage();
+      updateColumnBuilderButtonBadge(tableKey);
+      renderCurrentTab();
+    }
+
+    function reorderColumnInTable(tableKey, sourceColId, targetIndex) {
+      const cols = [...getActiveColumnsForTable(tableKey)];
+      const oldIdx = cols.indexOf(sourceColId);
+      if (oldIdx === -1) return;
+      cols.splice(oldIdx, 1);
+      let insertIdx = targetIndex;
+      if (oldIdx < targetIndex) insertIdx = Math.max(0, targetIndex - 1);
+      insertIdx = Math.max(0, Math.min(cols.length, insertIdx));
+      cols.splice(insertIdx, 0, sourceColId);
+      AppState.tableColumns[tableKey] = cols;
+      saveColumnsToStorage();
+      renderCurrentTab();
+    }
+
+    function resetTableColumns(tableKey) {
+      AppState.tableColumns[tableKey] = getDefaultColumnsForTable(tableKey);
+      saveColumnsToStorage();
+      updateColumnBuilderButtonBadge(tableKey);
+      showToast(`Đã khôi phục cột mặc định cho ${TABLE_NAMES[tableKey]}`, '↺');
+      renderCurrentTab();
+    }
+
+    function renderColumnBuilderPanel(tableKey) {
+      if (!AppState.showColumnBuilder) return '';
+      const activeCols = getActiveColumnsForTable(tableKey).map(getColumnDef).filter(Boolean);
+      const { xml1Cols, selfCols } = getAvailableWarehouseColumns(tableKey);
+      const q = (AppState.columnSearchQuery || '').trim().toLowerCase();
+
+      const filterCols = (list) => !q ? list : list.filter(c =>
+        (c.label || '').toLowerCase().includes(q) ||
+        (c.shortLabel || '').toLowerCase().includes(q) ||
+        (c.id || '').toLowerCase().includes(q)
+      );
+
+      const filteredXml1 = filterCols(xml1Cols);
+      const filteredSelf = filterCols(selfCols);
+
+      return `
+        <div id="columnBuilderPanel" class="mb-4 rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50/60 via-white to-slate-50 p-3.5 shadow-sm space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-100 pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold text-indigo-900">🧩 Tùy chỉnh &amp; Kéo thả cột (${TABLE_NAMES[tableKey]})</span>
+              <span class="text-[11px] text-slate-500 hidden md:inline">• Kéo cột từ kho thả trực tiếp lên tiêu đề bảng hoặc kéo đổi vị trí</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="text" id="colBuilderSearch" value="${escapeHtml(AppState.columnSearchQuery)}" placeholder="Tìm tên cột..." class="px-2.5 py-1 text-xs border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 w-40">
+              <button onclick="resetTableColumns('${tableKey}')" class="px-2.5 py-1 text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg transition">↺ Mặc định</button>
+              <button onclick="AppState.showColumnBuilder=false; renderCurrentTab();" class="px-2 py-1 text-xs font-semibold text-slate-500 hover:text-slate-800 rounded-lg">✕</button>
+            </div>
+          </div>
+
+          <!-- Active Columns Dropzone -->
+          <div>
+            <div class="text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-1.5">Cột đang hiển thị trên bảng (kéo thả để sắp xếp, bấm × để gỡ):</div>
+            <div id="activeColumnsDropzone" class="flex flex-wrap gap-1.5 p-2 rounded-lg bg-white border border-dashed border-indigo-300 min-h-[42px]">
+              ${activeCols.map((col, idx) => `
+                <div draggable="true" data-active-col-id="${escapeHtml(col.id)}" data-active-col-idx="${idx}"
+                     class="col-draggable inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${col.source === 'XML1' ? 'bg-indigo-50 text-indigo-800 border-indigo-300' : 'bg-slate-100 text-slate-700 border-slate-300'} hover:shadow-sm">
+                  <span class="text-slate-400 text-[10px]">⋮⋮</span>
+                  ${col.source === 'XML1' ? '<span class="px-1 py-0.2 bg-indigo-600 text-white text-[9px] rounded font-bold">XML1</span>' : ''}
+                  <span>${escapeHtml(col.label)}</span>
+                  <button type="button" onclick="removeColumnFromTable('${tableKey}', '${escapeHtml(col.id)}')" class="ml-0.5 text-slate-400 hover:text-rose-600 font-bold leading-none" title="Gỡ cột">×</button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Warehouse Columns -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            ${tableKey !== 'XML1' ? `
+              <div class="rounded-lg bg-indigo-50/40 border border-indigo-100 p-2.5">
+                <div class="text-[11px] font-bold text-indigo-800 mb-1.5 flex items-center justify-between">
+                  <span>🔗 Cột liên kết từ XML 1 (Ghép tự động theo Mã LK)</span>
+                  <span class="text-[10px] font-normal text-indigo-600">Kéo thả hoặc bấm +</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto custom-scroll">
+                  ${filteredXml1.length > 0 ? filteredXml1.map(col => `
+                    <div draggable="true" data-warehouse-col-id="${escapeHtml(col.id)}"
+                         onclick="addColumnToTable('${tableKey}', '${escapeHtml(col.id)}')"
+                         class="col-draggable inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-600 hover:text-white transition shadow-xs cursor-pointer">
+                      <span>+</span>
+                      <span>${escapeHtml(col.shortLabel || col.label)}</span>
+                    </div>
+                  `).join('') : '<span class="text-[11px] text-slate-400 italic">Tất cả cột XML 1 khớp từ khóa đã được thêm.</span>'}
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="rounded-lg bg-slate-50 border border-slate-200 p-2.5 ${tableKey === 'XML1' ? 'lg:col-span-2' : ''}">
+              <div class="text-[11px] font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                <span>📋 Trường dữ liệu khác của ${TABLE_NAMES[tableKey]}</span>
+                <span class="text-[10px] font-normal text-slate-500">Kéo thả hoặc bấm +</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto custom-scroll">
+                ${filteredSelf.length > 0 ? filteredSelf.map(col => `
+                  <div draggable="true" data-warehouse-col-id="${escapeHtml(col.id)}"
+                       onclick="addColumnToTable('${tableKey}', '${escapeHtml(col.id)}')"
+                       class="col-draggable inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold bg-white text-slate-700 border border-slate-300 hover:bg-blue-600 hover:text-white transition shadow-xs cursor-pointer">
+                    <span>+</span>
+                    <span>${escapeHtml(col.shortLabel || col.label)}</span>
+                  </div>
+                `).join('') : '<span class="text-[11px] text-slate-400 italic">Không có trường ẩn nào khớp từ khóa.</span>'}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachColumnDragAndDropListeners(tableKey) {
+      let dragState = null; // { type: 'ACTIVE'|'WAREHOUSE', colId: string }
+
+      const clearIndicators = () => {
+        document.querySelectorAll('.col-drop-before, .col-drop-after, .col-pill-drop-before, .col-pill-drop-after, .col-dragging').forEach(el => {
+          el.classList.remove('col-drop-before', 'col-drop-after', 'col-pill-drop-before', 'col-pill-drop-after', 'col-dragging');
+        });
+      };
+
+      // Warehouse pills (drag start)
+      document.querySelectorAll('[data-warehouse-col-id]').forEach(el => {
+        el.addEventListener('dragstart', (e) => {
+          const colId = el.getAttribute('data-warehouse-col-id');
+          dragState = { type: 'WAREHOUSE', colId };
+          e.dataTransfer.effectAllowed = 'copyMove';
+          e.dataTransfer.setData('text/plain', JSON.stringify(dragState));
+          el.classList.add('col-dragging');
+        });
+        el.addEventListener('dragend', clearIndicators);
+      });
+
+      // Active column pills & Table <th> headers
+      const setupDropTarget = (el, getTargetIdx, beforeCls, afterCls) => {
+        el.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          const rect = el.getBoundingClientRect();
+          const isLeft = e.clientX < rect.left + rect.width / 2;
+          el.classList.remove(beforeCls, afterCls);
+          el.classList.add(isLeft ? beforeCls : afterCls);
+        });
+        el.addEventListener('dragleave', () => {
+          el.classList.remove(beforeCls, afterCls);
+        });
+        el.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const rect = el.getBoundingClientRect();
+          const isLeft = e.clientX < rect.left + rect.width / 2;
+          let targetIdx = getTargetIdx();
+          if (!isLeft) targetIdx += 1;
+
+          let payload = dragState;
+          if (!payload) {
+            try { payload = JSON.parse(e.dataTransfer.getData('text/plain')); } catch (_) {}
+          }
+          clearIndicators();
+          if (!payload || !payload.colId) return;
+
+          if (payload.type === 'WAREHOUSE') {
+            addColumnToTable(tableKey, payload.colId, targetIdx);
+          } else if (payload.type === 'ACTIVE') {
+            reorderColumnInTable(tableKey, payload.colId, targetIdx);
+          }
+        });
+      };
+
+      // Table <th> drag & drop
+      document.querySelectorAll('th[data-col-id]').forEach(th => {
+        const colId = th.getAttribute('data-col-id');
+        th.addEventListener('dragstart', (e) => {
+          dragState = { type: 'ACTIVE', colId };
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', JSON.stringify(dragState));
+          th.classList.add('col-dragging');
+        });
+        th.addEventListener('dragend', clearIndicators);
+        setupDropTarget(th, () => parseInt(th.getAttribute('data-col-index'), 10), 'col-drop-before', 'col-drop-after');
+      });
+
+      // Active pills drag & drop
+      document.querySelectorAll('[data-active-col-id]').forEach(pill => {
+        const colId = pill.getAttribute('data-active-col-id');
+        pill.addEventListener('dragstart', (e) => {
+          dragState = { type: 'ACTIVE', colId };
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', JSON.stringify(dragState));
+          pill.classList.add('col-dragging');
+        });
+        pill.addEventListener('dragend', clearIndicators);
+        setupDropTarget(pill, () => parseInt(pill.getAttribute('data-active-col-idx'), 10), 'col-pill-drop-before', 'col-pill-drop-after');
+      });
+
+      // Active dropzone container fallback drop (append to end)
+      const dz = document.getElementById('activeColumnsDropzone');
+      if (dz) {
+        dz.addEventListener('dragover', (e) => {
+          e.preventDefault();
+        });
+        dz.addEventListener('drop', (e) => {
+          if (e.target !== dz) return;
+          e.preventDefault();
+          let payload = dragState;
+          if (!payload) {
+            try { payload = JSON.parse(e.dataTransfer.getData('text/plain')); } catch (_) {}
+          }
+          clearIndicators();
+          if (payload && payload.colId) {
+            addColumnToTable(tableKey, payload.colId);
+          }
+        });
+      }
+
+      // Column search input inside builder
+      const searchEl = document.getElementById('colBuilderSearch');
+      if (searchEl) {
+        searchEl.addEventListener('input', (e) => {
+          AppState.columnSearchQuery = e.target.value;
+          const pos = e.target.selectionStart;
+          renderCurrentTab();
+          const newInput = document.getElementById('colBuilderSearch');
+          if (newInput) {
+            newInput.focus();
+            newInput.setSelectionRange(pos, pos);
+          }
+        });
+      }
+    }
+
     // Render Table Tab (XML1, XML2, XML3, ...)
     function renderTableListTab(container, tableKey) {
       let rawList = AppState.tablesData[tableKey] || [];
+      updateColumnBuilderButtonBadge(tableKey);
 
       // Status filter
       if (AppState.currentStatusFilter === 'ERROR') {
@@ -1351,11 +2208,13 @@
         rawList = rawList.filter(r => r._status === 'OK');
       }
 
-      // Search query filter
+      // Search query filter (also searches linked XML1 fields)
       const q = AppState.searchQuery.trim().toLowerCase();
       if (q) {
         rawList = rawList.filter(r => {
+          const x1 = AppState.dossierMap[r.MA_LK];
           return Object.values(r).some(v => String(v).toLowerCase().includes(q)) ||
+                 (x1 && Object.values(x1).some(v => String(v).toLowerCase().includes(q))) ||
                  (r._errors && r._errors.some(e => e.toLowerCase().includes(q))) ||
                  (r._warnings && r._warnings.some(w => w.toLowerCase().includes(q)));
         });
@@ -1369,69 +2228,39 @@
       const endIndex = Math.min(startIndex + AppState.pageSize, totalRows);
       const currentRows = rawList.slice(startIndex, endIndex);
 
+      const builderHtml = renderColumnBuilderPanel(tableKey);
+
       if (rawList.length === 0) {
         container.innerHTML = `
+          ${builderHtml}
           <div class="py-12 text-center text-slate-400 space-y-2">
             <div class="text-4xl">📭</div>
             <p class="text-sm font-semibold text-slate-600">Không tìm thấy bản ghi nào ở bảng ${TABLE_NAMES[tableKey]}</p>
             <p class="text-xs text-slate-400">${AppState.tablesData[tableKey]?.length === 0 ? 'Chưa nạp dữ liệu cho bảng này từ file Excel/XML.' : 'Thử chuyển sang bộ lọc khác hoặc xóa từ khóa tìm kiếm.'}</p>
           </div>
         `;
+        attachColumnDragAndDropListeners(tableKey);
         document.getElementById('pageInfo').innerText = `Hiển thị 0 bản ghi`;
         document.getElementById('paginationControls').innerHTML = '';
         return;
       }
 
-      // Render Dynamic Table Headers depending on table
-      let headersHtml = '';
-      if (tableKey === 'XML1') {
-        headersHtml = `
-          <th class="py-2.5 px-3 w-12 text-center">STT</th>
-          <th class="py-2.5 px-3 w-28">MÃ LK</th>
-          <th class="py-2.5 px-3 min-w-[150px]">HỌ TÊN BỆNH NHÂN</th>
-          <th class="py-2.5 px-3 w-28">NGÀY SINH / GT</th>
-          <th class="py-2.5 px-3 w-36">MÃ THẺ BHYT</th>
-          <th class="py-2.5 px-3 w-28">ICD BỆNH CHÍNH</th>
-          <th class="py-2.5 px-3 w-32">VÀO / RA VIỆN</th>
-          <th class="py-2.5 px-3 w-32 text-right">TỔNG CHI BHYT</th>
-          <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
-          <th class="py-2.5 px-3 min-w-[220px]">CHI TIẾT VI PHẠM &amp; ĐIỀU CHỈNH</th>
-        `;
-      } else if (tableKey === 'XML2') {
-        headersHtml = `
-          <th class="py-2.5 px-3 w-12 text-center">STT</th>
-          <th class="py-2.5 px-3 w-28">MÃ LK</th>
-          <th class="py-2.5 px-3 w-28">MÃ THUOC</th>
-          <th class="py-2.5 px-3 min-w-[180px]">TÊN THUỐC / HÀM LƯỢNG</th>
-          <th class="py-2.5 px-3 w-28">SỐ ĐK / GPNK</th>
-          <th class="py-2.5 px-3 w-28">TT THẦU</th>
-          <th class="py-2.5 px-3 w-28 text-center">NGÀY Y LỆNH</th>
-          <th class="py-2.5 px-3 w-28 text-right">THÀNH TIỀN</th>
-          <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
-          <th class="py-2.5 px-3 min-w-[220px]">CHI TIẾT VI PHẠM</th>
-        `;
-      } else if (tableKey === 'XML3') {
-        headersHtml = `
-          <th class="py-2.5 px-3 w-12 text-center">STT</th>
-          <th class="py-2.5 px-3 w-28">MÃ LK</th>
-          <th class="py-2.5 px-3 w-28">MÃ DV / VT</th>
-          <th class="py-2.5 px-3 min-w-[180px]">TÊN DỊCH VỤ KỸ THUẬT / VẬT TƯ</th>
-          <th class="py-2.5 px-2.5 w-28 text-center bg-amber-50/50">NGÀY Y LỆNH</th>
-          <th class="py-2.5 px-2.5 w-28 text-center bg-sky-50/50">THỰC HIỆN</th>
-          <th class="py-2.5 px-2.5 w-28 text-center bg-emerald-50/50">KẾT QUẢ</th>
-          <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
-          <th class="py-2.5 px-3 min-w-[220px]">CHI TIẾT VI PHẠM [Rule CROSS_02]</th>
-        `;
-      } else {
-        headersHtml = `
-          <th class="py-2.5 px-3 w-12 text-center">STT</th>
-          <th class="py-2.5 px-3 w-28">MÃ LK</th>
-          <th class="py-2.5 px-3 min-w-[200px]">NỘI DUNG / MÃ BẢN GHI</th>
-          <th class="py-2.5 px-3 min-w-[200px]">THÔNG TIN THỜI GIAN / BÁC SĨ</th>
-          <th class="py-2.5 px-2 text-center w-24">TRẠNG THÁI</th>
-          <th class="py-2.5 px-3 min-w-[240px]">CHI TIẾT VI PHẠM &amp; ĐIỀU CHỈNH</th>
-        `;
-      }
+      const activeColIds = getActiveColumnsForTable(tableKey);
+      const activeCols = activeColIds.map(getColumnDef).filter(Boolean);
+
+      const headersHtml = activeCols.map((col, cIdx) => `
+        <th draggable="true" data-col-id="${escapeHtml(col.id)}" data-col-index="${cIdx}"
+            class="col-draggable group ${col.thClass || 'py-2.5 px-3'}"
+            title="Kéo thả để đổi vị trí cột hoặc thả cột mới vào đây">
+          <div class="inline-flex items-center gap-1 ${col.thClass && col.thClass.includes('text-right') ? 'justify-end w-full' : (col.thClass && col.thClass.includes('text-center') ? 'justify-center w-full' : '')}">
+            <span class="text-slate-400 text-[10px] opacity-40 group-hover:opacity-100">⋮⋮</span>
+            ${col.source === 'XML1' ? '<span class="px-1 py-0.2 rounded bg-indigo-600 text-white text-[9px] font-bold">XML1</span>' : ''}
+            <span>${escapeHtml(col.label)}</span>
+            <button type="button" onclick="event.stopPropagation(); removeColumnFromTable('${tableKey}', '${escapeHtml(col.id)}')"
+                    class="th-remove-btn ml-0.5 text-slate-400 hover:text-rose-600 font-bold text-xs leading-none" title="Ẩn cột này">×</button>
+          </div>
+        </th>
+      `).join('');
 
       let rowsHtml = '';
       currentRows.forEach((r, idx) => {
@@ -1463,96 +2292,16 @@
           detailsHtml = `<span class="text-emerald-700 font-medium">Bản ghi hợp lệ theo quy chuẩn QĐ 130</span>`;
         }
 
-        if (tableKey === 'XML1') {
-          rowsHtml += `
-            <tr class="${rowClass}">
-              <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
-              <td class="py-2.5 px-3 font-bold text-slate-800 font-mono">${r.MA_LK}</td>
-              <td class="py-2.5 px-3">
-                <div class="font-bold text-slate-900">${r.HO_TEN || '-'}</div>
-                <div class="text-[11px] text-slate-400 font-mono">BN: ${r.MA_BN || '-'} | CCCD: ${r.SO_CCCD || '-'}</div>
-              </td>
-              <td class="py-2.5 px-3">
-                <div class="font-mono text-slate-700">${formatDTDisplay(r.NGAY_SINH)}</div>
-                <div class="text-[11px] text-slate-500">${r.GIOI_TINH === '1' ? 'Nam' : (r.GIOI_TINH === '2' ? 'Nữ' : 'Khác')}</div>
-              </td>
-              <td class="py-2.5 px-3 font-mono text-indigo-700 font-bold text-xs">${r.MA_THE_BHYT || r.MA_THE || '-'}</td>
-              <td class="py-2.5 px-3 min-w-[170px]">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="px-1.5 py-0.5 rounded font-mono font-bold text-xs bg-blue-100 text-blue-900 border border-blue-200">
-                    ${r.MA_BENH_CHINH || r.MA_BENH || '-'}
-                  </span>
-                </div>
-                <div class="text-[11px] text-slate-600 font-medium truncate max-w-[200px] mt-0.5" title="${r._icdChinhName || 'Chưa xác định tên'}">
-                  ${r._icdChinhName || ''}
-                </div>
-                ${r.MA_BENH_KT ? `<div class="text-[10px] text-slate-400 font-mono truncate max-w-[200px] mt-0.5" title="Kèm theo: ${r.MA_BENH_KT}"><span class="font-semibold text-slate-500">KT:</span> ${r.MA_BENH_KT}</div>` : ''}
-              </td>
-              <td class="py-2.5 px-3 text-xs mono">
-                <div>${formatDTDisplay(r.NGAY_VAO)}</div>
-                <div class="text-slate-400 text-[10px]">➔ ${formatDTDisplay(r.NGAY_RA)}</div>
-              </td>
-              <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-800">
-                ${(parseFloat(r.T_TONGCHI_BH) || 0).toLocaleString()}đ
-              </td>
-              <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
-              <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
-            </tr>
-          `;
-        } else if (tableKey === 'XML2') {
-          rowsHtml += `
-            <tr class="${rowClass}">
-              <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
-              <td class="py-2.5 px-3 font-bold text-slate-800 font-mono">${r.MA_LK}</td>
-              <td class="py-2.5 px-3 font-mono text-blue-600 font-semibold">${r.MA_THUOC || '-'}</td>
-              <td class="py-2.5 px-3">
-                <div class="font-medium text-slate-800">${r.TEN_THUOC || '-'}</div>
-                <div class="text-[11px] text-slate-400">HL: ${r.HAM_LUONG || '-'} | ĐD: ${r.DUONG_DUNG || '-'}</div>
-              </td>
-              <td class="py-2.5 px-3 font-mono text-xs">${r.SO_DANG_KY || '-'}</td>
-              <td class="py-2.5 px-3 text-xs font-mono text-slate-600">${r.TT_THAU || '-'}</td>
-              <td class="py-2.5 px-3 text-center text-xs font-mono">${formatDTDisplay(r.NGAY_YL)}</td>
-              <td class="py-2.5 px-3 text-right font-mono font-bold">${(parseFloat(r.THANH_TIEN_BV) || 0).toLocaleString()}đ</td>
-              <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
-              <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
-            </tr>
-          `;
-        } else if (tableKey === 'XML3') {
-          rowsHtml += `
-            <tr class="${rowClass}">
-              <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
-              <td class="py-2.5 px-3 font-bold text-slate-800 font-mono">${r.MA_LK}</td>
-              <td class="py-2.5 px-3 font-mono text-blue-600 font-semibold">${r.MA_DICH_VU || r.MA_VAT_TU || '-'}</td>
-              <td class="py-2.5 px-3">
-                <div class="font-medium text-slate-800">${r.TEN_DICH_VU || r.TEN_VAT_TU || '-'}</div>
-                <div class="text-[11px] text-slate-400">Khoa: ${r.MA_KHOA || '-'} | BS: ${r.MA_BAC_SI || '-'}</div>
-              </td>
-              <td class="py-2.5 px-2.5 text-center text-xs font-mono bg-amber-50/30">${formatDTDisplay(r.NGAY_YL)}</td>
-              <td class="py-2.5 px-2.5 text-center text-xs font-mono bg-sky-50/30">${formatDTDisplay(r.NGAY_TH_YL)}</td>
-              <td class="py-2.5 px-2.5 text-center text-xs font-mono bg-emerald-50/30">${formatDTDisplay(r.NGAY_KQ)}</td>
-              <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
-              <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
-            </tr>
-          `;
-        } else {
-          // General template for XML 4, 5, 7, 8, 11, 13, 14
-          const colContent = r.TEN_CHI_SO || r.DIEN_BIEN_LS || r.CHAN_DOAN_RV || r.SO_CT || r.SO_CHUYENTUYEN || r.SO_GIAYHEN_KL || Object.values(r)[2] || '-';
-          const colMeta = r.NGAY_KQ || r.THOI_DIEM_DBLS || r.NGAY_VAO || r.TU_NGAY || r.NGAY_HEN_KL || r.MA_BS || '-';
+        const ctx = { badgeHtml, detailsHtml };
+        const cellsHtml = activeCols.map(col => `
+          <td class="${col.tdClass || 'py-2.5 px-3'}">${col.render(r, rowNum, ctx)}</td>
+        `).join('');
 
-          rowsHtml += `
-            <tr class="${rowClass}">
-              <td class="py-2.5 px-3 text-center text-slate-500 font-mono">${rowNum}</td>
-              <td class="py-2.5 px-3 font-bold text-slate-800 font-mono">${r.MA_LK || '-'}</td>
-              <td class="py-2.5 px-3 text-slate-800 font-medium">${colContent}</td>
-              <td class="py-2.5 px-3 text-xs font-mono text-slate-600">${formatDTDisplay(colMeta)}</td>
-              <td class="py-2.5 px-2 text-center">${badgeHtml}</td>
-              <td class="py-2.5 px-3 text-xs leading-relaxed">${detailsHtml}</td>
-            </tr>
-          `;
-        }
+        rowsHtml += `<tr class="${rowClass}">${cellsHtml}</tr>`;
       });
 
       container.innerHTML = `
+        ${builderHtml}
         <div class="overflow-x-auto rounded-xl border border-slate-200 custom-scroll max-h-[580px]">
           <table class="w-full text-left text-xs border-collapse">
             <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0 z-20 border-b border-slate-300">
@@ -1563,6 +2312,7 @@
         </div>
       `;
 
+      attachColumnDragAndDropListeners(tableKey);
       document.getElementById('pageInfo').innerText = `Hiển thị ${startIndex + 1} - ${endIndex} trên ${totalRows.toLocaleString()} dòng (${TABLE_NAMES[tableKey]})`;
       renderPagination(totalPages);
     }
@@ -1883,7 +2633,13 @@
       renderCurrentTab();
     });
 
+    document.getElementById('btnToggleColumnBuilder').addEventListener('click', () => {
+      AppState.showColumnBuilder = !AppState.showColumnBuilder;
+      renderCurrentTab();
+    });
+
     // Auto-init dashboard
+    loadSavedColumnsFromStorage();
     refreshDashboard();
   </script>
 </body>
