@@ -89,7 +89,7 @@
             <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">KIỂM TRA TỔNG HỢP CÁC BẢNG XML BHYT</h1>
             <span class="px-2 py-0.5 text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 rounded-full">QĐ 130/QĐ-BYT</span>
           </div>
-          <p class="text-xs text-slate-300">Kiểm tra độc lập &amp; đối soát chéo: <span class="text-sky-300 font-medium">XML 1, 2, 3, 4, 5, 7, 8, 11, 13, 14</span></p>
+          <p class="text-xs text-slate-300">Kiểm tra độc lập &amp; đối soát chéo: <span class="text-sky-300 font-medium">XML 1 → 14 (đầy đủ 14 bảng QĐ 130)</span></p>
         </div>
       </div>
 
@@ -237,14 +237,26 @@
         <button data-tab="XML5" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
           XML 5: Diễn Biến LS
         </button>
+        <button data-tab="XML6" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 6: Chăm Sóc HIV
+        </button>
         <button data-tab="XML7" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
           XML 7: Tóm Tắt HSBA
         </button>
         <button data-tab="XML8" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
           XML 8: Báo Tử
         </button>
+        <button data-tab="XML9" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 9: Chứng Sinh
+        </button>
+        <button data-tab="XML10" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 10: Dưỡng Thai
+        </button>
         <button data-tab="XML11" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
           XML 11: Nghỉ Việc BHXH
+        </button>
+        <button data-tab="XML12" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
+          XML 12: Không CCT
         </button>
         <button data-tab="XML13" class="nav-tab px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200/80 transition shrink-0">
           XML 13: Chuyển Tuyến
@@ -310,9 +322,13 @@
         XML3: [],
         XML4: [],
         XML5: [],
+        XML6: [],
         XML7: [],
         XML8: [],
+        XML9: [],
+        XML10: [],
         XML11: [],
+        XML12: [],
         XML13: [],
         XML14: []
       },
@@ -334,9 +350,13 @@
       XML3: 'XML 3 (DVKT & VTYT)',
       XML4: 'XML 4 (Kết Quả CLS)',
       XML5: 'XML 5 (Diễn Biến LS)',
+      XML6: 'XML 6 (Chăm Sóc HIV/AIDS)',
       XML7: 'XML 7 (Tóm Tắt HSBA)',
       XML8: 'XML 8 (Giấy Báo Tử)',
+      XML9: 'XML 9 (Giấy Chứng Sinh)',
+      XML10: 'XML 10 (Nghỉ Dưỡng Thai)',
       XML11: 'XML 11 (Nghỉ Việc BHXH)',
+      XML12: 'XML 12 (Không Cùng Chi Trả)',
       XML13: 'XML 13 (Chuyển Tuyến)',
       XML14: 'XML 14 (Hẹn Khám Lại)'
     };
@@ -347,9 +367,13 @@
       XML3: 'Rules: Chuỗi tiến trình NGAY_YL <= NGAY_TH_YL <= NGAY_KQ <= NGAY_RA; Rule CROSS_02: Cận lâm sàng nhóm 1,2,3 bắt buộc có NGAY_KQ; PTTT có PTV & PP vô cảm.',
       XML4: 'Rules: Bắt buộc có kết quả (GIA_TRI hoặc MO_TA/KET_LUAN); NGAY_KQ trong đợt điều trị; Bác sĩ đọc KQ; Khớp nối chỉ định CLS từ XML 3.',
       XML5: 'Rules: Diễn biến lâm sàng bắt buộc; Thời điểm trong đợt KCB; Bệnh nhân có PTTT ở XML 3 phải có ghi nhận diễn biến mổ ở XML 5.',
+      XML6: 'Rules: Hồ sơ bệnh án chăm sóc điều trị HIV/AIDS; Khớp nối MA_LK & Ngày điều trị hợp lệ.',
       XML7: 'Rules: Tóm tắt HSBA; Ngày vào <= Ngày ra; Số lưu trữ, Mã khoa, Mã bác sĩ, Chẩn đoán và PP điều trị không để trống.',
       XML8: 'Rules: Giấy báo tử; Ngày giờ tử vong >= Ngày vào viện; Thông tin mẹ và con hợp lệ.',
+      XML9: 'Rules: Giấy chứng sinh; Bắt buộc có thông tin mẹ, ngày sinh con, số chứng sinh và người đỡ đẻ.',
+      XML10: 'Rules: Giấy chứng nhận nghỉ dưỡng thai; Từ ngày <= Đến ngày; Bắt buộc có bác sĩ ký cấp.',
       XML11: 'Rules: Số ngày nghỉ = (Đến ngày - Từ ngày + 1); Tối đa 30 ngày/lần ngoại trú; Bắt buộc có Mã BHXH/Thẻ và Bác sĩ ký cấp.',
+      XML12: 'Rules: Giấy xác nhận không cùng chi trả trong năm; Đủ thông tin thẻ BHYT & thời điểm đủ 5 năm liên tục.',
       XML13: 'Rules: Giấy chuyển tuyến; Mã nơi đi/đến đủ 5 ký tự; Lý do chuyển tuyến; Ngày vào <= Ngày ra.',
       XML14: 'Rules: Giấy hẹn khám lại; Ngày hẹn khám lại phải SAU Ngày ra viện; Bắt buộc có chẩn đoán khi ra viện.'
     };
@@ -901,12 +925,41 @@
     // ==========================================
     // CROSS-TABLE CORRELATION AUDIT
     // ==========================================
+    function validateGenericXmlRecord(rec, dossierMap, requiredFields = []) {
+      const errors = [];
+      const warnings = [];
+      if (!rec.MA_LK) errors.push('Thiếu mã liên kết (MA_LK)');
+      else if (Object.keys(dossierMap).length > 0 && !dossierMap[rec.MA_LK]) {
+        errors.push(`MA_LK "${rec.MA_LK}" không tồn tại trong XML 1`);
+      }
+      requiredFields.forEach(([field, label]) => {
+        if (!rec[field]) warnings.push(`Thiếu ${label} (${field})`);
+      });
+      return { ...rec, _errors: errors, _warnings: warnings, _status: errors.length > 0 ? 'ERROR' : (warnings.length > 0 ? 'WARNING' : 'OK') };
+    }
+
+    function validateXML6(rec, dossierMap) {
+      return validateGenericXmlRecord(rec, dossierMap, [['MA_THE_BHYT', 'Mã thẻ BHYT']]);
+    }
+
+    function validateXML9(rec, dossierMap) {
+      return validateGenericXmlRecord(rec, dossierMap, [['SO_CHUNG_SINH', 'Số chứng sinh']]);
+    }
+
+    function validateXML10(rec, dossierMap) {
+      return validateGenericXmlRecord(rec, dossierMap, [['TU_NGAY', 'Từ ngày'], ['DEN_NGAY', 'Đến ngày']]);
+    }
+
+    function validateXML12(rec, dossierMap) {
+      return validateGenericXmlRecord(rec, dossierMap, [['MA_THE_BHYT', 'Mã thẻ BHYT']]);
+    }
+
     function performCrossValidation() {
       const crossErrors = [];
       const dMap = AppState.dossierMap;
 
       // 1. Check orphan records in all tables
-      const checkTables = ['XML2', 'XML3', 'XML4', 'XML5', 'XML7', 'XML8', 'XML11', 'XML13', 'XML14'];
+      const checkTables = ['XML2', 'XML3', 'XML4', 'XML5', 'XML6', 'XML7', 'XML8', 'XML9', 'XML10', 'XML11', 'XML12', 'XML13', 'XML14'];
       checkTables.forEach(tKey => {
         const rows = AppState.tablesData[tKey];
         if (rows && rows.length > 0 && Object.keys(dMap).length > 0) {
@@ -1092,71 +1145,198 @@
       }
     }
 
-    function parseXmlText(xmlText, fileName) {
-      // Check if standard BHYT wrapped container with <LOAIHOSO>
-      const b64Regex = /<LOAIHOSO>\s*(XML\d+)\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/gi;
-      let m;
-      let matched = false;
+    const XML_TAG_MAP = {
+      XML1: ['TONG_HOP'],
+      XML2: ['CHI_TIET_THUOC'],
+      XML3: ['CHI_TIET_DVKT'],
+      XML4: ['CHI_TIET_CLS'],
+      XML5: ['CHI_TIET_DIEN_BIEN_BENH'],
+      XML6: ['CHI_TIET_HO_SO_BENH_AN_CHAM_SOC_DIEU_DUONG', 'CHI_TIET_CHAM_SOC', 'HO_SO_HIV'],
+      XML7: ['TOM_TAT_HSBA', 'CHI_TIET_TOM_TAT_HSBA'],
+      XML8: ['GIAY_BAO_TU', 'CHI_TIET_GIAY_BAO_TU'],
+      XML9: ['GIAY_CHUNG_SINH', 'CHI_TIET_GIAY_CHUNG_SINH'],
+      XML10: ['GIAY_NGHI_DUONG_THAI', 'CHI_TIET_GIAY_NGHI_DUONG_THAI'],
+      XML11: ['CHUNG_NHAN_NGHI_VIEC', 'CHI_TIET_CHUNG_NHAN_NGHI_VIEC', 'GIAY_CN_NGHI_BHXH'],
+      XML12: ['GIAY_CHUNG_NHAN_KHONG_CUNG_CHI_TRA', 'GIAY_XAC_NHAN_KHONG_CUNG_CHI_TRA'],
+      XML13: ['GIAY_CHUYEN_TUYEN', 'CHI_TIET_GIAY_CHUYEN_TUYEN'],
+      XML14: ['GIAY_HEN_KHAM_LAI', 'CHI_TIET_GIAY_HEN_KHAM_LAI']
+    };
 
-      while ((m = b64Regex.exec(xmlText)) !== null) {
-        matched = true;
-        const loaiHoSo = m[1].toUpperCase().trim();
-        const rawB64 = m[2].trim();
-        let decoded = rawB64;
-        try {
-          decoded = decodeURIComponent(escape(atob(rawB64)));
-        } catch(e) {
-          try { decoded = atob(rawB64); } catch(e2) {}
+    function decodeBase64Utf8(rawB64) {
+      const cleaned = rawB64.replace(/\s+/g, '');
+      try {
+        const binary = atob(cleaned);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
         }
-        extractXmlNodesToTable(decoded, loaiHoSo, fileName);
-      }
-
-      if (!matched) {
-        // Direct single XML file detection (longest keys first + boundary check)
-        const orderedKeys = Object.keys(AppState.tablesData).sort((a, b) => b.length - a.length);
-        const upperText = xmlText.toUpperCase();
-        const upperFile = fileName.toUpperCase().replace(/\s+/g, '');
-        for (const k of orderedKeys) {
-          const fileRe = new RegExp('(?:^|[^0-9A-Z])' + k + '(?:$|[^0-9])', 'i');
-          if (upperText.includes(`<${k}>`) || fileRe.test(upperFile)) {
-            extractXmlNodesToTable(xmlText, k, fileName);
-            break;
-          }
+        return new TextDecoder('utf-8').decode(bytes);
+      } catch (e) {
+        try {
+          return decodeURIComponent(escape(atob(cleaned)));
+        } catch (e2) {
+          return rawB64;
         }
       }
     }
 
-    function extractXmlNodesToTable(text, targetKey, fileName) {
-      if (!AppState.tablesData[targetKey]) return;
+    function normalizeXmlTableKey(rawKey) {
+      const upper = String(rawKey || '').toUpperCase().replace(/\s+/g, '');
+      const m = upper.match(/XML(\d{1,2})/);
+      if (m) {
+        const k = `XML${parseInt(m[1], 10)}`;
+        if (AppState.tablesData[k]) return k;
+      }
+      return AppState.tablesData[upper] ? upper : null;
+    }
 
-      // Extract item nodes based on tag conventions
-      const tagMap = {
-        XML1: 'TONG_HOP',
-        XML2: 'CHI_TIET_THUOC',
-        XML3: 'CHI_TIET_DVKT',
-        XML4: 'CHI_TIET_CLS',
-        XML5: 'CHI_TIET_DIEN_BIEN_BENH',
-        XML7: 'TOM_TAT_HSBA',
-        XML8: 'GIAY_BAO_TU',
-        XML11: 'CHUNG_NHAN_NGHI_VIEC',
-        XML13: 'GIAY_CHUYEN_TUYEN',
-        XML14: 'GIAY_HEN_KHAM_LAI'
-      };
+    function parseXmlText(xmlText, fileName) {
+      if (!xmlText || !xmlText.trim()) return;
+      const parser = new DOMParser();
+      let doc = null;
+      try {
+        doc = parser.parseFromString(xmlText, 'text/xml');
+        if (doc.querySelector('parsererror')) doc = null;
+      } catch (e) {
+        doc = null;
+      }
 
-      const itemTag = tagMap[targetKey] || targetKey;
-      const nodeRegex = new RegExp(`<${itemTag}>([\\s\\S]*?)<\\/${itemTag}>`, 'gi');
-      let m;
-      while ((m = nodeRegex.exec(text)) !== null) {
-        const block = m[1];
-        const rowObj = { _fileName: fileName };
-        const fieldRegex = /<([a-zA-Z0-9_]+)>(?:<!\[CDATA\[([\s\S]*?)\]\]>|([\s\S]*?))<\/\1>/gi;
-        let fm;
-        while ((fm = fieldRegex.exec(block)) !== null) {
-          const key = fm[1].toUpperCase().trim();
-          const val = fm[2] !== undefined ? fm[2] : (fm[3] || '');
-          rowObj[key] = val.trim();
+      // 1. Standard BHYT Wrapper: <FILEHOSO><LOAIHOSO>XML1..14</LOAIHOSO><NOIDUNGFILE>...</NOIDUNGFILE></FILEHOSO>
+      let foundWrapped = false;
+      if (doc) {
+        const fileHoSoNodes = doc.getElementsByTagName('FILEHOSO');
+        if (fileHoSoNodes && fileHoSoNodes.length > 0) {
+          for (let i = 0; i < fileHoSoNodes.length; i++) {
+            const node = fileHoSoNodes[i];
+            const loaiEl = node.getElementsByTagName('LOAIHOSO')[0];
+            const noiDungEl = node.getElementsByTagName('NOIDUNGFILE')[0];
+            if (!loaiEl || !noiDungEl) continue;
+            const targetKey = normalizeXmlTableKey(loaiEl.textContent);
+            if (!targetKey) continue;
+            foundWrapped = true;
+            const rawContent = (noiDungEl.textContent || '').trim();
+            const decoded = rawContent.startsWith('<') ? rawContent : decodeBase64Utf8(rawContent);
+            extractXmlNodesToTable(decoded, targetKey, fileName);
+          }
         }
-        AppState.tablesData[targetKey].push(rowObj);
+      } else {
+        // Regex fallback for wrapped <FILEHOSO> if XML had unescaped characters
+        const b64Regex = /<LOAIHOSO>\s*(XML\d+)\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/gi;
+        let m;
+        while ((m = b64Regex.exec(xmlText)) !== null) {
+          const targetKey = normalizeXmlTableKey(m[1]);
+          if (!targetKey) continue;
+          foundWrapped = true;
+          const rawContent = m[2].trim();
+          const decoded = rawContent.startsWith('<') ? rawContent : decodeBase64Utf8(rawContent);
+          extractXmlNodesToTable(decoded, targetKey, fileName);
+        }
+      }
+
+      if (foundWrapped) return;
+
+      // 2. Direct XML 1 - 14 parsing (unwrapped or combined XML, regardless of filename)
+      let foundDirect = false;
+      if (doc) {
+        for (const [tableKey, tagNames] of Object.entries(XML_TAG_MAP)) {
+          for (const tagName of tagNames) {
+            const nodes = doc.getElementsByTagName(tagName);
+            if (nodes && nodes.length > 0) {
+              foundDirect = true;
+              for (let i = 0; i < nodes.length; i++) {
+                const rowObj = extractDomElementFields(nodes[i], fileName);
+                if (Object.keys(rowObj).length > 1) {
+                  AppState.tablesData[tableKey].push(rowObj);
+                }
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      if (foundDirect) return;
+
+      // 3. Regex / filename fallback for direct XML 1 - 14
+      const orderedKeys = Object.keys(AppState.tablesData).sort((a, b) => b.length - a.length);
+      const upperText = xmlText.toUpperCase();
+      const upperFile = fileName.toUpperCase().replace(/\s+/g, '');
+
+      for (const k of orderedKeys) {
+        const tagNames = XML_TAG_MAP[k] || [k];
+        const hasTag = tagNames.some(t => upperText.includes(`<${t}`));
+        const fileRe = new RegExp('(?:^|[^0-9A-Z])' + k + '(?:$|[^0-9])', 'i');
+        if (hasTag || upperText.includes(`<${k}>`) || fileRe.test(upperFile)) {
+          extractXmlNodesToTable(xmlText, k, fileName);
+          if (hasTag) continue; // Support multi-table combined XML
+          break;
+        }
+      }
+    }
+
+    function extractDomElementFields(element, fileName) {
+      const rowObj = { _fileName: fileName };
+      const children = element.children;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        // Skip wrapper list nodes (e.g. DSACH_CHI_TIET_THUOC inside TONG_HOP)
+        if (child.children && child.children.length > 0) continue;
+        const key = child.tagName.toUpperCase().trim();
+        rowObj[key] = (child.textContent || '').trim();
+      }
+      return rowObj;
+    }
+
+    function extractXmlNodesToTable(text, targetKey, fileName) {
+      if (!AppState.tablesData[targetKey] || !text) return;
+      const tagNames = XML_TAG_MAP[targetKey] || [targetKey];
+
+      // Fast DOMParser path
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/xml');
+        if (!doc.querySelector('parsererror')) {
+          let parsedAny = false;
+          for (const tagName of tagNames) {
+            const nodes = doc.getElementsByTagName(tagName);
+            if (nodes && nodes.length > 0) {
+              parsedAny = true;
+              for (let i = 0; i < nodes.length; i++) {
+                const rowObj = extractDomElementFields(nodes[i], fileName);
+                if (Object.keys(rowObj).length > 1) {
+                  AppState.tablesData[targetKey].push(rowObj);
+                }
+              }
+              break;
+            }
+          }
+          if (parsedAny) return;
+        }
+      } catch (e) {
+        // Fall through to regex fallback
+      }
+
+      // Regex fallback for malformed XML
+      for (const itemTag of tagNames) {
+        const nodeRegex = new RegExp(`<${itemTag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${itemTag}>`, 'gi');
+        let m;
+        let matched = false;
+        while ((m = nodeRegex.exec(text)) !== null) {
+          matched = true;
+          const block = m[1];
+          const rowObj = { _fileName: fileName };
+          const fieldRegex = /<([a-zA-Z0-9_]+)(?:\s[^>]*)?>(?:<!\[CDATA\[([\s\S]*?)\]\]>|([\s\S]*?))<\/\1>/gi;
+          let fm;
+          while ((fm = fieldRegex.exec(block)) !== null) {
+            const key = fm[1].toUpperCase().trim();
+            const val = fm[2] !== undefined ? fm[2] : (fm[3] || '');
+            if (!val.includes('<')) {
+              rowObj[key] = val.trim();
+            }
+          }
+          AppState.tablesData[targetKey].push(rowObj);
+        }
+        if (matched) break;
       }
     }
 
@@ -1181,9 +1361,13 @@
       AppState.tablesData.XML3 = AppState.tablesData.XML3.map(r => validateXML3(r, AppState.dossierMap));
       AppState.tablesData.XML4 = AppState.tablesData.XML4.map(r => validateXML4(r, AppState.dossierMap));
       AppState.tablesData.XML5 = AppState.tablesData.XML5.map(r => validateXML5(r, AppState.dossierMap));
+      AppState.tablesData.XML6 = AppState.tablesData.XML6.map(r => validateXML6(r, AppState.dossierMap));
       AppState.tablesData.XML7 = AppState.tablesData.XML7.map(validateXML7);
       AppState.tablesData.XML8 = AppState.tablesData.XML8.map(validateXML8);
+      AppState.tablesData.XML9 = AppState.tablesData.XML9.map(r => validateXML9(r, AppState.dossierMap));
+      AppState.tablesData.XML10 = AppState.tablesData.XML10.map(r => validateXML10(r, AppState.dossierMap));
       AppState.tablesData.XML11 = AppState.tablesData.XML11.map(r => validateXML11(r, AppState.dossierMap));
+      AppState.tablesData.XML12 = AppState.tablesData.XML12.map(r => validateXML12(r, AppState.dossierMap));
       AppState.tablesData.XML13 = AppState.tablesData.XML13.map(validateXML13);
       AppState.tablesData.XML14 = AppState.tablesData.XML14.map(r => validateXML14(r, AppState.dossierMap));
 
@@ -1202,7 +1386,7 @@
       const foundTables = Object.keys(AppState.tablesData).filter(k => AppState.tablesData[k].length > 0);
       document.getElementById('kpiDossiers').innerText = x1Count.toLocaleString();
       document.getElementById('kpiTotalRows').innerText = `${totalRecs.toLocaleString()} bản ghi tất cả bảng`;
-      document.getElementById('kpiTablesCount').innerText = `${foundTables.length} / 10`;
+      document.getElementById('kpiTablesCount').innerText = `${foundTables.length} / ${Object.keys(AppState.tablesData).length}`;
       document.getElementById('kpiTablesList').innerText = foundTables.join(', ') || 'Chưa có';
 
       // Aggregate errors and warnings
