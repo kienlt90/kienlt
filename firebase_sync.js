@@ -3,6 +3,8 @@
  * Keeps window.CloudSync API compatible across index.html, main.html, math_game.html, english_game.html
  */
 
+const DEFAULT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx-DpqB5Cx8a0Cv2fqUNWrZ4yzQhhS6EicDPXUWOLWjTZLFeIoBmV8MXoN_-s07FMBtgg/exec';
+
 const LS_KEYS = {
   WEB_APP_URL: 'kienlt_sheets_webapp_url',
   KIDS: 'kienlt_kids_list',
@@ -30,9 +32,9 @@ function writeLS(key, val) {
 
 function getWebAppUrl() {
   try {
-    return (localStorage.getItem(LS_KEYS.WEB_APP_URL) || '').trim();
+    return (localStorage.getItem(LS_KEYS.WEB_APP_URL) || DEFAULT_WEB_APP_URL).trim();
   } catch (e) {
-    return '';
+    return DEFAULT_WEB_APP_URL;
   }
 }
 
