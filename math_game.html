@@ -18,7 +18,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-  <script src="firebase_sync.js"></script>
+  <script src="firebase_sync.js?v=20261112"></script>
   <!-- Security Vault (AES-GCM 256-bit Encryption) -->
   <script src="crypto_vault.js"></script>
   <script>
@@ -5063,7 +5063,11 @@ const mathBankGrade5 = [
     async function saveSheetsConfig() {
       const input = document.getElementById('sheets-webapp-url-input');
       const statusEl = document.getElementById('sheets-config-status');
-      if (!input || !window.CloudSync) return;
+      if (!input) return;
+      if (!window.CloudSync || !window.CloudSync.setWebAppUrl) {
+        alert('Trình duyệt đang dùng bản cache cũ. Vui lòng nhấn Ctrl + F5 để tải lại trang!');
+        return;
+      }
       const url = input.value.trim();
       window.CloudSync.setWebAppUrl(url);
       if (!url) {
@@ -5071,12 +5075,20 @@ const mathBankGrade5 = [
         return;
       }
       if (statusEl) statusEl.textContent = '⏳ Đang kiểm tra kết nối...';
-      const res = await window.CloudSync.testConnection(url);
-      if (res && res.ok) {
-        if (statusEl) statusEl.textContent = '✅ Kết nối Google Sheets thành công!';
-        await syncSheetsNow(true);
-      } else {
-        if (statusEl) statusEl.textContent = '❌ Không kết nối được URL này (kiểm tra quyền Anyone khi Deploy)';
+      try {
+        const res = await window.CloudSync.testConnection(url);
+        if (res && res.ok) {
+          if (statusEl) statusEl.textContent = '✅ Kết nối Google Sheets thành công!';
+          await syncSheetsNow(true);
+          alert('✅ Kết nối Google Sheets thành công!');
+        } else {
+          const errMsg = (res && res.error) ? ` (${res.error})` : '';
+          if (statusEl) statusEl.textContent = '❌ Không kết nối được URL này (kiểm tra quyền Anyone khi Deploy)';
+          alert('❌ Không kết nối được Google Sheets' + errMsg + '. Hãy kiểm tra lại URL Web App và quyền "Bất kỳ ai (Anyone)" khi Deploy.');
+        }
+      } catch (e) {
+        if (statusEl) statusEl.textContent = '❌ Lỗi kết nối: ' + e.message;
+        alert('❌ Lỗi kết nối: ' + e.message);
       }
     }
 
