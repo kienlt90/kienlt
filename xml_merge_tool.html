@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghép Bảng XML BHYT Tổng Hợp Bệnh Viện (QĐ 130)</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- SheetJS for Excel Reading and Exporting -->
+  <script src="xlsx.full.min.js"></script>
+  <script>
+    if (typeof XLSX === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');
+    }
+  </script>
+
+  <!-- JSZip for reading zip packages -->
+  <script src="jszip.min.js"></script>
+  <script>
+    if (typeof JSZip === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"><\/script>');
+    }
+  </script>
+
+  <style>
+    @layer utilities {
+      .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .custom-scroll::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+    }
+    .col-draggable {
+      cursor: grab;
+      user-select: none;
+    }
+    .col-draggable:active {
+      cursor: grabbing;
+    }
+    .col-drag-over {
+      outline: 2px dashed #4f46e5 !important;
+      background-color: #eef2ff !important;
+    }
+    table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-md border-b border-indigo-950/40 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <a href="main.html" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center justify-center text-white" title="Về Portal">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        </a>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-xl shadow-inner font-extrabold">
+          📑
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-black tracking-tight text-white uppercase">GHÉP BẢNG XML BHYT TỔNG HỢP</h1>
+            <span class="px-2 py-0.5 text-[10px] font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 rounded-full">QĐ 130 / 115 CỘT BV</span>
+          </div>
+          <p class="text-xs text-slate-300">Tự động bóc tách &amp; ghép nối quan hệ <span class="text-sky-300 font-bold">1 Hồ Sơ (XML1) ➔ Nhiều Dịch Vụ (XML2, XML3, XML4, XML5)</span> theo mã LK</p>
+        </div>
+      </div>
+
+      <div class="flex items-center flex-wrap gap-2">
+        <button id="btnSampleData" class="px-3 py-1.5 bg-indigo-700/80 hover:bg-indigo-600 text-white text-xs font-bold rounded-lg transition border border-indigo-400/30 flex items-center gap-1.5 shadow-sm">
+          <span>⚡</span>
+          <span>Nạp Mẫu Test</span>
+        </button>
+        <button id="btnExportExcel" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-md shadow-emerald-900/20 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span>Xuất Excel (.xlsx)</span>
+        </button>
+        <button id="btnClearData" class="px-2.5 py-1.5 bg-rose-900/40 hover:bg-rose-800 text-rose-200 text-xs font-bold rounded-lg transition border border-rose-700/40" title="Xóa dữ liệu để nạp file mới">
+          <span>✕ Xóa</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex-1 space-y-5 w-full">
+
+    <!-- Upload Box & Instructions -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+      <div id="dropZone" class="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-xl p-5 sm:p-7 text-center cursor-pointer bg-slate-50 hover:bg-indigo-50/40 transition flex flex-col items-center justify-center min-h-[130px]">
+        <div class="w-11 h-11 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-2 shadow-xs text-xl">
+          📂
+        </div>
+        <p class="text-sm font-bold text-slate-800 mb-1">
+          Kéo thả File <span class="text-indigo-600 font-extrabold">XML Tổng Hợp Bệnh Viện (.xml)</span>, gói <span class="text-sky-600 font-extrabold">.ZIP</span> hoặc Excel <span class="text-emerald-600 font-extrabold">XML_*.xlsx / BAOCAO_*.xlsx</span>
+        </p>
+        <p class="text-xs text-slate-400 mb-3 max-w-2xl">
+          Hệ thống tự động nhận diện tất cả hồ sơ KCB, bóc tách XML 1 (Hành chính) và ghép nối tự động sang từng dòng Thuốc (XML 2), Dịch vụ kỹ thuật &amp; VTYT (XML 3), Kết quả CLS (XML 4), Diễn biến bệnh (XML 5) theo chuẩn 115 cột BV hoặc tùy biến.
+        </p>
+        <div class="flex items-center gap-3">
+          <label class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl cursor-pointer transition shadow-sm flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>Chọn File Từ Máy Tính</span>
+            <input type="file" id="fileInput" multiple accept=".xml,.zip,.xlsx,.xls" class="hidden">
+          </label>
+          <label class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl cursor-pointer transition border border-slate-300">
+            <span>Chọn Thư Mục Chứa XML</span>
+            <input type="file" id="folderInput" webkitdirectory directory multiple class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <!-- Quick KPI Strip -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mt-4">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+          <p class="text-[10.5px] font-bold text-slate-400 uppercase">Hồ sơ KCB (XML1)</p>
+          <p id="kpiDossiers" class="text-xl font-black text-indigo-700 mt-0.5">0</p>
+          <p id="kpiDossiersSub" class="text-[10px] text-slate-400 truncate">Chưa nạp</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+          <p class="text-[10.5px] font-bold text-slate-400 uppercase">Tổng dòng đã ghép</p>
+          <p id="kpiTotalJoined" class="text-xl font-black text-emerald-700 mt-0.5">0</p>
+          <p id="kpiTotalJoinedSub" class="text-[10px] text-slate-400">Thuốc + DVKT + Khác</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+          <p class="text-[10.5px] font-bold text-slate-400 uppercase">Thuốc (XML 2)</p>
+          <p id="kpiXml2" class="text-xl font-black text-amber-600 mt-0.5">0</p>
+          <p class="text-[10px] text-slate-400">Chi tiết đơn thuốc</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+          <p class="text-[10.5px] font-bold text-slate-400 uppercase">DVKT &amp; VTYT (XML 3)</p>
+          <p id="kpiXml3" class="text-xl font-black text-sky-600 mt-0.5">0</p>
+          <p class="text-[10px] text-slate-400">Khám, PTTT, Xét nghiệm</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+          <p class="text-[10.5px] font-bold text-slate-400 uppercase">Cận lâm sàng (XML 4)</p>
+          <p id="kpiXml4" class="text-xl font-black text-teal-600 mt-0.5">0</p>
+          <p class="text-[10px] text-slate-400">Chỉ số xét nghiệm</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+          <p class="text-[10.5px] font-bold text-slate-400 uppercase">Tổng Chi Phí (VNĐ)</p>
+          <p id="kpiTotalCost" class="text-xl font-black text-rose-600 mt-0.5">0</p>
+          <p class="text-[10px] text-slate-400 truncate">Tổng tiền các dòng</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Table View & Column Customizer -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col">
+      
+      <!-- Toolbar -->
+      <div class="p-4 border-b border-slate-200 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center flex-wrap gap-2">
+          <!-- Preset View Switcher -->
+          <span class="text-xs font-bold text-slate-600">Góc nhìn ghép:</span>
+          <div class="inline-flex rounded-xl bg-slate-200/80 p-0.5 text-xs font-bold">
+            <button data-preset="BV_115" class="preset-btn px-3 py-1.5 rounded-lg bg-white text-indigo-700 shadow-xs">
+              🏥 Chuẩn 115 Cột Bệnh Viện
+            </button>
+            <button data-preset="QUICK" class="preset-btn px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900">
+              ⚡ Xem Nhanh Cốt Lõi
+            </button>
+            <button data-preset="FINANCE" class="preset-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-white/50">
+              💰 Tài Chính &amp; Viện Phí
+            </button>
+            <button data-preset="CLINICAL" class="preset-btn px-3 py-1.5 rounded-lg text-slate-600 hover:bg-white/50">
+              🩺 Lâm Sàng &amp; Dược
+            </button>
+          </div>
+
+          <button id="btnToggleColBuilder" class="px-3 py-1.5 bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs" title="Tùy chọn hiển thị, thêm/bớt và kéo thả cột">
+            <span>🧩 Kéo thả &amp; Chọn cột</span>
+            <span id="badgeActiveCols" class="px-1.5 py-0.2 text-[10px] rounded-full bg-indigo-600 text-white font-bold">115</span>
+          </button>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="flex items-center flex-wrap gap-2 text-xs">
+          <div class="relative">
+            <input type="text" id="searchInput" placeholder="Tìm Mã LK, Bệnh nhân, Mã DV, Tên DV..." class="pl-8 pr-3 py-1.5 bg-white border border-slate-300 rounded-lg w-56 sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
+            <svg class="w-4 h-4 absolute left-2.5 top-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+
+          <select id="filterType" class="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg font-bold text-slate-700 focus:outline-none">
+            <option value="ALL">Tất cả dịch vụ</option>
+            <option value="THUOC">💊 Chỉ Thuốc (XML 2)</option>
+            <option value="DVKT">💉 Chỉ DVKT &amp; VTYT (XML 3)</option>
+            <option value="CLS">🔬 Chỉ Cận Lâm Sàng (XML 4)</option>
+            <option value="DIENBIEN">📝 Chỉ Diễn Biến LS (XML 5)</option>
+          </select>
+
+          <select id="pageSize" class="px-2 py-1.5 bg-white border border-slate-300 rounded-lg font-bold text-slate-700 focus:outline-none">
+            <option value="20">20 dòng/trang</option>
+            <option value="50">50 dòng/trang</option>
+            <option value="100">100 dòng/trang</option>
+            <option value="200">200 dòng/trang</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Column Customizer Panel (Collapsible) -->
+      <div id="colBuilderPanel" class="hidden border-b border-indigo-100 bg-indigo-50/50 p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black uppercase text-indigo-900 tracking-wider">Tùy biến cột hiển thị trên bảng ghép</span>
+            <span class="text-[11px] text-slate-500">• Bấm vào thẻ để bật/tắt cột hoặc kéo thả tiêu đề bảng để đổi thứ tự</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="resetColumnsToPreset('BV_115')" class="px-2.5 py-1 text-xs font-bold text-indigo-600 hover:bg-indigo-100 rounded-lg transition">Mặc định (115 cột BV)</button>
+            <button onclick="selectAllColumns()" class="px-2.5 py-1 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition">Chọn tất cả</button>
+            <button onclick="toggleColBuilderPanel(false)" class="px-2 py-1 text-xs font-bold text-slate-400 hover:text-slate-700 rounded-lg">✕ Đóng</button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div>
+            <div class="text-[11px] font-bold text-indigo-900 mb-1 flex items-center justify-between">
+              <span>Cột Hành Chính &amp; Hồ Sơ KCB (từ XML 1):</span>
+              <span class="text-[10px] text-slate-400 font-normal">Ghép theo MA_LK</span>
+            </div>
+            <div id="warehouseXml1" class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto custom-scroll p-1 bg-white rounded-lg border border-indigo-200/70">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-indigo-900 mb-1 flex items-center justify-between">
+              <span>Cột Chi Tiết Dịch Vụ, Thuốc, VTYT (từ XML 2, XML 3, XML 4):</span>
+              <span class="text-[10px] text-slate-400 font-normal">Từng dòng chỉ định</span>
+            </div>
+            <div id="warehouseDetail" class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto custom-scroll p-1 bg-white rounded-lg border border-indigo-200/70">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="overflow-x-auto overflow-y-auto max-h-[680px] custom-scroll relative">
+        <table id="joinedTable" class="w-full text-left text-xs border-collapse">
+          <thead id="joinedTableHead" class="bg-slate-100 text-slate-700 font-bold uppercase text-[10.5px] border-b border-slate-300">
+            <!-- Headers rendered dynamically -->
+          </thead>
+          <tbody id="joinedTableBody" class="divide-y divide-slate-200 bg-white">
+            <!-- Rows rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination & Status Bar -->
+      <div class="p-3 border-t border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div id="pageInfo" class="font-semibold text-slate-600">
+          Chưa có dữ liệu
+        </div>
+        <div id="paginationControls" class="flex items-center gap-1">
+          <!-- Pagination buttons rendered dynamically -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-400">
+    Hệ thống ghép bảng XML BHYT QĐ 130/QĐ-BYT &bull; Chạy độc lập trên trình duyệt &bull; Không lưu trữ dữ liệu lên Server
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-xl flex items-center gap-2 pointer-events-none"></div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    // ==========================================
+    // 1. 115 COLUMNS DEFINITION OF BV REPORT
+    // ==========================================
+    const BV_115_COLUMNS = [
+      "STT", "MA_LK", "SOVAOVIEN", "MABN", "HOTEN", "NGAYSINH", "PHAI", "CHOLAM", "DIACHI", "MUCHUONG",
+      "MA_THE", "GT_THE_TU", "GT_THE_DEN", "TUYEN", "MA_KHUVUC", "NHANTU", "NGAY_VAO_VIEN", "NGAY_RA_VIEN", "NGAY_THANH_TOAN", "NGAY_VA0_KHOA",
+      "NGAY_RA_KHOA", "CHAN_DOAN", "MA_TAI_NAN", "TENTAINAN", "MATINHTRANG", "TENTINHTRANG", "MAKETQUA", "TENKETQUA", "SO_PHIEU", "NGAY_QT",
+      "THANG_QT", "TENKP", "CHANDOANKHAC", "MIEN_CUNG_CT", "MA_BENH", "MA_BENHKHAC", "MA_LYDO_VVIEN", "MA_NOI_CHUYEN", "SO_NGAY_DTRI", "MA_LOAI_KCB",
+      "MA_CSKCB", "NSTPTRA", "NSTPTRACOM", "MASO_HONGHEO", "GHICHU", "SOBENHAN", "CAPCUU", "TAMUNG", "NOIDUNGTAMUNG", "T_BNCCT",
+      "MA_KHOA_BV", "CAN_NANG", "MA_NHOM4210", "MAPT", "MA_DVKT_THUOC_VT_BV", "MA_DVKT_THUOC_VT_BH", "MA_NHOMBV", "TEN_DVKT_THUOC_VT_NOIBO", "TEN_DVKT_THUOC_VT_BH", "DVT",
+      "HAM_LUONG", "HOAT_CHAT", "DUONG_DUNG", "MA_DUONG_DUNG", "LIEUDUNG", "SO_DANG_KY", "SOTIEN", "BHYTTRA", "NGUONKHAC", "BNTRA",
+      "BNTUTRA", "THUOC", "VTYT", "SO_LUONG", "DON_GIA", "DONGIA_BV", "TYLE_TT", "THANH_TIEN", "THANHTIEN_BV", "T_BNTT",
+      "T_BHTT", "T_BNTT_NPV", "MA_KHOA_CHIDINH", "TEN_KHOA_CHIDINH", "MA_BAC_SY", "NGAY_YL", "NGAY_KQ", "MA_PTTT", "T_NGUONKHAC", "KY_THUAT_CAO",
+      "MATHAU", "MA_DOI_TUONG", "TEN_DOI_TUONG", "LOAITHUOC", "DONVI", "GOI_VTYT_4210", "PHAM_VI", "TT_THAU", "T_TRANTT", "MA_GIUONG",
+      "T_BNCCT_4210", "MAVP_PTTT", "MANVLP", "CHENHLECH", "MA_KKLP", "CP", "NGAYLP", "NGAYBD", "NGAYKT", "SOTHE1",
+      "SOTHE2", "A1111", "A2222", "DIEUCHINHCP", "DIEUCHINHBN"
+    ];
+
+    const PRESET_COLUMNS = {
+      BV_115: [...BV_115_COLUMNS],
+      QUICK: [
+        "STT", "MA_LK", "HOTEN", "NGAYSINH", "PHAI", "MA_THE", "NGAY_VAO_VIEN", "NGAY_RA_VIEN",
+        "CHAN_DOAN", "MA_BENH", "MA_NHOM4210", "MA_DVKT_THUOC_VT_BH", "TEN_DVKT_THUOC_VT_BH",
+        "SO_LUONG", "DON_GIA", "THANH_TIEN", "T_BHTT", "T_BNTT", "NGAY_YL", "NGAY_KQ", "MA_BAC_SY"
+      ],
+      FINANCE: [
+        "STT", "MA_LK", "HOTEN", "MA_THE", "MUCHUONG", "SO_PHIEU", "MA_NHOM4210", "TEN_DVKT_THUOC_VT_BH",
+        "SO_LUONG", "DON_GIA", "DONGIA_BV", "THANH_TIEN", "THANHTIEN_BV", "T_BHTT", "T_BNTT", "T_BNCCT",
+        "BHYTTRA", "BNTRA", "BNTUTRA", "TAMUNG", "CHENHLECH"
+      ],
+      CLINICAL: [
+        "STT", "MA_LK", "HOTEN", "NGAYSINH", "PHAI", "CHAN_DOAN", "CHANDOANKHAC", "TENKP",
+        "MA_NHOM4210", "MA_DVKT_THUOC_VT_BH", "TEN_DVKT_THUOC_VT_BH", "HOAT_CHAT", "HAM_LUONG",
+        "DUONG_DUNG", "LIEUDUNG", "SO_DANG_KY", "SO_LUONG", "DVT", "NGAY_YL", "NGAY_KQ", "MA_BAC_SY"
+      ]
+    };
+
+    // Columns that belong to Dossier header (XML 1)
+    const XML1_COLUMN_SET = new Set(BV_115_COLUMNS.slice(0, 52).concat(["SOTHE1", "SOTHE2"]));
+
+    // State
+    const AppState = {
+      dossiers: [],       // Raw XML1 or Dossier list: [ { MA_LK, ... } ]
+      joinedRows: [],     // Fully merged rows [ { STT, MA_LK, HOTEN, ... } ]
+      activeColumns: [...BV_115_COLUMNS],
+      currentPreset: 'BV_115',
+      currentPage: 1,
+      pageSize: 20,
+      searchQuery: '',
+      filterType: 'ALL'   // ALL, THUOC, DVKT, CLS, DIENBIEN
+    };
+
+    // ==========================================
+    // 2. PARSING ENGINE (XML PACKAGES & EXCEL)
+    // ==========================================
+
+    function extractElementFields(xmlBlock) {
+      const fields = {};
+      if (!xmlBlock) return fields;
+
+      // 1. CDATA elements
+      const cdataRegex = /<([A-Za-z0-9_]+)><!\[CDATA\[([\s\S]*?)\]\]><\/\1>/g;
+      let m;
+      while ((m = cdataRegex.exec(xmlBlock)) !== null) {
+        fields[m[1].toUpperCase().trim()] = m[2].trim();
+      }
+
+      // 2. Standard tag elements without child tags
+      const tagRegex = /<([A-Za-z0-9_]+)>([^<]*)<\/\1>/g;
+      while ((m = tagRegex.exec(xmlBlock)) !== null) {
+        const key = m[1].toUpperCase().trim();
+        if (fields[key] === undefined) {
+          fields[key] = m[2].trim();
+        }
+      }
+      return fields;
+    }
+
+    function formatDateTime(str) {
+      if (!str) return '';
+      const s = String(str).trim();
+      if (/^\d{12}$/.test(s)) {
+        // YYYYMMDDHHmm
+        return `${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)} ${s.slice(8,10)}:${s.slice(10,12)}`;
+      }
+      if (/^\d{8}$/.test(s)) {
+        // YYYYMMDD
+        return `${s.slice(6,8)}/${s.slice(4,6)}/${s.slice(0,4)}`;
+      }
+      return s;
+    }
+
+    function formatNumber(v) {
+      if (v === null || v === undefined || v === '') return '';
+      const n = Number(v);
+      if (isNaN(n)) return v;
+      return n.toLocaleString('vi-VN');
+    }
+
+    // Process single HOSO package (from XML Hospital Export)
+    function parseHospitalXmlText(xmlText, fileName) {
+      if (!xmlText) return;
+      const hosoMatches = xmlText.match(/<HOSO>[\s\S]*?<\/HOSO>/g);
+      
+      if (!hosoMatches || hosoMatches.length === 0) {
+        // Fallback: Check if it's a standalone single XML file
+        parseDirectStandaloneXml(xmlText, fileName);
+        return;
+      }
+
+      hosoMatches.forEach(hText => {
+        // 1. Extract XML 1 (TONG_HOP)
+        let m1 = hText.match(/<LOAIHOSO>\s*XML1\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/i);
+        let x1 = m1 ? extractElementFields(m1[1]) : {};
+        if (!x1.MA_LK) {
+          // Alternative tag
+          const altM = hText.match(/<TONG_HOP>([\s\S]*?)<\/TONG_HOP>/i);
+          if (altM) x1 = extractElementFields(altM[1]);
+        }
+        if (!x1.MA_LK) return;
+
+        AppState.dossiers.push(x1);
+
+        // 2. Extract XML 2 (Thuoc)
+        const m2 = hText.match(/<LOAIHOSO>\s*XML2\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/i);
+        const drugsText = m2 ? m2[1] : (hText.match(/<CHITIEU_CHITIET_THUOC>[\s\S]*?<\/CHITIEU_CHITIET_THUOC>/i)?.[0] || '');
+        const drugItems = drugsText.match(/<CHI_TIET_THUOC>[\s\S]*?<\/CHI_TIET_THUOC>/g) || [];
+
+        // 3. Extract XML 3 (DVKT & VTYT)
+        const m3 = hText.match(/<LOAIHOSO>\s*XML3\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/i);
+        const dvktText = m3 ? m3[1] : (hText.match(/<CHITIEU_CHITIET_DVKT_VTYT>[\s\S]*?<\/CHITIEU_CHITIET_DVKT_VTYT>/i)?.[0] || '');
+        const dvktItems = dvktText.match(/<CHI_TIET_DVKT>[\s\S]*?<\/CHI_TIET_DVKT>/g) || [];
+
+        // 4. Extract XML 4 (CLS)
+        const m4 = hText.match(/<LOAIHOSO>\s*XML4\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/i);
+        const clsText = m4 ? m4[1] : '';
+        const clsItems = clsText.match(/<CHI_TIET_CLS>[\s\S]*?<\/CHI_TIET_CLS>/g) || [];
+
+        // 5. Extract XML 5 (Dien Bien LS)
+        const m5 = hText.match(/<LOAIHOSO>\s*XML5\s*<\/LOAIHOSO>[\s\S]*?<NOIDUNGFILE>([\s\S]*?)<\/NOIDUNGFILE>/i);
+        const dbText = m5 ? m5[1] : '';
+        const dbItems = dbText.match(/<CHI_TIET_DIEN_BIEN_BENH>[\s\S]*?<\/CHI_TIET_DIEN_BIEN_BENH>/g) || [];
+
+        let rowCountInDossier = 0;
+
+        // Helper to push a joined row mapping to 115 columns
+        function pushJoinedRow(type, itemFields) {
+          rowCountInDossier++;
+          const row = {};
+
+          // --- PHẦN 1: HÀNH CHÍNH TỪ XML 1 ---
+          row.STT = rowCountInDossier;
+          row.MA_LK = x1.MA_LK || '';
+          row.SOVAOVIEN = x1.SO_VAO_VIEN || x1.SOVAOVIEN || '';
+          row.MABN = x1.MA_BN || x1.MABN || '';
+          row.HOTEN = x1.HO_TEN || x1.HOTEN || '';
+          row.NGAYSINH = x1.NGAY_SINH || x1.NGAYSINH || '';
+          row.PHAI = x1.GIOI_TINH === '1' ? 'Nam' : (x1.GIOI_TINH === '2' ? 'Nữ' : (x1.PHAI || ''));
+          row.CHOLAM = x1.NOI_LAM_VIEC || x1.CHOLAM || '';
+          row.DIACHI = x1.DIA_CHI || x1.DIACHI || '';
+          row.MUCHUONG = x1.MUC_HUONG || x1.MUCHUONG || '';
+          row.MA_THE = x1.MA_THE_BHYT || x1.MA_THE || '';
+          row.GT_THE_TU = x1.GT_THE_TU || '';
+          row.GT_THE_DEN = x1.GT_THE_DEN || '';
+          row.TUYEN = x1.MA_DKBD === x1.MA_CSKCB ? '1' : (x1.TUYEN || '');
+          row.MA_KHUVUC = x1.MA_KHUVUC || '';
+          row.NHANTU = x1.MA_LYDO_VVIEN || x1.NHANTU || '';
+          row.NGAY_VAO_VIEN = formatDateTime(x1.NGAY_VAO || x1.NGAY_VAO_VIEN);
+          row.NGAY_RA_VIEN = formatDateTime(x1.NGAY_RA || x1.NGAY_RA_VIEN);
+          row.NGAY_THANH_TOAN = formatDateTime(x1.NGAY_TTOAN || x1.NGAY_THANH_TOAN);
+          row.NGAY_VA0_KHOA = formatDateTime(x1.NGAY_VAO || x1.NGAY_VA0_KHOA);
+          row.NGAY_RA_KHOA = formatDateTime(x1.NGAY_RA || x1.NGAY_RA_KHOA);
+          row.CHAN_DOAN = x1.CHAN_DOAN_RV || x1.CHAN_DOAN_VAO || x1.CHAN_DOAN || '';
+          row.MA_TAI_NAN = x1.MA_TAI_NAN || '';
+          row.TENTAINAN = x1.TENTAINAN || '';
+          row.MATINHTRANG = x1.MA_TINHTRANG_RAVIEN || x1.MATINHTRANG || '';
+          row.TENTINHTRANG = x1.TENTINHTRANG || '';
+          row.MAKETQUA = x1.KET_QUA_DTRI || x1.MAKETQUA || '';
+          row.TENKETQUA = x1.TENKETQUA || '';
+          row.SO_PHIEU = x1.SO_PHIEU || '';
+          row.NGAY_QT = x1.NGAY_QT || (x1.NGAY_TTOAN ? x1.NGAY_TTOAN.slice(6, 8) : '');
+          row.THANG_QT = x1.THANG_QT || (x1.NGAY_TTOAN ? x1.NGAY_TTOAN.slice(4, 6) : '');
+          row.TENKP = itemFields.TEN_KHOA || x1.TEN_KHOA || x1.TENKP || '';
+          row.CHANDOANKHAC = x1.MA_BENH_KT || x1.CHANDOANKHAC || '';
+          row.MIEN_CUNG_CT = x1.MIEN_CUNG_CT || '';
+          row.MA_BENH = x1.MA_BENH_CHINH || x1.MA_BENH || '';
+          row.MA_BENHKHAC = x1.MA_BENH_KT || x1.MA_BENHKHAC || '';
+          row.MA_LYDO_VVIEN = x1.MA_LYDO_VVIEN || '';
+          row.MA_NOI_CHUYEN = x1.MA_NOI_CHUYEN || '';
+          row.SO_NGAY_DTRI = x1.SO_NGAY_DTRI || '';
+          row.MA_LOAI_KCB = x1.MA_LOAI_KCB || '';
+          row.MA_CSKCB = x1.MA_CSKCB || '';
+          row.NSTPTRA = x1.NSTPTRA || '';
+          row.NSTPTRACOM = x1.NSTPTRACOM || '';
+          row.MASO_HONGHEO = x1.MASO_HONGHEO || '';
+          row.GHICHU = x1.GHI_CHU || x1.GHICHU || '';
+          row.SOBENHAN = x1.SO_BENH_AN || x1.SOBENHAN || '';
+          row.CAPCUU = x1.CAPCUU || '';
+          row.TAMUNG = x1.T_TAMUNG || x1.TAMUNG || '';
+          row.NOIDUNGTAMUNG = x1.NOIDUNGTAMUNG || '';
+          row.T_BNCCT = x1.T_BNCCT || 0;
+          row.MA_KHOA_BV = itemFields.MA_KHOA || x1.MA_KHOA || '';
+          row.CAN_NANG = x1.CAN_NANG || '';
+
+          // --- PHẦN 2: CHI TIẾT DỊCH VỤ / THUỐC (XML 2/3/4) ---
+          row.MA_NHOM4210 = itemFields.MA_NHOM || '';
+          row.MAPT = itemFields.MA_PTTT_QT || itemFields.MAPT || '';
+          row.MA_DVKT_THUOC_VT_BV = itemFields.MA_THUOC || itemFields.MA_DICH_VU || itemFields.MA_VAT_TU || '';
+          row.MA_DVKT_THUOC_VT_BH = itemFields.MA_THUOC || itemFields.MA_DICH_VU || itemFields.MA_VAT_TU || '';
+          row.MA_NHOMBV = itemFields.MA_NHOM || '';
+          row.TEN_DVKT_THUOC_VT_NOIBO = itemFields.TEN_THUOC || itemFields.TEN_DICH_VU || itemFields.TEN_VAT_TU || '';
+          row.TEN_DVKT_THUOC_VT_BH = itemFields.TEN_THUOC || itemFields.TEN_DICH_VU || itemFields.TEN_VAT_TU || '';
+          row.DVT = itemFields.DON_VI_TINH || itemFields.DVT || '';
+          row.HAM_LUONG = itemFields.HAM_LUONG || '';
+          row.HOAT_CHAT = itemFields.HOAT_CHAT || itemFields.TEN_HOATCHAT || '';
+          row.DUONG_DUNG = itemFields.DUONG_DUNG || '';
+          row.MA_DUONG_DUNG = itemFields.MA_DUONG_DUNG || '';
+          row.LIEUDUNG = itemFields.LIEU_DUNG || itemFields.LIEUDUNG || '';
+          row.SO_DANG_KY = itemFields.SO_DANG_KY || '';
+          row.SOTIEN = itemFields.THANH_TIEN_BV || itemFields.THANH_TIEN || '';
+          row.BHYTTRA = itemFields.T_BHTT || itemFields.BHYTTRA || '';
+          row.NGUONKHAC = itemFields.T_NGUONKHAC || 0;
+          row.BNTRA = itemFields.T_BNTT || 0;
+          row.BNTUTRA = itemFields.T_BNCCT || 0;
+          row.THUOC = type === 'THUOC' ? (itemFields.THANH_TIEN_BV || itemFields.THANH_TIEN || '') : '';
+          row.VTYT = (type === 'DVKT' && itemFields.MA_VAT_TU) ? (itemFields.THANH_TIEN_BV || '') : (type === 'DVKT' ? 0 : '');
+          row.SO_LUONG = itemFields.SO_LUONG || 1;
+          row.DON_GIA = itemFields.DON_GIA || itemFields.DON_GIA_BH || itemFields.DON_GIA_BV || 0;
+          row.DONGIA_BV = itemFields.DON_GIA_BV || itemFields.DON_GIA || 0;
+          row.TYLE_TT = itemFields.TYLE_TT_BH || itemFields.TYLE_TT || 100;
+          row.THANH_TIEN = itemFields.THANH_TIEN_BV || itemFields.THANH_TIEN_BH || itemFields.THANH_TIEN || 0;
+          row.THANHTIEN_BV = itemFields.THANH_TIEN_BV || itemFields.THANH_TIEN || 0;
+          row.T_BNTT = itemFields.T_BNTT || 0;
+          row.T_BHTT = itemFields.T_BHTT || 0;
+          row.T_BNTT_NPV = '';
+          row.MA_KHOA_CHIDINH = itemFields.MA_KHOA || '';
+          row.TEN_KHOA_CHIDINH = itemFields.TEN_KHOA || '';
+          row.MA_BAC_SY = itemFields.MA_BAC_SI || itemFields.MA_BAC_SY || '';
+          row.NGAY_YL = formatDateTime(itemFields.NGAY_YL);
+          row.NGAY_KQ = formatDateTime(itemFields.NGAY_KQ);
+          row.MA_PTTT = itemFields.MA_PTTT || '';
+          row.T_NGUONKHAC = itemFields.T_NGUONKHAC || 0;
+          row.KY_THUAT_CAO = itemFields.KY_THUAT_CAO || 0;
+          row.MATHAU = itemFields.MA_THAU || '';
+          row.MA_DOI_TUONG = itemFields.MA_DOI_TUONG || '1';
+          row.TEN_DOI_TUONG = itemFields.TEN_DOI_TUONG || 'BHYT';
+          row.LOAITHUOC = itemFields.LOAITHUOC || '';
+          row.DONVI = itemFields.DON_VI_TINH || '';
+          row.GOI_VTYT_4210 = itemFields.GOI_VTYT || '';
+          row.PHAM_VI = itemFields.PHAM_VI || '1';
+          row.TT_THAU = itemFields.TT_THAU || '';
+          row.T_TRANTT = itemFields.T_TRANTT || '';
+          row.MA_GIUONG = itemFields.MA_GIUONG || '';
+
+          // PHẦN ĐUÔI
+          row.T_BNCCT_4210 = itemFields.T_BNCCT || 0;
+          row.MAVP_PTTT = '';
+          row.MANVLP = '';
+          row.CHENHLECH = '';
+          row.MA_KKLP = '';
+          row.CP = '';
+          row.NGAYLP = '';
+          row.NGAYBD = formatDateTime(x1.GT_THE_TU);
+          row.NGAYKT = formatDateTime(x1.GT_THE_DEN);
+          row.SOTHE1 = x1.MA_THE_BHYT || '';
+          row.SOTHE2 = '';
+          row.A1111 = '';
+          row.A2222 = '';
+          row.DIEUCHINHCP = '';
+          row.DIEUCHINHBN = '';
+
+          // System helper fields
+          row._TYPE = type; // THUOC, DVKT, CLS, DIENBIEN
+          row._FILE = fileName;
+
+          AppState.joinedRows.push(row);
+        }
+
+        // Push Drugs
+        drugItems.forEach(itXml => {
+          pushJoinedRow('THUOC', extractElementFields(itXml));
+        });
+
+        // Push DVKT
+        dvktItems.forEach(itXml => {
+          pushJoinedRow('DVKT', extractElementFields(itXml));
+        });
+
+        // Push CLS (if any)
+        clsItems.forEach(itXml => {
+          const fCls = extractElementFields(itXml);
+          fCls.TEN_DICH_VU = `[CLS] ${fCls.MA_CHI_SO || ''}: ${fCls.GIA_TRI || ''} (${fCls.DON_VI_DO || ''})`;
+          pushJoinedRow('CLS', fCls);
+        });
+
+        // Push Dien bien (if any)
+        dbItems.forEach(itXml => {
+          const fDb = extractElementFields(itXml);
+          fDb.TEN_DICH_VU = `[Diễn biến] ${fDb.DIEN_BIEN_LS || ''}`;
+          pushJoinedRow('DIENBIEN', fDb);
+        });
+
+        // If Dossier has no items at all (empty visit)
+        if (rowCountInDossier === 0) {
+          pushJoinedRow('EMPTY', { TEN_DICH_VU: '(Hồ sơ KCB không phát sinh chi phí thuốc / DVKT)' });
+        }
+      });
+    }
+
+    // Direct parser if file has no <HOSO> wrapper
+    function parseDirectStandaloneXml(xmlText, fileName) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(xmlText, 'text/xml');
+      if (doc.querySelector('parsererror')) return;
+
+      const tongHopNodes = doc.getElementsByTagName('TONG_HOP');
+      for (let i = 0; i < tongHopNodes.length; i++) {
+        const row = extractElementFields(tongHopNodes[i].outerHTML);
+        if (row.MA_LK) {
+          AppState.dossiers.push(row);
+          AppState.joinedRows.push({
+            STT: i + 1,
+            MA_LK: row.MA_LK,
+            HOTEN: row.HO_TEN || '',
+            NGAYSINH: row.NGAY_SINH || '',
+            PHAI: row.GIOI_TINH === '1' ? 'Nam' : 'Nữ',
+            MA_THE: row.MA_THE_BHYT || '',
+            CHAN_DOAN: row.CHAN_DOAN_RV || row.CHAN_DOAN_VAO || '',
+            THANH_TIEN: row.T_TONGCHI_BV || row.T_TONGCHI || 0,
+            _TYPE: 'XML1_STANDALONE',
+            _FILE: fileName
+          });
+        }
+      }
+    }
+
+    // Parse Excel (.xlsx/.xls) containing pre-joined sheets or XML sheets
+    async function parseExcelFile(file) {
+      const buffer = await file.arrayBuffer();
+      const wb = XLSX.read(buffer, { type: 'array' });
+      
+      wb.SheetNames.forEach(sheetName => {
+        const sheet = wb.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        if (rows.length === 0) return;
+
+        // Check if this sheet is already a joined report (like BAOCAO_CHITIET_79_80)
+        const firstRow = rows[0];
+        const keysUpper = Object.keys(firstRow).map(k => k.toUpperCase().trim());
+        const isBvChitiet = keysUpper.includes('MA_LK') && (keysUpper.includes('HOTEN') || keysUpper.includes('HO_TEN')) && (keysUpper.includes('TEN_DVKT_THUOC_VT_BH') || keysUpper.includes('MA_DVKT_THUOC_VT_BH'));
+
+        if (isBvChitiet) {
+          // Ingest direct 115 rows
+          rows.forEach((r, idx) => {
+            const row = { _FILE: `${file.name} [${sheetName}]` };
+            for (const [k, v] of Object.entries(r)) {
+              row[k.toUpperCase().trim()] = v;
+            }
+            if (!row.STT) row.STT = idx + 1;
+            // Determine type
+            const nhom = String(row.MA_NHOM4210 || row.MA_NHOM || '');
+            row._TYPE = (nhom === '4' || nhom === '5' || nhom === '6') ? 'THUOC' : 'DVKT';
+            AppState.joinedRows.push(row);
+          });
+          // Collect dossiers
+          const lkSet = new Set(rows.map(r => r.MA_LK || r.ma_lk).filter(Boolean));
+          lkSet.forEach(lk => AppState.dossiers.push({ MA_LK: lk }));
+        }
+      });
+    }
+
+    // Handle ZIP files
+    async function parseZipFile(file) {
+      const zip = await JSZip.loadAsync(file);
+      for (const [zname, zentry] of Object.entries(zip.files)) {
+        if (!zentry.dir && zname.toLowerCase().endsWith('.xml')) {
+          const text = await zentry.async('text');
+          parseHospitalXmlText(text, `${file.name}/${zname}`);
+        }
+      }
+    }
+
+    // Main entry point for uploaded files
+    async function handleIncomingFiles(fileList) {
+      if (!fileList || fileList.length === 0) return;
+      showToast(`Đang bóc tách & ghép dữ liệu ${fileList.length} file...`, "⏳");
+
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        const fName = file.name.toLowerCase();
+        try {
+          if (fName.endsWith('.zip')) {
+            await parseZipFile(file);
+          } else if (fName.endsWith('.xlsx') || fName.endsWith('.xls')) {
+            await parseExcelFile(file);
+          } else if (fName.endsWith('.xml')) {
+            const text = await file.text();
+            parseHospitalXmlText(text, file.name);
+          }
+        } catch (err) {
+          console.error("Lỗi đọc file:", file.name, err);
+        }
+      }
+
+      updateKpis();
+      AppState.currentPage = 1;
+      renderTable();
+      renderColumnWarehouses();
+      showToast(`Đã ghép thành công ${AppState.joinedRows.length.toLocaleString()} dòng từ ${AppState.dossiers.length.toLocaleString()} hồ sơ KCB!`, "✅");
+    }
+
+    // ==========================================
+    // 3. KPI & METRICS UPDATE
+    // ==========================================
+    function updateKpis() {
+      const distinctLk = new Set(AppState.joinedRows.map(r => r.MA_LK).filter(Boolean));
+      document.getElementById('kpiDossiers').innerText = distinctLk.size.toLocaleString();
+      document.getElementById('kpiDossiersSub').innerText = `${AppState.dossiers.length.toLocaleString()} hồ sơ XML1`;
+
+      document.getElementById('kpiTotalJoined').innerText = AppState.joinedRows.length.toLocaleString();
+
+      const countThuoc = AppState.joinedRows.filter(r => r._TYPE === 'THUOC').length;
+      const countDvkt = AppState.joinedRows.filter(r => r._TYPE === 'DVKT').length;
+      const countCls = AppState.joinedRows.filter(r => r._TYPE === 'CLS').length;
+
+      document.getElementById('kpiXml2').innerText = countThuoc.toLocaleString();
+      document.getElementById('kpiXml3').innerText = countDvkt.toLocaleString();
+      document.getElementById('kpiXml4').innerText = countCls.toLocaleString();
+
+      let totalCost = 0;
+      AppState.joinedRows.forEach(r => {
+        const val = Number(r.THANH_TIEN || r.SOTIEN || r.THANHTIEN_BV || 0);
+        if (!isNaN(val)) totalCost += val;
+      });
+      document.getElementById('kpiTotalCost').innerText = totalCost.toLocaleString('vi-VN');
+    }
+
+    // ==========================================
+    // 4. RENDERING ENGINE (TABLE & PAGINATION)
+    // ==========================================
+
+    function getFilteredRows() {
+      const q = AppState.searchQuery.toLowerCase().trim();
+      const type = AppState.filterType;
+
+      return AppState.joinedRows.filter(r => {
+        // Filter by type
+        if (type !== 'ALL' && r._TYPE !== type) return false;
+
+        // Search query
+        if (!q) return true;
+        const text = [
+          r.MA_LK, r.MABN, r.HOTEN, r.SO_CCCD, r.MA_THE,
+          r.MA_DVKT_THUOC_VT_BH, r.TEN_DVKT_THUOC_VT_BH, r.TEN_DVKT_THUOC_VT_NOIBO,
+          r.CHAN_DOAN, r.MA_BENH, r.MA_BAC_SY
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        return text.includes(q);
+      });
+    }
+
+    function renderTable() {
+      const thead = document.getElementById('joinedTableHead');
+      const tbody = document.getElementById('joinedTableBody');
+      const filtered = getFilteredRows();
+
+      // Render Header
+      thead.innerHTML = `
+        <tr>
+          ${AppState.activeColumns.map((colKey, cIdx) => {
+            const isXml1 = XML1_COLUMN_SET.has(colKey);
+            return `
+              <th draggable="true" data-col-id="${colKey}" data-col-index="${cIdx}"
+                  class="col-draggable group px-3 py-2.5 whitespace-nowrap border-r border-slate-200/80 hover:bg-indigo-100/70 transition"
+                  title="Kéo thả đổi vị trí cột hoặc bấm để xem thông tin">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-400 text-[10px] opacity-40 group-hover:opacity-100">⋮⋮</span>
+                  ${isXml1 ? '<span class="px-1 py-0.2 rounded bg-indigo-100 text-indigo-700 text-[9px] font-black border border-indigo-200">XML1</span>' : '<span class="px-1 py-0.2 rounded bg-emerald-100 text-emerald-800 text-[9px] font-black border border-emerald-200">DV</span>'}
+                  <span class="text-slate-800 font-extrabold">${colKey}</span>
+                  <button onclick="removeColumn('${colKey}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-600 transition ml-auto font-black text-xs" title="Gỡ cột này">✕</button>
+                </div>
+              </th>
+            `;
+          }).join('')}
+        </tr>
+      `;
+
+      // Pagination slice
+      const totalRows = filtered.length;
+      const totalPages = Math.ceil(totalRows / AppState.pageSize) || 1;
+      if (AppState.currentPage > totalPages) AppState.currentPage = totalPages;
+
+      const startIndex = (AppState.currentPage - 1) * AppState.pageSize;
+      const endIndex = Math.min(startIndex + AppState.pageSize, totalRows);
+      const pageSlice = filtered.slice(startIndex, endIndex);
+
+      if (pageSlice.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="${AppState.activeColumns.length}" class="p-12 text-center text-slate-400">
+              <div class="text-4xl mb-2">📂</div>
+              <p class="text-sm font-bold text-slate-600">Chưa có dòng dữ liệu ghép nào phù hợp</p>
+              <p class="text-xs text-slate-400 mt-1">Kéo thả file XML tổng hợp bệnh viện hoặc bấm nút "Nạp Mẫu Test" ở góc trên để chạy thử.</p>
+            </td>
+          </tr>
+        `;
+        document.getElementById('pageInfo').innerText = "Hiển thị 0 dòng";
+        document.getElementById('paginationControls').innerHTML = "";
+        return;
+      }
+
+      // Render Rows
+      tbody.innerHTML = pageSlice.map((r, rIdx) => {
+        const typeBadge = r._TYPE === 'THUOC' ? 'bg-amber-50/40' : (r._TYPE === 'DVKT' ? 'bg-white' : 'bg-slate-50/50');
+        return `
+          <tr class="${typeBadge} hover:bg-indigo-50/60 transition group">
+            ${AppState.activeColumns.map(colKey => {
+              let val = r[colKey] !== undefined ? r[colKey] : '';
+              
+              // Formatting
+              const isCostCol = ['THANH_TIEN', 'THANHTIEN_BV', 'SOTIEN', 'DON_GIA', 'DONGIA_BV', 'BHYTTRA', 'BNTRA', 'BNTUTRA', 'T_BHTT', 'T_BNTT', 'T_BNCCT'].includes(colKey);
+              if (isCostCol && val !== '') {
+                val = formatNumber(val);
+              }
+
+              const isMaLk = colKey === 'MA_LK';
+              const isHoTen = colKey === 'HOTEN';
+              const isTenDv = colKey === 'TEN_DVKT_THUOC_VT_BH' || colKey === 'TEN_DVKT_THUOC_VT_NOIBO';
+
+              return `
+                <td class="px-3 py-2 whitespace-nowrap border-r border-slate-100 ${isCostCol ? 'text-right font-bold text-emerald-700 font-mono' : 'text-slate-700'}">
+                  ${isMaLk ? `<span class="font-black text-indigo-700 font-mono">${val}</span>` : ''}
+                  ${isHoTen ? `<span class="font-extrabold text-slate-900">${val}</span>` : ''}
+                  ${isTenDv ? `<span class="font-semibold text-slate-800" title="${val}">${val}</span>` : ''}
+                  ${!isMaLk && !isHoTen && !isTenDv ? val : ''}
+                </td>
+              `;
+            }).join('')}
+          </tr>
+        `;
+      }).join('');
+
+      // Status info
+      document.getElementById('pageInfo').innerText = `Hiển thị ${startIndex + 1} - ${endIndex} trên tổng số ${totalRows.toLocaleString()} dòng đã ghép (${AppState.activeColumns.length} cột)`;
+      renderPaginationControls(totalPages);
+      attachHeaderDragListeners();
+    }
+
+    function renderPaginationControls(totalPages) {
+      const c = document.getElementById('paginationControls');
+      if (totalPages <= 1) {
+        c.innerHTML = '';
+        return;
+      }
+
+      let html = `
+        <button onclick="changePage(${AppState.currentPage - 1})" ${AppState.currentPage === 1 ? 'disabled class="px-2 py-1 bg-slate-100 text-slate-400 rounded-lg cursor-not-allowed text-xs"' : 'class="px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100 text-xs font-bold"'}><</button>
+      `;
+
+      for (let p = 1; p <= totalPages; p++) {
+        if (p === 1 || p === totalPages || (p >= AppState.currentPage - 2 && p <= AppState.currentPage + 2)) {
+          html += `
+            <button onclick="changePage(${p})" class="px-2.5 py-1 rounded-lg text-xs font-bold ${p === AppState.currentPage ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'}">${p}</button>
+          `;
+        } else if (p === AppState.currentPage - 3 || p === AppState.currentPage + 3) {
+          html += `<span class="px-1 text-slate-400 text-xs">...</span>`;
+        }
+      }
+
+      html += `
+        <button onclick="changePage(${AppState.currentPage + 1})" ${AppState.currentPage === totalPages ? 'disabled class="px-2 py-1 bg-slate-100 text-slate-400 rounded-lg cursor-not-allowed text-xs"' : 'class="px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100 text-xs font-bold"'}>></button>
+      `;
+      c.innerHTML = html;
+    }
+
+    function changePage(p) {
+      AppState.currentPage = p;
+      renderTable();
+    }
+
+    // ==========================================
+    // 5. COLUMN CUSTOMIZER & WAREHOUSES
+    // ==========================================
+
+    function renderColumnWarehouses() {
+      const wXml1 = document.getElementById('warehouseXml1');
+      const wDetail = document.getElementById('warehouseDetail');
+      const activeSet = new Set(AppState.activeColumns);
+
+      document.getElementById('badgeActiveCols').innerText = AppState.activeColumns.length;
+
+      // Group 1: XML1 columns (first 52)
+      const xml1Cols = BV_115_COLUMNS.slice(0, 52);
+      wXml1.innerHTML = xml1Cols.map(col => {
+        const isAct = activeSet.has(col);
+        return `
+          <button onclick="toggleColumn('${col}')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${isAct ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-300'}">
+            <span>${isAct ? '✓' : '+'}</span>
+            <span>${col}</span>
+          </button>
+        `;
+      }).join('');
+
+      // Group 2: Detail columns (52 to 115)
+      const detailCols = BV_115_COLUMNS.slice(52);
+      wDetail.innerHTML = detailCols.map(col => {
+        const isAct = activeSet.has(col);
+        return `
+          <button onclick="toggleColumn('${col}')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${isAct ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-300'}">
+            <span>${isAct ? '✓' : '+'}</span>
+            <span>${col}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleColumn(colKey) {
+      const idx = AppState.activeColumns.indexOf(colKey);
+      if (idx > -1) {
+        if (AppState.activeColumns.length <= 1) {
+          showToast('Bảng phải giữ ít nhất 1 cột hiển thị!', '⚠️');
+          return;
+        }
+        AppState.activeColumns.splice(idx, 1);
+      } else {
+        AppState.activeColumns.push(colKey);
+      }
+      renderColumnWarehouses();
+      renderTable();
+    }
+
+    function removeColumn(colKey) {
+      const idx = AppState.activeColumns.indexOf(colKey);
+      if (idx > -1) {
+        if (AppState.activeColumns.length <= 1) {
+          showToast('Bảng phải giữ ít nhất 1 cột!', '⚠️');
+          return;
+        }
+        AppState.activeColumns.splice(idx, 1);
+        renderColumnWarehouses();
+        renderTable();
+      }
+    }
+
+    function selectAllColumns() {
+      AppState.activeColumns = [...BV_115_COLUMNS];
+      renderColumnWarehouses();
+      renderTable();
+      showToast('Đã chọn toàn bộ 115 cột BV!', '📑');
+    }
+
+    function resetColumnsToPreset(presetKey) {
+      if (PRESET_COLUMNS[presetKey]) {
+        AppState.activeColumns = [...PRESET_COLUMNS[presetKey]];
+        AppState.currentPreset = presetKey;
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+          if (btn.getAttribute('data-preset') === presetKey) {
+            btn.className = 'preset-btn px-3 py-1.5 rounded-lg bg-white text-indigo-700 shadow-xs';
+          } else {
+            btn.className = 'preset-btn px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900';
+          }
+        });
+        renderColumnWarehouses();
+        renderTable();
+        showToast(`Đã áp dụng góc nhìn: ${presetKey}`, '🎯');
+      }
+    }
+
+    function toggleColBuilderPanel(force) {
+      const p = document.getElementById('colBuilderPanel');
+      if (force !== undefined) {
+        if (force) p.classList.remove('hidden');
+        else p.classList.add('hidden');
+      } else {
+        p.classList.toggle('hidden');
+      }
+    }
+
+    // Drag-and-drop table headers to reorder
+    function attachHeaderDragListeners() {
+      let dragColId = null;
+      let dragIdx = null;
+
+      document.querySelectorAll('#joinedTableHead th.col-draggable').forEach(th => {
+        th.addEventListener('dragstart', (e) => {
+          dragColId = th.getAttribute('data-col-id');
+          dragIdx = parseInt(th.getAttribute('data-col-index'), 10);
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        th.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          th.classList.add('col-drag-over');
+        });
+
+        th.addEventListener('dragleave', () => {
+          th.classList.remove('col-drag-over');
+        });
+
+        th.addEventListener('drop', (e) => {
+          e.preventDefault();
+          th.classList.remove('col-drag-over');
+          const targetIdx = parseInt(th.getAttribute('data-col-index'), 10);
+          if (dragIdx !== null && targetIdx !== null && dragIdx !== targetIdx) {
+            const item = AppState.activeColumns.splice(dragIdx, 1)[0];
+            AppState.activeColumns.splice(targetIdx, 0, item);
+            renderTable();
+            showToast(`Đã chuyển vị trí cột "${item}"`, '🔀');
+          }
+        });
+      });
+    }
+
+    // ==========================================
+    // 6. EXPORT TO EXCEL
+    // ==========================================
+    function exportJoinedToExcel() {
+      if (AppState.joinedRows.length === 0) {
+        showToast('Chưa có dữ liệu để xuất Excel!', '⚠️');
+        return;
+      }
+
+      showToast('Đang tạo file Excel báo cáo...', '⏳');
+      const filtered = getFilteredRows();
+
+      // Build rows matching current active columns
+      const headers = [...AppState.activeColumns];
+      const dataRows = [headers];
+
+      filtered.forEach(r => {
+        const row = headers.map(col => r[col] !== undefined ? r[col] : '');
+        dataRows.push(row);
+      });
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(dataRows);
+
+      // Auto column widths
+      const colWidths = headers.map(h => ({ wch: Math.max(h.length, 12) }));
+      ws['!cols'] = colWidths;
+
+      XLSX.utils.book_append_sheet(wb, ws, "BAOCAO_GHEP_XML");
+
+      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      XLSX.writeFile(wb, `BAOCAO_GHEP_XML_TONGHOP_BV_${dateStr}.xlsx`);
+      showToast('Đã tải xuống file Excel thành công!', '📥');
+    }
+
+    // ==========================================
+    // 7. SAMPLE DEMO DATA (SIMULATED 1 HOSO WITH DRUGS & DVKT)
+    // ==========================================
+    function loadSampleData() {
+      clearAllData();
+
+      const sampleXml = `<?xml version="1.0" encoding="utf-8"?>
+<GIAMDINHHS>
+  <THONGTINHOSO>
+    <DANHSACHHOSO>
+      <HOSO>
+        <FILEHOSO>
+          <LOAIHOSO>XML1</LOAIHOSO>
+          <NOIDUNGFILE>
+            <TONG_HOP>
+              <MA_LK>2052187</MA_LK>
+              <STT>1</STT>
+              <MA_BN>BN23000024017</MA_BN>
+              <HO_TEN><![CDATA[NGUYỄN VĂN CÓ]]></HO_TEN>
+              <SO_CCCD>074169006183</SO_CCCD>
+              <NGAY_SINH>196201010000</NGAY_SINH>
+              <GIOI_TINH>1</GIOI_TINH>
+              <DIA_CHI><![CDATA[Kp1-Phường Minh Hưng-Thành phố Đồng Nai]]></DIA_CHI>
+              <MA_THE_BHYT>GD4757021691056</MA_THE_BHYT>
+              <GT_THE_TU>20260101</GT_THE_TU>
+              <GT_THE_DEN>20261231</GT_THE_DEN>
+              <MA_DKBD>74147</MA_DKBD>
+              <NGAY_VAO>202611160616</NGAY_VAO>
+              <NGAY_RA>202611160639</NGAY_RA>
+              <MA_BENH_CHINH>E11.9</MA_BENH_CHINH>
+              <MA_BENH_KT>I10;I25.5;E78.2</MA_BENH_KT>
+              <CHAN_DOAN_RV><![CDATA[Bệnh đái tháo đường típ 2, không kèm biến chứng; Tăng huyết áp vô căn; Bệnh lý cơ tim do thiếu máu cục bộ]]></CHAN_DOAN_RV>
+              <SO_NGAY_DTRI>30</SO_NGAY_DTRI>
+              <MA_LOAI_KCB>05</MA_LOAI_KCB>
+              <MA_CSKCB>74147</MA_CSKCB>
+              <T_TONGCHI_BV>138750</T_TONGCHI_BV>
+              <T_BHTT>138750</T_BHTT>
+              <T_BNTT>0</T_BNTT>
+              <T_BNCCT>0</T_BNCCT>
+              <CAN_NANG>75</CAN_NANG>
+              <TEN_KHOA><![CDATA[Khoa Khám bệnh]]></TEN_KHOA>
+              <MA_KHOA>KBENH</MA_KHOA>
+            </TONG_HOP>
+          </NOIDUNGFILE>
+        </FILEHOSO>
+        <FILEHOSO>
+          <LOAIHOSO>XML2</LOAIHOSO>
+          <NOIDUNGFILE>
+            <CHITIEU_CHITIET_THUOC>
+              <DSACH_CHI_TIET_THUOC>
+                <CHI_TIET_THUOC>
+                  <MA_LK>2052187</MA_LK>
+                  <STT>1</STT>
+                  <MA_THUOC>40.491</MA_THUOC>
+                  <MA_NHOM>4</MA_NHOM>
+                  <TEN_THUOC><![CDATA[AMLODAC 5]]></TEN_THUOC>
+                  <DON_VI_TINH>Viên</DON_VI_TINH>
+                  <HAM_LUONG>5mg</HAM_LUONG>
+                  <DUONG_DUNG>1.01</DUONG_DUNG>
+                  <LIEU_DUNG><![CDATA[Sáng: 1 Viên [1 Viên/ngày]]]></LIEU_DUNG>
+                  <SO_DANG_KY>VN-16521-13</SO_DANG_KY>
+                  <TT_THAU>711/QĐ-BVNDGĐ;G1;N2;2025;79</TT_THAU>
+                  <SO_LUONG>30.000</SO_LUONG>
+                  <DON_GIA>233.000</DON_GIA>
+                  <THANH_TIEN_BV>6990</THANH_TIEN_BV>
+                  <THANH_TIEN_BH>6990</THANH_TIEN_BH>
+                  <T_BHTT>6990</T_BHTT>
+                  <MA_KHOA>KBENH</MA_KHOA>
+                  <MA_BAC_SI>0003691/BD-CCHN</MA_BAC_SI>
+                  <NGAY_YL>202611160636</NGAY_YL>
+                </CHI_TIET_THUOC>
+                <CHI_TIET_THUOC>
+                  <MA_LK>2052187</MA_LK>
+                  <STT>2</STT>
+                  <MA_THUOC>40.540</MA_THUOC>
+                  <MA_NHOM>4</MA_NHOM>
+                  <TEN_THUOC><![CDATA[Mivic]]></TEN_THUOC>
+                  <DON_VI_TINH>Viên</DON_VI_TINH>
+                  <HAM_LUONG>20mg</HAM_LUONG>
+                  <DUONG_DUNG>1.01</DUONG_DUNG>
+                  <LIEU_DUNG><![CDATA[Chiều: 1 Viên [1 Viên/ngày]]]></LIEU_DUNG>
+                  <SO_DANG_KY>VD-24316-16</SO_DANG_KY>
+                  <TT_THAU>711/QĐ-BVNDGĐ;G1;N2;2025;79</TT_THAU>
+                  <SO_LUONG>30.000</SO_LUONG>
+                  <DON_GIA>777.000</DON_GIA>
+                  <THANH_TIEN_BV>23310</THANH_TIEN_BV>
+                  <THANH_TIEN_BH>23310</THANH_TIEN_BH>
+                  <T_BHTT>23310</T_BHTT>
+                  <MA_KHOA>KBENH</MA_KHOA>
+                  <MA_BAC_SI>0003691/BD-CCHN</MA_BAC_SI>
+                  <NGAY_YL>202611160636</NGAY_YL>
+                </CHI_TIET_THUOC>
+                <CHI_TIET_THUOC>
+                  <MA_LK>2052187</MA_LK>
+                  <STT>3</STT>
+                  <MA_THUOC>40.807</MA_THUOC>
+                  <MA_NHOM>4</MA_NHOM>
+                  <TEN_THUOC><![CDATA[Glumeform 500]]></TEN_THUOC>
+                  <DON_VI_TINH>Viên</DON_VI_TINH>
+                  <HAM_LUONG>500mg</HAM_LUONG>
+                  <DUONG_DUNG>1.01</DUONG_DUNG>
+                  <LIEU_DUNG><![CDATA[Sáng: 1 Viên, Chiều: 1 Viên [2 Viên/ngày]]]></LIEU_DUNG>
+                  <SO_DANG_KY>VD-21779-14</SO_DANG_KY>
+                  <TT_THAU>711/QĐ-BVNDGĐ;G1;N2;2025;79</TT_THAU>
+                  <SO_LUONG>60.000</SO_LUONG>
+                  <DON_GIA>289.000</DON_GIA>
+                  <THANH_TIEN_BV>17340</THANH_TIEN_BV>
+                  <THANH_TIEN_BH>17340</THANH_TIEN_BH>
+                  <T_BHTT>17340</T_BHTT>
+                  <MA_KHOA>KBENH</MA_KHOA>
+                  <MA_BAC_SI>0003691/BD-CCHN</MA_BAC_SI>
+                  <NGAY_YL>202611160636</NGAY_YL>
+                </CHI_TIET_THUOC>
+              </DSACH_CHI_TIET_THUOC>
+            </CHITIEU_CHITIET_THUOC>
+          </NOIDUNGFILE>
+        </FILEHOSO>
+        <FILEHOSO>
+          <LOAIHOSO>XML3</LOAIHOSO>
+          <NOIDUNGFILE>
+            <CHITIEU_CHITIET_DVKT_VTYT>
+              <DSACH_CHI_TIET_DVKT>
+                <CHI_TIET_DVKT>
+                  <MA_LK>2052187</MA_LK>
+                  <STT>1</STT>
+                  <MA_DICH_VU>02.03</MA_DICH_VU>
+                  <MA_NHOM>13</MA_NHOM>
+                  <TEN_DICH_VU><![CDATA[Khám Nội tổng hợp]]></TEN_DICH_VU>
+                  <DON_VI_TINH>Lần</DON_VI_TINH>
+                  <SO_LUONG>1.000</SO_LUONG>
+                  <DON_GIA_BV>39800.000</DON_GIA_BV>
+                  <DON_GIA_BH>39800.000</DON_GIA_BH>
+                  <THANH_TIEN_BV>39800</THANH_TIEN_BV>
+                  <THANH_TIEN_BH>39800</THANH_TIEN_BH>
+                  <T_BHTT>39800</T_BHTT>
+                  <MA_KHOA>KBENH</MA_KHOA>
+                  <MA_BAC_SI>0003691/BD-CCHN</MA_BAC_SI>
+                  <NGAY_YL>202611160618</NGAY_YL>
+                  <NGAY_KQ>202611160635</NGAY_KQ>
+                </CHI_TIET_DVKT>
+              </DSACH_CHI_TIET_DVKT>
+            </CHITIEU_CHITIET_DVKT_VTYT>
+          </NOIDUNGFILE>
+        </FILEHOSO>
+      </HOSO>
+    </DANHSACHHOSO>
+  </THONGTINHOSO>
+</GIAMDINHHS>`;
+
+      parseHospitalXmlText(sampleXml, 'SAMPLE_BV_DEMO.xml');
+      updateKpis();
+      AppState.currentPage = 1;
+      renderTable();
+      renderColumnWarehouses();
+      showToast('Đã nạp thành công bộ dữ liệu mẫu chuẩn QĐ 130!', '⚡');
+    }
+
+    function clearAllData() {
+      AppState.dossiers = [];
+      AppState.joinedRows = [];
+      AppState.currentPage = 1;
+      updateKpis();
+      renderTable();
+      renderColumnWarehouses();
+      showToast('Đã xóa trắng dữ liệu!', '🗑️');
+    }
+
+    function showToast(msg, icon = 'ℹ️') {
+      const el = document.getElementById('toast');
+      el.className = 'fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-xl flex items-center gap-2 bg-slate-900 border border-slate-700 transition-all duration-300';
+      el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+      el.style.transform = 'translateY(0)';
+      el.style.opacity = '1';
+      setTimeout(() => {
+        el.style.transform = 'translateY(20px)';
+        el.style.opacity = '0';
+      }, 3500);
+    }
+
+    // ==========================================
+    // 8. EVENT LISTENERS
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      renderColumnWarehouses();
+      renderTable();
+
+      // Drop Zone & Inputs
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const folderInput = document.getElementById('folderInput');
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-indigo-500', 'bg-indigo-50/50');
+      });
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
+      });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleIncomingFiles(e.dataTransfer.files);
+        }
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) handleIncomingFiles(fileInput.files);
+      });
+      folderInput.addEventListener('change', () => {
+        if (folderInput.files.length > 0) handleIncomingFiles(folderInput.files);
+      });
+
+      // Search & Filters
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        AppState.searchQuery = e.target.value;
+        AppState.currentPage = 1;
+        renderTable();
+      });
+
+      document.getElementById('filterType').addEventListener('change', (e) => {
+        AppState.filterType = e.target.value;
+        AppState.currentPage = 1;
+        renderTable();
+      });
+
+      document.getElementById('pageSize').addEventListener('change', (e) => {
+        AppState.pageSize = parseInt(e.target.value, 10);
+        AppState.currentPage = 1;
+        renderTable();
+      });
+
+      // Preset buttons
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = btn.getAttribute('data-preset');
+          resetColumnsToPreset(p);
+        });
+      });
+
+      // Actions
+      document.getElementById('btnToggleColBuilder').addEventListener('click', () => toggleColBuilderPanel());
+      document.getElementById('btnSampleData').addEventListener('click', loadSampleData);
+      document.getElementById('btnClearData').addEventListener('click', clearAllData);
+      document.getElementById('btnExportExcel').addEventListener('click', exportJoinedToExcel);
+    });
+  </script>
+</body>
+</html>
