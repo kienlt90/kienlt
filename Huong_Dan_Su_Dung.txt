@@ -1,0 +1,26 @@
+======================================================================
+HƯỚNG DẪN SỬ DỤNG CÔNG CỤ TỔNG HỢP & KÉO THẢ CỘT XML BHYT (LOCAL BV)
+Quy chuẩn: Quyết định 130/QĐ-BYT (Áp dụng cho 14 bảng XML)
+======================================================================
+
+1. CÁCH MỞ CÔNG CỤ:
+- Nhấp đúp chuột trực tiếp vào file: xml_tonghop_local.html
+- Công cụ sẽ mở bằng Microsoft Edge hoặc Google Chrome.
+- Hoàn toàn KHÔNG cần kết nối mạng Internet, dữ liệu bảo mật 100% tại RAM máy tính.
+
+2. CÁCH NẠP DỮ LIỆU:
+- Kéo thả file Excel tổng hợp (chứa các sheet XML1, XML2, XML3...), file nén .ZIP hoặc các file .XML vào khung nạp dữ liệu.
+- Hoặc bấm nút 'Nạp Dữ Liệu Mẫu' ở góc trên bên phải để dùng thử dữ liệu demo.
+
+3. CÁCH KÉO THẢ GHÉP CỘT (TÙY BIẾN CỘT):
+- Bấm chọn Bảng dữ liệu muốn ghép (VD: bấm tab 'XML 2 - Thuốc' hoặc 'XML 3 - DVKT').
+- Bấm nút '🧩 Kéo thả cột' trên thanh công cụ:
+  + Kéo thả các trường từ XML 1 (Họ tên, Ngày vào, Ngày ra, Mã thẻ BHYT, Mã bệnh chính...) thả trực tiếp lên dòng tiêu đề của bảng.
+  + Hoặc bấm dấu '+' tại các trường để thêm nhanh vào bảng.
+  + Bấm 'x' trên đầu cột để ẩn/gỡ bỏ cột không cần thiết.
+  + Kéo đổi vị trí trực tiếp giữa các cột để sắp xếp thứ tự hiển thị theo ý muốn.
+
+4. CÁCH XUẤT FILE EXCEL TỔNG HỢP:
+- Xuất riêng 1 bảng: Bấm nút '📥 Xuất Bảng Này (.xlsx)' ở thanh công cụ của bảng.
+- Xuất toàn bộ: Bấm nút '📊 Xuất File Tổng Hợp (.xlsx)' ở thanh menu trên cùng để xuất toàn bộ 14 bảng ra 1 file Excel (mỗi bảng 1 sheet).
+======================================================================
