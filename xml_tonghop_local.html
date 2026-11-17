@@ -105,13 +105,9 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           Nạp Dữ Liệu Mẫu
         </button>
-        <button id="btnExportAllCustom" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg shadow-md transition flex items-center gap-1.5" title="Xuất file Excel tổng hợp gồm tất cả các bảng XML theo cột tùy chỉnh">
+        <button id="btnExportAllCustom" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-md transition flex items-center gap-1.5" title="Xuất file Excel tổng hợp gồm tất cả các bảng XML theo cột tùy chỉnh">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          Xuất File Tổng Hợp (Tất Cả Bảng)
-        </button>
-        <button id="btnExportExcel" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-md transition flex items-center gap-1.5" title="Xuất báo cáo đối soát chéo và các bản ghi lỗi vi phạm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          Báo Cáo Lỗi (.xlsx)
+          Xuất File Tổng Hợp (.xlsx)
         </button>
       </div>
     </div>
@@ -2678,7 +2674,7 @@
     function exportCurrentTableToExcel() {
       const tableKey = AppState.currentTab;
       if (tableKey === 'CROSS') {
-        document.getElementById('btnExportExcel').click();
+        showToast('Vui lòng chọn bảng XML (XML 1 - 14) để xuất dữ liệu!', 'ℹ️');
         return;
       }
       const rows = AppState.tablesData[tableKey] || [];
@@ -2775,55 +2771,8 @@
       showToast(`Đã xuất file tổng hợp gồm ${exportedSheets} bảng XML!`, '📊');
     }
 
-    // ==========================================
-    // EXPORT COMPREHENSIVE AUDIT REPORT
-    // ==========================================
-        document.getElementById('btnExportAllCustom').addEventListener('click', exportAllTablesToExcel);
+    document.getElementById('btnExportAllCustom').addEventListener('click', exportAllTablesToExcel);
     document.getElementById('btnExportCurrentTable').addEventListener('click', exportCurrentTableToExcel);
-    document.getElementById('btnExportExcel').addEventListener('click', () => {
-      if (countTotalRecords() === 0) {
-        showToast("Chưa có dữ liệu để xuất báo cáo!", "⚠️");
-        return;
-      }
-
-      const wb = XLSX.utils.book_new();
-
-      // Sheet 1: Cross Issues
-      const crossRows = [
-        ["STT", "BẢNG DỮ LIỆU", "MỨC ĐỘ", "VẤN ĐỀ VI PHẠM", "CHI TIẾT VÀ GỢI Ý XỬ LÝ TRÊN HIS"]
-      ];
-      AppState.crossErrors.forEach((ce, i) => {
-        crossRows.push([i + 1, ce.table, ce.type, ce.title, `${ce.message} -> Gợi ý: ${ce.suggestion}`]);
-      });
-      const wsCross = XLSX.utils.aoa_to_sheet(crossRows);
-      XLSX.utils.book_append_sheet(wb, wsCross, "Doi_Soat_Cheo");
-
-      // Sheet 2: All Errors & Warnings
-      const allErrRows = [
-        ["STT", "BẢNG XML", "MÃ LK", "TRẠNG THÁI", "LỖI VI PHẠM (ERRORS)", "CẢNH BÁO (WARNINGS)", "TÊN TỆP NGUỒN"]
-      ];
-      let rowIdx = 1;
-      Object.keys(AppState.tablesData).forEach(tKey => {
-        AppState.tablesData[tKey].forEach(r => {
-          if (r._status === 'ERROR' || r._status === 'WARNING') {
-            allErrRows.push([
-              rowIdx++,
-              tKey,
-              r.MA_LK || "",
-              r._status === 'ERROR' ? 'LỖI' : 'CẢNH BÁO',
-              (r._errors || []).join(" | "),
-              (r._warnings || []).join(" | "),
-              r._fileName || ""
-            ]);
-          }
-        });
-      });
-      const wsErr = XLSX.utils.aoa_to_sheet(allErrRows);
-      XLSX.utils.book_append_sheet(wb, wsErr, "Tong_Hop_Loi_XML");
-
-      XLSX.writeFile(wb, `Bao_Cao_Kiem_Tra_Tong_Hop_XML_QD130_${new Date().toISOString().slice(0,10)}.xlsx`);
-      showToast("Đã tải xuống file báo cáo Excel thành công!", "📥");
-    });
 
     // ==========================================
     // SAMPLE DEMO DATA LOADER (XML 1-14)
